@@ -1,12 +1,12 @@
-# LearnPath — Curated Research Bibliography
+# Sensei — Curated Research Bibliography
 
 > **58 foundation sources curated from 61 total researched**
 >
 > Last Updated: 2026-04-19
 
-This bibliography contains only the research that directly informs LearnPath's architecture and pedagogy. Sources were selected for alignment with our product direction: multi-agent LLM tutoring, principle-based guardrails (not deterministic state machines), adaptive learner profiling, CLI-first local workflow, and evidence-based learning science.
+This bibliography contains only the research that directly informs Sensei's architecture and pedagogy. Sources were selected for alignment with our product direction: multi-agent LLM tutoring, principle-based guardrails (not deterministic state machines), adaptive learner profiling, CLI-first local workflow, and evidence-based learning science.
 
-Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
+The two architecture-critical full reports are published under [`docs/research/`](docs/research/). The remaining reports were synthesized into [`PRODUCT-IDEATION.md`](PRODUCT-IDEATION.md) rather than promoted individually.
 
 ---
 
@@ -39,7 +39,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025 (submitted EACL 2026)
 - **URL:** <https://arxiv.org/html/2512.18669v1>
 
-**Why it matters for LearnPath:** The most directly relevant architecture in the literature. IntelliCode uses 6 specialized agents with a centralized versioned learner state and a 40/50/10 content selection strategy with graduated hinting, formulated as a POMDP. Their learner state schema maps almost 1:1 to our `learner-profile.yaml`. Critically, it uses LLMs for high-variance pedagogical decisions and reserves deterministic logic only for state management — exactly our approach.
+**Why it matters for Sensei:** The most directly relevant architecture in the literature. IntelliCode uses 6 specialized agents with a centralized versioned learner state and a 40/50/10 content selection strategy with graduated hinting, formulated as a POMDP. Their learner state schema maps almost 1:1 to our `learner-profile.yaml`. Critically, it uses LLMs for high-variance pedagogical decisions and reserves deterministic logic only for state management — exactly our approach.
 
 ---
 
@@ -50,7 +50,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **URL:** <https://arxiv.org/html/2501.15749>
 - **GitHub:** <https://github.com/GeminiLight/gen-mentor>
 
-**Why it matters for LearnPath:** Goal-oriented multi-agent tutoring with skill gap identification, adaptive learner modeling, and evolvable learning paths. Deployed at Microsoft with 80%+ of users reporting enhanced efficiency, outperforming both MOOCs and standalone chatbots. Includes a learner simulator agent for proactive adaptation — a pattern we can adopt for offline path optimization.
+**Why it matters for Sensei:** Goal-oriented multi-agent tutoring with skill gap identification, adaptive learner modeling, and evolvable learning paths. Deployed at Microsoft with 80%+ of users reporting enhanced efficiency, outperforming both MOOCs and standalone chatbots. Includes a learner simulator agent for proactive adaptation — a pattern we can adopt for offline path optimization.
 
 ---
 
@@ -60,7 +60,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **URL:** <https://arxiv.org/html/2504.05370v1>
 
-**Why it matters for LearnPath:** Demonstrates adversarial multi-agent collaboration (evaluator + optimizer + analyst) scoring 88/100 vs. 17 for single-model approaches. Directly validates our multi-agent architecture and the challenger/reviewer concept — specialized agents that critique and improve each other's outputs produce dramatically better pedagogical quality.
+**Why it matters for Sensei:** Demonstrates adversarial multi-agent collaboration (evaluator + optimizer + analyst) scoring 88/100 vs. 17 for single-model approaches. Directly validates our multi-agent architecture and the challenger/reviewer concept — specialized agents that critique and improve each other's outputs produce dramatically better pedagogical quality.
 
 ---
 
@@ -69,7 +69,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **URL:** <https://arxiv.org/html/2601.17346v1>
 
-**Why it matters for LearnPath:** Addresses transparency and adaptability in learning path planning with a focus on learner-centered explainability. Supports our design goal of making learning paths inspectable and editable as local files rather than opaque black-box recommendations.
+**Why it matters for Sensei:** Addresses transparency and adaptability in learning path planning with a focus on learner-centered explainability. Supports our design goal of making learning paths inspectable and editable as local files rather than opaque black-box recommendations.
 
 ---
 
@@ -81,7 +81,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2024
 - **URL:** <https://arxiv.org/html/2412.16429v3>
 
-**Why it matters for LearnPath:** Achieved +31% over GPT-4o in pedagogical preference evaluations. Key quote: "Pedagogy is prohibitively difficult to define" for all contexts. Argues that LLM instruction-following outperforms hardcoded rules, and that prompting will remain the best approach because models improve too fast for rigid systems. This is the strongest industry evidence for our principle-based guardrails approach.
+**Why it matters for Sensei:** Achieved +31% over GPT-4o in pedagogical preference evaluations. Key quote: "Pedagogy is prohibitively difficult to define" for all contexts. Argues that LLM instruction-following outperforms hardcoded rules, and that prompting will remain the best approach because models improve too fast for rigid systems. This is the strongest industry evidence for our principle-based guardrails approach.
 
 ---
 
@@ -91,7 +91,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **URL:** <https://arxiv.org/html/2601.14560v1>
 
-**Why it matters for LearnPath:** Demonstrates +134% learning improvement with reasoning-enabled tutors. Shows that LLM internal reasoning can be shaped for pedagogical decisions — even 8B models approach frontier performance with RL training. GPT-5.2 achieves 0% answer leakage with just a pedagogical prompt, validating that principle-based prompting is sufficient for guardrails.
+**Why it matters for Sensei:** Demonstrates +134% learning improvement with reasoning-enabled tutors. Shows that LLM internal reasoning can be shaped for pedagogical decisions — even 8B models approach frontier performance with RL training. GPT-5.2 achieves 0% answer leakage with just a pedagogical prompt, validating that principle-based prompting is sufficient for guardrails.
 
 ---
 
@@ -101,7 +101,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **URL:** <https://arxiv.org/html/2505.15607v1>
 
-**Why it matters for LearnPath:** The StratL authors themselves moved beyond deterministic state machines to RL-aligned tutoring. This is the strongest possible validation that the field is moving in our direction — the very researchers who proposed state-machine pedagogy have abandoned that approach.
+**Why it matters for Sensei:** The StratL authors themselves moved beyond deterministic state machines to RL-aligned tutoring. This is the strongest possible validation that the field is moving in our direction — the very researchers who proposed state-machine pedagogy have abandoned that approach.
 
 ---
 
@@ -111,7 +111,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2024 (peer-reviewed, Nature)
 - **URL:** <https://pmc.ncbi.nlm.nih.gov/articles/PMC12179260/>
 
-**Why it matters for LearnPath:** Gold-standard randomized controlled trial evidence. AI tutoring (without state machines) produced 2x learning gains vs. active learning. Published in Nature. This is the single strongest piece of evidence that LLM-driven tutoring works at a fundamental level.
+**Why it matters for Sensei:** Gold-standard randomized controlled trial evidence. AI tutoring (without state machines) produced 2x learning gains vs. active learning. Published in Nature. This is the single strongest piece of evidence that LLM-driven tutoring works at a fundamental level.
 
 ---
 
@@ -121,7 +121,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2024
 - **URL:** <https://arxiv.org/html/2510.05087v1>
 
-**Why it matters for LearnPath:** Trained on 100K hours of real tutoring transcripts. Doubled student talk time and improved questioning style. Demonstrates that LLMs can internalize pedagogical expertise through training data alone, without needing external state machines to govern their behavior.
+**Why it matters for Sensei:** Trained on 100K hours of real tutoring transcripts. Doubled student talk time and improved questioning style. Demonstrates that LLMs can internalize pedagogical expertise through training data alone, without needing external state machines to govern their behavior.
 
 ---
 
@@ -133,7 +133,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2026
 - **Source:** Referenced in BCS analysis (April 2026)
 
-**Why it matters for LearnPath:** An 84-page constitution demonstrating principles-based behavior at scale. Key insight: "Models must understand why we want them to behave in certain ways" and "apply broad principles rather than mechanically following specific rules." Directly informs our approach to pedagogical guardrails — we encode teaching principles, not decision trees.
+**Why it matters for Sensei:** An 84-page constitution demonstrating principles-based behavior at scale. Key insight: "Models must understand why we want them to behave in certain ways" and "apply broad principles rather than mechanically following specific rules." Directly informs our approach to pedagogical guardrails — we encode teaching principles, not decision trees.
 
 ---
 
@@ -142,7 +142,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Source:** Accelerra.io
 - **Year:** January 2026
 
-**Why it matters for LearnPath:** Documents the industry-wide shift from rules to values in AI alignment. Principles are more scalable, less brittle, and more human-centered than exhaustive rule sets. Validates our architectural decision to use principle-based guardrails over deterministic state machines for pedagogical decisions.
+**Why it matters for Sensei:** Documents the industry-wide shift from rules to values in AI alignment. Principles are more scalable, less brittle, and more human-centered than exhaustive rule sets. Validates our architectural decision to use principle-based guardrails over deterministic state machines for pedagogical decisions.
 
 ---
 
@@ -150,7 +150,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 - **Year:** 2025
 
-**Why it matters for LearnPath:** Demonstrates that natural language policies can serve as enforceable guardrails without state machines. Supports our approach of encoding pedagogical constraints as prompt-level principles rather than code-level control flow.
+**Why it matters for Sensei:** Demonstrates that natural language policies can serve as enforceable guardrails without state machines. Supports our approach of encoding pedagogical constraints as prompt-level principles rather than code-level control flow.
 
 ---
 
@@ -158,7 +158,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 - **Year:** 2025
 
-**Why it matters for LearnPath:** Shows that context-aware adaptive guardrails outperform static rule-based guardrails. Reinforces our design of guardrails that adapt to learner context (expertise level, topic difficulty, engagement state) rather than applying uniform rules.
+**Why it matters for Sensei:** Shows that context-aware adaptive guardrails outperform static rule-based guardrails. Reinforces our design of guardrails that adapt to learner context (expertise level, topic difficulty, engagement state) rather than applying uniform rules.
 
 ---
 
@@ -171,7 +171,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **URL:** <https://github.com/open-spaced-repetition/free-spaced-repetition-scheduler>
 - **Papers:** Ye, J. (2022) ACM KDD; FSRS Wiki
 
-**Why it matters for LearnPath:** ML-based spaced repetition scheduler with 21 trainable parameters, achieving 15–20% fewer reviews than SM-2/Anki. Open source and directly implementable. Our primary candidate for the scheduling layer — handles review timing, difficulty estimation, and retention prediction out of the box.
+**Why it matters for Sensei:** ML-based spaced repetition scheduler with 21 trainable parameters, achieving 15–20% fewer reviews than SM-2/Anki. Open source and directly implementable. Our primary candidate for the scheduling layer — handles review timing, difficulty estimation, and retention prediction out of the box.
 
 ---
 
@@ -181,7 +181,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **URL:** arXiv:2602.02457
 
-**Why it matters for LearnPath:** Defines 11 metacognitive coach moves as an action space. Critical finding: LLMs intervene 8–10x too much, and silence should be ~40% of turns. Directly shapes our tutor agent design — we must actively resist the LLM's tendency to over-help and build in deliberate pauses.
+**Why it matters for Sensei:** Defines 11 metacognitive coach moves as an action space. Critical finding: LLMs intervene 8–10x too much, and silence should be ~40% of turns. Directly shapes our tutor agent design — we must actively resist the LLM's tendency to over-help and build in deliberate pauses.
 
 ---
 
@@ -191,7 +191,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **URL:** arXiv:2511.12822
 
-**Why it matters for LearnPath:** A warning against permanent AI scaffolding. Continuous assistance without fading collapses the Zone of Proximal Development into cognitive stagnation. Directly shapes our scaffold fading design — LearnPath must progressively withdraw support as mastery increases.
+**Why it matters for Sensei:** A warning against permanent AI scaffolding. Continuous assistance without fading collapses the Zone of Proximal Development into cognitive stagnation. Directly shapes our scaffold fading design — Sensei must progressively withdraw support as mastery increases.
 
 ---
 
@@ -201,7 +201,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **URL:** arXiv:2507.19483
 
-**Why it matters for LearnPath:** Identifies three dimensions of effective scaffolding: progressive autonomy, adaptive personalization, and cognitive load optimization. Provides the theoretical framework for how our scaffolding should fade across the learner's journey.
+**Why it matters for Sensei:** Identifies three dimensions of effective scaffolding: progressive autonomy, adaptive personalization, and cognitive load optimization. Provides the theoretical framework for how our scaffolding should fade across the learner's journey.
 
 ---
 
@@ -211,7 +211,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **URL:** arXiv:2508.01503v2
 
-**Why it matters for LearnPath:** Integrates Evidence-Centered Design (ECD), Sociocultural Theory (SCT), and Zone of Proximal Development (ZPD) into a unified framework, tested with 104 real students. The agent achieved strong agreement with human scoring. Provides a validated theoretical backbone for our assessor agent.
+**Why it matters for Sensei:** Integrates Evidence-Centered Design (ECD), Sociocultural Theory (SCT), and Zone of Proximal Development (ZPD) into a unified framework, tested with 104 real students. The agent achieved strong agreement with human scoring. Provides a validated theoretical backbone for our assessor agent.
 
 ---
 
@@ -221,7 +221,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **Source:** Frontiers in Education 10, doi:10.3389/feduc.2025.1738751
 
-**Why it matters for LearnPath:** Meta-analysis of 32 studies (3,029 participants) showing AI interventions produce g=1.613 for self-regulated learning. The forethought phase (goal-setting, planning) shows the strongest gains — validating our emphasis on goal-oriented learning paths and upfront planning in the CLI workflow.
+**Why it matters for Sensei:** Meta-analysis of 32 studies (3,029 participants) showing AI interventions produce g=1.613 for self-regulated learning. The forethought phase (goal-setting, planning) shows the strongest gains — validating our emphasis on goal-oriented learning paths and upfront planning in the CLI workflow.
 
 ---
 
@@ -233,7 +233,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2024
 - **URL:** <https://arxiv.org/html/2512.03501v1>
 
-**Why it matters for LearnPath:** Students shifted from vague help-seeking to precise problem decomposition in 2–3 weeks, with 75%+ producing substantive reflections. Validates the Socratic approach for our tutor agent — asking questions instead of giving answers produces measurably better learning outcomes.
+**Why it matters for Sensei:** Students shifted from vague help-seeking to precise problem decomposition in 2–3 weeks, with 75%+ producing substantive reflections. Validates the Socratic approach for our tutor agent — asking questions instead of giving answers produces measurably better learning outcomes.
 
 ---
 
@@ -242,7 +242,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Authors:** Bloom (1984); VanLehn (2011); Fletcher & Morrison (2012, 2014)
 - **URL:** <https://nintil.com/bloom-sigma>
 
-**Why it matters for LearnPath:** The benchmark for all tutoring systems. Bloom's 2-sigma effect is driven by a 90% mastery threshold. The DARPA Digital Tutor achieved d=1.97–3.18. Key insight: high mastery standards matter more than tutoring style. This directly informs our mastery-based progression gates.
+**Why it matters for Sensei:** The benchmark for all tutoring systems. Bloom's 2-sigma effect is driven by a 90% mastery threshold. The DARPA Digital Tutor achieved d=1.97–3.18. Key insight: high mastery standards matter more than tutoring style. This directly informs our mastery-based progression gates.
 
 ---
 
@@ -251,7 +251,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Authors:** Manu Kapur
 - **URL:** <https://www.manukapur.com/productive-failure/>
 
-**Why it matters for LearnPath:** Present problems before teaching. Struggling with a problem first activates prior knowledge and creates a "need to know" that makes subsequent instruction more effective. Directly shapes our challenger agent design — it should pose problems slightly beyond current ability before the tutor provides scaffolding.
+**Why it matters for Sensei:** Present problems before teaching. Struggling with a problem first activates prior knowledge and creates a "need to know" that makes subsequent instruction more effective. Directly shapes our challenger agent design — it should pose problems slightly beyond current ability before the tutor provides scaffolding.
 
 ---
 
@@ -259,7 +259,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 - **Authors:** Bjork, R.A. (1994); Soderstrom & Bjork (2015)
 
-**Why it matters for LearnPath:** The theoretical foundation for spacing, interleaving, retrieval practice, and generation effects. The key insight is the learning vs. performance distinction — conditions that feel harder produce better long-term retention. Informs our design philosophy: LearnPath should feel challenging, not comfortable.
+**Why it matters for Sensei:** The theoretical foundation for spacing, interleaving, retrieval practice, and generation effects. The key insight is the learning vs. performance distinction — conditions that feel harder produce better long-term retention. Informs our design philosophy: Sensei should feel challenging, not comfortable.
 
 ---
 
@@ -272,7 +272,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **URL:** <https://arxiv.org/html/2510.13862>
 - **GitHub:** <https://github.com/CharlieChenyuZhang/llm-ensemble-affective-tutoring>
 
-**Why it matters for LearnPath:** A 3-LLM ensemble reliably detects confusion (22%), frustration (8.6%), and curiosity (15.8%) in tutoring dialogues. Key finding: neutral moments are the best intervention points. Practical and implementable for our engagement detection layer.
+**Why it matters for Sensei:** A 3-LLM ensemble reliably detects confusion (22%), frustration (8.6%), and curiosity (15.8%) in tutoring dialogues. Key finding: neutral moments are the best intervention points. Practical and implementable for our engagement detection layer.
 
 ---
 
@@ -281,7 +281,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Source:** EDM 2024
 - **URL:** educationaldatamining.org/edm2024/proceedings/2024.EDM-short-papers.58
 
-**Why it matters for LearnPath:** Predicts confusion 120 seconds ahead and frustration 40 seconds ahead, enabling proactive intervention. Supports our design of an engagement-aware tutor that adjusts difficulty and scaffolding before the learner disengages.
+**Why it matters for Sensei:** Predicts confusion 120 seconds ahead and frustration 40 seconds ahead, enabling proactive intervention. Supports our design of an engagement-aware tutor that adjusts difficulty and scaffolding before the learner disengages.
 
 ---
 
@@ -292,7 +292,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2024 (RecSys)
 - **URL:** <https://arxiv.org/html/2502.15709v2>
 
-**Why it matters for LearnPath:** The first system to combine knowledge tracing with LLM via RAG, achieving 10% satisfaction improvement and 5% quiz score gains. Validates our approach of using RAG to ground tutoring responses in the learner's actual knowledge state.
+**Why it matters for Sensei:** The first system to combine knowledge tracing with LLM via RAG, achieving 10% satisfaction improvement and 5% quiz score gains. Validates our approach of using RAG to ground tutoring responses in the learner's actual knowledge state.
 
 ---
 
@@ -301,7 +301,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **URL:** <https://arxiv.org/html/2502.19915v1>
 
-**Why it matters for LearnPath:** Uses LLM + RAG for subjective difficulty assessment with dual-channel objective + subjective tracking. Informs our assessor agent's ability to distinguish between "objectively hard" and "hard for this specific learner."
+**Why it matters for Sensei:** Uses LLM + RAG for subjective difficulty assessment with dual-channel objective + subjective tracking. Informs our assessor agent's ability to distinguish between "objectively hard" and "hard for this specific learner."
 
 ---
 
@@ -312,7 +312,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **URL:** <https://arxiv.org/html/2509.21972v1>
 
-**Why it matters for LearnPath:** Systematic risk analysis across 70 studies identifying over-reliance, hallucination, metacognitive laziness, and memory erosion as primary failure modes. Essential reading for designing our mitigation strategies — every risk identified here needs a corresponding guardrail in LearnPath.
+**Why it matters for Sensei:** Systematic risk analysis across 70 studies identifying over-reliance, hallucination, metacognitive laziness, and memory erosion as primary failure modes. Essential reading for designing our mitigation strategies — every risk identified here needs a corresponding guardrail in Sensei.
 
 ---
 
@@ -321,7 +321,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2024
 - **URL:** <https://www.edutopia.org/video/how-ai-vaporizes-long-term-learning/>
 
-**Why it matters for LearnPath:** Students scored 48–127% better short-term with AI assistance but plummeted on closed-book tests. This is the core problem LearnPath exists to solve. Validates our assessor/challenger approach — we must test retention without scaffolding to ensure real learning, not performance theater.
+**Why it matters for Sensei:** Students scored 48–127% better short-term with AI assistance but plummeted on closed-book tests. This is the core problem Sensei exists to solve. Validates our assessor/challenger approach — we must test retention without scaffolding to ensure real learning, not performance theater.
 
 ---
 
@@ -331,7 +331,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 - **URL:** <https://www.khanacademy.org/khan-labs>
 
-**Why it matters for LearnPath:** 700K+ users with LLM-driven Socratic tutoring and no state machines. The largest real-world validation that our approach direction works at scale. Key gap: Khanmigo is web-only, closed-platform, and not developer-focused.
+**Why it matters for Sensei:** 700K+ users with LLM-driven Socratic tutoring and no state machines. The largest real-world validation that our approach direction works at scale. Key gap: Khanmigo is web-only, closed-platform, and not developer-focused.
 
 ---
 
@@ -339,7 +339,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 - **URL:** <https://github.com/HKUDS/DeepTutor> (19.3k stars)
 
-**Why it matters for LearnPath:** The closest existing open-source project — CLI + AI tutoring. But it's single-agent and document-focused, with no multi-agent collaboration, learner profiling, or spaced repetition. Shows the gap LearnPath fills.
+**Why it matters for Sensei:** The closest existing open-source project — CLI + AI tutoring. But it's single-agent and document-focused, with no multi-agent collaboration, learner profiling, or spaced repetition. Shows the gap Sensei fills.
 
 ---
 
@@ -347,7 +347,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 - **URL:** <https://exercism.org>
 
-**Why it matters for LearnPath:** CLI-based developer learning with human mentors. Validates developer appetite for CLI-based learning workflows. No AI integration represents our opportunity.
+**Why it matters for Sensei:** CLI-based developer learning with human mentors. Validates developer appetite for CLI-based learning workflows. No AI integration represents our opportunity.
 
 ---
 
@@ -355,7 +355,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 - **URL:** <https://codecrafters.io>
 
-**Why it matters for LearnPath:** Build-the-real-thing challenges for senior developers with a git-based workflow. Validates the market for serious developer learning tools. No AI integration represents our opportunity.
+**Why it matters for Sensei:** Build-the-real-thing challenges for senior developers with a git-based workflow. Validates the market for serious developer learning tools. No AI integration represents our opportunity.
 
 ---
 
@@ -363,7 +363,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 - **Year:** April 2026
 
-**Why it matters for LearnPath:** 16M+ views validating local markdown + LLM as an architecture pattern. We extend this from knowledge management to active learning — same file-based philosophy, but with pedagogical agents that teach rather than just organize.
+**Why it matters for Sensei:** 16M+ views validating local markdown + LLM as an architecture pattern. We extend this from knowledge management to active learning — same file-based philosophy, but with pedagogical agents that teach rather than just organize.
 
 ---
 
@@ -373,7 +373,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **URL:** <https://austinscholar.substack.com/p/austin-scholar-173-the-science-behind>
 
-**Why it matters for LearnPath:** Practitioner case study documenting Alpha School's real-world results using AI-powered mastery-based tutoring (99th percentile achievement + 90th percentile growth in 2hrs/day). Key insights for LearnPath: motivation-first design (time efficiency IS the motivational engine), ceiling removal as explicit goal, the Expertise Reversal Effect (Kalyuga 2007) as critical principle for mixed-profile learners, and the 2-hour efficiency claim suggesting focused AI tutoring is 3-4x more time-efficient than traditional instruction. Points to 'The Math Academy Way' as a high-signal implementation resource.
+**Why it matters for Sensei:** Practitioner case study documenting Alpha School's real-world results using AI-powered mastery-based tutoring (99th percentile achievement + 90th percentile growth in 2hrs/day). Key insights for Sensei: motivation-first design (time efficiency IS the motivational engine), ceiling removal as explicit goal, the Expertise Reversal Effect (Kalyuga 2007) as critical principle for mixed-profile learners, and the 2-hour efficiency claim suggesting focused AI tutoring is 3-4x more time-efficient than traditional instruction. Points to 'The Math Academy Way' as a high-signal implementation resource.
 
 ---
 
@@ -383,7 +383,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 - **Year:** April 2025
 
-**Why it matters for LearnPath:** The first reasoning model with autonomous tool use, achieving 87.5% on ARC-AGI. Demonstrates that LLMs can plan, pivot, and execute multi-step strategies autonomously — the capability foundation that makes multi-agent tutoring architectures viable.
+**Why it matters for Sensei:** The first reasoning model with autonomous tool use, achieving 87.5% on ARC-AGI. Demonstrates that LLMs can plan, pivot, and execute multi-step strategies autonomously — the capability foundation that makes multi-agent tutoring architectures viable.
 
 ---
 
@@ -393,7 +393,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **URL:** <https://link.springer.com/article/10.1007/s10462-025-11464-8>
 
-**Why it matters for LearnPath:** Shows that LLM teaching plans are comparable to expert educators, and that multi-agent frameworks produce richer discourse patterns than single-agent approaches. Validates both our LLM-driven pedagogy and multi-agent architecture decisions.
+**Why it matters for Sensei:** Shows that LLM teaching plans are comparable to expert educators, and that multi-agent frameworks produce richer discourse patterns than single-agent approaches. Validates both our LLM-driven pedagogy and multi-agent architecture decisions.
 
 ---
 
@@ -405,7 +405,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2026
 - **Source:** Neuropsychologia
 
-**Why it matters for LearnPath:** Sleep actively reorganizes memories, and timing matters for consolidation. Shapes our session scheduling recommendations — LearnPath should discourage marathon sessions and encourage sleep-spaced review cycles.
+**Why it matters for Sensei:** Sleep actively reorganizes memories, and timing matters for consolidation. Shapes our session scheduling recommendations — Sensei should discourage marathon sessions and encourage sleep-spaced review cycles.
 
 ---
 
@@ -415,7 +415,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2023
 - **Source:** PMC
 
-**Why it matters for LearnPath:** Consolidation works even after prolonged wakefulness. Supports multi-day learning design — even if a learner misses the optimal review window, the spaced repetition system should still schedule reviews rather than treating the material as lost.
+**Why it matters for Sensei:** Consolidation works even after prolonged wakefulness. Supports multi-day learning design — even if a learner misses the optimal review window, the spaced repetition system should still schedule reviews rather than treating the material as lost.
 
 ---
 
@@ -426,7 +426,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Authors:** Roediger, H.L. & Karpicke, J.D.
 - **Year:** 2006
 
-**Why it matters for LearnPath:** 50-80% better retention than re-studying. Testing IS the learning mechanism. Every system interaction should require retrieval. Foundation for LearnPath's assessment-as-learning approach.
+**Why it matters for Sensei:** 50-80% better retention than re-studying. Testing IS the learning mechanism. Every system interaction should require retrieval. Foundation for Sensei's assessment-as-learning approach.
 
 ---
 
@@ -435,7 +435,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Authors:** Rohrer, D. et al.
 - **Year:** 2014
 
-**Why it matters for LearnPath:** Doubled test scores vs blocked practice. Critical for interview prep where choosing the right approach matters more than executing it. The system should mix problem types after initial exposure.
+**Why it matters for Sensei:** Doubled test scores vs blocked practice. Critical for interview prep where choosing the right approach matters more than executing it. The system should mix problem types after initial exposure.
 
 ---
 
@@ -445,7 +445,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2019
 - **Source:** PNAS
 
-**Why it matters for LearnPath:** Mathematically optimal review scheduling validated on 12M Duolingo sessions. For short timelines: aggressive initial retrieval for rusty items, shorter spacing expanding with mastery for new items.
+**Why it matters for Sensei:** Mathematically optimal review scheduling validated on 12M Duolingo sessions. For short timelines: aggressive initial retrieval for rusty items, shorter spacing expanding with mastery for new items.
 
 ---
 
@@ -454,7 +454,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Authors:** Kapur, M.
 - **Year:** 2008-2024 (53 studies)
 
-**Why it matters for LearnPath:** 20% higher success rates when problems are presented before instruction. Failed attempts activate prior knowledge and create cognitive hooks. Directly applicable to Jacundu's reindexing mode.
+**Why it matters for Sensei:** 20% higher success rates when problems are presented before instruction. Failed attempts activate prior knowledge and create cognitive hooks. Directly applicable to Jacundu's reindexing mode.
 
 ---
 
@@ -466,7 +466,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Meta-analysis:** 37 studies, n=1,837
 - **Additional:** RAND RR750 (military applications)
 
-**Why it matters for LearnPath:** Graduated stress exposure reduces anxiety AND enhances performance. Three phases (conceptualize → acquire coping skills → apply under pressure) map directly to LearnPath's performance preparation stack.
+**Why it matters for Sensei:** Graduated stress exposure reduces anxiety AND enhances performance. Three phases (conceptualize → acquire coping skills → apply under pressure) map directly to Sensei's performance preparation stack.
 
 ---
 
@@ -474,7 +474,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 - **Authors:** Beilock, S.
 
-**Why it matters for LearnPath:** Two failure modes — anxiety consuming working memory, and conscious attention disrupting automated skills. The fix: drill until automatic, then add pressure. Most interview prep does this backwards.
+**Why it matters for Sensei:** Two failure modes — anxiety consuming working memory, and conscious attention disrupting automated skills. The fix: drill until automatic, then add pressure. Most interview prep does this backwards.
 
 ---
 
@@ -483,13 +483,13 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Authors:** Brooks, A.W. (Harvard)
 - **Year:** 2014
 
-**Why it matters for LearnPath:** "I am excited" outperforms "I am calm" because reframing high-arousal states is easier than suppression. Measurably improves performance across singing, speaking, and math tasks.
+**Why it matters for Sensei:** "I am excited" outperforms "I am calm" because reframing high-arousal states is easier than suppression. Measurably improves performance across singing, speaking, and math tasks.
 
 ---
 
 ### 46. USC VITA / SAFE Systems
 
-**Why it matters for LearnPath:** Existing AI interview simulation systems validate that AI-simulated exposure reduces anxiety (SAFE pilot: -2.0 points on 10-point scale). But no system integrates the full performance stack. LearnPath's gap to fill.
+**Why it matters for Sensei:** Existing AI interview simulation systems validate that AI-simulated exposure reduces anxiety (SAFE pilot: -2.0 points on 10-point scale). But no system integrates the full performance stack. Sensei's gap to fill.
 
 ---
 
@@ -500,7 +500,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2024
 - **URL:** arxiv 2404.00712
 
-**Why it matters for LearnPath:** 4-20 adaptive questions achieve full diagnostic accuracy using prerequisite graphs and KL-divergence item selection. Foundation for LearnPath's rapid diagnostic.
+**Why it matters for Sensei:** 4-20 adaptive questions achieve full diagnostic accuracy using prerequisite graphs and KL-divergence item selection. Foundation for Sensei's rapid diagnostic.
 
 ---
 
@@ -509,13 +509,13 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2024
 - **URL:** arxiv 2403.13179
 
-**Why it matters for LearnPath:** Ornstein-Uhlenbeck model explicitly represents temporal decay. Detects "rusty vs never learned" through recognition probes and relearning rate. Prerequisite graphs enable 60-80% assessment pruning.
+**Why it matters for Sensei:** Ornstein-Uhlenbeck model explicitly represents temporal decay. Detects "rusty vs never learned" through recognition probes and relearning rate. Prerequisite graphs enable 60-80% assessment pruning.
 
 ---
 
 ### 49. Confidence-Weighted Assessment (4-Quadrant Model)
 
-**Why it matters for LearnPath:** Correct+confident=mastery, incorrect+confident=misconception, correct+uncertain=fragile, incorrect+uncertain=gap. Single probe per topic distinguishes expert/rusty/misconceived/novice.
+**Why it matters for Sensei:** Correct+confident=mastery, incorrect+confident=misconception, correct+uncertain=fragile, incorrect+uncertain=gap. Single probe per topic distinguishes expert/rusty/misconceived/novice.
 
 ---
 
@@ -524,7 +524,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025
 - **URL:** arxiv 2601.15551
 
-**Why it matters for LearnPath:** Multi-agent system for mapping existing skills to target skills and identifying the delta. Goal-backward planning finds minimal gap set.
+**Why it matters for Sensei:** Multi-agent system for mapping existing skills to target skills and identifying the delta. Goal-backward planning finds minimal gap set.
 
 ---
 
@@ -536,7 +536,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2025 (ACM Web Conference)
 - **URL:** <https://arxiv.org/html/2501.15749>
 
-**Why it matters for LearnPath:** Direct evidence that LLM multi-agent task selection outperforms baselines in professional learning. Skill gap identification recall 0.67 vs 0.42, learning path quality 4.56/5 vs 3.95/5. Validates LLM-driven task selection for goal-oriented learning across arbitrary domains. (Note: GenMentor also appears as source #2 for its architecture; this entry is specifically for its task selection evidence.)
+**Why it matters for Sensei:** Direct evidence that LLM multi-agent task selection outperforms baselines in professional learning. Skill gap identification recall 0.67 vs 0.42, learning path quality 4.56/5 vs 3.95/5. Validates LLM-driven task selection for goal-oriented learning across arbitrary domains. (Note: GenMentor also appears as source #2 for its architecture; this entry is specifically for its task selection evidence.)
 
 ---
 
@@ -544,7 +544,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 - **Year:** 2024
 
-**Why it matters for LearnPath:** GPT-4o zero-shot outperforms supervised baselines on prerequisite link prediction (81.2% vs 70.9%). Topic extraction achieves F1 of 0.96-0.98. Works across NLP, CV, and bioinformatics domains. Validates that LLMs can generate prerequisite graphs for arbitrary domains without hand-crafting.
+**Why it matters for Sensei:** GPT-4o zero-shot outperforms supervised baselines on prerequisite link prediction (81.2% vs 70.9%). Topic extraction achieves F1 of 0.96-0.98. Works across NLP, CV, and bioinformatics domains. Validates that LLMs can generate prerequisite graphs for arbitrary domains without hand-crafting.
 
 ---
 
@@ -552,7 +552,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 - **Year:** 2025
 
-**Why it matters for LearnPath:** Closest existing system to LearnPath's vision. Dynamically builds learner memory graphs from everyday LLM conversations, tracks mastery, generates personalized mini-courses. Key lessons: separate planning from content generation, use observable evidence over LLM inference for mastery tracking, make the graph a shared workspace. Validates the core concept; its fragility from end-to-end prompting is what LearnPath's structured approach (Math Academy-inspired constraints) would solve.
+**Why it matters for Sensei:** Closest existing system to Sensei's vision. Dynamically builds learner memory graphs from everyday LLM conversations, tracks mastery, generates personalized mini-courses. Key lessons: separate planning from content generation, use observable evidence over LLM inference for mastery tracking, make the graph a shared workspace. Validates the core concept; its fragility from end-to-end prompting is what Sensei's structured approach (Math Academy-inspired constraints) would solve.
 
 ---
 
@@ -560,7 +560,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 - **Year:** 2026 (VLDB)
 
-**Why it matters for LearnPath:** Combines LLM-constructed knowledge graphs with Bayesian Knowledge Tracing for task selection. 90% fine-grained concept accuracy. Measurable learning gains (0% to 40.2% mastery over 3 rounds). Demonstrates the hybrid architecture: LLM generates graph + structured algorithms reason over it.
+**Why it matters for Sensei:** Combines LLM-constructed knowledge graphs with Bayesian Knowledge Tracing for task selection. 90% fine-grained concept accuracy. Measurable learning gains (0% to 40.2% mastery over 3 rounds). Demonstrates the hybrid architecture: LLM generates graph + structured algorithms reason over it.
 
 ---
 
@@ -569,7 +569,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Authors:** Abu-Rasheed et al.
 - **Year:** 2025
 
-**Why it matters for LearnPath:** Human-AI collaboration for curriculum graph construction achieves near-expert quality. Validates the hybrid approach: LLM generates, human/system validates, learner data refines.
+**Why it matters for Sensei:** Human-AI collaboration for curriculum graph construction achieves near-expert quality. Validates the hybrid approach: LLM generates, human/system validates, learner data refines.
 
 ---
 
@@ -578,7 +578,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Authors:** Alatrash et al.
 - **Year:** 2025
 
-**Why it matters for LearnPath:** Combining multiple signals (Wikipedia links, concept entropy, temporal order) via voting achieves 1.0 precision on prerequisite detection. Key insight for LearnPath: wrong prerequisites are more harmful than missing ones — prioritize precision over recall.
+**Why it matters for Sensei:** Combining multiple signals (Wikipedia links, concept entropy, temporal order) via voting achieves 1.0 precision on prerequisite detection. Key insight for Sensei: wrong prerequisites are more harmful than missing ones — prioritize precision over recall.
 
 ---
 
@@ -588,7 +588,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 - **Year:** 2024
 - **URL:** <https://www.justinmath.com/files/the-math-academy-way.pdf>
 
-**Why it matters for LearnPath:** Comprehensive implementation guide for AI-powered mastery-based learning. Key contributions to LearnPath: Fractional Implicit Repetition (FIRe), dual knowledge graphs (prerequisites vs encompassings), 3-4 prerequisite limit per topic, per-student-per-topic speed calibration, one good explanation + prerequisites > many explanations, behavior coaching. Argues for expert systems over LLMs for task selection — a legitimate counterpoint we've considered and respectfully diverge from for domain-agnostic reasons.
+**Why it matters for Sensei:** Comprehensive implementation guide for AI-powered mastery-based learning. Key contributions to Sensei: Fractional Implicit Repetition (FIRe), dual knowledge graphs (prerequisites vs encompassings), 3-4 prerequisite limit per topic, per-student-per-topic speed calibration, one good explanation + prerequisites > many explanations, behavior coaching. Argues for expert systems over LLMs for task selection — a legitimate counterpoint we've considered and respectfully diverge from for domain-agnostic reasons.
 
 ---
 
@@ -596,7 +596,7 @@ Full research reports and analysis are available in `.yolo-sisyphus/handoff/`.
 
 ## Discarded Sources
 
-Sources researched but excluded for misalignment with LearnPath's product direction.
+Sources researched but excluded for misalignment with Sensei's product direction.
 
 | # | Source | Reason for Exclusion |
 |---|--------|---------------------|

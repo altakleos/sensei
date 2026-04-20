@@ -76,7 +76,7 @@ kiro  # or any LLM agent — and just start talking
 - **Personal learning tool** — single user, not community
 - **Agent-agnostic** — works with any LLM that reads project context
 - **Offline-first** — all state is local files, git-trackable, portable
-- **Multi-agent architecture** — tutor, assessor, challenger, reviewer
+- **Four behavioral modes** — tutor, assessor, challenger, reviewer emerge from one principle-driven mentor (not four separate agents — see §3.2)
 - **Truly adaptive** — learner profile evolves with every interaction
 - **Automatic progress tracking** — agents update state files after interactions
 - **Conversation-first** — goals, curriculum, and learning happen through natural dialogue with the LLM, not CLI flags
