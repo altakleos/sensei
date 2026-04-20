@@ -14,3 +14,4 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0006 | [Hybrid Runtime — Scripts Compute, Protocols Judge](0006-hybrid-runtime-architecture.md) | accepted |
 | 0007 | [Review Protocol Config Knobs](0007-review-config-knobs.md) | accepted (lite) |
 | 0008 | [Review Writes Only Audit Fields at V1](0008-review-writes-audit-fields-only.md) | accepted (lite) |
+| 0009 | [Maintainer Tooling Lives Outside the Engine Bundle](0009-maintainer-tooling-outside-engine.md) | accepted (lite) |
