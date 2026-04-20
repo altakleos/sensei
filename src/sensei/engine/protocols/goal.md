@@ -43,6 +43,8 @@ flowchart TD
 - Engine defaults: `.sensei/defaults.yaml`
 - Instance overrides: `instance/config.yaml`
 - Helpers: `.sensei/scripts/check_goal.py`
+- Frontier computation: `.sensei/scripts/frontier.py`
+- Graph mutations: `.sensei/scripts/mutate_graph.py`
 
 Current UTC timestamp is generated with `date -u +%Y-%m-%dT%H:%M:%SZ` whenever the protocol needs "now".
 
@@ -151,6 +153,14 @@ Regenerate the curriculum with a simpler structure (fewer nodes, flatter graph) 
 
 Find the node with state `active` in the curriculum. Transition to tutor mode.
 
+Run `scripts/frontier.py --curriculum instance/goals/<slug>.yaml` to compute the frontier. Use the returned ordered list to select the next topic. If `instance/hints.yaml` exists, pass `--hints instance/hints.yaml` to incorporate learner-declared priority signals.
+
+If no node is currently `active`, activate the first frontier topic:
+
+```
+python .sensei/scripts/mutate_graph.py --operation activate --node <slug> --curriculum instance/goals/<slug>.yaml
+```
+
 The first lesson IS the assessment. Start with a probe that reveals whether the learner already knows this topic. The probe should be:
 
 - A question that requires producing knowledge, not recognizing it.
@@ -167,9 +177,31 @@ Wait for the learner's response. Then classify:
 
 - **Demonstrates mastery** (correct, confident, nuanced): Collapse this node. Find the next frontier topic (all prerequisites collapsed or completed, node is pending). Set it to `active`. Update the goal file. Say something brief like "You've got that. Let's move to [next topic]." Return to the top of Step 6 with the new active topic.
 
+  Mark the node completed, then advance the frontier:
+
+  ```
+  python .sensei/scripts/mutate_graph.py --operation complete --node <topic-slug> --curriculum instance/goals/<slug>.yaml
+  python .sensei/scripts/frontier.py --curriculum instance/goals/<slug>.yaml
+  python .sensei/scripts/mutate_graph.py --operation activate --node <next-frontier-slug> --curriculum instance/goals/<slug>.yaml
+  ```
+
+  If the learner already knows a topic before teaching begins (revealed by the probe), collapse it instead:
+
+  ```
+  python .sensei/scripts/mutate_graph.py --operation collapse --node <topic-slug> --curriculum instance/goals/<slug>.yaml
+  ```
+
 - **Shows partial knowledge** (partially correct, or correct but uncertain): Continue teaching from where they are. Fill the gaps without re-explaining what they already know. Proceed in tutor mode.
 
 - **Shows no knowledge** (incorrect, or "I don't know"): Teach from the beginning. Use the generate→probe→reshape loop: explain a concept, probe understanding, reshape based on response.
+
+If teaching reveals a prerequisite gap (the learner lacks knowledge assumed by the current node), spawn a new node to cover it:
+
+```
+python .sensei/scripts/mutate_graph.py --operation spawn --node <new-slug> --prerequisites <comma-separated-prerequisite-slugs> --curriculum instance/goals/<slug>.yaml
+```
+
+Then activate the spawned node and teach it before returning to the original topic.
 
 This is the ongoing teaching loop. Continue until the learner signals they want to stop, switch topics, or be assessed.
 
