@@ -2,7 +2,7 @@
 feature: deep-frontiers-principles
 serves: (decomposition — PRODUCT-IDEATION.md §2.4 into foundation principles)
 design: (N/A — foundation principles, not feature specs)
-status: planned
+status: done
 date: 2026-04-20
 ---
 # Plan: Deep Frontiers Principles — PRODUCT-IDEATION §2.4 Decomposition

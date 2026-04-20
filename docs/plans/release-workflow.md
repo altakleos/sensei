@@ -2,7 +2,7 @@
 feature: release-workflow
 serves: docs/specs/release-process.md
 design: docs/design/release-workflow.md
-status: planned
+status: done
 date: 2026-04-20
 ---
 # Plan: Release Workflow

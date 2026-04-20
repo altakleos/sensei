@@ -2,7 +2,7 @@
 feature: foundations-layer
 serves: (method change — no per-feature spec)
 design: (inline — captured in ADR-0012 and the new `docs/development-process.md` section)
-status: planned
+status: done
 date: 2026-04-20
 ---
 # Plan: Foundations Layer + PRODUCT-IDEATION Phase-1 Decomposition

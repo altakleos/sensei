@@ -2,7 +2,7 @@
 feature: mermaid-diagrams
 serves: (documentation enhancement — no feature spec)
 design: (convention in docs/development-process.md § Diagrams)
-status: planned
+status: done
 date: 2026-04-20
 ---
 # Plan: Mermaid Diagram Enhancement Pass

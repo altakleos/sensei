@@ -2,7 +2,7 @@
 feature: research-and-closure
 serves: (decomposition — PRODUCT-IDEATION.md §8/§9/§10 + full deprecation)
 design: (N/A — absorption + cross-reference migration + deletion)
-status: planned
+status: done
 date: 2026-04-20
 ---
 # Plan: Research, Closure & Deletion of PRODUCT-IDEATION.md

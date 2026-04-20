@@ -2,7 +2,7 @@
 feature: behavioral-architecture
 serves: (decomposition — PRODUCT-IDEATION.md §3 into SDD artifacts)
 design: (produced by this plan — no pre-existing design doc)
-status: planned
+status: done
 date: 2026-04-20
 ---
 # Plan: Behavioral Architecture — PRODUCT-IDEATION §3 Decomposition
