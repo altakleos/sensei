@@ -11,12 +11,15 @@ The first real protocol. Exercises four of the five v1 helpers (`check_profile`,
 
 This plan is deliberately front-loaded with a spec and design task because `review.md` makes the first pedagogical guarantees that must survive future protocols.
 
-## Open Questions (resolve before T1)
+## Open Questions
 
-1. What does "review" guarantee to the learner? Options: (a) purely retrieval practice on stale topics, (b) retrieval practice followed by a brief reteach on failures, (c) learner-selectable. Affects the spec and the protocol's success criteria.
-2. Should `review.md` write state directly, or should a separate `record-response.md` sub-protocol handle state mutation? Leaning: one protocol that owns the full read-ask-classify-write cycle is simpler and easier to test at v1.
-3. Does the protocol need a new helper to propose the retrieval question, or is that left to the LLM's discretion (prose guidance only)?
-4. Seed a minimal `profile.yaml` during `sensei init` as a prerequisite — fold into T0, or a separate tiny plan? Leaning: T0 of this plan, since the protocol is meaningless without a profile.
+Resolved:
+1. **What does "review" guarantee?** → **(a) Retrieval-only.** Spec captures the full invariants; see `docs/specs/review-protocol.md`.
+4. **Seed profile during init — in this plan or separate?** → Shipped standalone ahead of this plan (commit `59decfb`).
+
+Still open (resolve before T2 design):
+2. Single protocol that owns read-ask-classify-write, or split into `review.md` + `record-response.md`? Leaning: one protocol at v1.
+3. Does review need a new helper to propose the retrieval question, or is that left to the LLM's discretion (prose guidance only)? Leaning: prose-only for v1; the question-generation problem is too open to pin down in a helper yet.
 
 ## Tasks
 
@@ -27,7 +30,7 @@ This plan is deliberately front-loaded with a spec and design task because `revi
 
 ### Phase 1 — Specify
 
-- [ ] T1: Spec `docs/specs/review-protocol.md` — what review guarantees (cadence, scope, invariants like "retrieval before reteach", "stale-only by default") → `docs/specs/review-protocol.md`
+- [x] T1: Spec `docs/specs/review-protocol.md` — retrieval-only; stale-first; one topic at a time; no reteach inside review; single-writer post-question; learner-exit-anytime → `docs/specs/review-protocol.md`
 
 ### Phase 2 — Design
 
