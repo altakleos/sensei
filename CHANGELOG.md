@@ -6,10 +6,13 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a3] — 2026-04-20
+
 ### Added
 
 - Curriculum graph implementation: `scripts/frontier.py` (frontier computation with hints-based priority boosting) and `scripts/mutate_graph.py` (5 validated graph operations — activate, complete, collapse, spawn, expand — with cycle detection). Curriculum tunables in `defaults.yaml`.
 - Status protocol (`protocols/status.md`): conversational progress reporting synthesizing profile mastery, curriculum state, hint freshness, and review staleness into a 5–8 sentence narrative.
+- Parallel agent execution: spec, design, ADR-0016, and shell scripts (`scripts/worktree-setup.sh`, `scripts/worktree-teardown.sh`) for git worktree-based isolation enabling multiple LLM agents to implement plans simultaneously.
 - Branching and PR convention added to `docs/development-process.md`. All changes now land on main through a branch and pull request.
 
 ## [0.1.0a2] — 2026-04-20
