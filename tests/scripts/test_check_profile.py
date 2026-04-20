@@ -143,3 +143,21 @@ def test_script_runs_as_subprocess(tmp_path: Path) -> None:
     )
     parsed = json.loads(result.stdout)
     assert parsed["status"] == "ok"
+
+
+def test_yaml_parse_error(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    path = tmp_path / "bad.yaml"
+    path.write_text("{{{", encoding="utf-8")
+    rc = main(["--profile", str(path)])
+    assert rc == 1
+    out = capsys.readouterr().out.lower()
+    assert "yaml" in out or "parse" in out
+
+
+def test_non_dict_yaml(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    path = tmp_path / "list.yaml"
+    path.write_text("- a list\n", encoding="utf-8")
+    rc = main(["--profile", str(path)])
+    assert rc == 1
+    out = capsys.readouterr().out.lower()
+    assert "mapping" in out
