@@ -2,7 +2,9 @@
 
 Operational procedures for releasing Sensei and handling incidents.
 
-> **Status: aspirational.** This playbook documents the *target* release process. Several pieces it depends on — `.github/workflows/release.yml`, `.github/workflows/verify.yml`, a configured PyPI trusted publisher, a `pypi` GitHub Environment, and `check-package-contents.py` — do not yet exist. Commands that rely on CI will fail until those land. When they do, delete this preamble; the body below is already correct.
+The release mechanism and its invariants are documented in the spec [`docs/specs/release-process.md`](../specs/release-process.md), the design [`docs/design/release-workflow.md`](../design/release-workflow.md), and the placement of maintainer tooling in [ADR-0009](../decisions/0009-maintainer-tooling-outside-engine.md). This playbook is the operational runbook maintainers follow to execute those mechanisms.
+
+**Prerequisites before the first real release:** PyPI project registration, PyPI trusted-publisher configuration, GitHub Environment `pypi` setup, and capturing the environment ID below. See `docs/plans/release-workflow.md` § Prerequisites for the exact steps.
 
 ## Normal Release
 
@@ -103,7 +105,7 @@ git push origin v0.1.1
 
 `sensei upgrade` should sweep stale `.sensei.old.*` and `tmp*` directories from a prior interrupted run on every invocation. No manual cleanup is needed after a SIGKILL'd upgrade — the next `sensei upgrade` run (including an "already up to date" no-op) reclaims them automatically.
 
-*(Aspirational — `sensei upgrade` is currently a stub; this behavior lands when the command is implemented.)*
+*(Pending: `sensei upgrade` is currently a stub; this behaviour lands when the command is implemented. Not blocking for the first publish.)*
 
 ## Rollback: Users on a Bad Version
 
@@ -124,7 +126,7 @@ Before tagging:
 - [ ] Version bumped in `src/sensei/__init__.py`
 - [ ] `docs/plans/` has no `status: in-progress` plans that should block
 - [ ] `pytest` passes locally
-- [ ] `python -m build && python src/sensei/engine/scripts/check-package-contents.py` passes *(TBD — validator not yet written)*
+- [ ] `python -m build && python ci/check_package_contents.py --wheel dist/*.whl --tag vX.Y.Z` passes
 - [ ] GitHub Environment `pypi` reviewers still exist and are reachable
 
 ## Approving PyPI Publish from the Terminal
@@ -147,10 +149,15 @@ gh api repos/altakleos/sensei/actions/runs/<RUN_ID>/pending_deployments \
   --field 'comment=Ship it'
 ```
 
-The environment ID is stable once the `pypi` environment is created — capture it here the first time a release is cut. *(TBD — environment not yet created.)*
+The environment ID is stable once the `pypi` environment is created — capture it here the first time a release is cut. *(Placeholder `<ENV_ID>` — update once the GitHub Environment exists.)*
 
 ## References
 
+- Release process spec: [docs/specs/release-process.md](../specs/release-process.md)
+- Release workflow design: [docs/design/release-workflow.md](../design/release-workflow.md)
+- Release plan (prerequisites + acceptance criteria): [docs/plans/release-workflow.md](../plans/release-workflow.md)
 - Distribution ADR: [docs/decisions/0004-sensei-distribution-model.md](../decisions/0004-sensei-distribution-model.md)
-- Release workflow: `.github/workflows/release.yml` *(TBD — not yet written)*
+- Maintainer-tooling location ADR: [docs/decisions/0009-maintainer-tooling-outside-engine.md](../decisions/0009-maintainer-tooling-outside-engine.md)
+- Release workflow file: [.github/workflows/release.yml](../../.github/workflows/release.yml)
+- Package-contents validator: [ci/check_package_contents.py](../../ci/check_package_contents.py)
 - PyPI yank documentation: https://pypi.org/help/#yanked

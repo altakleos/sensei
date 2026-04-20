@@ -13,16 +13,16 @@ Implements the `release-process` spec via the mechanism in `design/release-workf
 
 ### Phase 1 — Implementation
 
-- [ ] T1: Write `ci/check_package_contents.py` — wheel validator. Checks required files, required directories, forbidden path prefixes, and version concordance between `sensei/__init__.py` and the supplied `--tag`. Exit codes 0/1/2/3 per design. Single JSON report to stdout. → `ci/check_package_contents.py`
-- [ ] T2: Unit tests for T1 using synthetic wheel fixtures built on-the-fly — happy path, each missing-required-file case (bundled into one parameterized test), each forbidden-path case, version-mismatch case → `tests/ci/test_check_package_contents.py`
-- [ ] T3: Write `.github/workflows/release.yml` — three jobs (`verify` matrix, `build-and-check`, `publish`). Tag trigger per design. `pypi` environment on the publish job with `id-token: write`. `pypa/gh-action-pypi-publish` action → `.github/workflows/release.yml`
-- [ ] T4: Remove the aspirational preamble from `docs/operations/release-playbook.md`; add cross-links to the new spec, design, and ADR-0009; update the `check-package-contents.py` path reference from `src/sensei/engine/scripts/` to `ci/` → `docs/operations/release-playbook.md`
+- [x] T1: Write `ci/check_package_contents.py` — wheel validator. Checks required files, required directories, forbidden path prefixes, and version concordance between `sensei/__init__.py` and the supplied `--tag`. Exit codes 0/1/2/3 per design. Single JSON report to stdout. → `ci/check_package_contents.py`
+- [x] T2: Unit tests for T1 using synthetic wheel fixtures built on-the-fly — happy path, each missing-required-file case (parameterized), each forbidden-path case, version-mismatch case (34 tests) → `tests/ci/test_check_package_contents.py`
+- [x] T3: Write `.github/workflows/release.yml` — three jobs (`verify` matrix, `build-and-check`, `publish`). Tag trigger per design. `pypi` environment on the publish job with `id-token: write`. `pypa/gh-action-pypi-publish` action → `.github/workflows/release.yml`
+- [x] T4: Remove the aspirational preamble from `docs/operations/release-playbook.md`; add cross-links to the new spec, design, and ADR-0009; update the `check-package-contents.py` path reference from `src/sensei/engine/scripts/` to `ci/` → `docs/operations/release-playbook.md`
 
 ### Phase 2 — Verify
 
-- [x] T5: Unit tests from T2 pass locally. *(Satisfied by T2.)*
-- [ ] T6: `pytest` full suite green including the new CI-validator tests.
-- [ ] T7: Build a wheel locally (`python -m build`), run `python ci/check_package_contents.py --wheel dist/*.whl --tag v0.0.0` as a smoke check.
+- [x] T5: Unit tests from T2 pass locally (34 new tests; suite 85/85).
+- [x] T6: `pytest` full suite green including the new CI-validator tests.
+- [x] T7: Local wheel build + smoke-check — `python -m build` clean (no duplicate-name warnings), `python ci/check_package_contents.py --wheel dist/*.whl --tag v0.0.0` returns status `ok`. Also dropped the redundant `[tool.hatch.build.targets.wheel.force-include]` from `pyproject.toml` that had been causing the warnings.
 - [ ] T8: **(Blocked on maintainer)** — after PyPI trusted publisher + `pypi` environment are set up, push a pre-release tag like `v0.0.1-test` to observe the workflow end-to-end. Block the publish gate by rejecting the environment approval. Delete the test tag. No artifact on PyPI.
 
 ## Acceptance Criteria
