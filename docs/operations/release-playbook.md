@@ -144,12 +144,12 @@ gh api repos/altakleos/sensei/actions/runs/<RUN_ID>/pending_deployments
 # Approve
 gh api repos/altakleos/sensei/actions/runs/<RUN_ID>/pending_deployments \
   --method POST \
-  --field 'environment_ids[]=<ENV_ID>' \
+  --field 'environment_ids[]=14342694313' \
   --field 'state=approved' \
   --field 'comment=Ship it'
 ```
 
-The environment ID is stable once the `pypi` environment is created — capture it here the first time a release is cut. *(Placeholder `<ENV_ID>` — update once the GitHub Environment exists.)*
+The environment ID `14342694313` is stable — the `pypi` environment in `altakleos/sensei`. Only the run ID changes per release.
 
 ## References
 
