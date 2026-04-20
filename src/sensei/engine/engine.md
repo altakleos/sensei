@@ -1,6 +1,6 @@
 # Sensei Engine — Kernel
 
-> **Status: active.** One protocol authored (`protocols/review.md`). The dispatch table below routes user intent to protocol files under `protocols/`.
+> **Status: active.** Review protocol authored (`protocols/review.md`). Behavioral modes authored (`protocols/personality.md` + `protocols/modes/`). The dispatch table below routes user intent to protocol files under `protocols/`.
 
 This document is the kernel. Every LLM session starts at `AGENTS.md`, which routes here. From here, user intent is dispatched to a protocol file under `protocols/`.
 
