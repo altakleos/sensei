@@ -9,6 +9,13 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 ### Added
 
 - Release-communication spec (`docs/specs/release-communication.md`) and this `CHANGELOG.md`. Every future release must ship with a dated entry here; `ci/check_package_contents.py` enforces the presence of an entry for the tag being released.
+- Behavioural verification layer (`tests/transcripts/`) with a pytest loader for transcript fixtures and the first fixture file (`review.md`). Per [ADR-0011](docs/decisions/0011-transcript-fixtures.md).
+- `docs/foundations/` — new cross-cutting-concerns layer per [ADR-0012](docs/decisions/0012-foundations-layer.md). Contains `vision.md`, 14 principles (6 technical migrated from `sensei-implementation.md` + 7 pedagogical pillars + one mentor-relationship principle), and the Jacundu persona. Specs gain optional `serves:` / `realizes:` / `stressed_by:` frontmatter; `ci/check_foundations.py` is a hard-fail CI gate that catches broken references.
+- `docs/development-process.md` gains a project-agnostic "Foundations" section describing the layer as source material above the six-layer stack.
+
+### Notes
+
+- No user-visible CLI or runtime behaviour changes in this Unreleased cycle yet; the above are documentation-layer expansions and verification infrastructure. Users installing `pip install sensei-tutor` see no functional difference.
 
 ## [0.1.0a1] — 2026-04-20
 
