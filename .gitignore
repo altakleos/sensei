@@ -21,3 +21,6 @@ Thumbs.db
 *.docx
 *.tmp
 *~
+
+# Agent working state
+.yolo-sisyphus/
