@@ -18,6 +18,14 @@ The LLM is the execution engine. Sensei is the intelligence layer. Swap the LLM 
 
 **Sensei is a program written in prose, executed by any LLM, with persistent state stored in yaml and markdown.**
 
+### Core Flow
+
+```
+sensei init ~/learning
+cd ~/learning
+kiro  # or any LLM agent
+```
+
 ## Mission
 
 Develop the learner *as a learner*. The subject matter (Rust, ML, system design, whatever) is the vehicle, not the destination. The real outcomes are:
@@ -37,7 +45,7 @@ Sensei is not "AI that helps you learn Rust faster." Sensei is "AI that develops
 - **Offline-first** — all state is local files, git-trackable, portable across machines.
 - **Four behavioural modes** — tutor, assessor, challenger, reviewer — emerging from one principle-driven mentor, not four separate agents. (See the `mentor-relationship` principle and the assessor-exception rules in the review-protocol spec.)
 - **Truly adaptive** — the learner profile evolves with every interaction.
-- **Conversation-first** — goals, curriculum, and learning happen through natural dialogue with the LLM, not CLI flags. The CLI scaffolds; the conversation does the rest.
+- **Conversation-first** — goals, curriculum, and learning happen through natural dialogue with the LLM, not CLI flags. The CLI scaffolds; the conversation does the rest. There is no artificial separation between setup and learning.
 
 ## Non-Goals
 
@@ -51,11 +59,10 @@ Sensei is **not**:
 
 ## Source
 
-Extracted from `PRODUCT-IDEATION.md` §1 (Vision & Identity) and §2.1 (What Sensei Actually Is) as part of the Phase-1 foundations decomposition per [ADR-0012](../decisions/0012-foundations-layer.md).
+Extracted from the original product ideation document (§1, §2.1) during the Phase-1 foundations decomposition per [ADR-0012](../decisions/0012-foundations-layer.md). The source document's history is preserved in git.
 
 ## References
 
 - Pedagogical principles that realise this vision: `docs/foundations/principles/` (kind: `pedagogical`).
 - Technical principles that realise this vision: `docs/foundations/principles/` (kind: `technical`).
 - Primary stress-testing persona: [`docs/foundations/personas/jacundu.md`](personas/jacundu.md).
-- Full ideation backdrop: [`PRODUCT-IDEATION.md`](../../PRODUCT-IDEATION.md).

@@ -23,9 +23,9 @@ The ultimate goal of any tutor is to make itself unnecessary. Scaffolding that w
 
 ## Exceptions / Tensions
 
-- Under extreme emotional duress (panic, identity-threat — Jacundu's day-1 state in `PRODUCT-IDEATION.md` §7.1), full scaffolding is appropriate short-term. The exception is time-bounded; withdrawal resumes when the learner has stabilised.
+- Under extreme emotional duress (panic, identity-threat — Jacundu's day-1 state in `docs/foundations/personas/jacundu.md`), full scaffolding is appropriate short-term. The exception is time-bounded; withdrawal resumes when the learner has stabilised.
 - Tensions with [P-productive-failure](productive-failure.md): giving support too early blunts productive failure; withholding it too long collapses into the Zone of No Development. The mentor's job is the calibration.
 
 ## Source
 
-`PRODUCT-IDEATION.md` §2.2 Pillar 6. dos Santos & Birdwell, "The Surging Zone of No Development" (2025).
+Pedagogical Pillar 6 (original). dos Santos & Birdwell, "The Surging Zone of No Development" (2025).

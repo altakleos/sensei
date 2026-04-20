@@ -19,7 +19,7 @@ stressed_by:
 
 Sensei's review protocol is the first guarantee the mentor makes about long-horizon care for what the learner already knows. When a learner returns — whether after an hour or after three weeks — review selects topics whose freshness has decayed below the configured stale threshold and offers one retrieval opportunity per topic, updating the profile from the response. Review is not new instruction, not reteaching, and not a lecture; it is the disciplined application of the testing effect, one topic at a time.
 
-The protocol exists because the product depends on it. Without review, the learner profile is a ledger nobody consults. With review, the profile becomes load-bearing: every topic the learner has ever studied gets measured retrieval opportunities before it decays below recoverable levels. Review is the first protocol whose absence would invalidate the forgetting-curve pillar (PRODUCT-IDEATION.md §8.1) and the retention-testing evidence from Roediger & Karpicke.
+The protocol exists because the product depends on it. Without review, the learner profile is a ledger nobody consults. With review, the profile becomes load-bearing: every topic the learner has ever studied gets measured retrieval opportunities before it decays below recoverable levels. Review is the first protocol whose absence would invalidate the forgetting-curve pillar (P-forgetting-curve-is-curriculum) and the retention-testing evidence from Roediger & Karpicke.
 
 ## Invariants
 
@@ -65,7 +65,7 @@ Single-topic atomicity and post-question writes are there so review is easy to r
 
 ## References
 
-- PRODUCT-IDEATION.md §3.3 "Assessor Mode" — the behavioural-mode sketch closest to review
-- PRODUCT-IDEATION.md §3.10 "Silence Across Modes" — review inherits the assessor silence profile
-- PRODUCT-IDEATION.md §8.1 "FSRS / forgetting-curve" and §8.4 "Testing effect" — empirical basis for retrieval-only
+- P-mentor-relationship — the behavioural-mode sketch closest to review
+- P-silence-is-teaching — review inherits the assessor silence profile
+- P-forgetting-curve-is-curriculum + docs/research/synthesis/learning-science.md — FSRS/forgetting-curve and testing effect empirical basis
 - Roediger, H.L. & Karpicke, J.D. (2006) — testing effect meta-analysis

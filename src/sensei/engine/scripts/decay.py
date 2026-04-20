@@ -1,4 +1,4 @@
-"""Forgetting-curve freshness arithmetic (per PRODUCT-IDEATION.md §8.1).
+"""Forgetting-curve freshness arithmetic (per P-forgetting-curve-is-curriculum, ADR-0006).
 
 Computes a retention score in [0, 1] from an exponential decay model:
 

@@ -1,4 +1,4 @@
-"""Confidence × correctness 4-quadrant classifier (per PRODUCT-IDEATION.md §8.5).
+"""Confidence × correctness 4-quadrant classifier (per ADR-0006 § V1 scope, see docs/research/synthesis/accelerated-performance.md).
 
 Quadrant semantics:
     confident + correct   = mastery        (stable knowledge)

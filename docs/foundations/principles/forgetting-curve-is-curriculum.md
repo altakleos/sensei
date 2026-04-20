@@ -23,9 +23,9 @@ Too-early review is wasted effort; too-late review means relearning from scratch
 
 ## Exceptions / Tensions
 
-- For rusty-but-previously-learned material, the initial re-encounter should be aggressive (short intervals) because relearning is fast; for genuinely-new material, expanding intervals dominate (see `PRODUCT-IDEATION.md` §8.5).
+- For rusty-but-previously-learned material, the initial re-encounter should be aggressive (short intervals) because relearning is fast; for genuinely-new material, expanding intervals dominate (see `docs/research/synthesis/accelerated-performance.md`).
 - Sleep-dependent consolidation is real and orthogonal to algorithmic spacing — review-before-bed + test-next-morning is optimal regardless of the scheduler. v1 does not optimise for sleep; a later protocol may.
 
 ## Source
 
-`PRODUCT-IDEATION.md` §2.2 Pillar 5. FSRS algorithm (Ye 2022); Ebbinghaus forgetting curve; Math Academy's FIRe model (§8.6).
+Pedagogical Pillar 5 (original). FSRS algorithm (Ye 2022); Ebbinghaus forgetting curve; Math Academy's FIRe model (see `docs/research/synthesis/accelerated-performance.md`).

@@ -6,7 +6,7 @@
 
 This bibliography contains only the research that directly informs Sensei's architecture and pedagogy. Sources were selected for alignment with our product direction: multi-agent LLM tutoring, principle-based guardrails (not deterministic state machines), adaptive learner profiling, CLI-first local workflow, and evidence-based learning science.
 
-The two architecture-critical full reports are published under [`docs/research/`](docs/research/). The remaining reports were synthesized into [`PRODUCT-IDEATION.md`](PRODUCT-IDEATION.md) rather than promoted individually.
+The two architecture-critical full reports are published under [`docs/research/`](docs/research/). The remaining reports were synthesized into the original ideation document and subsequently decomposed into `docs/foundations/` and `docs/specs/`.
 
 ---
 

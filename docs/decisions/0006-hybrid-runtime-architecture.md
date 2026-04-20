@@ -74,4 +74,7 @@ The assessor exception (§3.6) becomes enforceable: mastery checks run through `
 
 - [`docs/sensei-implementation.md`](../sensei-implementation.md) — updated to reflect this ADR
 - [`ADR-0004: Sensei Distribution Model`](0004-sensei-distribution-model.md) — pip + `.sensei/` model that this ADR fills in with actual runtime content
-- [`PRODUCT-IDEATION.md`](../../PRODUCT-IDEATION.md) §3.6 (assessor exception), §8.1 (FSRS), §8.5 (confidence × correctness), §8.6 (FIRe) — computations motivating this decision
+- `docs/specs/review-protocol.md` § Invariants — assessor exception (originally §3.6)
+- P-forgetting-curve-is-curriculum — FSRS/spacing basis (originally §8.1)
+- `src/sensei/engine/scripts/classify_confidence.py` — confidence × correctness (originally §8.5)
+- ADR-0006 § V2 scope — FIRe/dual-graphs (originally §8.6)

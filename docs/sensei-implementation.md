@@ -47,13 +47,13 @@ Verification in Sensei is the set of artifacts that confirm Implementation met i
 
 Sensei's load-bearing principles have migrated to [`docs/foundations/principles/`](foundations/principles/) per [ADR-0012](decisions/0012-foundations-layer.md). The six technical principles that lived here (`prose-is-code`, `scripts-compute-protocols-judge`, `config-over-hardcoding`, `validators-close-the-loop`, `cross-link-dont-duplicate`, `prose-verified-by-prose`) are now first-class foundation files with the TOGAF shape (Statement / Rationale / Implications / Exceptions and Tensions / Source). Specs reference them via `realizes: [P-<slug>]` frontmatter; broken references are caught by [`ci/check_foundations.py`](../ci/check_foundations.py).
 
-Sensei-specific pedagogical principles (the seven pillars from `PRODUCT-IDEATION.md` §2.2) land alongside them with `kind: pedagogical` in subsequent commits. See [`docs/foundations/principles/`](foundations/principles/) for the catalog.
+Sensei-specific pedagogical principles (the seven pillars from `docs/foundations/principles/`) land alongside them with `kind: pedagogical` in subsequent commits. See [`docs/foundations/principles/`](foundations/principles/) for the catalog.
 
 ## Where to Look for What
 
 | Question | Read |
 |---|---|
 | "How is SDD supposed to flow?" | [`development-process.md`](development-process.md) |
-| "What is Sensei as a product?" | [`../PRODUCT-IDEATION.md`](../PRODUCT-IDEATION.md) |
+| "What is Sensei as a product?" | [`docs/foundations/vision.md`](foundations/vision.md) |
 | "Where are the tunables?" | `src/sensei/engine/defaults.yaml` |
 | "Which ADRs have been accepted?" | [`decisions/README.md`](decisions/README.md) |

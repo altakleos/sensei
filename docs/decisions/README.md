@@ -18,3 +18,6 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0010 | [PyPI Distribution Name is `sensei-tutor`](0010-pypi-distribution-name.md) | accepted (lite) |
 | 0011 | [Transcript Fixtures as a Verification Artifact](0011-transcript-fixtures.md) | accepted (lite) |
 | 0012 | [Adopt `docs/foundations/` for Cross-Cutting Concerns](0012-foundations-layer.md) | accepted |
+| 0013 | [Context Composition Strategy — Active Mode + Summaries](0013-context-composition.md) | accepted |
+| 0014 | [Principles Over State Machines for LLM Pedagogy](0014-principles-over-state-machines.md) | accepted |
+| 0015 | [Unified Goal-Processing Pipeline with Type-Sensitive Parameters](0015-unified-goal-pipeline.md) | accepted |

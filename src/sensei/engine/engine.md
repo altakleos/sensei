@@ -35,7 +35,7 @@ Every user-facing operation maps to exactly one protocol. All entries below are 
 
 These are the behavioral invariants the engine must preserve across every protocol. Each will be realized as a runtime assertion once protocols exist.
 
-- **Assessor exception** — during assessment, the engine never teaches. (Source: `PRODUCT-IDEATION.md` §3.6)
+- **Assessor exception** — during assessment, the engine never teaches. (Source: `docs/specs/review-protocol.md` § Invariants)
 - **Two-failure principle** — after two failed attempts at the same concept, diagnose prerequisites before a third explanation. (§3.8)
 - **Silence profiles** — silence is a first-class pedagogical action; the engine's default is shorter responses, not longer. (§3.10)
 
@@ -47,4 +47,4 @@ All tunables live in `defaults.yaml` (engine) and are overridden by `instance/co
 
 - [`docs/sensei-implementation.md`](../../../docs/sensei-implementation.md) — what Implementation and Verification mean in this project
 - [`docs/decisions/0002-agent-bootstrap.md`](../../../docs/decisions/0002-agent-bootstrap.md) — why `AGENTS.md` is the entry point
-- [`PRODUCT-IDEATION.md`](../../../PRODUCT-IDEATION.md) — the product vision that invariants above derive from
+- [`docs/foundations/vision.md`](../../../docs/foundations/vision.md) — the product vision that invariants above derive from

@@ -22,9 +22,9 @@ Most learning systems let the learner move on at 70% understanding. Bloom's 2-si
 
 ## Exceptions / Tensions
 
-- Under time pressure (interview prep, deadline-driven study), mastery narrows from "mastery of the topic" to "mastery of the skill the topic tests." The pillar holds; the definition of mastery becomes more specific. See `PRODUCT-IDEATION.md` §7.1 Jacundu's case for the reasoning.
+- Under time pressure (interview prep, deadline-driven study), mastery narrows from "mastery of the topic" to "mastery of the skill the topic tests." The pillar holds; the definition of mastery becomes more specific. See `docs/foundations/personas/jacundu.md` for the reasoning.
 - Tensions with [P-learner-self-sufficiency](learner-self-sufficiency.md): strict gating can produce dependency on the gate itself. Resolution: the gate measures unassisted performance, and the learner is periodically assessed without scaffolding.
 
 ## Source
 
-`PRODUCT-IDEATION.md` §2.2 Pillar 3. Bloom (1984), VanLehn (2011), Fletcher & Morrison (2012) — 2-sigma and DARPA Digital Tutor.
+Pedagogical Pillar 3 (original). Bloom (1984), VanLehn (2011), Fletcher & Morrison (2012) — 2-sigma and DARPA Digital Tutor.

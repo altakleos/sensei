@@ -107,7 +107,7 @@ A new section "Foundations" is inserted before § "Specs" describing the layer a
 
 - [`docs/development-process.md`](../development-process.md) — method doc gaining the new section.
 - [`docs/sensei-implementation.md`](../sensei-implementation.md) — source of technical principles migrating out.
-- [`PRODUCT-IDEATION.md`](../../PRODUCT-IDEATION.md) — source of pedagogical pillars and Jacundu persona.
+- [`docs/foundations/`](../foundations/) — destination of pedagogical pillars and Jacundu persona.
 - [ADR-0005: ADR-Lite Format](0005-adr-lite-format.md) — precedent for the `scope: policy` frontmatter approach and the migration-ADR format.
 - [ADR-0011: Transcript Fixtures](0011-transcript-fixtures.md) — precedent for widening artifact inventory (Verification) without adding a new layer.
 - External research: AWS Kiro `.kiro/steering/`, GitHub Spec Kit `.specify/memory/constitution.md`, Kubernetes `design-proposals-archive/architecture/principles.md`, TOGAF principle template, Python PEPs, Diataxis framework.

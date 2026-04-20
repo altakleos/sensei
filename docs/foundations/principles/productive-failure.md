@@ -28,4 +28,4 @@ Counter-intuitive but robust. Kapur's meta-analysis of 53 studies shows ~20% hig
 
 ## Source
 
-`PRODUCT-IDEATION.md` §2.2 Pillar 4. Kapur, M., Productive Failure (2008–2024, 53-study meta-analysis).
+Pedagogical Pillar 4 (original). Kapur, M., Productive Failure (2008–2024, 53-study meta-analysis).

@@ -28,4 +28,4 @@ Telling produces recognition; asking produces understanding. When a learner read
 
 ## Source
 
-`PRODUCT-IDEATION.md` §2.2 Pillar 2. Socratic method; Bloom's 2-sigma work on tutored outcomes.
+Pedagogical Pillar 2 (original). Socratic method; Bloom's 2-sigma work on tutored outcomes.

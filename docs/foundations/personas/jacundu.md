@@ -65,4 +65,4 @@ The day-1 emotional architecture is the most dangerous moment: shame + urgency +
 
 ## Source
 
-`PRODUCT-IDEATION.md` §7.1 (Jacundu — Senior SDE Interview Prep). The three-mode framework (reindexing / genuine new / performance), the "emotional state as learning infrastructure" insight, and the meta-pillar framing for Know-the-Learner all originated in this use-case analysis.
+Original use-case analysis from the product ideation document §7.1 (history preserved in git). This persona is now the canonical artifact. The three-mode framework (reindexing / genuine new / performance), the "emotional state as learning infrastructure" insight, and the meta-pillar framing for Know-the-Learner all originated in this use-case analysis.

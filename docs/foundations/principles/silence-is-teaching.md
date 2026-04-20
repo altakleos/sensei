@@ -25,8 +25,8 @@ Research on LLM-based tutors (MetaCLASS, Rice University 2025) documents a "comp
 
 - The reviewer mode is the designed counter-example. Code reviews require detailed, specific feedback; silence there is not restraint but abandonment.
 - Tensions with [P-ask-dont-tell](ask-dont-tell.md): asking is not silence; asking is active but non-answering. Silence is the absence of mentor turn-taking; asking is the presence of a mentor question that keeps the learner as the active thinker. They compose rather than conflict.
-- When emotional dynamics (frustration, panic) break the learner's ability to think, silence stops teaching and starts harming. See the Jacundu persona's emotional-architecture analysis in `PRODUCT-IDEATION.md` §7.1.
+- When emotional dynamics (frustration, panic) break the learner's ability to think, silence stops teaching and starts harming. See the Jacundu persona's emotional-architecture analysis in `docs/foundations/personas/jacundu.md`.
 
 ## Source
 
-`PRODUCT-IDEATION.md` §2.2 Pillar 1. MetaCLASS research on LLM intervention bias.
+Pedagogical Pillar 1 (original). MetaCLASS research on LLM intervention bias.

@@ -18,7 +18,7 @@ The bottom two layers (Implementation and Verification) are named functionally (
 
 ## Alternatives Considered
 
-- **Ad-hoc development.** Rejected because decisions rot into commit messages and intent drifts from implementation. The analyst review already surfaced the cost: `PRODUCT-IDEATION.md` and `RESEARCH-BIBLIOGRAPHY.md` contradict each other and mix legacy product names ("LearnPath") because there was no layering to contain change.
+- **Ad-hoc development.** Rejected because decisions rot into commit messages and intent drifts from implementation. The analyst review already surfaced the cost: the original ideation document and research bibliography contradicted each other and mixed legacy product names ("LearnPath") because there was no layering to contain change.
 - **External spec-first tools (GitHub Spec Kit, AWS Kiro).** Rejected for the same reason a sibling project rejected them — those tools assume spec → traditional code, but Sensei's implementation is expected to be substantially prose-as-code that the LLM executes. The generic SDD method works regardless of executor.
 - **Bespoke invented process.** Rejected in favor of adopting a sibling project's proven SDD method verbatim. Reinventing process before writing product code is yak-shaving.
 

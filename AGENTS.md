@@ -4,7 +4,7 @@ You are operating the Sensei source repository. This is the upstream project, no
 
 ## What Sensei Is
 
-A pip-installable CLI that scaffolds a learning-environment folder. The user opens that folder with any LLM agent and the agent becomes an adaptive mentor guided by prose-as-code context files and a living learner profile. See [`PRODUCT-IDEATION.md`](PRODUCT-IDEATION.md) for the full product vision.
+A pip-installable CLI that scaffolds a learning-environment folder. The user opens that folder with any LLM agent and the agent becomes an adaptive mentor guided by prose-as-code context files and a living learner profile. See [`docs/foundations/vision.md`](docs/foundations/vision.md) for the product vision.
 
 ## Contributor Boot Chain
 
@@ -19,8 +19,7 @@ A pip-installable CLI that scaffolds a learning-environment folder. The user ope
 sensei/
 ├── AGENTS.md                 (this file — contributor entry point)
 ├── CLAUDE.md                 (Claude Code shim pointing at AGENTS.md)
-├── PRODUCT-IDEATION.md       (product vision — pre-decomposition monolith)
-├── RESEARCH-BIBLIOGRAPHY.md  (58 curated sources)
+├── docs/research/bibliography.md  (58 curated sources)
 ├── README.md                 (project readme)
 ├── pyproject.toml            (pip package metadata)
 ├── docs/
@@ -51,7 +50,7 @@ sensei/
 
 - `docs/development-process.md` is **project-agnostic**. Do not mention pedagogy, learner, mentor, tutor, curriculum, or Sensei the product in it. Sensei-specific material lives in `docs/sensei-implementation.md`.
 - ADRs are immutable once accepted. To reverse one, write a superseding ADR.
-- `PRODUCT-IDEATION.md` and `RESEARCH-BIBLIOGRAPHY.md` are the pre-decomposition record. Do not edit them casually — they will be broken into specs and design docs in a dedicated pass.
+- The product vision has been fully decomposed into docs/foundations/ (principles, personas, vision) and docs/specs/ (protocols, features). `docs/research/bibliography.md` is the curated research catalog.
 
 ## Contribution Conventions
 
@@ -63,4 +62,4 @@ sensei/
 - [`docs/development-process.md`](docs/development-process.md) — the SDD method
 - [`docs/sensei-implementation.md`](docs/sensei-implementation.md) — Sensei's instantiation
 - [`docs/decisions/README.md`](docs/decisions/README.md) — ADR index
-- [`PRODUCT-IDEATION.md`](PRODUCT-IDEATION.md) — product vision
+- [`docs/foundations/vision.md`](docs/foundations/vision.md) — product vision
