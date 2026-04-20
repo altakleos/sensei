@@ -58,6 +58,20 @@ expertise_map:
 | `attempts` | integer | yes | Non-negative count of attempted retrievals. |
 | `correct` | integer | yes | Non-negative count of correct attempts. Must be `≤ attempts`. |
 
+<!-- Diagram: illustrates §Fields -->
+```mermaid
+stateDiagram-v2
+    [*] --> none
+    none --> shaky : first attempt
+    shaky --> developing : repeated practice
+    developing --> solid : consistent accuracy
+    solid --> mastered : 90% gate (mastery_check.py)
+    mastered --> solid : time decay
+    solid --> developing : time decay
+    developing --> shaky : time decay
+```
+*Figure 1. TopicState mastery progression with validator-enforced gates and time-based demotion.*
+
 ### Topic Slug Convention
 
 Topic keys in `expertise_map` are lowercase ASCII strings with hyphens as the only permitted separator (regex `^[a-z][a-z0-9-]*$`). No nested namespaces at v1 (no dots, no slashes). The slug is chosen by whatever protocol first records the topic and is treated as immutable.

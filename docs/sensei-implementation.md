@@ -4,6 +4,27 @@ The development process in [`development-process.md`](development-process.md) de
 
 For the generic method, read `development-process.md`. For Sensei's artifact choices, read this doc.
 
+<!-- Diagram: illustrates §Implementation + Verification -->
+```mermaid
+flowchart TD
+    subgraph Implementation
+        P[Protocols — prose-as-code]
+        C[Config — yaml tunables]
+        H[Helpers — Python scripts]
+    end
+    subgraph Verification
+        V1[Schema assertions]
+        V2[CI linter rules]
+        V3[Test runner — pytest]
+        V4[Transcript fixtures]
+    end
+    P --> V4
+    H --> V3
+    C --> V1
+    P --> V2
+```
+*Figure 1. Implementation artifacts feed into verification: protocols verified by transcript fixtures, helpers by pytest, config by schema assertions, all by CI linter rules.*
+
 > **Status: scaffolding.** Sensei is in the ideation-plus-scaffolding phase. The tables below describe the *intended* shape of Implementation and Verification, but most artifacts are placeholders. Load-bearing principles will be committed as they crystallize from the first real protocol. The runtime architecture question is resolved — see [ADR-0006](decisions/0006-hybrid-runtime-architecture.md).
 
 ## Implementation Layer (planned)

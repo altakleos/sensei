@@ -24,6 +24,28 @@ This produces a single coherent principle set in the context window rather than 
 
 Mode transitions are signaled by conversational context (learner asks a question → tutor emphasis; learner submits code → reviewer emphasis). The engine recomposes the context when emphasis shifts.
 
+<!-- Diagram: illustrates §Decision -->
+```mermaid
+flowchart TD
+    subgraph "Always loaded"
+        BP[personality.md — full]
+    end
+    subgraph "Active mode"
+        AM[active mode .md — full]
+    end
+    subgraph "Background"
+        S1[mode₂ §Summary]
+        S2[mode₃ §Summary]
+        S3[mode₄ §Summary]
+    end
+    BP --> CTX[LLM Context]
+    AM --> CTX
+    S1 --> CTX
+    S2 --> CTX
+    S3 --> CTX
+```
+*Figure 1. Context composition: full personality + full active mode + brief summaries of inactive modes.*
+
 ## Alternatives Considered
 
 ### A. Load all four mode files simultaneously

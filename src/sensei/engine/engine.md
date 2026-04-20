@@ -17,6 +17,18 @@ AGENTS.md (root)
 
 In the source repo (this one), the engine lives at `src/sensei/engine/` instead of `.sensei/`. The contents are identical; only the path differs.
 
+<!-- Diagram: illustrates §Boot Chain -->
+```mermaid
+flowchart LR
+    A[AGENTS.md] --> B[engine.md]
+    B --> C{Dispatch}
+    C --> P1[protocols/review.md]
+    C --> P2[protocols/modes/*.md]
+    C --> P3[protocols/personality.md]
+    P1 --> H[scripts/*.py]
+```
+*Figure 1. Boot chain: AGENTS.md routes to engine.md, which dispatches to protocols. Protocols invoke helper scripts.*
+
 ## Dispatch Table
 
 Every user-facing operation maps to exactly one protocol. All entries below are **TBD pending protocol authoring** — see [`docs/sensei-implementation.md`](../../../docs/sensei-implementation.md) for the open design questions that must be resolved first.

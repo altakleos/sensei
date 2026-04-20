@@ -51,6 +51,26 @@ A unified `sensei compute <op>` facade is explicitly **deferred**. If the script
 
 An MCP tool-server path is considered but not adopted at v1. Shell subprocess is the lowest common denominator across the target agents (Claude Code, Cursor, Kiro, Aider, Copilot agent mode). MCP adds a running-server requirement that complicates the "open a folder" product promise and excludes Aider, which does not support MCP natively. A later ADR may add MCP as an alternate invocation path if demand materializes.
 
+<!-- Diagram: illustrates §Decision -->
+```mermaid
+flowchart TD
+    subgraph "LLM Runtime"
+        P[Protocols — prose-as-code]
+    end
+    subgraph "CPython Runtime"
+        S1[mastery_check.py]
+        S2[classify_confidence.py]
+        S3[decay.py]
+        S4[check_profile.py]
+    end
+    P -->|shell subprocess| S1
+    P -->|shell subprocess| S2
+    P -->|shell subprocess| S3
+    P -->|shell subprocess| S4
+    S1 -->|JSON stdout| P
+```
+*Figure 1. Hybrid runtime: protocols (LLM) invoke scripts (CPython) via subprocess. Scripts compute; protocols judge.*
+
 ## Alternatives Considered
 
 - **Pure scaffolding (LLM does all arithmetic).** Rejected because LLM arithmetic is unreliable in exactly the places Sensei needs determinism (mastery gates, scheduling, graph propagation). The assessor exception would not survive contact with a real session. The analyst review's "profiles will rot within days" finding is load-bearing here.

@@ -33,6 +33,24 @@ The protocol exists because the product depends on it. Without review, the learn
 - **Learner can exit at any point.** Review does not require completion. The learner saying "stop" or equivalent ends the session cleanly, with any in-flight profile update reverted if the current question was never answered.
 - **Silence is the default mode.** Per §3.10 the review protocol sits on the assessor side of the silence profile — the mentor speaks only to pose the question, record the answer, and transition. No encouragement, no commentary, no celebration of correct answers.
 
+<!-- Diagram: illustrates §Invariants — review session flow -->
+```mermaid
+flowchart TD
+    A[Load + validate profile] --> B[Enumerate stale topics]
+    B --> C{Any stale?}
+    C -->|No| D[Nothing due — end]
+    C -->|Yes| E[Rank by freshness ↑]
+    E --> F[Pose retrieval question]
+    F --> G[Classify response]
+    G --> H[Update profile + validate]
+    H --> I{More stale?}
+    I -->|Yes| F
+    I -->|No| J[Sign-off]
+    F --> K{Learner exits?}
+    K -->|Yes| J
+```
+*Figure 1. Review session flow: stale-first selection, one question per topic, no reteaching.*
+
 ## Rationale
 
 **Retrieval-only is the deliberate product choice.** An earlier framing offered retrieve-then-reteach or learner-selectable reteach. Both were rejected.

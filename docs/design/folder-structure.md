@@ -40,6 +40,27 @@ implements:
 └── .aiassistant/rules/sensei.md     # tool shim → AGENTS.md
 ```
 
+<!-- Diagram: illustrates §Canonical Layout -->
+```mermaid
+flowchart TD
+    subgraph "Engine-owned (.sensei/)" 
+        E1[engine.md]
+        E2[protocols/]
+        E3[scripts/]
+        E4[schemas/]
+        E5[defaults.yaml]
+    end
+    subgraph "Learner-owned (instance/)"
+        L1[config.yaml]
+        L2[profile.yaml]
+    end
+    subgraph "Tool shims (root)"
+        S1[AGENTS.md]
+        S2[.cursor/ .kiro/ etc.]
+    end
+```
+*Figure 1. Ownership split: engine bundle is overwritten on upgrade; instance state is preserved.*
+
 ## Divergences from §6.1
 
 | §6.1 Sketch | Actual (v1) | Rationale |

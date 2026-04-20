@@ -20,6 +20,20 @@ Sensei uses two distinct assessment types that must not be conflated because the
 
 The separation exists because conflating the two corrupts both. If diagnostic probes gate progress, the tutor becomes an examiner and the learner stops treating conversation as safe exploration. If summative gates rely on LLM judgment, mastery thresholds flicker across sessions and models — the assessor exception becomes unenforceable. The hybrid runtime (ADR-0006) exists precisely to make this separation load-bearing: scripts compute the gate, protocols judge the understanding.
 
+<!-- Diagram: illustrates §Intent — two assessment tracks -->
+```mermaid
+flowchart LR
+    subgraph Diagnostic
+        D1[Within tutor mode] --> D2[Inline probing]
+        D2 --> D3[Informs but\ndoesn't gate]
+    end
+    subgraph Summative
+        S1[Assessor mode] --> S2[Deterministic scoring\nmastery_check.py]
+        S2 --> S3[Gates progression\nwrites to profile]
+    end
+```
+*Figure 1. Two assessment tracks: diagnostic (within teaching, non-gating) vs summative (assessor mode, deterministic, gates progress).*
+
 ## Invariants
 
 - **Diagnostic assessment happens within tutor mode; summative invokes assessor mode.** The two assessment types never share a behavioral mode. Diagnostic probes are part of the teaching conversation. Summative assessment is a mode transition — the mentor stops teaching and starts measuring.
@@ -29,6 +43,19 @@ The separation exists because conflating the two corrupts both. If diagnostic pr
 - **Summative results write to the learner profile; diagnostic results inform but don't gate.** Summative assessment is a profile-writing event — it updates mastery state and determines progression. Diagnostic assessment is a signal the tutor consumes in-conversation; it does not write mastery state or block advancement.
 - **The assessor exception is absolute.** During summative assessment, the mentor does not teach, hint, encourage, elaborate, or explain. No exceptions. The learner receives the question, gives the answer, and the script scores it. This is the hardest behavioral constraint in the system.
 - **After two failures at the same concept, shift to prerequisite diagnosis.** Per P-two-failure-prerequisite, two failed summative attempts at the same concept mean the problem is deeper than explanation style. The protocol stops re-assessing and shifts to prerequisite diagnosis — using recognition probes to find the missing foundation. A third attempt without prerequisite repair is unproductive failure.
+
+<!-- Diagram: illustrates §Invariants — two-failure prerequisite diagnosis -->
+```mermaid
+flowchart TD
+    A[Attempt 1: fail] --> B[Try different angle]
+    B --> C[Attempt 2: fail]
+    C --> D[Prerequisite diagnosis]
+    D --> E[Recognition probes]
+    E --> F{Recognized?}
+    F -->|Fast relearning| G[Rusty → Review]
+    F -->|No recognition| H[Never learned → Teach]
+```
+*Figure 2. Two-failure prerequisite diagnosis: after two failures, diagnose rather than explain a third time.*
 
 ## Rationale
 

@@ -24,7 +24,33 @@ This spec exists because every protocol that selects "what to teach next" depend
   - **spawned** — a gap discovered during interaction that was not in the original graph. Spawned nodes are inserted with appropriate dependency edges. They represent the hypothesis self-correcting.
   - **active** — the topic is currently being taught or assessed. At most one node is active per goal at any time.
   - **completed** — the learner has demonstrated sufficient mastery. Completed nodes contribute to unblocking dependents and feed the forgetting-curve decay model for future review.
+<!-- Diagram: illustrates §Invariants — node states -->
+```mermaid
+stateDiagram-v2
+    [*] --> active : topic created
+    active --> completed : mastery confirmed
+    active --> expanded : needs more granularity
+    active --> collapsed : skip (already known)
+    expanded --> active : sub-topic focused
+    collapsed --> active : re-activated (decay)
+    [*] --> spawned : gap discovered
+    spawned --> active : prerequisite addressed
+```
+*Figure 1. Curriculum graph node states and valid transitions.*
+
 - **Frontier is computed, not stored.** The frontier — the set of topics eligible for activation — is derived dynamically from node states and dependency edges. A node is on the frontier when all its prerequisites are either collapsed or completed, and the node itself is neither collapsed, active, nor completed. The frontier is never persisted; it is recomputed on demand.
+<!-- Diagram: illustrates §Invariants — frontier computation -->
+```mermaid
+flowchart TD
+    A[All nodes in DAG] --> B{Prerequisites\ncompleted?}
+    B -->|Yes| C{Node state?}
+    B -->|No| D[Not eligible]
+    C -->|active| E[In frontier]
+    C -->|collapsed/completed| D
+    C -->|spawned| F[Pending prerequisite]
+```
+*Figure 2. Frontier computation: a node enters the frontier when all its prerequisites are completed and it is in active state.*
+
 - **Evolve, don't regenerate.** Graph mutations are incremental: collapse a node, expand a node into a subgraph, spawn a new node with edges, mark a node completed, activate a node. The graph is never thrown away and rebuilt from scratch. Wholesale regeneration is disorienting to the learner (even though they don't see the graph, they experience its effects as topic sequencing) and discards calibration evidence embedded in node states.
 - **Validation effort scales with uncertainty.** For well-defined domains (e.g., "data structures"), the LLM-generated graph tolerates ~80% accuracy because the structure is correctable — errors surface as misplaced prerequisites and self-correct through interaction. For vague targets (e.g., "understand distributed systems deeply"), both the graph and the target are uncertain, so errors compound. Sensei invests more probing effort before stabilizing the graph when uncertainty is high.
 

@@ -8,6 +8,25 @@ When the learner signals intent to review (e.g., "review", "let's review", "what
 
 **This is not reteaching.** If the learner misses a question, you record the miss and move on. You never explain the correct answer during review. If the learner wants explanation, route them to a different protocol; see Step 8.
 
+<!-- Diagram: illustrates §Purpose -->
+```mermaid
+flowchart TD
+    A[Validate profile] -->|error| X1[End: setup error]
+    A -->|ok| B[Enumerate stale topics]
+    B --> C{Any stale?}
+    C -->|No| X2[End: nothing due]
+    C -->|Yes| D[Rank by freshness]
+    D --> E[Pose question]
+    E --> F[Classify response]
+    F --> G[Update + validate]
+    G -->|invalid| X3[Revert + error]
+    G -->|ok| H{Continue?}
+    H -->|Learner exits| X4[Sign-off]
+    H -->|More topics| E
+    H -->|No more| X4
+```
+*Figure 1. Review protocol flow with error branches. Every path terminates cleanly.*
+
 ## Invariants (from `docs/specs/review-protocol.md`)
 
 - Retrieval before anything else. No priming, no pre-teach.

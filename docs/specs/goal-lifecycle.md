@@ -23,6 +23,20 @@ The goal lifecycle exists because Sensei's adaptive model depends on a well-defi
 - **All goals decompose into three unknowns.** Regardless of type, every goal reduces to: prior state (what does the learner already know?), target state (what does "done" look like?), and constraints (what shapes the path — time, context, depth, application domain). Goal types differ in which unknown is hardest to resolve, not in structure.
 - **One pipeline, type-sensitive parameters.** Per ADR-0015, Sensei does not use different strategies per goal type. It uses one pipeline — triage ambiguity, resolve via minimal dialogue, generate a parameterized DAG, adapt at type-appropriate cadence — with parameters that vary by which unknown is dominant. Well-defined domains evolve slowly; vague aspirations evolve rapidly as the target itself shifts.
 
+<!-- Diagram: illustrates §Invariants — goal lifecycle -->
+```mermaid
+flowchart TD
+    A[Learner expresses goal] --> B[Triage: 3 unknowns\nprior state / target / constraints]
+    B --> C[Generate draft curriculum\n70th-percentile bias]
+    C --> D[First lesson IS assessment]
+    D --> E{Probe: accurate?}
+    E -->|No| F[Reshape curriculum]
+    F --> D
+    E -->|Yes| G[Continue teaching]
+    G --> E
+```
+*Figure 1. Goal lifecycle: generate → probe → reshape. The curriculum is a hypothesis continuously updated by evidence.*
+
 ## Rationale
 
 **Init generates immediately without asking questions.** The resolved §9 question "How much should init ask?" was answered definitively: generate immediately, first lesson IS the assessment (§5.2). Questionnaires fail because learners are terrible at knowing what they don't know. A mentor discovers that through performance, not self-report. The draft curriculum gives the learner something concrete to react to, and the reaction is itself assessment data.

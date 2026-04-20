@@ -30,6 +30,20 @@ Packaging details:
 - Entry point: `[project.scripts] sensei = "sensei.cli:main"`.
 - Schema versioning: `schema_version` in `defaults.yaml`, incremented independently of the pip package SemVer.
 
+<!-- Diagram: illustrates §Decision -->
+```mermaid
+flowchart TD
+    A[pip install sensei-tutor] --> B[Wheel in site-packages]
+    B --> C[sensei init ~/learning]
+    C --> D[.sensei/ — engine bundle copied]
+    C --> E[instance/ — config + profile seeded]
+    C --> F[AGENTS.md + shims written]
+    D --> G[sensei upgrade]
+    G --> D2[.sensei/ overwritten]
+    G -.->|preserved| E
+```
+*Figure 1. Distribution flow: install delivers the wheel; init copies the engine; upgrade overwrites engine only.*
+
 ## Alternatives Considered
 
 - **Pure pip (engine in site-packages, accessed via `importlib.resources`).** Rejected because the LLM agent cannot browse site-packages; path resolution breaks when scripts live in site-packages while state lives in the user's working directory; and the "folder is the program" product identity requires local files.

@@ -26,6 +26,16 @@ Two workflow files under `.github/workflows/`:
    - `build-and-check` — builds wheel and sdist; runs `check_package_contents.py` against the wheel asserting bundle integrity, no instance content, and version concordance with the tag.
    - `publish` — gated on GitHub Environment `pypi` approval; uploads via `pypa/gh-action-pypi-publish` using OIDC trusted publishing. Requires `id-token: write` permission.
 
+<!-- Diagram: illustrates §Architecture -->
+```mermaid
+flowchart LR
+    T["Tag push (v*)"] --> V[verify job\ntests + lint]
+    V --> B[build-and-check\nwheel + validator]
+    B --> A{Environment\napproval gate}
+    A --> P[publish\nOIDC → PyPI]
+```
+*Figure 1. Release pipeline: three jobs with OIDC trusted publishing and environment approval gate.*
+
 ### Tag filter
 
 The `release.yml` `on.push.tags` filter matches semver and PEP 440 prerelease patterns:

@@ -23,6 +23,20 @@ The v1 profile captures the smallest set of signals sufficient to enforce the as
 
 - **Single source of truth.** Any mentor decision that depends on prior state reads from the profile; no parallel caches, no per-session derived scoreboards that outlive the session.
 - **Mastery is ordered.** The mastery axis has five levels in strict order: `none < shaky < developing < solid < mastered`. "Advanced" is never a level below "mastered" or above it; there is no sixth level at v1.
+<!-- Diagram: illustrates §Invariants — mastery levels -->
+```mermaid
+stateDiagram-v2
+    [*] --> none
+    none --> shaky : first exposure
+    shaky --> developing : repeated practice
+    developing --> solid : consistent performance
+    solid --> mastered : 90% threshold
+    mastered --> solid : decay (time)
+    solid --> developing : decay
+    developing --> shaky : decay
+```
+*Figure 1. Mastery levels: progression through practice, demotion through decay. Monotonicity is not enforced.*
+
 - **Confidence is a unit float.** Confidence for any topic is in `[0.0, 1.0]`. Values outside the range are an invalid profile.
 - **Timestamps are absolute UTC, ISO-8601.** `last_seen` on each topic is a full ISO-8601 timestamp in UTC (Z-suffix or `+00:00`). No implicit local time.
 - **Profile is schema-versioned.** Every profile carries `schema_version: <int>`. Loading a profile with a schema version the engine does not support is a validation failure, not a silent migration.

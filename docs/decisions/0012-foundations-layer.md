@@ -35,6 +35,20 @@ docs/foundations/
 
 `docs/decisions/` is unchanged; cross-cutting ADRs gain an optional `scope: policy` frontmatter field (default: `feature`).
 
+<!-- Diagram: illustrates §Decision -->
+```mermaid
+flowchart TD
+    F["Foundations\n(vision · principles · personas)"]
+    F -.->|serves / realizes| S[Specs]
+    F -.->|stressed_by| P[Personas]
+    S --> D[Design]
+    D --> ADR[ADRs]
+    D --> PL[Plans]
+    PL --> I[Implementation]
+    I --> V[Verification]
+```
+*Figure 1. Foundations sit above the 6-layer stack as source material that specs cite via frontmatter linkage.*
+
 ### Templates
 
 **Principle** — unified for pedagogical, technical, and product principles distinguished by a `kind:` frontmatter field (prior draft split `pillars/` and `principles/`; the adversarial critic identified these as the same artifact type). Structure: YAML frontmatter (`status`, `date`, `id: P-<slug>`, `kind: pedagogical | technical | product`), then sections Statement / Rationale / Implications / Exceptions-and-Tensions / Source. TOGAF-flavoured.

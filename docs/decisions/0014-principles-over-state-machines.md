@@ -47,6 +47,17 @@ Use **principle-driven LLM pedagogy** over deterministic state machines. The arc
 
 Pedagogical judgment lives in Layer 2. The LLM decides *how* to teach; deterministic code decides *what* to teach next and *whether* mastery has been achieved.
 
+<!-- Diagram: illustrates §Decision -->
+```mermaid
+flowchart TD
+    L1["Layer 1: Deterministic\n(code/yaml — mastery scores, FSRS, scheduling)"]
+    L2["Layer 2: Principle-Driven LLM\n(context files — pedagogical reasoning)"]
+    L3["Layer 3: Multi-Agent Coordination\n(shared state files — autonomous agents)"]
+    L1 --> L2
+    L2 --> L3
+```
+*Figure 1. Three-layer architecture: deterministic computation at the base, principle-driven LLM reasoning in the middle, multi-agent coordination at the top.*
+
 ## Alternatives Considered
 
 ### A. Full deterministic state machine

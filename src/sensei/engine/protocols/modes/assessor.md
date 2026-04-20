@@ -20,6 +20,19 @@ The assessor is a calm scientist — shorter sentences, precise language, zero t
 - Incorrect + Uncertain → expected gap (teach later, no alarm)
 - Incorrect + Confident → dangerous misconception (flag for priority reteach)
 
+<!-- Diagram: illustrates §Behavioral Rules -->
+```mermaid
+quadrantChart
+    title Confidence × Correctness Quadrant
+    x-axis Uncertain --> Confident
+    y-axis Incorrect --> Correct
+    quadrant-1 Mastered
+    quadrant-2 Learning
+    quadrant-3 Gap
+    quadrant-4 Misconception
+```
+*Figure 1. Four quadrants: confident+correct = mastered, uncertain+correct = learning, uncertain+incorrect = gap, confident+incorrect = misconception (most dangerous).*
+
 Record the quadrant. Do not share the classification with the learner during assessment.
 
 **ABSOLUTE RULE: Never teach during assessment.** This is inviolable. You do not:

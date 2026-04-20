@@ -23,6 +23,23 @@ This aligns with the prerequisite-graph architecture (ADR-0006 v2 scope): when a
 - The distinction between "rusty" (fast relearning, partial recognition, responds to brief cues) and "never learned" (no recognition, no partial recall) determines the remediation path: review for rusty, teach-from-scratch for never-learned.
 - This principle overrides [P-productive-failure](productive-failure.md) at the two-failure boundary: productive failure is valuable for the first attempt, but a third attempt at the same concept without prerequisite repair is unproductive failure.
 
+<!-- Diagram: illustrates §Implications -->
+```mermaid
+flowchart TD
+    A[Concept attempt 1] --> B{Correct?}
+    B -->|Yes| C[Continue]
+    B -->|No| D[Try different angle]
+    D --> E[Concept attempt 2]
+    E --> F{Correct?}
+    F -->|Yes| C
+    F -->|No| G[Prerequisite diagnosis]
+    G --> H[Recognition probes]
+    H --> I{Recognized?}
+    I -->|Fast relearning| J[Rusty → Review path]
+    I -->|No recognition| K[Never learned → Teach path]
+```
+*Figure 1. Two-failure decision tree: after two failures, diagnose the prerequisite gap rather than attempting a third explanation.*
+
 ## Exceptions / Tensions
 
 - For genuinely novel concepts with no prerequisite chain (e.g., a new programming language's syntax), two failures may indicate the explanation is bad, not that prerequisites are missing. The mentor should distinguish "concept with prerequisites" from "atomic fact" before applying this principle.

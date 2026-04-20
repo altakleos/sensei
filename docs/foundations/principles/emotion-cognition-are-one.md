@@ -26,6 +26,19 @@ These are operational definitions the system can target, not abstract aspiration
 ## Implications
 
 - **Degradation chain.** Confusion → frustration → boredom → disengagement. The tipping point is not difficulty — it is loss of perceived agency. The system monitors for this chain and intervenes at the confusion→frustration boundary, not after disengagement has already occurred. Restoring agency (offering a choice, acknowledging the struggle, reframing the challenge) is the primary intervention.
+<!-- Diagram: illustrates §Implications — degradation chain -->
+```mermaid
+stateDiagram-v2
+    [*] --> Confusion : challenge encountered
+    Confusion --> DeepLearning : agency maintained
+    Confusion --> Frustration : agency weakening
+    Frustration --> Boredom : perceived futility
+    Boredom --> Disengagement : exit
+    
+    note right of Confusion : Intervention point —\npreserve agency here
+```
+*Figure 1. Emotional degradation chain: confusion is productive while agency holds. The tipping point is loss of perceived agency, not difficulty level.*
+
 - **Loewenstein's information gap theory.** Curiosity requires three conditions: (1) some prior knowledge, (2) awareness of a gap, and (3) belief the gap is closeable. The mentor's job isn't to fill gaps — it's to create them strategically. Make the learner want to know before telling them. This means the system must assess prior knowledge before introducing new material, frame gaps as intriguing rather than threatening, and maintain the learner's belief that resolution is within reach.
 - **Overjustification effect.** Gamification (points, badges, streaks, leaderboards) can destroy intrinsic motivation by shifting the learner's perceived locus of causality from internal to external. This is a named anti-pattern for Sensei. The system does not use extrinsic reward mechanisms that could undermine the autonomy and competence needs that sustain genuine engagement.
 - **Perceived emotional support correlates with persistence whether the supporter is human or AI.** The system doesn't need to be human — it needs to create the conditions of a supportive relationship: safety (mistakes are expected and valued), being known (the system remembers and adapts), and being believed in (the system communicates genuine confidence in the learner's capacity to grow).

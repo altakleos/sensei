@@ -20,6 +20,17 @@ The import chain is:
 AGENTS.md → engine.md → protocols/*.md → (scripts/*.py, prompts/*.md, schemas/, etc.)
 ```
 
+<!-- Diagram: illustrates §Decision -->
+```mermaid
+flowchart LR
+    A[AGENTS.md] --> B[.sensei/engine.md]
+    B --> C[protocols/*.md]
+    C --> D[scripts/*.py]
+    C --> E[schemas/*.json]
+    C --> F[prompts/]
+```
+*Figure 1. Boot chain: each file imports the next. The LLM reads left-to-right at session start.*
+
 ## Alternatives Considered
 
 - **Inline all instructions in a single file.** Becomes unwieldy as the project grows; no separation between project-level boot and runtime dispatch.

@@ -22,6 +22,16 @@ Transcript fixtures verify invariants declared in the protocol specs themselves.
 
 ## Architecture
 
+<!-- Diagram: illustrates §Architecture -->
+```mermaid
+flowchart TD
+    F[Fixture .md files] --> C[conftest.py loader]
+    D[Dogfood transcripts] --> C
+    C --> T1[Tier-1: Lexical checks\nCI — forbidden phrases, required patterns]
+    C --> T2[Tier-2: LLM-as-judge\nLocal — behavioral quality]
+```
+*Figure 1. Two-tier verification: Tier-1 runs in CI (fast, deterministic); Tier-2 runs locally (LLM judgment).*
+
 ### Directory and file layout
 
 ```

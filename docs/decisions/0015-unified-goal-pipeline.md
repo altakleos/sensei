@@ -36,6 +36,15 @@ The three-unknowns framework is universal. What changes per goal type is:
 
 Type sensitivity lives in the parameters, not in the pipeline structure.
 
+<!-- Diagram: illustrates §Decision -->
+```mermaid
+flowchart LR
+    A[Triage\nambiguity] --> B[Resolve via\ndialogue]
+    B --> C[Generate\nparameterized DAG]
+    C --> D[Adapt at\ntype-appropriate cadence]
+```
+*Figure 1. Unified goal pipeline: one pipeline for all goal types, with type-sensitive parameters at each stage.*
+
 ## Alternatives Considered
 
 ### A. Per-goal-type strategy classes

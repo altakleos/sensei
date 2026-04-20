@@ -24,6 +24,17 @@ Rather than introducing a fifth mode or a separate agent, performance training o
 - **Each stage modifies existing mode behaviors.** Tutor adds time awareness (pacing, clock management, when to move on). Challenger adds interview-style pressure (format constraints, curveball variations, thinking-aloud requirements). Assessor simulates evaluation conditions (timed problems, realistic scoring, no hints). No stage invents behavior outside the existing mode definitions.
 - **Entry requires sufficient mastery across relevant curriculum.** Performance training is not a shortcut. The learner must have demonstrated adequate mastery of the underlying topics before the phase activates. Rushing a learner into timed mocks on material they haven't learned violates P-mastery-before-progress.
 
+<!-- Diagram: illustrates §Invariants — performance preparation stack -->
+```mermaid
+flowchart LR
+    L[Learn] --> Au[Automate]
+    Au --> V[Verbalize]
+    V --> T[Time\npressure]
+    T --> S[Simulated\nevaluation]
+    S --> M[Full mock]
+```
+*Figure 1. Performance Preparation Stack: six ordered stages, each building on the previous.*
+
 ## Rationale
 
 **Performance training is a cross-cutting journey phase, not a fifth mode or separate agent.** This was a resolved question in the product ideation (§9 / §3.9): the Performance Preparation Stack doesn't map cleanly to any single mode, but adding a fifth mode would fracture the behavioral model. Instead, performance training modifies how all modes behave when the learner's goal shifts from understanding to execution under pressure.

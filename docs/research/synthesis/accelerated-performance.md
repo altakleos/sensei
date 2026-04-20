@@ -42,6 +42,17 @@ Six-step progression for building performance capability: [Bibliography #43, #44
 
 *Design implication:* Performance training is a phased progression, not a single mode. Each step builds on automaticity from the previous step.
 
+<!-- Diagram: illustrates §The Performance Preparation Stack -->
+```mermaid
+flowchart LR
+    L[Learn] --> A[Automate]
+    A --> V[Verbalize]
+    V --> TP[Time\npressure]
+    TP --> SE[Simulated\nevaluation]
+    SE --> FM[Full\nmock]
+```
+*Figure 1. Performance Preparation Stack: six ordered stages building from knowledge acquisition to full performance under pressure.*
+
 ## Performance Science
 
 - **Stress Inoculation Training (Meichenbaum).** [Bibliography #43] 37 studies, n=1,837 validate graduated stress exposure. *Design implication:* Introduce pressure gradually — never jump from zero pressure to full simulation.
@@ -68,6 +79,23 @@ Six-step progression for building performance capability: [Bibliography #43, #44
 ## Fractional Implicit Repetition (FIRe)
 
 - **Math Academy's most novel contribution.** [Bibliography #58] In hierarchical knowledge, reviewing an advanced topic implicitly reviews its component skills. FIRe models this as fractional credit flowing through a knowledge graph — passed reviews flow downward, failed reviews flow upward. This compresses dozens of due reviews into a handful of tasks. *Design implication:* Implement FIRe-style credit flow through the knowledge graph. A single advanced review can satisfy multiple prerequisite review requirements.
+
+<!-- Diagram: illustrates §Fractional Implicit Repetition (FIRe) -->
+```mermaid
+flowchart TD
+    subgraph "Prerequisite Graph"
+        direction LR
+        PA[Topic A] --> PB[Topic B]
+        PB --> PC[Topic C]
+    end
+    subgraph "Encompassing Graph"
+        direction LR
+        EC[Topic C] --> EB[Topic B]
+        EB --> EA[Topic A]
+    end
+    PC -.->|"FIRe: mastering C\ngives fractional credit\nto A and B"| EA
+```
+*Figure 2. Dual graphs: prerequisites flow forward (gates progression); encompassing flows backward (enables FIRe fractional credit).*
 
 ## Knowledge Graph Architecture
 
