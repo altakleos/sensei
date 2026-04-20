@@ -21,3 +21,4 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0013 | [Context Composition Strategy — Active Mode + Summaries](0013-context-composition.md) | accepted |
 | 0014 | [Principles Over State Machines for LLM Pedagogy](0014-principles-over-state-machines.md) | accepted |
 | 0015 | [Unified Goal-Processing Pipeline with Type-Sensitive Parameters](0015-unified-goal-pipeline.md) | accepted |
+| 0016 | [Git Worktrees for Multi-Agent Filesystem Isolation](0016-worktree-agent-isolation.md) | accepted |

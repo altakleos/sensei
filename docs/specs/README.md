@@ -10,6 +10,7 @@ For the full development model, see `docs/development-process.md`.
 | [Release Communication](release-communication.md) | accepted |
 | [Release Process](release-process.md) | accepted |
 | [Review Protocol](review-protocol.md) | accepted |
+| [Parallel Agent Execution](parallel-agents.md) | draft |
 
 ## Template
 

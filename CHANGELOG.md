@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ### Added
 
+- Parallel agent execution: spec, design, ADR-0016, and shell scripts for git worktree-based isolation enabling multiple LLM agents to implement plans simultaneously
 - Release-communication spec (`docs/specs/release-communication.md`) and this `CHANGELOG.md`. Every future release must ship with a dated entry here; `ci/check_package_contents.py` enforces the presence of an entry for the tag being released.
 - Behavioural verification layer (`tests/transcripts/`) with a pytest loader for transcript fixtures and the first fixture file (`review.md`). Per [ADR-0011](docs/decisions/0011-transcript-fixtures.md).
 - `docs/foundations/` — new cross-cutting-concerns layer per [ADR-0012](docs/decisions/0012-foundations-layer.md). Contains `vision.md`, 14 principles (6 technical migrated from `sensei-implementation.md` + 7 pedagogical pillars + one mentor-relationship principle), and the Jacundu persona. Specs gain optional `serves:` / `realizes:` / `stressed_by:` frontmatter; `ci/check_foundations.py` is a hard-fail CI gate that catches broken references.
@@ -19,6 +20,13 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 - 27 mermaid diagrams across specs, design docs, ADRs, and principles. Diagram convention added to `development-process.md`.
 - mypy --strict + ruff added to CI pipeline. All source passes both.
 - 15 new tests (127 total): CLI commands, config loader, YAML error paths.
+- Goal lifecycle: `protocols/goal.md` (6-step protocol: parse goal → triage three unknowns → generate curriculum DAG → validate → begin teaching), `schemas/goal.schema.json`, `scripts/check_goal.py` (DAG cycle detection, single-active-node enforcement, prerequisite resolution).
+- `sensei status` enhanced: shows learner ID, topic count, mastery distribution, and stale topics due for review.
+- `sensei verify` implemented: checks 18 expected engine files + profile schema validation. Reports specific missing files on failure.
+- `sensei upgrade` implemented: replaces `.sensei/` engine bundle from installed package, preserves `instance/` data. Detects same-version noop.
+- `sensei init` now creates `instance/goals/` directory for goal state files.
+- Assessment transcript fixture (`tests/transcripts/assess.md`) with 4 test cases.
+- Hints ingestion protocol + hint_decay.py for curriculum hint processing.
 
 ### Fixed
 

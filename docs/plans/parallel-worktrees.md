@@ -1,34 +1,65 @@
 ---
 feature: parallel-worktrees
-serves: (operational — unblocks parallel agent execution of Plans 2, 3, 4)
-design: (N/A — git workflow, not a product feature)
+serves: docs/specs/parallel-agents.md
+design: docs/design/parallel-agents.md
 status: planned
 date: 2026-04-20
 ---
 # Plan: Parallel Agent Worktrees
 
-## Problem
-
-Plans 2 (curriculum-engine), 3 (interaction-model), and 4 (deep-frontiers-principles) can run in parallel, but a single git checkout means:
-- One agent creating a branch moves the other agent's HEAD
-- Uncommitted changes from one agent appear in the other's `git status`
-- Neither agent knows what's theirs to commit
-
-## Solution
-
-Git worktrees: one worktree per plan, each on its own branch, sharing the same `.git` object store. No copies, no forks, instant setup.
-
 ## Tasks
 
-- [ ] T1: Create `scripts/worktree-setup.sh` — takes a plan name, creates a branch from `main`, adds a worktree under `../<repo>-<plan>/`. Idempotent (skip if worktree exists). → `scripts/worktree-setup.sh`
-- [ ] T2: Create `scripts/worktree-teardown.sh` — takes a plan name, merges its branch into `main` (fast-forward only; abort on conflict for manual resolution), removes the worktree, deletes the branch. → `scripts/worktree-teardown.sh`
-- [ ] T3: Create `docs/operations/parallel-agents.md` — brief workflow doc: setup, point each agent at its worktree directory, merge back. Includes the exact commands for the 3-plan case. → `docs/operations/parallel-agents.md`
-- [ ] T4: Dry-run — execute `worktree-setup.sh` for all three plans, verify each worktree is on the correct branch and has a clean working tree, then tear down one to verify the merge path works.
+- [ ] **T1:** Add `.worktrees/` to `.gitignore` → `.gitignore`
+  Append `.worktrees/` to the existing .gitignore file.
+
+- [ ] **T2:** Create `scripts/worktree-setup.sh` → `scripts/worktree-setup.sh`
+  Bash script (~50 lines) that:
+  - Accepts one or more plan names as arguments
+  - Validates working directory is clean (abort if dirty)
+  - For each plan name: creates branch `plan/<name>` from current HEAD, creates worktree at `.worktrees/<name>/`
+  - Runs `pip install -e .` in each worktree (if pyproject.toml exists)
+  - Prints summary: directory paths and branch names for each agent
+  - Idempotent: skips existing worktrees with a message
+  - Make executable (chmod +x)
+
+- [ ] **T3:** Create `scripts/worktree-teardown.sh` → `scripts/worktree-teardown.sh` (depends: T2)
+  Bash script (~50 lines) that:
+  - Accepts one or more plan names as arguments (merge order = argument order)
+  - For each plan: merges `plan/<name>` into current branch (ff preferred, --no-ff fallback)
+  - After each merge: runs `pytest` and `python ci/check_foundations.py`
+  - If merge conflicts: aborts, prints conflicting files, prints resolution hint for CHANGELOG.md pattern
+  - If verification fails: aborts, prints failure output
+  - On success: removes worktree (`git worktree remove`), deletes branch (`git branch -d`)
+  - Make executable (chmod +x)
+
+- [ ] **T4:** Create workflow runbook → `docs/operations/parallel-agents.md` (depends: T2, T3)
+  Step-by-step human workflow (~40 lines):
+  - When to use (plans declared as parallelizable)
+  - Setup: exact commands for the Plans 2/3/4 case
+  - During execution: what to tell each agent, how to monitor
+  - Integration: merge order recommendation (smallest first), CHANGELOG conflict resolution pattern
+  - Cleanup: what happens automatically vs manually
+  - Troubleshooting: common issues and fixes
+
+- [ ] **T5:** Verify end-to-end → verify (depends: T2, T3)
+  - Run `scripts/worktree-setup.sh curriculum-engine interaction-model deep-frontiers`
+  - Confirm 3 worktrees exist at `.worktrees/`
+  - Make a trivial commit in one worktree, confirm it's invisible from another
+  - Run `scripts/worktree-teardown.sh deep-frontiers` on one to verify merge path
+  - Clean up remaining worktrees
+  - Full test suite green
+
+- [ ] **T6:** Update `docs/specs/README.md` and `docs/design/README.md` indexes → `docs/specs/README.md`, `docs/design/README.md` (depends: T1)
+  Add rows for the new spec and design doc.
+
+- [ ] **T7:** Append Unreleased entry to CHANGELOG.md → `CHANGELOG.md` (depends: T5)
 
 ## Acceptance Criteria
 
-- [ ] AC1: Running `worktree-setup.sh curriculum-engine` creates `../sensei-curriculum-engine/` on branch `plan/curriculum-engine` from current `main`
-- [ ] AC2: Running `worktree-setup.sh` for all three plans produces three independent working directories that share the same git object store
-- [ ] AC3: A commit in one worktree does not appear in `git status` of another
-- [ ] AC4: `worktree-teardown.sh curriculum-engine` fast-forward merges the branch into `main` and removes the worktree
-- [ ] AC5: `docs/operations/parallel-agents.md` exists and documents the full workflow
+- [ ] **AC1:** `scripts/worktree-setup.sh plan-a plan-b` creates `.worktrees/plan-a/` and `.worktrees/plan-b/` with correct branches
+- [ ] **AC2:** Changes committed in one worktree are invisible from another worktree's `git status`
+- [ ] **AC3:** `scripts/worktree-teardown.sh plan-a` merges, verifies, removes worktree, and deletes branch
+- [ ] **AC4:** Teardown aborts cleanly on merge conflict (worktree preserved for manual resolution)
+- [ ] **AC5:** `.worktrees/` is gitignored (does not appear in `git status`)
+- [ ] **AC6:** Workflow runbook is followable by someone with no prior context
+- [ ] **AC7:** Full test suite green

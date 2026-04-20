@@ -27,3 +27,6 @@ Thumbs.db
 # Agent working state
 .yolo-sisyphus/
 .omc/
+
+# Parallel agent worktrees
+.worktrees/

@@ -10,6 +10,7 @@ For the full development model, see `docs/development-process.md`.
 | 2 | [Review Protocol Orchestration](review-protocol.md) | Nine-step read/rank/ask/classify/write loop realizing the review-protocol spec | accepted |
 | 3 | [Release Workflow](release-workflow.md) | Three-job GitHub Actions release pipeline with OIDC trusted publishing and `ci/check_package_contents.py` wheel validator | accepted |
 | 4 | [Transcript Fixtures](transcript-fixtures.md) | Behavioural-verification artifacts that assert LLM-interpreted protocols respect their spec invariants; pytest loader with tier-1 lexical checks free in CI | accepted |
+| 5 | [Parallel Agent Execution](parallel-agents.md) | Worktree isolation for concurrent LLM agents with setup/teardown scripts | draft |
 
 ## Template
 
