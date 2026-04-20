@@ -17,3 +17,4 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0009 | [Maintainer Tooling Lives Outside the Engine Bundle](0009-maintainer-tooling-outside-engine.md) | accepted (lite) |
 | 0010 | [PyPI Distribution Name is `sensei-tutor`](0010-pypi-distribution-name.md) | accepted (lite) |
 | 0011 | [Transcript Fixtures as a Verification Artifact](0011-transcript-fixtures.md) | accepted (lite) |
+| 0012 | [Adopt `docs/foundations/` for Cross-Cutting Concerns](0012-foundations-layer.md) | accepted |
