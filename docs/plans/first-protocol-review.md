@@ -17,9 +17,9 @@ Resolved:
 1. **What does "review" guarantee?** → **(a) Retrieval-only.** Spec captures the full invariants; see `docs/specs/review-protocol.md`.
 4. **Seed profile during init — in this plan or separate?** → Shipped standalone ahead of this plan (commit `59decfb`).
 
-Still open (resolve before T2 design):
-2. Single protocol that owns read-ask-classify-write, or split into `review.md` + `record-response.md`? Leaning: one protocol at v1.
-3. Does review need a new helper to propose the retrieval question, or is that left to the LLM's discretion (prose guidance only)? Leaning: prose-only for v1; the question-generation problem is too open to pin down in a helper yet.
+Resolved during T2 design:
+2. **Single protocol vs split** → single `review.md` owns the full cycle. No sub-protocol at v1.
+3. **Question-generation helper** → prose-only at v1. LLM generates retrieval questions per the design's shape guidelines.
 
 ## Tasks
 
@@ -34,7 +34,7 @@ Still open (resolve before T2 design):
 
 ### Phase 2 — Design
 
-- [ ] T2: Design `docs/design/review-protocol.md` — the orchestration prose, step numbering convention, helper invocation contract, error handling (profile invalid mid-session), silence profile per PRODUCT-IDEATION §3.10 (depends: T1) → `docs/design/review-protocol.md`
+- [x] T2: Design `docs/design/review-protocol.md` — nine-step orchestration, helper invocation contract, v1 update rule (last_seen/attempts/correct only; mastery/confidence deferred), error-handling table, config references (half_life_days, stale_threshold), silence profile, engine dispatch update (depends: T1) → `docs/design/review-protocol.md`
 
 ### Phase 3 — Implement the protocol
 

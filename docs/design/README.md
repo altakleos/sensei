@@ -7,6 +7,7 @@ For the full development model, see `docs/development-process.md`.
 | # | Design | Description | Status |
 |---|--------|-------------|--------|
 | 1 | [Learner Profile State](learner-profile-state.md) | YAML shape for `instance/profile.yaml` (v1: `expertise_map` only) | accepted |
+| 2 | [Review Protocol Orchestration](review-protocol.md) | Nine-step read/rank/ask/classify/write loop realizing the review-protocol spec | accepted |
 
 ## Template
 
