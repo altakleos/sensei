@@ -7,6 +7,7 @@ For the full development model, see `docs/development-process.md`.
 | Spec | Status |
 |------|--------|
 | [Learner Profile](learner-profile.md) | accepted |
+| [Release Communication](release-communication.md) | accepted |
 | [Release Process](release-process.md) | accepted |
 | [Review Protocol](review-protocol.md) | accepted |
 
