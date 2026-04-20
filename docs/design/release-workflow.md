@@ -82,7 +82,7 @@ Always prints a structured report to stdout (grouped by category: OK/MISSING/FOR
 
 A GitHub Environment named `pypi` gates the `publish` job. The environment is configured (manually, outside this repo) with:
 - **Required reviewers**: at least one designated maintainer.
-- **Deployment branch restriction**: only `main` is eligible.
+- **Deployment branch and tag restriction**: **tag pattern `v*`**. The `release.yml` workflow is triggered by tag push, so the triggering ref is the tag itself, not `main`. A branch restriction on `main` would reject every tag-triggered run. The tag pattern must match (or be a superset of) the workflow's `on.push.tags` filter.
 - **Wait timer**: 0 (approval is the gate, not delay).
 
 ### Authentication
