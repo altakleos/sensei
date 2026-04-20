@@ -1,3 +1,4 @@
+import sys
 """Tests for frontier.py — curriculum DAG frontier computation."""
 import json
 import subprocess
@@ -5,7 +6,7 @@ from pathlib import Path
 
 import yaml
 
-PYTHON = "/Users/santorob/dev/sensei/.venv/bin/python"
+PYTHON = sys.executable
 SCRIPT = "src/sensei/engine/scripts/frontier.py"
 
 

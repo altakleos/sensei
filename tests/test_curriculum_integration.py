@@ -1,3 +1,4 @@
+import sys
 """Integration test — end-to-end curriculum lifecycle."""
 import json
 import subprocess
@@ -5,7 +6,7 @@ from pathlib import Path
 
 import yaml
 
-PYTHON = "/Users/santorob/dev/sensei/.venv/bin/python"
+PYTHON = sys.executable
 FRONTIER = "src/sensei/engine/scripts/frontier.py"
 MUTATE = "src/sensei/engine/scripts/mutate_graph.py"
 
