@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a7] — 2026-04-20
+
+### Fixed
+
+- Goal protocol Step 4: corrected YAML format to match actual schema (nodes as map, not list; correct field names).
+- Goal protocol: "spawned" is the correct state for not-yet-started topics (not "pending").
+- Added dependency guidance to engine.md for pipx/system-Python environments.
+
 ## [0.1.0a6] — 2026-04-20
 
 ### Fixed
