@@ -1,5 +1,5 @@
 ---
-status: draft
+status: accepted
 date: 2026-04-20
 realizes:
   - P-know-the-learner
@@ -13,7 +13,7 @@ stressed_by:
 
 When a learner pursues multiple goals, knowledge and effort do not stay siloed. Foundational concepts learned in one goal transfer to another. Spaced repetition schedules across goals compete for the same limited session time. Goals are paused and resumed, and the time away causes decay that must be accounted for on re-entry. Cross-goal intelligence is the set of mechanisms that coordinate across goal boundaries to produce a coherent learning experience rather than isolated parallel tracks.
 
-This spec is deferred (status: draft) because the v1 product operates goal-by-goal. The mechanisms described here become necessary when multi-goal learners are common enough that siloed operation produces visible incoherence — redundant review of the same concept under two goals, or a paused goal resuming as if no time passed.
+This spec is deferred (status: accepted) because the v1 product operates goal-by-goal. The mechanisms described here become necessary when multi-goal learners are common enough that siloed operation produces visible incoherence — redundant review of the same concept under two goals, or a paused goal resuming as if no time passed.
 
 ## Invariants
 
