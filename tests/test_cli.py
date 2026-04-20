@@ -30,11 +30,39 @@ def test_status_fails_without_instance(tmp_path: Path) -> None:
     assert result.exit_code != 0
 
 
-def test_upgrade_exits_not_implemented() -> None:
+def test_upgrade_same_version_noop(tmp_path: Path) -> None:
     runner = CliRunner()
-    result = runner.invoke(main, ["upgrade"])
+    runner.invoke(main, ["init", str(tmp_path / "inst")])
+    result = runner.invoke(main, ["upgrade", str(tmp_path / "inst")])
+    assert result.exit_code == 0
+    assert "Already at" in result.output
+
+
+def test_upgrade_replaces_engine(tmp_path: Path) -> None:
+    runner = CliRunner()
+    runner.invoke(main, ["init", str(tmp_path / "inst")])
+    # Simulate old version
+    (tmp_path / "inst" / ".sensei" / ".sensei-version").write_text("0.0.0\n")
+    # Write custom profile to verify it's preserved
+    profile_content = "schema_version: 0\nlearner_id: alice\nexpertise_map: {}\n"
+    (tmp_path / "inst" / "instance" / "profile.yaml").write_text(profile_content)
+    result = runner.invoke(main, ["upgrade", str(tmp_path / "inst")])
+    assert result.exit_code == 0
+    assert "0.0.0" in result.output
+    assert "preserved" in result.output.lower()
+    # Engine updated
+    from sensei import __version__
+    new_ver = (tmp_path / "inst" / ".sensei" / ".sensei-version").read_text().strip()
+    assert new_ver == __version__
+    # Instance preserved
+    profile = (tmp_path / "inst" / "instance" / "profile.yaml").read_text()
+    assert "alice" in profile
+
+
+def test_upgrade_fails_without_instance(tmp_path: Path) -> None:
+    runner = CliRunner()
+    result = runner.invoke(main, ["upgrade", str(tmp_path)])
     assert result.exit_code != 0
-    assert "not yet implemented" in result.output.lower()
 
 
 def test_verify_exits_zero() -> None:

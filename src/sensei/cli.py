@@ -242,10 +242,29 @@ def status(target: Path) -> None:
 
 
 @main.command()
-def upgrade() -> None:
-    """Update .sensei/ to the installed package version (stub)."""
-    click.echo("upgrade: not yet implemented")
-    sys.exit(2)
+@click.argument("target", type=click.Path(exists=True, file_okay=False, path_type=Path), default=".")
+def upgrade(target: Path) -> None:
+    """Update .sensei/ engine bundle to the installed package version."""
+    target = target.resolve()
+    sensei_dir = target / ".sensei"
+    if not sensei_dir.exists():
+        raise click.ClickException(f"Not a Sensei instance: {target} (no .sensei/ directory).")
+
+    # Read current version
+    version_file = sensei_dir / ".sensei-version"
+    old_version = version_file.read_text().strip() if version_file.exists() else "unknown"
+
+    if old_version == __version__:
+        click.echo(f"Already at {__version__}. Nothing to upgrade.")
+        return
+
+    # Replace engine bundle (instance/ is preserved)
+    shutil.rmtree(sensei_dir)
+    shutil.copytree(_engine_source(), sensei_dir)
+    (sensei_dir / ".sensei-version").write_text(f"{__version__}\n", encoding="utf-8")
+
+    click.echo(f"Upgraded .sensei/ from {old_version} → {__version__}")
+    click.echo("Instance data (instance/) preserved.")
 
 
 @main.command()

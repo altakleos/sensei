@@ -21,6 +21,7 @@ import argparse
 import json
 import sys
 from datetime import datetime, timezone
+from typing import Any
 
 try:
     import yaml
@@ -39,12 +40,12 @@ def _parse_iso(raw: str) -> datetime:
 
 
 def update_hints(
-    hints: list[dict],
+    hints: list[dict[str, Any]],
     half_life_days: float,
     expire_threshold: float,
     expire_after_days: int,
     now: datetime,
-) -> list[dict]:
+) -> list[dict[str, Any]]:
     """Recompute freshness and expire stale hints in-place."""
     if half_life_days <= 0:
         raise ValueError(f"half_life_days must be positive, got {half_life_days}")
@@ -76,7 +77,7 @@ def main(argv: list[str] | None = None) -> int:
         print("error: PyYAML is required. Install with: pip install pyyaml", file=sys.stderr)
         return 1
 
-    with open(args.hints_file, "r") as f:
+    with open(args.hints_file) as f:
         data = yaml.safe_load(f)
 
     if not isinstance(data, dict) or "hints" not in data:
