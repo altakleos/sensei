@@ -282,7 +282,7 @@ We challenged the initial recommendation of deterministic state machines for ped
 
 We can't ship a state machine runtime in a pip package that works with any LLM agent. But we **CAN** ship well-crafted principle-based context files that make any frontier LLM a good tutor.
 
-> 📄 Full reports: `.yolo-sisyphus/handoff/librarian-llm-driven-pedagogy.md`, `.yolo-sisyphus/handoff/librarian-agentic-pedagogy.md`
+> 📄 Full reports: [docs/research/librarian-llm-driven-pedagogy.md](docs/research/librarian-llm-driven-pedagogy.md), [docs/research/librarian-agentic-pedagogy.md](docs/research/librarian-agentic-pedagogy.md)
 
 ### 3.2 One Mentor, Principle-Driven Behavior
 
@@ -638,7 +638,7 @@ Key findings from cognitive science, neuroscience, and educational psychology (2
 - **AI's strongest impact is on the forethought phase** of self-regulated learning (goal-setting, planning, strategy selection) — meta-analysis shows **g=1.613**.
 - **Sleep-dependent consolidation** — review before bed, test next morning is optimal spacing.
 
-> 📄 Full report: `.yolo-sisyphus/handoff/librarian-learning-science.md`
+> 📄 *Source research synthesized above.*
 
 ### 8.2 Competitive Landscape
 
@@ -650,7 +650,7 @@ Key findings from cognitive science, neuroscience, and educational psychology (2
 - **Local files + LLM pattern** is validated and trending (Karpathy's "LLM Wiki", 16M views).
 - **Developer learning tools** (Exercism, CodeCrafters) have strong engagement but zero AI integration.
 
-> 📄 Full report: `.yolo-sisyphus/handoff/librarian-competitive-landscape.md`
+> 📄 *Source research synthesized above.*
 
 ### 8.3 Teaching Methods
 
@@ -664,7 +664,7 @@ Ranked by effectiveness and feasibility for AI implementation:
 
 > **Benchmark:** DARPA Digital Tutor achieved **d=1.97–3.18** using granular feedback + strict mastery + adaptive difficulty.
 
-> 📄 Full report: `.yolo-sisyphus/handoff/librarian-teaching-methods.md`
+> 📄 *Source research synthesized above.*
 
 ### 8.4 AI Personalization
 
@@ -674,7 +674,7 @@ Ranked by effectiveness and feasibility for AI implementation:
 - **RAG over authoritative content** is mandatory to prevent hallucinated teaching.
 - **Track hint dependency ratio** and penalize mastery when hints are overused.
 
-> 📄 Full report: `.yolo-sisyphus/handoff/librarian-ai-personalization.md`
+> 📄 *Source research synthesized above.*
 
 ### 8.5 Accelerated Learning, Performance & Assessment
 
@@ -710,7 +710,7 @@ Key research: Stress Inoculation Training (Meichenbaum; 37 studies, n=1,837), Au
 
 The system must always know whether it is reindexing, teaching new, or training performance. These require fundamentally different pedagogical approaches and the system must fluidly switch between them within a single session.
 
-> 📄 Full reports: `.yolo-sisyphus/handoff/librarian-accelerated-adult-learning.md`, `.yolo-sisyphus/handoff/librarian-performance-under-pressure.md`, `.yolo-sisyphus/handoff/librarian-adaptive-assessment.md`
+> 📄 *Source research synthesized above.*
 
 ### 8.6 The Math Academy Way & Alpha School
 
@@ -746,7 +746,7 @@ Motivation is 90% of the solution. Time efficiency IS the reward. For Sensei: sp
 
 Math Academy uses deterministic expert systems for task selection. Our position remains: frontier LLMs can make better task selection decisions for arbitrary domains because they reason about the specific learner's context in ways no rule set can anticipate. We adopt Math Academy's domain-independent principles (FIRe, dual graphs, prerequisite limits, speed calibration, behavior coaching) while maintaining LLM-driven task selection.
 
-> 📄 Full reports: `.yolo-sisyphus/handoff/librarian-math-academy-way.md`, Austin Scholar #173
+> 📄 *Source research synthesized above.*
 
 ---
 
@@ -785,7 +785,7 @@ Math Academy uses deterministic expert systems for task selection. Our position 
 
 ## 10. Research Reports Index
 
-All full research reports are stored in `.yolo-sisyphus/handoff/`:
+Full research reports that informed this document. The two architecture-critical reports are available in `docs/research/`. Others were synthesized into the sections above.
 
 | Report | Description |
 |--------|-------------|
