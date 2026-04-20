@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sensei.dev/schemas/profile.schema.json",
+  "title": "Sensei Learner Profile",
+  "description": "Per-learner state file (instance/profile.yaml). V1 scope: expertise_map only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "learner_id", "expertise_map"],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 0,
+      "description": "Profile schema version. Bump on any field-semantics change."
+    },
+    "learner_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable learner identifier. Immutable once set."
+    },
+    "expertise_map": {
+      "type": "object",
+      "description": "Map from topic slug to TopicState. Empty object is valid.",
+      "patternProperties": {
+        "^[a-z][a-z0-9-]*$": { "$ref": "#/$defs/TopicState" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "TopicState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mastery", "confidence", "last_seen", "attempts", "correct"],
+      "properties": {
+        "mastery": {
+          "type": "string",
+          "enum": ["none", "shaky", "developing", "solid", "mastered"]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "last_seen": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 UTC timestamp."
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "correct": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

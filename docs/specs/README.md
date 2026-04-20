@@ -6,7 +6,7 @@ For the full development model, see `docs/development-process.md`.
 
 | Spec | Status |
 |------|--------|
-| _(none yet)_ | — |
+| [Learner Profile](learner-profile.md) | accepted |
 
 ## Template
 

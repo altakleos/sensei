@@ -6,7 +6,7 @@ For the full development model, see `docs/development-process.md`.
 
 | # | Design | Description | Status |
 |---|--------|-------------|--------|
-| _(none yet)_ | — | — | — |
+| 1 | [Learner Profile State](learner-profile-state.md) | YAML shape for `instance/profile.yaml` (v1: `expertise_map` only) | accepted |
 
 ## Template
 
