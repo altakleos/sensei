@@ -1,8 +1,8 @@
-import sys
 """Integration test — end-to-end curriculum lifecycle."""
+
 import json
 import subprocess
-from pathlib import Path
+import sys
 
 import yaml
 

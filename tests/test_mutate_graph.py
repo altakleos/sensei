@@ -1,8 +1,8 @@
-import sys
 """Tests for mutate_graph.py — validated state transitions."""
+
 import json
 import subprocess
-from pathlib import Path
+import sys
 
 import yaml
 
@@ -130,7 +130,7 @@ def test_spawn_fails_cycle(tmp_path):
     # but also make B depend on C? Can't with spawn alone.
     # The only way spawn creates a cycle: if the new node's prereqs
     # form a cycle with existing edges. E.g., A(prereqs=[B]), B(prereqs=[]).
-    # Spawn C(prereqs=[B]) — no cycle. 
+    # Spawn C(prereqs=[B]) — no cycle.
     # Actually impossible to create cycle with spawn alone since new node
     # only adds incoming edges (prereqs). Need existing node pointing to new node.
     # That can't happen since new node didn't exist before.

@@ -21,15 +21,15 @@ import json
 import sys
 from collections import deque
 from pathlib import Path
+from typing import Any
 
 import yaml
-
 
 _DONE_STATES = frozenset({"collapsed", "completed"})
 _EXCLUDED_STATES = frozenset({"collapsed", "active", "completed", "expanded"})
 
 
-def _is_on_frontier(slug: str, nodes: dict[str, dict]) -> bool:
+def _is_on_frontier(slug: str, nodes: dict[str, dict[str, Any]]) -> bool:
     """Check if a node is on the activation frontier."""
     node = nodes.get(slug)
     if not node or node.get("state") in _EXCLUDED_STATES:
@@ -38,7 +38,7 @@ def _is_on_frontier(slug: str, nodes: dict[str, dict]) -> bool:
     return all(nodes.get(p, {}).get("state") in _DONE_STATES for p in prereqs)
 
 
-def _has_cycle(nodes: dict[str, dict]) -> bool:
+def _has_cycle(nodes: dict[str, dict[str, Any]]) -> bool:
     """Kahn's algorithm — returns True if a cycle exists."""
     in_degree: dict[str, int] = {s: 0 for s in nodes}
     for slug, node in nodes.items():
@@ -60,7 +60,7 @@ def _has_cycle(nodes: dict[str, dict]) -> bool:
     return visited < len(nodes)
 
 
-def _frontier_list(nodes: dict[str, dict]) -> list[str]:
+def _frontier_list(nodes: dict[str, dict[str, Any]]) -> list[str]:
     """Compute current frontier slugs."""
     return [s for s in nodes if _is_on_frontier(s, nodes)]
 
@@ -70,7 +70,7 @@ def _fail(op: str, slug: str, msg: str, code: int = 1) -> int:
     return code
 
 
-def _success(op: str, slug: str, state: str, nodes: dict[str, dict]) -> int:
+def _success(op: str, slug: str, state: str, nodes: dict[str, dict[str, Any]]) -> int:
     print(json.dumps({
         "operation": op,
         "node": slug,
@@ -81,7 +81,10 @@ def _success(op: str, slug: str, state: str, nodes: dict[str, dict]) -> int:
     return 0
 
 
-def mutate(nodes: dict[str, dict], op: str, slug: str, prerequisites: list[str] | None, subgraph: dict | None) -> tuple[int, str]:
+def mutate(
+    nodes: dict[str, dict[str, Any]], op: str, slug: str,
+    prerequisites: list[str] | None, subgraph: dict[str, Any] | None,
+) -> tuple[int, str]:
     """Apply mutation. Returns (exit_code, new_state_or_empty)."""
     if op == "activate":
         if slug not in nodes:
@@ -204,10 +207,7 @@ def main(argv: list[str] | None = None) -> int:
                 missing = [p for p in prerequisites if p not in original]
                 msg = f"prerequisite(s) not found: {missing}"
         elif args.operation == "expand":
-            if args.node not in original:
-                msg = f"node '{args.node}' does not exist"
-            else:
-                msg = "subgraph required for expand"
+            msg = f"node '{args.node}' does not exist" if args.node not in original else "subgraph required for expand"
         else:
             msg = "unknown error"
         return _fail(args.operation, args.node, msg)

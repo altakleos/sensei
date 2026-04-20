@@ -18,17 +18,17 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 import yaml
-
 
 _DONE_STATES = frozenset({"collapsed", "completed"})
 _EXCLUDED_STATES = frozenset({"collapsed", "active", "completed", "expanded"})
 
 
 def compute_frontier(
-    nodes: dict[str, dict],
-    hints: list[dict] | None = None,
+    nodes: dict[str, dict[str, Any]],
+    hints: list[dict[str, Any]] | None = None,
     boost_weight: float = 1.5,
     max_boost: float = 2.0,
 ) -> list[str]:

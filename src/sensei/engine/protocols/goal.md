@@ -153,6 +153,24 @@ Regenerate the curriculum with a simpler structure (fewer nodes, flatter graph) 
 
 Find the node with state `active` in the curriculum. Transition to tutor mode.
 
+**Global knowledge check:** Before teaching, check if this topic is already mastered globally:
+
+```
+python .sensei/scripts/global_knowledge.py --profile instance/profile.yaml --topic <active-topic>
+```
+
+If `known == true`: the learner already mastered this elsewhere. Collapse the node:
+
+```
+python .sensei/scripts/mutate_graph.py collapse --topic <topic> --curriculum instance/goals/<slug>.yaml
+```
+
+Say: "You already know [topic] from previous work. Skipping ahead."
+
+Recompute the frontier and activate the next topic. Repeat the global knowledge check for the new topic. Continue until you find a topic that is NOT globally known, then teach it.
+
+**If not globally known:** proceed with teaching.
+
 Run `scripts/frontier.py --curriculum instance/goals/<slug>.yaml` to compute the frontier. Use the returned ordered list to select the next topic. If `instance/hints.yaml` exists, pass `--hints instance/hints.yaml` to incorporate learner-declared priority signals.
 
 If no node is currently `active`, activate the first frontier topic:

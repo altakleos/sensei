@@ -70,6 +70,22 @@ When a transition fires, swap which mode file supplies full content and which su
 
 **If no trigger matches:** persist the current active mode. **If ambiguous:** default to Tutor (asking a clarifying question is always safe).
 
+## Session Start — Goal Selection
+
+If the learner opens a session without specifying what to work on, select the highest-priority active goal:
+
+```
+python .sensei/scripts/goal_priority.py --goals-dir instance/goals/ --profile instance/profile.yaml --now <utc>
+```
+
+If the result is non-empty, load the top-ranked goal and say:
+
+> Continuing with [goal expressed_as]. [reason from priority script]
+
+Then proceed to the goal protocol's Step 6 (begin teaching the active topic).
+
+If no active goals exist, greet the learner in tutor mode and wait for them to express a goal or ask a question.
+
 ## Dispatch Table
 
 When the learner expresses a specific operational intent, dispatch to the corresponding protocol. Protocols run within the active mode — they inherit the mode's behavioral constraints.
