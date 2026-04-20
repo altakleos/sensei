@@ -29,7 +29,7 @@
     },
     "status": {
       "type": "string",
-      "enum": ["active", "paused", "completed"]
+      "enum": ["active", "paused", "abandoned", "completed"]
     },
     "three_unknowns": {
       "$ref": "#/$defs/ThreeUnknowns"

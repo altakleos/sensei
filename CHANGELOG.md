@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ### Added
 
+- Goal lifecycle transitions: pause, resume, abandon, and automatic completion. Goals persist across transitions with full progress preservation.
 - Tutor protocol (`protocols/tutor.md`): the pedagogical engine governing multi-turn teaching via explain→probe→reshape cycles, with explanation strategies by topic type, formative micro-assessment, two-failure prerequisite diagnosis, and mid-session triggers for review weaving and hint integration.
 
 ## [0.1.0a3] — 2026-04-20

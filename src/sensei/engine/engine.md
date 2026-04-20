@@ -99,6 +99,9 @@ When the learner expresses a specific operational intent, dispatch to the corres
 | "Quiz me" / "Am I ready?" / "Test me" | `protocols/assess.md` | accepted |
 | "Challenge me" / "Make it harder" | (Challenger mode — no separate protocol yet) | active via modes |
 | "Process my hints" / "What's in my inbox?" / "New hints" | `protocols/hints.md` | draft |
+| "Pause this goal" / "Take a break" / "Switch goals" | `protocols/goal.md` §Pause | accepted |
+| "Resume [goal]" / "Back to [goal]" / "Continue [goal]" | `protocols/goal.md` §Resume | accepted |
+| "Drop this goal" / "I don't want to learn X" | `protocols/goal.md` §Abandon | accepted |
 | "How am I doing?" / "Show my progress" | `protocols/status.md` | accepted |
 
 For intents without a dedicated protocol, operate in the appropriate mode using that mode's behavioral instructions directly. The mode files ARE the protocol for general interaction.

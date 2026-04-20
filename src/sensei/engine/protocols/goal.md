@@ -225,6 +225,57 @@ This is the ongoing teaching loop. Continue until the learner signals they want 
 
 ---
 
+---
+
+## Lifecycle Transitions
+
+These transitions are triggered by learner intent expressed in natural language. They operate on the currently active goal unless the learner names a specific goal.
+
+### Pause
+
+**Triggers:** "pause this goal" / "take a break" / "switch goals" / "put this on hold"
+
+1. Set `status: paused` in the goal file (`instance/goals/<slug>.yaml`).
+2. Leave the current active node as-is (will resume from there).
+3. Confirm: "Goal paused. Your progress is saved."
+
+### Resume
+
+**Triggers:** "resume [goal]" / "back to [goal]" / "continue [goal]"
+
+1. If another goal is currently active, pause it first (run §Pause).
+2. Set `status: active` in the target goal file.
+3. Recompute the frontier:
+   ```
+   python .sensei/scripts/frontier.py --curriculum instance/goals/<slug>.yaml
+   ```
+4. Identify stale topics:
+   ```
+   python .sensei/scripts/decay.py --profile instance/profile.yaml --curriculum instance/goals/<slug>.yaml
+   ```
+5. Report: "Resuming [goal]. You left off at [active topic]. [N] topics are getting stale."
+6. Offer: continue where you left off, or review stale topics first?
+7. Proceed to Step 6 (begin teaching) based on learner's choice.
+
+### Abandon
+
+**Triggers:** "drop this goal" / "I don't want to learn X anymore" / "abandon [goal]"
+
+1. Confirm: "Are you sure? Your progress will be preserved if you change your mind."
+2. On confirmation: set `status: abandoned` in the goal file.
+3. If this was the active goal, no goal is active. Offer to create or resume another.
+
+### Complete (automatic)
+
+After every `mutate_graph.py complete` or `collapse` operation:
+
+1. Check if ALL nodes in the curriculum have state `collapsed` or `completed`.
+2. If yes: set `status: completed` in the goal file.
+3. Report: "Congratulations — you've completed [goal]! [Summary of what was learned]."
+4. Offer: review topics periodically, set a new goal, or explore related areas?
+
+---
+
 ## Silence profile (binding)
 
 - Tutor mode: ask more than tell. Target ~40% silence (questions, pauses, letting the learner think).
