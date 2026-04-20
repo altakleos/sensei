@@ -264,6 +264,18 @@ def upgrade(target: Path) -> None:
     (sensei_dir / ".sensei-version").write_text(f"{__version__}\n", encoding="utf-8")
 
     click.echo(f"Upgraded .sensei/ from {old_version} → {__version__}")
+
+    # Migrate instance state files to current schema versions
+    instance_dir = target / "instance"
+    if instance_dir.exists():
+        from sensei.engine.scripts.migrate import migrate_instance
+
+        migrated = migrate_instance(instance_dir)
+        if migrated:
+            for desc in migrated:
+                click.echo(f"  Migrated: {desc}")
+        else:
+            click.echo("  Instance schemas already current.")
     click.echo("Instance data (instance/) preserved.")
 
 
