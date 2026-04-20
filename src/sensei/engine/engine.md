@@ -82,7 +82,7 @@ When the learner expresses a specific operational intent, dispatch to the corres
 | "Quiz me" / "Am I ready?" / "Test me" | `protocols/assess.md` | accepted |
 | "Challenge me" / "Make it harder" | (Challenger mode — no separate protocol yet) | active via modes |
 | "Process my hints" / "What's in my inbox?" / "New hints" | `protocols/hints.md` | draft |
-| "How am I doing?" / "Show my progress" | `protocols/status.md` | TBD |
+| "How am I doing?" / "Show my progress" | `protocols/status.md` | accepted |
 
 For intents without a dedicated protocol, operate in the appropriate mode using that mode's behavioral instructions directly. The mode files ARE the protocol for general interaction.
 
