@@ -4,6 +4,7 @@ date: 2026-04-20
 realizes:
   - P-know-the-learner
   - P-forgetting-curve-is-curriculum
+  - P-transfer-is-the-goal
 stressed_by:
   - persona-jacundu
 ---

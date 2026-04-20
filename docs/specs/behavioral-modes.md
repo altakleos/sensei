@@ -6,6 +6,7 @@ realizes:
   - P-silence-is-teaching
   - P-principles-not-modes
   - P-two-failure-prerequisite
+  - P-emotion-cognition-are-one
 stressed_by:
   - persona-jacundu
 ---
