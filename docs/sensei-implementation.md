@@ -4,7 +4,7 @@ The development process in [`development-process.md`](development-process.md) de
 
 For the generic method, read `development-process.md`. For Sensei's artifact choices, read this doc.
 
-> **Status: scaffolding.** Sensei is in the ideation-plus-scaffolding phase. The tables below describe the *intended* shape of Implementation and Verification, but most artifacts are placeholders. Load-bearing principles will be committed as they crystallize from the first real protocol.
+> **Status: scaffolding.** Sensei is in the ideation-plus-scaffolding phase. The tables below describe the *intended* shape of Implementation and Verification, but most artifacts are placeholders. Load-bearing principles will be committed as they crystallize from the first real protocol. The runtime architecture question is resolved — see [ADR-0006](decisions/0006-hybrid-runtime-architecture.md).
 
 ## Implementation Layer (planned)
 
@@ -16,9 +16,21 @@ Implementation in Sensei is realized across three artifact types, all under `src
 | Tunable configuration | `src/sensei/engine/defaults.yaml` | Both | Thresholds, vocabularies, limits, heuristics |
 | Deterministic helpers | `src/sensei/engine/scripts/*.py` (non-`check-*`) | CPython | Mechanical work (config loading; scoring/scheduling math once runtime-code question is resolved) |
 
-### Open Design Question
+### Runtime Architecture (resolved by ADR-0006)
 
-Whether Sensei ships runtime computation code (e.g., FSRS scheduling, mastery scoring, 4-quadrant classification, affect detection) is deliberately unresolved in the scaffolding phase. Answering it drives every subsequent design doc. See the analyst review and `PRODUCT-IDEATION.md` for context; a dedicated ADR is planned.
+**Scripts compute what can be computed; protocols judge what requires understanding.** Sensei ships a hybrid runtime: prose-as-code protocols executed by the LLM, plus deterministic Python helpers executed by CPython. Protocols invoke helpers via shell subprocess.
+
+**V1 helper inventory** (ships with the first protocol):
+
+1. `scripts/config.py` — deep-merge loader (already shipped).
+2. `scripts/mastery-check.py` — mastery-threshold gate for the assessor exception (§3.6).
+3. `scripts/classify-confidence.py` — confidence × correctness → 4-quadrant label (§8.5).
+4. `scripts/decay.py` — forgetting-curve freshness arithmetic.
+5. `scripts/check-*.py` — schema validators, one per instance state file (added as schemas land).
+
+**V2 deferrals** (separate ADR when needed): FSRS full scheduler, FIRe fractional credit propagation, per-student-per-topic speed calibration, affect detection.
+
+See [`decisions/0006-hybrid-runtime-architecture.md`](decisions/0006-hybrid-runtime-architecture.md) for the full rationale, invocation-style decision, and deferred MCP path.
 
 ## Verification Layer (planned)
 

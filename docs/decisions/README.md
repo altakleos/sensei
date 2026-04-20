@@ -11,3 +11,4 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0003 | [Tool-Specific Agent Hook Files](0003-tool-specific-agent-hooks.md) | accepted |
 | 0004 | [Sensei Distribution Model — pip + Local Engine Copy](0004-sensei-distribution-model.md) | accepted |
 | 0005 | [ADR-Lite Format for Behavioral Changes](0005-adr-lite-format.md) | accepted |
+| 0006 | [Hybrid Runtime — Scripts Compute, Protocols Judge](0006-hybrid-runtime-architecture.md) | accepted |
