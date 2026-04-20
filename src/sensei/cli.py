@@ -12,6 +12,7 @@ from __future__ import annotations
 import shutil
 import sys
 from pathlib import Path
+from string import Template
 
 import click
 
@@ -64,11 +65,12 @@ _INSTANCE_CONFIG_YAML = """# Instance-level overrides for Sensei defaults.
 # Leave empty to use engine defaults from .sensei/defaults.yaml.
 """
 
-_STARTER_PROFILE_YAML = """# Sensei learner profile. See docs/specs/learner-profile.md for the contract.
+_STARTER_PROFILE_YAML = """\
+# Sensei learner profile. See docs/specs/learner-profile.md for the contract.
 # Validated by .sensei/scripts/check_profile.py.
 schema_version: 0
-learner_id: {learner_id}
-expertise_map: {{}}
+learner_id: $learner_id
+expertise_map: {}
 """
 
 
@@ -133,7 +135,7 @@ def init(target: Path, force: bool, learner_id: str) -> None:
     instance_profile = target / "instance" / "profile.yaml"
     if not instance_profile.exists():
         instance_profile.write_text(
-            _STARTER_PROFILE_YAML.format(learner_id=learner_id),
+            Template(_STARTER_PROFILE_YAML).substitute(learner_id=learner_id),
             encoding="utf-8",
         )
 

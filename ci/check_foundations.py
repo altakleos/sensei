@@ -36,12 +36,16 @@ VALID_KINDS: frozenset[str] = frozenset({"pedagogical", "technical", "product"})
 
 
 def _split_frontmatter(text: str) -> tuple[dict[str, Any], str]:
+    text = text.replace("\r\n", "\n")
     if not text.startswith("---\n"):
         return {}, text
     end = text.find("\n---\n", 4)
     if end < 0:
         return {}, text
-    fm = yaml.safe_load(text[4:end]) or {}
+    try:
+        fm = yaml.safe_load(text[4:end]) or {}
+    except yaml.YAMLError:
+        return {}, text
     body = text[end + len("\n---\n"):]
     return fm, body
 

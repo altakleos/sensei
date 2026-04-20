@@ -1,6 +1,6 @@
 # Sensei Engine — Kernel
 
-> **Status: scaffolding stub.** No protocols authored yet. The dispatch table below is a placeholder; each entry will be filled in as the corresponding protocol is written.
+> **Status: active.** One protocol authored (`protocols/review.md`). The dispatch table below routes user intent to protocol files under `protocols/`.
 
 This document is the kernel. Every LLM session starts at `AGENTS.md`, which routes here. From here, user intent is dispatched to a protocol file under `protocols/`.
 

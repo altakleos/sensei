@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from datetime import datetime, timezone
 
@@ -62,7 +63,6 @@ def freshness(
     elapsed_days = elapsed_seconds / 86_400.0
     fresh_score = 2.0 ** (-elapsed_days / half_life_days)
 
-    import math
     # freshness hits threshold when elapsed_days / half_life_days = -log2(threshold)
     stale_at_days = -math.log2(stale_threshold) * half_life_days
     days_until_stale = max(0.0, stale_at_days - elapsed_days)
