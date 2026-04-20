@@ -22,7 +22,8 @@ This plan is deliberately front-loaded with a spec and design task because `revi
 
 ### Phase 0 — Prerequisite
 
-- [ ] T0: Update `sensei init` to seed a minimal valid `profile.yaml` (schema_version 0, empty expertise_map, learner_id from CLI flag or prompt) → `src/sensei/cli.py`, test in `tests/test_init.py`
+- [x] T0: Update `sensei init` to seed a minimal valid `profile.yaml` (schema_version 0, empty expertise_map, learner_id from `--learner-id` flag defaulting to `learner`) → `src/sensei/cli.py`, `tests/test_init.py`
+  - *Split out and shipped as a standalone change ahead of the rest of this plan (43/43 tests passing).*
 
 ### Phase 1 — Specify
 

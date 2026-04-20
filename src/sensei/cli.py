@@ -64,6 +64,13 @@ _INSTANCE_CONFIG_YAML = """# Instance-level overrides for Sensei defaults.
 # Leave empty to use engine defaults from .sensei/defaults.yaml.
 """
 
+_STARTER_PROFILE_YAML = """# Sensei learner profile. See docs/specs/learner-profile.md for the contract.
+# Validated by .sensei/scripts/check_profile.py.
+schema_version: 0
+learner_id: {learner_id}
+expertise_map: {{}}
+"""
+
 
 def _engine_source() -> Path:
     """Return a filesystem path to the bundled engine directory.
@@ -94,7 +101,13 @@ def main() -> None:
 @main.command()
 @click.argument("target", type=click.Path(file_okay=False, path_type=Path))
 @click.option("--force", is_flag=True, help="Overwrite an existing .sensei/ directory.")
-def init(target: Path, force: bool) -> None:
+@click.option(
+    "--learner-id",
+    default="learner",
+    show_default=True,
+    help="Identifier written to instance/profile.yaml. Edit later if you prefer a different name.",
+)
+def init(target: Path, force: bool, learner_id: str) -> None:
     """Scaffold a new Sensei instance at TARGET."""
     target = target.resolve()
     target.mkdir(parents=True, exist_ok=True)
@@ -112,11 +125,17 @@ def init(target: Path, force: bool) -> None:
     shutil.copytree(_engine_source(), sensei_dir)
     (sensei_dir / ".sensei-version").write_text(f"{__version__}\n", encoding="utf-8")
 
-    # Instance config directory.
+    # Instance config directory + seed profile.
     (target / "instance").mkdir(exist_ok=True)
     instance_config = target / "instance" / "config.yaml"
     if not instance_config.exists():
         instance_config.write_text(_INSTANCE_CONFIG_YAML, encoding="utf-8")
+    instance_profile = target / "instance" / "profile.yaml"
+    if not instance_profile.exists():
+        instance_profile.write_text(
+            _STARTER_PROFILE_YAML.format(learner_id=learner_id),
+            encoding="utf-8",
+        )
 
     # AGENTS.md + tool shims (ADR-0003).
     (target / "AGENTS.md").write_text(_AGENTS_MD, encoding="utf-8")
@@ -125,6 +144,7 @@ def init(target: Path, force: bool) -> None:
 
     click.echo(f"Created .sensei/ at {sensei_dir}")
     click.echo(f"Wrote AGENTS.md and {len(_SHIMS)} tool-specific shims.")
+    click.echo(f"Seeded instance/profile.yaml with learner_id={learner_id!r}.")
     click.echo("Open this folder with any LLM agent to begin.")
 
 
