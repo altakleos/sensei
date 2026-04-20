@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sensei.dev/schemas/hints.yaml.schema.json",
+  "title": "Sensei Hints Registry",
+  "description": "Hint ingestion registry (instance/hints/hints.yaml). Tracks external hints and their lifecycle.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "hints"],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 0,
+      "description": "Hints schema version. Bump on any field-semantics change."
+    },
+    "hints": {
+      "type": "array",
+      "description": "List of ingested hint entries.",
+      "items": { "$ref": "#/$defs/HintEntry" }
+    }
+  },
+  "$defs": {
+    "HintEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "ingested", "relevance", "topics", "status", "freshness", "content_hash"],
+      "properties": {
+        "file": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Relative path to the hint source file."
+        },
+        "ingested": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 UTC timestamp when the hint was ingested."
+        },
+        "relevance": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Relevance score assigned at triage."
+        },
+        "topics": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "maxItems": 5,
+          "description": "Topic slugs this hint relates to (1-5)."
+        },
+        "cluster": {
+          "type": ["string", "null"],
+          "description": "Optional cluster identifier for grouping related hints."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["triaged", "active", "absorbed", "expired", "irrelevant"],
+          "description": "Lifecycle status of the hint."
+        },
+        "freshness": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Computed freshness score (exponential decay from ingestion)."
+        },
+        "acted_on": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO-8601 UTC timestamp when the hint was acted upon. Null if not yet acted on."
+        },
+        "content_hash": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Hash of hint content for deduplication."
+        }
+      }
+    }
+  }
+}

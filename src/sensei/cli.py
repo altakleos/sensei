@@ -140,6 +140,17 @@ def init(target: Path, force: bool, learner_id: str) -> None:
             encoding="utf-8",
         )
 
+    # Hints ingestion directories and registry.
+    (target / "instance" / "inbox").mkdir(exist_ok=True)
+    (target / "instance" / "inbox" / ".gitkeep").write_text(
+        "# Drop zone for raw learning hints (URLs, snippets, notes).\n", encoding="utf-8"
+    )
+    (target / "instance" / "hints" / "active").mkdir(parents=True, exist_ok=True)
+    (target / "instance" / "hints" / "archive").mkdir(parents=True, exist_ok=True)
+    hints_registry = target / "instance" / "hints" / "hints.yaml"
+    if not hints_registry.exists():
+        hints_registry.write_text("schema_version: 1\nhints: []\n", encoding="utf-8")
+
     # AGENTS.md + tool shims (ADR-0003).
     (target / "AGENTS.md").write_text(_AGENTS_MD, encoding="utf-8")
     for rel_path, content in _SHIMS.items():
