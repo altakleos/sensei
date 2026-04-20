@@ -41,6 +41,7 @@ Verification in Sensei is the set of artifacts that confirm Implementation met i
 | Executable assertions | `src/sensei/engine/scripts/check-*.py` | CPython | Structural checks (frontmatter, schemas, yaml shape) |
 | Rule catalog | `memory/rules.yaml` (in instance) | CPython via `verify.py` | Registry of invariants with their check commands |
 | Top-level runner | `sensei verify` (CLI) | CPython | Entry point for CI and inline invocation |
+| Transcript fixtures | `tests/transcripts/<protocol>.md` + `<protocol>.dogfood.md` | pytest (tier-1, lexical) / LLM-as-judge (tier-2, operator-local) | Assert the LLM interpreting a protocol respects the invariants its spec declares. See [ADR-0011](decisions/0011-transcript-fixtures.md) and [design/transcript-fixtures.md](design/transcript-fixtures.md). |
 
 ## Load-Bearing Principles
 
@@ -51,6 +52,7 @@ Verification in Sensei is the set of artifacts that confirm Implementation met i
 3. **Config over hardcoding.** No magic numbers in protocol prose.
 4. **Validators close the loop.** Every spec invariant that can be checked mechanically has a `check-*.py`.
 5. **Cross-link, don't duplicate.** Point to the authoritative source; never copy content between layers.
+6. **Prose verified by prose.** Every engine protocol earns a fixture file at `tests/transcripts/<protocol>.md` that pins its spec invariants to phrase-level assertions over a committed dogfood transcript. Protocol-level correctness is not a feeling; it is tested material. See [ADR-0011](decisions/0011-transcript-fixtures.md).
 
 Each principle will be locked in as it survives contact with a real protocol. Until then, they are aspirational.
 
