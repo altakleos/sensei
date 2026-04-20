@@ -8,8 +8,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-from sensei.engine.scripts.global_knowledge import check, main as gk_main
-from sensei.engine.scripts.goal_priority import main as gp_main, score_goal
+from sensei.engine.scripts.global_knowledge import main as gk_main
+from sensei.engine.scripts.goal_priority import main as gp_main
 
 # ---------------------------------------------------------------------------
 # Helpers

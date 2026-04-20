@@ -5,7 +5,15 @@
   "description": "Per-goal state file (instance/goals/<slug>.yaml). Defines a curriculum DAG with node states and prerequisites. At most one node may be active at any time (cross-field constraint, not enforceable by JSON Schema alone).",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "goal_id", "expressed_as", "created", "status", "three_unknowns", "nodes"],
+  "required": [
+    "schema_version",
+    "goal_id",
+    "expressed_as",
+    "created",
+    "status",
+    "three_unknowns",
+    "nodes"
+  ],
   "properties": {
     "schema_version": {
       "type": "integer",
@@ -29,7 +37,12 @@
     },
     "status": {
       "type": "string",
-      "enum": ["active", "paused", "abandoned", "completed"]
+      "enum": [
+        "active",
+        "paused",
+        "abandoned",
+        "completed"
+      ]
     },
     "three_unknowns": {
       "$ref": "#/$defs/ThreeUnknowns"
@@ -38,24 +51,65 @@
       "type": "object",
       "description": "Map from topic slug to NodeState. Represents the curriculum DAG.",
       "patternProperties": {
-        "^[a-z][a-z0-9-]*$": { "$ref": "#/$defs/NodeState" }
+        "^[a-z][a-z0-9-]*$": {
+          "$ref": "#/$defs/NodeState"
+        }
       },
       "additionalProperties": false
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "high",
+        "normal",
+        "low"
+      ],
+      "default": "normal",
+      "description": "Learner-expressed goal priority for cross-goal scheduling"
+    },
+    "paused_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "ISO timestamp when goal was paused (null if never paused)"
+    },
+    "resumed_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "ISO timestamp when goal was last resumed (null if never resumed)"
     }
   },
   "$defs": {
     "ThreeUnknowns": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["prior_state", "target_state", "constraints"],
+      "required": [
+        "prior_state",
+        "target_state",
+        "constraints"
+      ],
       "properties": {
         "prior_state": {
           "type": "string",
-          "enum": ["unknown", "none", "partial", "strong"]
+          "enum": [
+            "unknown",
+            "none",
+            "partial",
+            "strong"
+          ]
         },
         "target_state": {
           "type": "string",
-          "enum": ["vague", "emerging", "clear"]
+          "enum": [
+            "vague",
+            "emerging",
+            "clear"
+          ]
         },
         "constraints": {
           "type": "string",
@@ -66,19 +120,34 @@
     "NodeState": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["state", "prerequisites"],
+      "required": [
+        "state",
+        "prerequisites"
+      ],
       "properties": {
         "state": {
           "type": "string",
-          "enum": ["collapsed", "expanded", "spawned", "active", "completed"]
+          "enum": [
+            "collapsed",
+            "expanded",
+            "spawned",
+            "active",
+            "completed"
+          ]
         },
         "prerequisites": {
           "type": "array",
-          "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
           "description": "List of prerequisite topic slugs (must reference existing nodes)."
         },
         "spawned_from": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "default": null,
           "description": "Parent topic slug if this node was a gap-fill spawn, else null."
         }
