@@ -12,3 +12,5 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0004 | [Sensei Distribution Model — pip + Local Engine Copy](0004-sensei-distribution-model.md) | accepted |
 | 0005 | [ADR-Lite Format for Behavioral Changes](0005-adr-lite-format.md) | accepted |
 | 0006 | [Hybrid Runtime — Scripts Compute, Protocols Judge](0006-hybrid-runtime-architecture.md) | accepted |
+| 0007 | [Review Protocol Config Knobs](0007-review-config-knobs.md) | accepted (lite) |
+| 0008 | [Review Writes Only Audit Fields at V1](0008-review-writes-audit-fields-only.md) | accepted (lite) |
