@@ -46,6 +46,8 @@ flowchart TD
 - Frontier computation: `.sensei/scripts/frontier.py`
 - Graph mutations: `.sensei/scripts/mutate_graph.py`
 
+**Python invocation:** Use `python3 -c "import sensei; print(sensei.__file__)"` to find the installed package, then use that Python interpreter for all script calls. If `jsonschema` or `pyyaml` is missing, install them with `pip install jsonschema pyyaml` in the same environment that has `sensei-tutor` installed.
+
 Current UTC timestamp is generated with `date -u +%Y-%m-%dT%H:%M:%SZ` whenever the protocol needs "now".
 
 ---
@@ -102,33 +104,39 @@ Generate a draft curriculum as a list of 5–12 topics with prerequisite relatio
 Rules for generation:
 
 - Bias toward the 70th-percentile learner in this domain. Not a complete beginner, not an expert.
-- Each topic is a node with: `slug`, `title`, `state`, `prerequisites` (list of slugs).
 - The graph MUST be a DAG — no cycles. A topic cannot be its own transitive prerequisite.
 - Set the first frontier topic (a topic with no unmet prerequisites) to state `active`.
-- All other topics start as `pending`.
+- All other topics start as `spawned` (meaning: not yet started, waiting for prerequisites or activation).
 - The draft is intentionally imprecise but usefully wrong. Err toward inclusion; nodes can be collapsed later.
 
-Write the goal file to `instance/goals/<slug>.yaml` in this format:
+**Valid node states:** `active` (currently being taught — at most ONE), `spawned` (not yet started), `collapsed` (skip — already known), `completed` (mastered), `expanded` (needs sub-topics). For initial generation, use only `active` (one node) and `spawned` (all others).
+
+Write the goal file to `instance/goals/<slug>.yaml` in **exactly** this format:
 
 ```yaml
-goal: <human-readable goal statement>
-slug: <slug>
+schema_version: 0
+goal_id: <slug>
+expressed_as: "<learner's original statement>"
+created: "<current UTC ISO-8601>"
 status: active
-created: <current UTC ISO-8601>
-prior_state: <unknown|none|partial|strong>
-target_state: <vague|emerging|clear>
-constraints: <free text or "none">
-curriculum:
-  - slug: <topic-slug>
-    title: <Topic Title>
-    state: <active|pending|collapsed|completed|expanded|spawned>
+three_unknowns:
+  prior_state: <unknown|none|partial|strong>
+  target_state: <vague|emerging|clear>
+  constraints: "<free text or none>"
+nodes:
+  <topic-slug>:
+    state: active
     prerequisites: []
-  - slug: <topic-slug>
-    title: <Topic Title>
-    state: pending
+  <topic-slug>:
+    state: spawned
     prerequisites: [<prerequisite-slug>]
+  <topic-slug>:
+    state: spawned
+    prerequisites: [<slug-a>, <slug-b>]
   # ... 5-12 topics total
 ```
+
+**Critical:** The file must match this schema exactly. `nodes` is a map (not a list). Each node has only `state` and `prerequisites`. No `title` field. Topic slugs are lowercase with hyphens only (`^[a-z][a-z0-9-]*$`).
 
 ## Step 5 — Validate the goal file
 

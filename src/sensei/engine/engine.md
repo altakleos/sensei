@@ -116,6 +116,16 @@ These behavioral invariants hold across every mode and every protocol:
 - **Forbidden language** — "Great question!", "Nice work!", apologetic softeners, and praise tokens are forbidden in all modes. (Source: `protocols/personality.md`)
 - **Profile updates are automatic** — after every pedagogical interaction that reveals learner state, update `instance/profile.yaml`. (Source: `docs/specs/learner-profile.md`)
 
+## Running Helper Scripts
+
+All helper scripts require `pyyaml` and `jsonschema`. When invoking scripts, use the Python that has `sensei-tutor` installed:
+
+```
+python3 .sensei/scripts/<script>.py --args
+```
+
+If you get `ModuleNotFoundError: No module named 'jsonschema'` or `'yaml'`, the current Python doesn't have the dependencies. Fix: `pip install jsonschema pyyaml` in the active environment, or use the Python from the sensei-tutor installation.
+
 ## Configuration
 
 All tunables live in `defaults.yaml` (engine) and are overridden by `instance/config.yaml` (learner instance). Protocols reference values via `config.dotpath` notation.
