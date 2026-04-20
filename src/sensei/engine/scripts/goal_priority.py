@@ -45,7 +45,7 @@ def _is_stale(last_seen: str, now: datetime) -> bool:
 def score_goal(goal: dict[str, Any], profile: dict[str, Any], now: datetime) -> dict[str, Any] | None:
     """Score a single goal. Returns None if goal should be skipped."""
     status = goal.get("status", "")
-    if status not in ("active", "paused"):
+    if status != "active":
         return None
 
     slug = goal.get("goal_id", "unknown")

@@ -130,6 +130,7 @@ def init(target: Path, force: bool, learner_id: str) -> None:
 
     # Instance config directory + seed profile.
     (target / "instance").mkdir(exist_ok=True)
+    (target / "instance" / "goals").mkdir(exist_ok=True)
     instance_config = target / "instance" / "config.yaml"
     if not instance_config.exists():
         instance_config.write_text(_INSTANCE_CONFIG_YAML, encoding="utf-8")
