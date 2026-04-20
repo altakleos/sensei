@@ -23,7 +23,7 @@ Implements the `release-process` spec via the mechanism in `design/release-workf
 - [x] T5: Unit tests from T2 pass locally (34 new tests; suite 85/85).
 - [x] T6: `pytest` full suite green including the new CI-validator tests.
 - [x] T7: Local wheel build + smoke-check — `python -m build` clean (no duplicate-name warnings), `python ci/check_package_contents.py --wheel dist/*.whl --tag v0.0.0` returns status `ok`. Also dropped the redundant `[tool.hatch.build.targets.wheel.force-include]` from `pyproject.toml` that had been causing the warnings.
-- [ ] T8: **(Blocked on maintainer)** — after PyPI trusted publisher + `pypi` environment are set up, push a pre-release tag like `v0.0.1-test` to observe the workflow end-to-end. Block the publish gate by rejecting the environment approval. Delete the test tag. No artifact on PyPI.
+- [x] T8: End-to-end exercise — first real tag `v0.1.0a1` pushed. First publish attempt failed with `invalid-publisher` (PyPI pending-publisher not yet registered); after registering, `gh run rerun --failed` succeeded on second approval. Release live at https://pypi.org/project/sensei-tutor/0.1.0a1/ and https://github.com/altakleos/sensei/releases/tag/v0.1.0a1. Clean-venv `pip install sensei-tutor==0.1.0a1 --pre` + `sensei init` verified the published wheel scaffolds correctly and the seeded profile validates.
 
 ## Acceptance Criteria
 
