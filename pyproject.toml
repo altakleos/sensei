@@ -34,5 +34,6 @@ include = [
     "src/sensei",
     "README.md",
     "LICENSE",
+    "CHANGELOG.md",
     "pyproject.toml",
 ]

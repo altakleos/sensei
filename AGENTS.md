@@ -53,6 +53,11 @@ sensei/
 - ADRs are immutable once accepted. To reverse one, write a superseding ADR.
 - `PRODUCT-IDEATION.md` and `RESEARCH-BIBLIOGRAPHY.md` are the pre-decomposition record. Do not edit them casually — they will be broken into specs and design docs in a dedicated pass.
 
+## Contribution Conventions
+
+- **Commit messages** — prefer [Conventional Commits](https://www.conventionalcommits.org/) prefixes (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`). Convention only, no CI gate.
+- **Changelog** — append every user-visible change to `## [Unreleased]` in `CHANGELOG.md` in the same commit that introduces it. Don't batch at release time. Per [docs/specs/release-communication.md](docs/specs/release-communication.md). Refactors, internal tests, and docs-only edits don't need a changelog entry.
+
 ## References
 
 - [`docs/development-process.md`](docs/development-process.md) — the SDD method

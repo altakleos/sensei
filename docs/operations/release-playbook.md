@@ -22,7 +22,7 @@ The release mechanism and its invariants are documented in the spec [`docs/specs
    ```bash
    pip index versions sensei-tutor
    ```
-5. Create a GitHub Release on the tag with notes.
+5. Create a GitHub Release. Body is the `CHANGELOG.md` section for `vX.Y.Z` verbatim plus a `pip install sensei-tutor==X.Y.Z` install hint. Per [docs/specs/release-communication.md](../specs/release-communication.md), the changelog is the canonical "what changed" artifact; the Release is a derived view.
 
 **Tag patterns the workflow matches:** `v1.2.3`, `v0.1.0-alpha`, `v0.1.0-rc.1`, `v0.1.0a1`, `v0.1.0b2`.
 
@@ -49,6 +49,7 @@ A **yank** hides a release from `pip install sensei-tutor` (without a pinned ver
 2. Find the release, click **Options → Yank**
 3. Enter a short reason (shown to users who pinned to the yanked version)
 4. Confirm
+5. Amend `CHANGELOG.md` in a follow-up commit: append `**Yanked:** <reason, link to fix version>` under the yanked release's heading. Per `docs/specs/release-communication.md`, the entry itself is **never deleted** — yanking hides the version from unpinned installs, so anyone who pinned it deserves to find an explanation in the changelog.
 
 **When to yank vs delete:** Always yank first. Delete only if the release contains secrets or malicious code (deletion is permanent and breaks anyone with a pinned version). PyPI does not allow re-uploading a deleted version.
 
@@ -122,7 +123,7 @@ Their `.sensei/` directory was left untouched by the bad CLI (per upgrade atomic
 Before tagging:
 
 - [ ] CI green on `main`
-- [ ] `CHANGELOG.md` updated (if maintained)
+- [ ] `CHANGELOG.md` `## [Unreleased]` section promoted to `vX.Y.Z` with today's date (per [docs/specs/release-communication.md](../specs/release-communication.md) — `ci/check_package_contents.py` rejects the build if this is missing)
 - [ ] Version bumped in `src/sensei/__init__.py`
 - [ ] `docs/plans/` has no `status: in-progress` plans that should block
 - [ ] `pytest` passes locally
@@ -154,6 +155,7 @@ The environment ID `14342694313` is stable — the `pypi` environment in `altakl
 ## References
 
 - Release process spec: [docs/specs/release-process.md](../specs/release-process.md)
+- Release communication spec: [docs/specs/release-communication.md](../specs/release-communication.md)
 - Release workflow design: [docs/design/release-workflow.md](../design/release-workflow.md)
 - Release plan (prerequisites + acceptance criteria): [docs/plans/release-workflow.md](../plans/release-workflow.md)
 - Distribution ADR: [docs/decisions/0004-sensei-distribution-model.md](../decisions/0004-sensei-distribution-model.md)
