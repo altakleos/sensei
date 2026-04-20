@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ### Added
 
+- Reviewer protocol (`protocols/reviewer.md`): structured code/solution review with three-tier feedback (what works, issues, key learning), self-assessment calibration, and iterative revision support.
 - Challenger protocol (`protocols/challenger.md`): structured challenge sequences with difficulty calibration, challenge-type selection from the disruption toolkit, observe→calibrate loop, and profile-tracked weakness patterns.
 - Cross-goal intelligence: `global_knowledge.py` (skip already-mastered topics across goals) and `goal_priority.py` (rank goals by priority, decay risk, and recency for session start).
 
