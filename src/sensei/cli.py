@@ -195,6 +195,40 @@ def status(target: Path) -> None:
         parts = [f"{v} {k}" for k, v in levels.items() if v > 0]
         click.echo(f"Mastery:  {', '.join(parts)}")
 
+        # Stale topics (due for review)
+        from datetime import datetime, timezone
+
+        now = datetime.now(tz=timezone.utc)
+        defaults_path = sensei_dir / "defaults.yaml"
+        defaults = yaml.safe_load(defaults_path.read_text()) if defaults_path.exists() else {}
+        memory_cfg = defaults.get("memory", {}) if isinstance(defaults, dict) else {}
+        half_life = float(memory_cfg.get("half_life_days", 7))
+        threshold = float(memory_cfg.get("stale_threshold", 0.5))
+
+        stale: list[str] = []
+        for slug, state in expertise.items():
+            if not isinstance(state, dict):
+                continue
+            last_seen_str = state.get("last_seen")
+            if not last_seen_str:
+                stale.append(slug)
+                continue
+            try:
+                last_seen = datetime.fromisoformat(str(last_seen_str).replace("Z", "+00:00"))
+                elapsed = (now - last_seen).total_seconds() / 86400.0
+                freshness = 2.0 ** (-elapsed / half_life)
+                if freshness < threshold:
+                    stale.append(slug)
+            except (ValueError, TypeError):
+                stale.append(slug)
+
+        if stale:
+            click.echo(f"Stale:    {len(stale)} topic{'s' if len(stale) != 1 else ''} due for review")
+            for s in stale[:5]:
+                click.echo(f"          - {s}")
+            if len(stale) > 5:
+                click.echo(f"          ... and {len(stale) - 5} more")
+
 
 @main.command()
 def upgrade() -> None:
