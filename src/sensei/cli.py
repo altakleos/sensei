@@ -268,10 +268,65 @@ def upgrade(target: Path) -> None:
 
 
 @main.command()
-def verify() -> None:
-    """Run validators (stub)."""
-    click.echo("verify: no validators yet")
-    sys.exit(0)
+@click.argument("target", type=click.Path(exists=True, file_okay=False, path_type=Path), default=".")
+def verify(target: Path) -> None:
+    """Verify engine bundle integrity: expected files present, profile valid."""
+    target = target.resolve()
+    sensei_dir = target / ".sensei"
+    if not sensei_dir.exists():
+        raise click.ClickException(f"Not a Sensei instance: {target} (no .sensei/ directory).")
+
+    errors: list[str] = []
+
+    expected = [
+        "engine.md",
+        "defaults.yaml",
+        ".sensei-version",
+        "scripts/config.py",
+        "scripts/check_profile.py",
+        "scripts/classify_confidence.py",
+        "scripts/decay.py",
+        "scripts/mastery_check.py",
+        "scripts/check_goal.py",
+        "protocols/review.md",
+        "protocols/assess.md",
+        "protocols/goal.md",
+        "protocols/personality.md",
+        "protocols/modes/tutor.md",
+        "protocols/modes/assessor.md",
+        "protocols/modes/challenger.md",
+        "protocols/modes/reviewer.md",
+        "schemas/profile.schema.json",
+    ]
+    for rel in expected:
+        if not (sensei_dir / rel).exists():
+            errors.append(f"missing: .sensei/{rel}")
+
+    profile_path = target / "instance" / "profile.yaml"
+    if profile_path.exists():
+        try:
+            profile = yaml.safe_load(profile_path.read_text())
+            if isinstance(profile, dict):
+                from sensei.engine.scripts.check_profile import validate_profile
+
+                v_status, errs = validate_profile(profile)
+                if v_status != "ok":
+                    for e in errs:
+                        errors.append(f"profile: {e}")
+            else:
+                errors.append("profile: not a YAML mapping")
+        except yaml.YAMLError as exc:
+            errors.append(f"profile: invalid YAML — {exc}")
+    else:
+        errors.append("missing: instance/profile.yaml")
+
+    if errors:
+        click.echo("FAIL")
+        for e in errors:
+            click.echo(f"  ✗ {e}")
+        sys.exit(1)
+    else:
+        click.echo("OK — engine bundle intact, profile valid.")
 
 
 if __name__ == "__main__":

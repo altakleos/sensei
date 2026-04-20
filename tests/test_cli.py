@@ -65,10 +65,18 @@ def test_upgrade_fails_without_instance(tmp_path: Path) -> None:
     assert result.exit_code != 0
 
 
-def test_verify_exits_zero() -> None:
+def test_verify_exits_zero(tmp_path: Path) -> None:
     runner = CliRunner()
-    result = runner.invoke(main, ["verify"])
+    runner.invoke(main, ["init", str(tmp_path / "inst")])
+    result = runner.invoke(main, ["verify", str(tmp_path / "inst")])
     assert result.exit_code == 0
+    assert "OK" in result.output
+
+
+def test_verify_fails_without_instance(tmp_path: Path) -> None:
+    runner = CliRunner()
+    result = runner.invoke(main, ["verify", str(tmp_path)])
+    assert result.exit_code != 0
 
 
 def test_version_flag() -> None:

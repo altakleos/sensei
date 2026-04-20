@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sensei.dev/schemas/goal.schema.json",
+  "title": "Sensei Curriculum Goal",
+  "description": "Per-goal state file (instance/goals/<slug>.yaml). Defines a curriculum DAG with node states and prerequisites. At most one node may be active at any time (cross-field constraint, not enforceable by JSON Schema alone).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "goal_id", "expressed_as", "created", "status", "three_unknowns", "nodes"],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 0,
+      "description": "Goal schema version. Bump on any field-semantics change."
+    },
+    "goal_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "URL-safe slug identifying this goal. Immutable once set."
+    },
+    "expressed_as": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Learner's original goal statement in natural language."
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC timestamp of goal creation."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "paused", "completed"]
+    },
+    "three_unknowns": {
+      "$ref": "#/$defs/ThreeUnknowns"
+    },
+    "nodes": {
+      "type": "object",
+      "description": "Map from topic slug to NodeState. Represents the curriculum DAG.",
+      "patternProperties": {
+        "^[a-z][a-z0-9-]*$": { "$ref": "#/$defs/NodeState" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "ThreeUnknowns": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prior_state", "target_state", "constraints"],
+      "properties": {
+        "prior_state": {
+          "type": "string",
+          "enum": ["unknown", "none", "partial", "strong"]
+        },
+        "target_state": {
+          "type": "string",
+          "enum": ["vague", "emerging", "clear"]
+        },
+        "constraints": {
+          "type": "string",
+          "description": "Free-text description of time/resource constraints."
+        }
+      }
+    },
+    "NodeState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "prerequisites"],
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["collapsed", "expanded", "spawned", "active", "completed"]
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "description": "List of prerequisite topic slugs (must reference existing nodes)."
+        },
+        "spawned_from": {
+          "type": ["string", "null"],
+          "default": null,
+          "description": "Parent topic slug if this node was a gap-fill spawn, else null."
+        }
+      }
+    }
+  }
+}
