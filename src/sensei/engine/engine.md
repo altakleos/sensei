@@ -25,7 +25,8 @@ Every user-facing operation maps to exactly one protocol. All entries below are 
 |---|---|---|
 | "I want to learn X" | `protocols/goal.md` | TBD |
 | "Teach me" / "Let's work on X" | `protocols/tutor.md` | TBD |
-| "Review my solution" | `protocols/review.md` | TBD |
+| "Let's review" / "What should I review?" / "Quiz me on what I've learned" | `protocols/review.md` | accepted |
+| "Review my solution" (code review) | `protocols/review-code.md` | TBD |
 | "Quiz me" / "Am I ready?" | `protocols/assess.md` | TBD |
 | "Challenge me" | `protocols/challenge.md` | TBD |
 | "How am I doing?" | `protocols/status.md` | TBD |

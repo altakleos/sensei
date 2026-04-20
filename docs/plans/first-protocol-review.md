@@ -38,13 +38,15 @@ Resolved during T2 design:
 
 ### Phase 3 — Implement the protocol
 
-- [ ] T3: Write `src/sensei/engine/protocols/review.md` as prose-as-code (numbered steps, config references, shell invocations in fenced blocks, tone calibration) (depends: T2) → `src/sensei/engine/protocols/review.md`
-- [ ] T4: If T2 surfaces a need: add a helper to pick the next-due topic from decay output (e.g., `scripts/next_due_topic.py`). Otherwise defer.
+- [x] T3: `src/sensei/engine/protocols/review.md` — full prose-as-code with nine numbered steps, shell-subprocess helper invocations, stop-signal list, silence profile binding, error-handling table (depends: T2) → `src/sensei/engine/protocols/review.md`
+- [x] T3b: Populate `defaults.yaml` with `memory.half_life_days: 7.0` and `memory.stale_threshold: 0.5` → `src/sensei/engine/defaults.yaml`
+- [~] T4: **Not needed.** T2 design resolved the question-generation concern as "prose-only at v1"; no helper shipped. Deferred until a protocol actually needs deterministic question templating.
 
 ### Phase 4 — Verify
 
-- [ ] T5: Acceptance tests — integration-ish: synthesize a profile with several topics at varying freshness, run the helpers in the sequence the protocol specifies, assert the expected behavioural properties (stale-first ordering, no reteach before retrieval, state write-back passes validation) → `tests/protocols/test_review.py`
-- [ ] T6: Update `engine.md` dispatch table to reflect that `review.md` is the first populated entry (depends: T3) → `src/sensei/engine/engine.md`
+- [x] T5: Orchestration integration tests — synthesize profiles with varying freshness, drive helpers in protocol sequence, assert stale-first ranking, tie-break behaviour, v1 update rule preserves cross-field invariant, all four quadrants produce valid updates (8 tests) → `tests/scripts/test_review_protocol.py`
+  - *Does not test LLM prose interpretation. Behavioural correctness of the protocol itself requires dogfood testing with a real LLM agent.*
+- [x] T6: Update `engine.md` dispatch — review signals route to `protocols/review.md` (accepted); code-review intent re-assigned to future `protocols/review-code.md` → `src/sensei/engine/engine.md`
 
 ## Acceptance Criteria
 
