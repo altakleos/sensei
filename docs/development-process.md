@@ -280,21 +280,20 @@ Bug fixes, threshold tuning, documentation improvements, presentation/formatting
 
 ## Diagrams
 
-Mermaid diagrams are inline in `.md` files (GitHub renders them natively). They enhance prose; they never replace it.
+Mermaid diagrams are inline in `.md` files (GitHub renders them natively). They enhance prose; they never replace it. Use them anywhere a visual clarifies a concept that prose alone struggles to convey — relationships, flows, states, hierarchies, or mental models.
 
-### When a diagram is required
+### When to use a diagram
 
-- **Specs with state machines or ordered enums** — include a `stateDiagram-v2` showing states and valid transitions.
-- **Design docs with multi-step orchestration** (3+ steps involving multiple actors) — include a `sequenceDiagram` showing actor handoffs.
+- **State machines or ordered enums** — a `stateDiagram-v2` makes transitions visible at a glance.
+- **Multi-step orchestration** (3+ steps, multiple actors) — a `sequenceDiagram` shows handoffs.
+- **Concept explanation** — a flowchart or graph can clarify a principle's implications, a spec's decision tree, or a design's architecture faster than prose paragraphs.
+- **Dependency or hierarchy** — `graph TD/LR` for layer stacks, provenance chains, or plan dependencies.
 
-### When a diagram is optional but encouraged
-
-- Architecture or composition diagrams in design docs (use `graph LR` or `graph TD`).
-- Structural overviews in index READMEs (dependency graphs, provenance chains).
+Diagrams are welcome in any artifact type — specs, design docs, principles, READMEs — whenever they earn their keep by making something clearer. The test: would a contributor understand the concept faster with the diagram than without it?
 
 ### When diagrams are not expected
 
-ADRs, principles, personas, vision documents, individual plan task lists, operations runbooks.
+Don't force them. A flat list of invariants doesn't need a diagram. A narrative persona doesn't need a flowchart. If the prose is already clear and the diagram would just restate it in boxes, skip it.
 
 ### Conventions
 
