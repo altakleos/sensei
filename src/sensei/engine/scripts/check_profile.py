@@ -24,13 +24,13 @@ from typing import Any
 import yaml
 from jsonschema import Draft202012Validator
 
-
 _SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schemas" / "profile.schema.json"
 
 
 def _load_schema() -> dict[str, Any]:
     with _SCHEMA_PATH.open("r", encoding="utf-8") as fh:
-        return json.load(fh)
+        schema: dict[str, Any] = json.load(fh)
+    return schema
 
 
 def _check_cross_field(profile: dict[str, Any]) -> list[str]:

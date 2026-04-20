@@ -118,7 +118,7 @@ def check(foundations_root: Path, specs_root: Path) -> tuple[list[str], list[str
     allowed = discover_allowed_slugs(foundations_root)
 
     # Principle `kind:` validation
-    for slug, info in allowed.items():
+    for _slug, info in allowed.items():
         if info["type"] == "principle":
             kind = info.get("kind")
             if kind not in VALID_KINDS:
@@ -174,12 +174,11 @@ def check(foundations_root: Path, specs_root: Path) -> tuple[list[str], list[str
 
     # Orphan-principle warnings
     for slug, info in allowed.items():
-        if info["type"] == "principle" and info.get("status") == "accepted":
-            if slug not in referenced:
-                warnings.append(
-                    f"{info['path']}: principle {slug!r} is accepted but "
-                    f"not referenced by any spec or persona"
-                )
+        if info["type"] == "principle" and info.get("status") == "accepted" and slug not in referenced:
+            warnings.append(
+                f"{info['path']}: principle {slug!r} is accepted but "
+                f"not referenced by any spec or persona"
+            )
 
     return errors, warnings
 

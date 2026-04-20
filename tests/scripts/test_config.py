@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from sensei.engine.scripts.config import load_config, _deep_merge
+from sensei.engine.scripts.config import _deep_merge, load_config
 
 
 def _write_yaml(path: Path, content: str) -> None:

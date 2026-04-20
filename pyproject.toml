@@ -18,6 +18,10 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
+    "mypy>=1.10",
+    "ruff>=0.4",
+    "types-PyYAML>=6.0",
+    "types-jsonschema>=4.18",
 ]
 
 [project.scripts]
@@ -37,3 +41,21 @@ include = [
     "CHANGELOG.md",
     "pyproject.toml",
 ]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+packages = ["sensei"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[tool.ruff]
+target-version = "py310"
+src = ["src", "tests", "ci"]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]

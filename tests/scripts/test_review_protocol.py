@@ -13,10 +13,8 @@ a real LLM agent and is out of scope for pytest.
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 from typing import Any
 
-import pytest
 import yaml
 
 from sensei.engine.scripts.check_profile import validate_profile

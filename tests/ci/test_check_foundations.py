@@ -4,11 +4,9 @@ from __future__ import annotations
 
 import importlib.util
 import json
-import sys
 from pathlib import Path
 
 import pytest
-
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _VALIDATOR_PATH = _REPO_ROOT / "ci" / "check_foundations.py"

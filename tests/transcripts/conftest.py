@@ -13,7 +13,6 @@ See `docs/design/transcript-fixtures.md` for the full design, and
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 from typing import Any
 
