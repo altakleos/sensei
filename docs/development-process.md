@@ -156,12 +156,23 @@ The simplest path. A threshold is wrong, a check has a bug, a configuration valu
 
 ## Relationships Between Layers
 
+<!-- Diagram: illustrates the directional relationships between SDD layers -->
+```mermaid
+---
+title: SDD Layer Relationships
+---
+graph TD
+    F["Foundations\n(Vision · Principles · Personas)"]
+    S[Specs] --> D[Design Docs]
+    D --> ADR[ADRs]
+    D --> P[Plans]
+    P --> I[Implementation]
+    I --> V[Verification]
+    V -.->|"enforces"| S
+    F -.->|"cited by"| S
+    F -.->|"cited by"| D
 ```
-Specs ────────► Design Docs ────────► Implementation
-                     │                     │
-                     ▼                     ▼
-                   ADRs              Verification
-```
+*Figure 1. Foundations sit above the stack as source material. Specs drive design; design produces ADRs and plans; plans drive implementation; verification enforces specs.*
 
 **Specs drive Design Docs.** A spec's intent constrains the solution space for the design.
 
@@ -266,6 +277,44 @@ Concrete triggers (any one):
 ### No ADR needed
 
 Bug fixes, threshold tuning, documentation improvements, presentation/formatting changes, adding a new output type that follows existing patterns, routine implementation updates with no meaningful alternative.
+
+## Diagrams
+
+Mermaid diagrams are inline in `.md` files (GitHub renders them natively). They enhance prose; they never replace it.
+
+### When a diagram is required
+
+- **Specs with state machines or ordered enums** — include a `stateDiagram-v2` showing states and valid transitions.
+- **Design docs with multi-step orchestration** (3+ steps involving multiple actors) — include a `sequenceDiagram` showing actor handoffs.
+
+### When a diagram is optional but encouraged
+
+- Architecture or composition diagrams in design docs (use `graph LR` or `graph TD`).
+- Structural overviews in index READMEs (dependency graphs, provenance chains).
+
+### When diagrams are not expected
+
+ADRs, principles, personas, vision documents, individual plan task lists, operations runbooks.
+
+### Conventions
+
+- **Inline only.** No separate `.mmd` files. The diagram lives next to the prose it illustrates.
+- **Anchor comment.** Each diagram has a comment above it: `<!-- Diagram: illustrates §Section Name -->`. This tells future editors which prose section the diagram serves.
+- **Numbered caption.** Each diagram has a caption below it: `*Figure N. Description.*`
+- **Accessibility.** Include `accTitle` and `accDescr` in the mermaid block when the diagram conveys information not available in surrounding prose.
+- **No theme specification.** Never use `%%{init: {'theme': ...}}%%` — let GitHub handle dark/light mode.
+- **Complexity ceiling.** ≤15 nodes per diagram. If bigger, decompose the concept into multiple diagrams or simplify.
+- **Maintenance.** When editing a section with an adjacent diagram, verify the diagram still matches. Diagram rot is a defect with the same weight as stale prose.
+
+### Diagram type guide
+
+| Content pattern | Diagram type | Example |
+|---|---|---|
+| Ordered states with transition rules | `stateDiagram-v2` | Mastery levels, behavioral mode transitions |
+| Multi-step protocol with actor handoffs | `sequenceDiagram` | Review protocol, assessment flow |
+| Hierarchy or dependency graph | `graph TD` | SDD layer stack, plan dependencies |
+| Pipeline or composition flow | `graph LR` | Context composition, goal lifecycle, provenance chain |
+| Data model with typed fields | `classDiagram` | Profile schema (if complex enough to warrant it) |
 
 ---
 

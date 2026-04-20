@@ -29,6 +29,22 @@ docs/research/
 
 ## Provenance Chain
 
+<!-- Diagram: illustrates the research provenance chain -->
+```mermaid
+graph LR
+    B["bibliography.md\n#1–#58"] --> S1["synthesis/\nlearning-science"]
+    B --> S2["synthesis/\nadaptive-personalization"]
+    B --> S3["synthesis/\naccelerated-performance"]
+    B --> S4["synthesis/\ncompetitive-landscape"]
+    S1 --> P1["principles/\nforgetting-curve"]
+    S1 --> P2["principles/\nsilence-is-teaching"]
+    S2 --> P3["principles/\nknow-the-learner"]
+    S3 --> P4["principles/\ntwo-failure-prerequisite"]
+    S3 --> SP["specs/\nassessment-protocol"]
+    P1 --> SP2["specs/\nreview-protocol"]
+```
+*Figure 1. Provenance chain: bibliography entries flow through synthesis docs into principles and specs.*
+
 ```
 bibliography.md #N  →  synthesis/<theme>.md [Bibliography #N]  →  principle Rationale / spec Rationale
 ```

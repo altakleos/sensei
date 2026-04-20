@@ -27,6 +27,42 @@ One file owns the full read → rank → ask → classify → write → re-valid
 
 ### The orchestration (nine steps)
 
+<!-- Diagram: illustrates the 9-step review protocol orchestration -->
+```mermaid
+sequenceDiagram
+    participant M as Mentor (LLM)
+    participant L as Learner
+    participant CP as check_profile.py
+    participant D as decay.py
+    participant CC as classify_confidence.py
+    participant P as profile.yaml
+
+    M->>CP: 1. Validate profile
+    CP-->>M: ok / error
+
+    loop Each topic in expertise_map
+        M->>D: 2. Check freshness
+        D-->>M: stale: true/false
+    end
+
+    Note over M: 3. Exit if nothing stale
+    Note over M: 4. Rank by freshness ↑
+
+    loop Each stale topic (most stale first)
+        M->>L: 5. Pose retrieval question
+        L-->>M: Response
+        M->>CC: 6. Classify (confidence × correctness)
+        CC-->>M: quadrant + interpretation
+        M->>P: 7. Update (last_seen, attempts, correct)
+        M->>CP: 7. Re-validate
+        CP-->>M: ok / error
+        Note over M,L: 8. Continue or exit
+    end
+
+    M->>L: 9. Sign-off (one line)
+```
+*Figure 1. Review protocol orchestration: the LLM drives the loop, invoking deterministic helpers for validation, decay, and classification.*
+
 The protocol prose maps to these numbered steps. Each step is either a helper invocation (shell subprocess per ADR-0006) or an LLM-side operation. The LLM is responsible for literal step-by-step execution; it may not reorder, skip, or batch.
 
 1. **Load and validate the profile.** Read `instance/profile.yaml`. Invoke `python .sensei/scripts/check_profile.py --profile instance/profile.yaml`. If exit ≠ 0, surface the error to the learner and end the session. Never proceed on an invalid profile.

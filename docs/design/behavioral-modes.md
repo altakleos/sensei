@@ -31,6 +31,18 @@ The composed output is a single principle set injected into the LLM context. Tra
 
 **Why not load all four at full length?** Transformer attention dilution — longer contexts reduce per-token attention weight, making behavioral instructions less reliable. The CSS-cascade analogy from P-principles-not-modes applies: authors write rules per-component, the engine composes them into one computed style.
 
+<!-- Diagram: illustrates §Composition model -->
+```mermaid
+graph LR
+    P["personality.md\n(full)"] --> C["Composed\nPrinciple Set"]
+    A["active mode .md\n(full)"] --> C
+    S1["mode₂ §Summary"] --> C
+    S2["mode₃ §Summary"] --> C
+    S3["mode₄ §Summary"] --> C
+    C --> LLM["LLM Context"]
+```
+*Figure 2. Context composition: base personality + active mode at full length + brief summaries of the other three modes.*
+
 ### Transition trigger table
 
 Transitions are system-driven and mostly invisible (§3.4). The engine evaluates triggers after each learner turn and activates the highest-priority matching mode.
@@ -47,6 +59,26 @@ Transitions are system-driven and mostly invisible (§3.4). The engine evaluates
 | Learner mastered ≥80% of curriculum | Challenger (primary) | Pattern disruption, constraint mutation | 8 |
 
 **Priority resolution:** When multiple triggers match, the highest-numbered priority wins. This ensures mastery-confirmed transitions override default question-handling. If no trigger matches, the previous active mode persists.
+
+<!-- Diagram: illustrates §Transition trigger table -->
+```mermaid
+stateDiagram-v2
+    [*] --> Tutor : question asked (default)
+
+    Tutor --> Reviewer : code submitted
+    Tutor --> Assessor : several successes
+    Reviewer --> Tutor : conceptual gap found
+    Tutor --> Tutor : two failures (prerequisite diagnosis)
+    Assessor --> Challenger : mastery confirmed
+    Assessor --> Tutor : overconfidence → gate → path back
+    Challenger --> Tutor : agency lost (shrink problem)
+
+    note right of Tutor : ~40% silent\nask > tell
+    note right of Assessor : deterministic scoring\nno teaching
+    note right of Challenger : productive failure\nterse, amused
+    note right of Reviewer : NOT silent\ndetailed feedback
+```
+*Figure 1. Behavioral mode transitions. Tutor is the default; transitions are system-driven and invisible to the learner.*
 
 ### Signal → response adaptation table
 
