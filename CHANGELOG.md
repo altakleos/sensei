@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a8] — 2026-04-20
+
+### Fixed
+
+- Tutor mode: after posing a question, treat the learner's next message as their answer (not a meta-request).
+
 ## [0.1.0a7] — 2026-04-20
 
 ### Fixed
