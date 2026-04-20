@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "sensei-tutor"
-version = "0.0.0"
+dynamic = ["version"]
 description = "A pip-installable CLI that scaffolds a learning-environment folder for any LLM agent to operate as an adaptive mentor."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -22,6 +22,9 @@ dev = [
 
 [project.scripts]
 sensei = "sensei.cli:main"
+
+[tool.hatch.version]
+path = "src/sensei/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/sensei"]
