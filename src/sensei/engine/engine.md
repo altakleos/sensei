@@ -97,7 +97,7 @@ When the learner expresses a specific operational intent, dispatch to the corres
 | "Teach me" / "Help me with X" / "Explain X" | `protocols/tutor.md` | accepted |
 | "Review my solution" / "Check my code" | (Reviewer mode — no separate protocol yet) | active via modes |
 | "Quiz me" / "Am I ready?" / "Test me" | `protocols/assess.md` | accepted |
-| "Challenge me" / "Make it harder" | (Challenger mode — no separate protocol yet) | active via modes |
+| "Challenge me" / "Make it harder" / "Test my limits" | `protocols/challenger.md` | accepted |
 | "Process my hints" / "What's in my inbox?" / "New hints" | `protocols/hints.md` | draft |
 | "Pause this goal" / "Take a break" / "Switch goals" | `protocols/goal.md` §Pause | accepted |
 | "Resume [goal]" / "Back to [goal]" / "Continue [goal]" | `protocols/goal.md` §Resume | accepted |
