@@ -3,17 +3,16 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-import pytest
 import yaml
 
-VENV = Path(__file__).resolve().parents[1] / ".venv" / "bin"
-PYTHON = str(VENV / "python")
-SENSEI = str(VENV / "sensei")
+PYTHON = sys.executable
+SENSEI = shutil.which("sensei") or str(Path(__file__).resolve().parents[1] / ".venv" / "bin" / "sensei")
 SCRIPTS = str(Path(__file__).resolve().parents[1] / "src" / "sensei" / "engine" / "scripts")
 
 

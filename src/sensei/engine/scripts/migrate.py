@@ -36,7 +36,7 @@ GOAL_MIGRATIONS: dict[int, Any] = {
 }
 
 
-def migrate_profile(data: dict) -> dict:
+def migrate_profile(data: dict[str, Any]) -> dict[str, Any]:
     """Migrate a profile dict to the current schema version. Returns the migrated dict."""
     version = data.get("schema_version", 0)
     while version < CURRENT_PROFILE_VERSION:
@@ -49,7 +49,7 @@ def migrate_profile(data: dict) -> dict:
     return data
 
 
-def migrate_goal(data: dict) -> dict:
+def migrate_goal(data: dict[str, Any]) -> dict[str, Any]:
     """Migrate a goal dict to the current schema version. Returns the migrated dict."""
     version = data.get("schema_version", 0)
     while version < CURRENT_GOAL_VERSION:
@@ -89,12 +89,11 @@ def migrate_file(path: Path, file_type: str) -> bool:
 
 def migrate_instance(instance_dir: Path) -> list[str]:
     """Migrate all instance files. Returns list of migrated file descriptions."""
-    migrated = []
+    migrated: list[str] = []
 
     profile = instance_dir / "profile.yaml"
-    if profile.exists():
-        if migrate_file(profile, "profile"):
-            migrated.append(f"profile.yaml: schema_version → {CURRENT_PROFILE_VERSION}")
+    if profile.exists() and migrate_file(profile, "profile"):
+        migrated.append(f"profile.yaml: schema_version → {CURRENT_PROFILE_VERSION}")
 
     # Migrate goal files (future: when goal workspaces exist)
     for goal_file in instance_dir.glob("goals/*/goal.yaml"):

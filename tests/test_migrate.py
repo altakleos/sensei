@@ -1,8 +1,15 @@
 """Tests for schema migration."""
 
+
 import yaml
-from sensei.engine.scripts.migrate import migrate_profile, migrate_goal, migrate_instance, CURRENT_PROFILE_VERSION, CURRENT_GOAL_VERSION
-from pathlib import Path
+
+from sensei.engine.scripts.migrate import (
+    CURRENT_GOAL_VERSION,
+    CURRENT_PROFILE_VERSION,
+    migrate_goal,
+    migrate_instance,
+    migrate_profile,
+)
 
 
 def test_migrate_profile_already_current():
