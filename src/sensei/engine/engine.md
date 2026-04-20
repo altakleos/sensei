@@ -77,7 +77,8 @@ When the learner expresses a specific operational intent, dispatch to the corres
 | User signal | Protocol file | Status |
 |---|---|---|
 | "Let's review" / "What should I review?" / "Quiz me on what I've learned" | `protocols/review.md` | accepted |
-| "I want to learn X" / "Help me with X" | `protocols/goal.md` | accepted |
+| "I want to learn X" / "Set a goal" / "New goal" | `protocols/goal.md` | accepted |
+| "Teach me" / "Help me with X" / "Explain X" | `protocols/tutor.md` | accepted |
 | "Review my solution" / "Check my code" | (Reviewer mode — no separate protocol yet) | active via modes |
 | "Quiz me" / "Am I ready?" / "Test me" | `protocols/assess.md` | accepted |
 | "Challenge me" / "Make it harder" | (Challenger mode — no separate protocol yet) | active via modes |
