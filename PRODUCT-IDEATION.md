@@ -752,24 +752,24 @@ Math Academy uses deterministic expert systems for task selection. Our position 
 
 ## 9. Open Design Questions
 
-1. Scope — coding-only or general learning? Coding-first is easier to build and verify.
-2. RAG integration — should the system support adding reference materials (textbooks, docs) to a knowledge base folder?
-3. Should Sensei explicitly teach metacognitive skills (how to learn) alongside the subject matter? Or should metacognition be woven invisibly into every interaction?
-4. How should the system navigate the emotional landscape — should it model emotional states explicitly, or respond to emotional signals implicitly through its pedagogical choices?
-5. How do we design for transfer, not just retention? What does a transfer-optimized curriculum look like vs a retention-optimized one?
-6. Should the system sometimes deliberately go against the learner's preferences (anti-personalization) to force deeper processing?
-7. How does the system handle the tension between honest diagnostic assessment ("you have significant gaps") and emotional support for a learner in crisis?
-8. Should Sensei have an explicit "time-pressured" mode that adjusts all pillars, or should time awareness be woven into the system's general adaptivity?
-9. How should FIRe (Fractional Implicit Repetition) or an equivalent work in a domain-agnostic system where knowledge graphs aren't pre-built by experts?
-10. Should Sensei detect and coach learning behaviors (focus, reference reliance, retrieval attempts) or focus purely on content and assessment?
-11. Should the curriculum DAG be visible to the learner (transparency) or hidden (simplicity)? Can the learner edit it?
-12. How does cross-goal knowledge transfer work in practice? If a learner masters "recursion" in their algorithms goal, how does Sensei know to skip it in their Rust goal?
-13. Should Sensei proactively suggest new goals based on what it observes? ("You keep hitting concurrency issues in Rust — want me to create a focused goal for that?")
-14. How do we test whether mode bleed is happening? What does subtle quality degradation look like in practice?
-15. Should the learner be able to see their mastery scores (transparency) or should Sensei only surface them when relevant?
+1. ~~RAG integration~~ — Deferred. Design the folder structure for it but don't implement in v1.
 
 ### Resolved Questions (kept for reference)
 
+- ~~Scope?~~ → SDE interview prep (coding, system design, behavioral, language fluency). Architecture stays domain-agnostic for future expansion.
+- ~~Metacognition explicit or invisible?~~ → Invisible by default, surface when the learner is ready or asks.
+- ~~Emotional state modeling?~~ → Track internally for adaptation, never surface labels to the learner.
+- ~~Transfer vs retention?~~ → Retention while novice, shift to transfer optimization as mastery grows.
+- ~~Anti-personalization?~~ → Strategically, when plateau or over-reliance on one approach is detected. Not default.
+- ~~Honest assessment vs emotional support?~~ → Always honest, framed with agency ("here's the gap, here's the path back"), tone calibrated to emotional state.
+- ~~Time-pressured mode?~~ → No special mode. Time pressure is woven into general adaptivity as another signal the principles respond to.
+- ~~FIRe in domain-agnostic system?~~ → LLM-generated prerequisite and encompassing graphs, accept ~80% accuracy, self-correct over time.
+- ~~Coach learning behaviors?~~ → Track silently, nudge through strategy adjustments (e.g., withhold hints if no retrieval attempt). Don't lecture about study habits.
+- ~~Curriculum DAG visible?~~ → Hidden. Sensei manages it entirely, learner experiences the flow.
+- ~~Cross-goal knowledge transfer?~~ → Global knowledge state for foundational concepts + goals can require re-demonstration in their specific context.
+- ~~Proactive goal suggestions?~~ → Suggest once when patterns emerge, don't repeat if ignored.
+- ~~Mode bleed testing?~~ → Automated behavioral tests for hard rules (assessor exception) + learner confusion signals for soft boundaries.
+- ~~Mastery scores visible?~~ → Always visible. Learner can check anytime via conversation or `sensei status`.
 - ~~CLI trigger different agents?~~ → One mentor, four modes, organic transitions (§3.4)
 - ~~Export/portability format?~~ → It's just a folder. Git-track, Dropbox-sync, copy (§4.5)
 - ~~Performance Stack integration — mode or agent?~~ → Cross-cutting concern modifying all modes (§3.9)
