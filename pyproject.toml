@@ -26,9 +26,6 @@ sensei = "sensei.cli:main"
 [tool.hatch.build.targets.wheel]
 packages = ["src/sensei"]
 
-[tool.hatch.build.targets.wheel.force-include]
-"src/sensei/engine" = "sensei/engine"
-
 [tool.hatch.build.targets.sdist]
 include = [
     "src/sensei",
