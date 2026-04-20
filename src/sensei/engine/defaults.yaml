@@ -7,7 +7,13 @@ mentor: {}      # behavioral thresholds (silence profiles, intervention rates, e
 
 learner: {}     # profile defaults (initial mastery levels, decay rates, etc.)
 
-curriculum: {}  # generation, adaptation, and pruning parameters
+curriculum:
+  # Curriculum graph tunables (consumed by frontier.py, mutate_graph.py, goal protocol).
+  max_nodes: 30           # hard cap on total nodes per goal
+  initial_size_min: 5     # minimum nodes for initial DAG generation
+  initial_size_max: 12    # maximum nodes for initial DAG generation
+  frontier_max: 5         # max frontier nodes to present as choices
+  mastery_threshold: 0.9  # score required to complete a node
 
 memory:
   # Review protocol tunables (consumed by protocols/review.md via decay.py).
