@@ -45,16 +45,9 @@ Verification in Sensei is the set of artifacts that confirm Implementation met i
 
 ## Load-Bearing Principles
 
-*To be authored as the first protocols land.* Candidates inherited from prior art:
+Sensei's load-bearing principles have migrated to [`docs/foundations/principles/`](foundations/principles/) per [ADR-0012](decisions/0012-foundations-layer.md). The six technical principles that lived here (`prose-is-code`, `scripts-compute-protocols-judge`, `config-over-hardcoding`, `validators-close-the-loop`, `cross-link-dont-duplicate`, `prose-verified-by-prose`) are now first-class foundation files with the TOGAF shape (Statement / Rationale / Implications / Exceptions and Tensions / Source). Specs reference them via `realizes: [P-<slug>]` frontmatter; broken references are caught by [`ci/check_foundations.py`](../ci/check_foundations.py).
 
-1. **Prose is code.** Protocols are executable instructions, not documentation.
-2. **Scripts compute, protocols judge.** Deterministic work goes to Python. Judgment and synthesis go to LLM protocols.
-3. **Config over hardcoding.** No magic numbers in protocol prose.
-4. **Validators close the loop.** Every spec invariant that can be checked mechanically has a `check-*.py`.
-5. **Cross-link, don't duplicate.** Point to the authoritative source; never copy content between layers.
-6. **Prose verified by prose.** Every engine protocol earns a fixture file at `tests/transcripts/<protocol>.md` that pins its spec invariants to phrase-level assertions over a committed dogfood transcript. Protocol-level correctness is not a feeling; it is tested material. See [ADR-0011](decisions/0011-transcript-fixtures.md).
-
-Each principle will be locked in as it survives contact with a real protocol. Until then, they are aspirational.
+Sensei-specific pedagogical principles (the seven pillars from `PRODUCT-IDEATION.md` §2.2) land alongside them with `kind: pedagogical` in subsequent commits. See [`docs/foundations/principles/`](foundations/principles/) for the catalog.
 
 ## Where to Look for What
 
