@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/sensei
+      url: https://pypi.org/project/sensei-tutor
     permissions:
       id-token: write
     steps:

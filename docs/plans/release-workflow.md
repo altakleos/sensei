@@ -39,8 +39,8 @@ Implements the `release-process` spec via the mechanism in `design/release-workf
 
 These are the items the maintainer must handle manually on PyPI and GitHub before the first real release can cut. T8 is blocked on all four.
 
-1. Register `sensei` on PyPI (the first publish can use the trusted-publisher pending-project flow without a pre-existing project).
-2. Configure the PyPI trusted publisher for project `sensei`: repository `altakleos/sensei`, workflow `release.yml`, environment `pypi`.
+1. Register `sensei-tutor` on PyPI (the first publish can use the trusted-publisher pending-project flow without a pre-existing project). Distribution name per ADR-0010.
+2. Configure the PyPI trusted publisher for project `sensei-tutor`: repository `altakleos/sensei`, workflow `release.yml`, environment `pypi`.
 3. Create the GitHub Environment `pypi` with a required reviewer and the deployment-branch restriction set to `main`.
 4. Capture the environment ID in `docs/operations/release-playbook.md` (currently placeholder `<TBD>`).
 

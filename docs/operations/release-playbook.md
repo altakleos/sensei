@@ -20,7 +20,7 @@ The release mechanism and its invariants are documented in the spec [`docs/specs
    - On approval, publishes wheel + sdist to PyPI via OIDC trusted publishing
 4. Verify the release is live:
    ```bash
-   pip index versions sensei
+   pip index versions sensei-tutor
    ```
 5. Create a GitHub Release on the tag with notes.
 
@@ -38,14 +38,14 @@ git push origin v0.2.0-alpha
 Users must pass `--pre` to pip to install prereleases:
 
 ```bash
-pip install sensei --pre
+pip install sensei-tutor --pre
 ```
 
 ## Yanking a Bad Release
 
-A **yank** hides a release from `pip install sensei` (without a pinned version) but leaves it installable for anyone who pinned to that specific version. Yank when a release has a correctness bug but is not actively harmful.
+A **yank** hides a release from `pip install sensei-tutor` (without a pinned version) but leaves it installable for anyone who pinned to that specific version. Yank when a release has a correctness bug but is not actively harmful.
 
-1. Log in to PyPI: https://pypi.org/manage/project/sensei/releases/
+1. Log in to PyPI: https://pypi.org/manage/project/sensei-tutor/releases/
 2. Find the release, click **Options → Yank**
 3. Enter a short reason (shown to users who pinned to the yanked version)
 4. Confirm
@@ -96,7 +96,7 @@ git push origin v0.1.1
 ### PyPI account compromised
 
 1. Reset PyPI password and 2FA from a clean device.
-2. Review trusted publishers: https://pypi.org/manage/project/sensei/settings/publishing/ — remove any unfamiliar entries.
+2. Review trusted publishers: https://pypi.org/manage/project/sensei-tutor/settings/publishing/ — remove any unfamiliar entries.
 3. Review PyPI account activity for unauthorized publishes. Yank anything unauthorized.
 4. Rotate any GitHub personal access tokens.
 5. Open a GitHub issue or security advisory to disclose.
@@ -112,7 +112,7 @@ git push origin v0.1.1
 A user who installed a bad release can downgrade:
 
 ```bash
-pip install 'sensei==0.1.0' --force-reinstall --pre
+pip install 'sensei-tutor==0.1.0' --force-reinstall --pre
 ```
 
 Their `.sensei/` directory was left untouched by the bad CLI (per upgrade atomicity, ADR-0004), so their instance content is intact. If they ran `sensei upgrade` mid-flight on a broken version, the atomic-swap guarantees the previous `.sensei/` is preserved.

@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "sensei"
+name = "sensei-tutor"
 version = "0.0.0"
 description = "A pip-installable CLI that scaffolds a learning-environment folder for any LLM agent to operate as an adaptive mentor."
 readme = "README.md"

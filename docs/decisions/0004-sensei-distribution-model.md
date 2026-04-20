@@ -16,7 +16,7 @@ Sensei is distributed as a pip-installable Python package. Installation provides
 
 The split:
 
-- **pip package (`pip install sensei`)** — CLI entry point (`sensei init/status/upgrade/verify`), engine bundle shipped inside the wheel, scaffolding templates.
+- **pip package (`pip install sensei-tutor`)** — CLI entry point (`sensei init/status/upgrade/verify`), engine bundle shipped inside the wheel, scaffolding templates. The distribution name is `sensei-tutor` per [ADR-0010](0010-pypi-distribution-name.md); the CLI, imports, and product identity remain `sensei`.
 - **Distributed instance (after `sensei init <path>`)** — `.sensei/` directory (engine copy), `instance/` directory (user config), tool-specific shim files (per [ADR-0003](0003-tool-specific-agent-hooks.md)), `AGENTS.md` boot document.
 
 Upgrades are explicit via `sensei upgrade`. The engine files in `.sensei/` are committed to the instance's git history so instances are portable (clone and run) and upgrades are visible in version history.
@@ -38,7 +38,7 @@ Packaging details:
 
 ## Consequences
 
-The user experience is: `pip install sensei`, then `sensei init ~/learning`, then open `~/learning/` with any LLM agent. The folder is fully self-contained and portable.
+The user experience is: `pip install sensei-tutor`, then `sensei init ~/learning`, then open `~/learning/` with any LLM agent. The folder is fully self-contained and portable.
 
 The engine bundle is small (markdown + yaml + a handful of Python helpers). Copying it into every instance is cheap.
 

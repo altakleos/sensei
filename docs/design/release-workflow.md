@@ -116,8 +116,8 @@ After this design lands and `release.yml` is in place, `docs/operations/release-
 
 These must be done by a maintainer before the first real release can cut:
 
-1. Register `sensei` on PyPI as a project (first publish can use `trusted-publishers/pending/` flow without an existing project).
-2. Configure the PyPI trusted publisher: project `sensei`, repository `altakleos/sensei`, workflow `release.yml`, environment `pypi`.
+1. Register `sensei-tutor` on PyPI as a project (first publish can use `trusted-publishers/pending/` flow without an existing project). Distribution name per [ADR-0010](../decisions/0010-pypi-distribution-name.md).
+2. Configure the PyPI trusted publisher: project `sensei-tutor`, repository `altakleos/sensei`, workflow `release.yml`, environment `pypi`.
 3. Create the GitHub Environment `pypi` with a reviewer and the `main`-branch restriction.
 4. Capture the environment ID in `docs/operations/release-playbook.md` (currently `<TBD>`).
 
