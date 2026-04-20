@@ -2,7 +2,7 @@
 feature: curriculum-engine
 serves: (decomposition — PRODUCT-IDEATION.md §5 + §4.4 into SDD artifacts)
 design: (produced by this plan — no pre-existing design doc)
-status: planned
+status: done
 date: 2026-04-20
 ---
 # Plan: Curriculum Engine — PRODUCT-IDEATION §5 + §4.4 Decomposition

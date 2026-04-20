@@ -2,7 +2,7 @@
 feature: interaction-model
 serves: (decomposition — PRODUCT-IDEATION.md §4 + §6.1 into SDD artifacts)
 design: (produced by this plan — no pre-existing design doc)
-status: planned
+status: done
 date: 2026-04-20
 ---
 # Plan: Interaction Model — PRODUCT-IDEATION §4 + §6.1 Decomposition

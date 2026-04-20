@@ -2,7 +2,7 @@
 feature: first-protocol-review
 serves: (spec to be written as T1)
 design: (design to be written as T2)
-status: planned
+status: done
 date: 2026-04-20
 ---
 # Plan: First Protocol — `review.md`

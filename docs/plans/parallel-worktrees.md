@@ -2,7 +2,7 @@
 feature: parallel-worktrees
 serves: docs/specs/parallel-agents.md
 design: docs/design/parallel-agents.md
-status: planned
+status: done
 date: 2026-04-20
 ---
 # Plan: Parallel Agent Worktrees
