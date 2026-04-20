@@ -17,6 +17,11 @@ For the full development model, see `docs/development-process.md`.
 ---
 status: draft | accepted | superseded
 date: YYYY-MM-DD
+# Optional foundation backreferences (see docs/foundations/README.md).
+# Broken references are hard-failed by ci/check_foundations.py.
+serves: [<foundation-slug>, ...]            # vision / product principles
+realizes: [<P-slug>, ...]                   # technical / pedagogical principles
+stressed_by: [<persona-slug>, ...]          # personas that exercise this spec
 ---
 # <Spec Name>
 
@@ -40,3 +45,5 @@ What this spec explicitly does NOT cover.
 
 - Link to relevant ADRs once they exist.
 ```
+
+The foundation backreference fields (`serves:`, `realizes:`, `stressed_by:`) are optional but encouraged. Each referenced slug is validated against `docs/foundations/`; a broken reference fails CI. See [`docs/foundations/README.md`](../foundations/README.md) for linkage conventions.

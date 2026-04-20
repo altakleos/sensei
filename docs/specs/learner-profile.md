@@ -1,6 +1,14 @@
 ---
 status: accepted
 date: 2026-04-20
+realizes:
+  - P-know-the-learner
+  - P-mentor-relationship
+  - P-scripts-compute-protocols-judge
+  - P-validators-close-the-loop
+  - P-cross-link-dont-duplicate
+stressed_by:
+  - persona-jacundu
 ---
 # Learner Profile
 

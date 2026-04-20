@@ -1,6 +1,9 @@
 ---
 status: accepted
 date: 2026-04-20
+realizes:
+  - P-validators-close-the-loop
+  - P-cross-link-dont-duplicate
 ---
 # Release Communication
 

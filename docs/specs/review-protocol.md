@@ -1,6 +1,17 @@
 ---
 status: accepted
 date: 2026-04-20
+realizes:
+  - P-silence-is-teaching
+  - P-ask-dont-tell
+  - P-productive-failure
+  - P-forgetting-curve-is-curriculum
+  - P-prose-is-code
+  - P-prose-verified-by-prose
+  - P-config-over-hardcoding
+  - P-scripts-compute-protocols-judge
+stressed_by:
+  - persona-jacundu
 ---
 # Review Protocol
 
