@@ -14,10 +14,23 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 - `docs/development-process.md` gains a project-agnostic "Foundations" section describing the layer as source material above the six-layer stack.
 - Full decomposition of `PRODUCT-IDEATION.md` into SDD artifacts (Plans 1–5): 7 new foundation principles, 6 new feature specs, 3 new design docs, 3 new ADRs (0013–0015), and 4 research synthesis docs. The original ideation document is deleted (preserved in git history).
 - `docs/research/` reorganized into a 3-tier structure: `bibliography.md` (58 annotated citations), `reports/` (deep investigative reports), `synthesis/` (curated findings with `[Bibliography #N]` provenance citations).
+- Behavioral modes runtime: `protocols/personality.md` (base personality, always loaded) + four mode authoring files (`protocols/modes/{tutor,assessor,challenger,reviewer}.md`). Engine kernel (`engine.md`) rewritten with full composition instructions and transition rules.
+- Assessment protocol (`protocols/assess.md`): summative mastery gating with deterministic scoring via `mastery_check.py`, two-failure prerequisite diagnosis, assessor exception enforcement.
+- 27 mermaid diagrams across specs, design docs, ADRs, and principles. Diagram convention added to `development-process.md`.
+- mypy --strict + ruff added to CI pipeline. All source passes both.
+- 15 new tests (127 total): CLI commands, config loader, YAML error paths.
+
+### Fixed
+
+- `cli.py`: learner-id with `{` or `}` no longer crashes (switched from `str.format()` to `string.Template`).
+- `config.py`: invalid YAML now raises `ValueError` with clear message instead of silent `{}` or crash.
+- `check_foundations.py`: Windows line endings no longer break frontmatter parsing; malformed YAML handled gracefully.
+- `decay.py`: `import math` moved to top level (PEP 8).
+- `engine.md`: status updated from "scaffolding stub" to reflect active protocols.
 
 ### Notes
 
-- No user-visible CLI or runtime behaviour changes in this Unreleased cycle yet; the above are documentation-layer expansions and verification infrastructure. Users installing `pip install sensei-tutor` see no functional difference.
+- The behavioral modes and assessment protocol are runtime prose-as-code — they change how an LLM agent behaves when reading the `.sensei/` bundle. Users installing `pip install sensei-tutor` and running `sensei init` will get the full four-mode mentor system.
 
 ## [0.1.0a1] — 2026-04-20
 

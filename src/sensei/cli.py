@@ -15,6 +15,7 @@ from pathlib import Path
 from string import Template
 
 import click
+import yaml
 
 import sensei
 from sensei import __version__
@@ -153,16 +154,46 @@ def init(target: Path, force: bool, learner_id: str) -> None:
 @main.command()
 @click.argument("target", type=click.Path(exists=True, file_okay=False, path_type=Path), default=".")
 def status(target: Path) -> None:
-    """Report instance state (stub)."""
+    """Report instance state: engine version, profile summary, stale topics."""
     target = target.resolve()
     sensei_dir = target / ".sensei"
     if not sensei_dir.exists():
         raise click.ClickException(f"Not a Sensei instance: {target} (no .sensei/ directory).")
+
     version_file = sensei_dir / ".sensei-version"
     engine_version = version_file.read_text().strip() if version_file.exists() else "unknown"
     click.echo(f"Instance: {target}")
-    click.echo(f"Engine version: {engine_version}")
-    click.echo("Status: ok (stub — learner/goal reporting not yet implemented)")
+    click.echo(f"Engine:   {engine_version}")
+
+    # Profile summary
+    profile_path = target / "instance" / "profile.yaml"
+    if not profile_path.exists():
+        click.echo("Profile:  not found")
+        return
+
+    profile = yaml.safe_load(profile_path.read_text())
+    if not isinstance(profile, dict):
+        click.echo("Profile:  invalid (not a mapping)")
+        return
+
+    learner_id = profile.get("learner_id", "unknown")
+    expertise = profile.get("expertise_map") or {}
+    total = len(expertise)
+
+    # Count by mastery level
+    levels = {"mastered": 0, "solid": 0, "developing": 0, "shaky": 0, "none": 0}
+    for topic_state in expertise.values():
+        if isinstance(topic_state, dict):
+            lvl = topic_state.get("mastery", "none")
+            if lvl in levels:
+                levels[lvl] += 1
+
+    click.echo(f"Learner:  {learner_id}")
+    click.echo(f"Topics:   {total}")
+
+    if total > 0:
+        parts = [f"{v} {k}" for k, v in levels.items() if v > 0]
+        click.echo(f"Mastery:  {', '.join(parts)}")
 
 
 @main.command()
