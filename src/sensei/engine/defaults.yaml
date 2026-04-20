@@ -13,3 +13,13 @@ memory:
   # Review protocol tunables (consumed by protocols/review.md via decay.py).
   half_life_days: 7.0     # exponential decay half-life per topic (days)
   stale_threshold: 0.5    # freshness below this is considered stale and due for review
+
+hints:
+  # Hint ingestion tunables (consumed by protocols/hints.md via hint_decay.py).
+  half_life_days: 14.0      # hint relevance decay half-life (days)
+  boost_weight: 1.5         # multiplier for hinted topics in curriculum ordering
+  max_boost: 2.0            # ceiling on cumulative hint boost per topic
+  cluster_threshold: 3      # hints in same cluster before suggesting a deep-dive
+  expire_threshold: 0.2     # freshness below this triggers expiration
+  expire_after_days: 28     # hard cap: expire unacted hints after this many days
+  relevance_floor: 0.3      # hints scored below this are auto-marked irrelevant

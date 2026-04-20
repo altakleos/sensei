@@ -37,6 +37,13 @@ def test_init_creates_instance(tmp_path: Path) -> None:
     assert profile["learner_id"] == "learner"  # default
     assert profile["expertise_map"] == {}
 
+    # Hints ingestion directories and registry.
+    assert (target / "instance" / "inbox").is_dir()
+    assert (target / "instance" / "hints" / "active").is_dir()
+    assert (target / "instance" / "hints" / "archive").is_dir()
+    hints_reg = yaml.safe_load((target / "instance" / "hints" / "hints.yaml").read_text())
+    assert hints_reg == {"schema_version": 1, "hints": []}
+
     # Boot document and shims.
     assert (target / "AGENTS.md").is_file()
     assert (target / "CLAUDE.md").read_text().strip() == "See @AGENTS.md"
