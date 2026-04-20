@@ -5,6 +5,7 @@ realizes:
   - P-mastery-before-progress
   - P-scripts-compute-protocols-judge
   - P-two-failure-prerequisite
+  - P-metacognition-is-the-multiplier
 stressed_by:
   - persona-jacundu
 ---
