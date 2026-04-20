@@ -122,6 +122,36 @@ For this project's instantiation of Verification, see [sensei-implementation.md]
 
 ---
 
+## Branching and Integration
+
+All changes land on `main` through a branch and pull request. Direct pushes to `main` are not allowed.
+
+### Branch naming
+
+Use descriptive slash-prefixed names that match the change type:
+
+| Change type | Branch name pattern | Example |
+|---|---|---|
+| New feature | `feat/<slug>` | `feat/hints-ingestion` |
+| Bug fix | `fix/<slug>` | `fix/profile-schema-crash` |
+| Documentation | `docs/<slug>` | `docs/hints-spec` |
+| Refactor | `refactor/<slug>` | `refactor/config-loader` |
+| Chore / tooling | `chore/<slug>` | `chore/ci-mypy-strict` |
+
+### Pull request workflow
+
+1. Create a branch from `main`.
+2. Commit work to the branch. Plans are the first commit on a feature branch.
+3. Push the branch and open a pull request. PR title follows the same conventional-commit prefix as the branch (`feat:`, `fix:`, `docs:`, etc.).
+4. Review, iterate, merge. Squash-merge is the default for single-concern branches. Merge commits are acceptable when the branch contains multiple atomic commits worth preserving individually.
+5. Delete the branch after merge.
+
+### What belongs in one branch
+
+A branch covers one concern — a feature, a bug fix, a spec, a refactor. If work spans multiple unrelated concerns, split into separate branches. A branch that touches both a new spec and an unrelated bug fix is too broad.
+
+Batching related commits on one branch is fine: a spec commit + its design doc commit + its plan commit all serve the same feature and belong together.
+
 ## How Work Flows Through the Layers
 
 Not every change touches every layer. The path through the stack depends on the scope and nature of the change.
@@ -133,9 +163,11 @@ When introducing a new user-visible capability:
 1. **Spec** — Write or update a spec capturing product intent. What problem does this solve? What properties must the output have? What invariants must hold?
 2. **Design Doc** — Write a design doc proposing architecture. Which components, how data flows, what trade-offs.
 3. **ADRs** — As design decisions crystallize, capture each in an ADR. Not every design decision needs an ADR — only those where the choice was non-obvious or where viable alternatives existed.
-4. **Plan** — Write a task breakdown in `docs/plans/<feature>.md`. Ordered steps, file paths, acceptance criteria. Commit this as the first commit on the feature branch. Implementing agents read this before writing code.
-5. **Implementation** — Build or modify the artifacts that produce the behavior. These may be code, prose instructions, configuration, or any combination the project's instantiation allows.
-6. **Verification** — Write or extend checks to assert the new invariants hold.
+4. **Plan** — Write a task breakdown in `docs/plans/<feature>.md`. Ordered steps, file paths, acceptance criteria. Commit this as the first commit on the feature branch.
+5. **Branch** — Create a feature branch (`feat/<slug>`). The plan is the first commit. All subsequent implementation and verification commits land here.
+6. **Implementation** — Build or modify the artifacts that produce the behavior. These may be code, prose instructions, configuration, or any combination the project's instantiation allows.
+7. **Verification** — Write or extend checks to assert the new invariants hold.
+8. **Pull Request** — Open a PR, review, merge to `main`.
 
 ### Behavioral Change: Implementation + (maybe) ADR
 
