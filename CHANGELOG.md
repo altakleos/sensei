@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a6] — 2026-04-20
+
+### Fixed
+
+- `goal_priority.py`: paused goals no longer appear in priority rankings (only active goals ranked).
+- `sensei init`: now creates `instance/goals/` directory for goal state files.
+- `test_e2e_smoke.py`: uses `sys.executable` and `shutil.which` instead of hardcoded `.venv/` paths (fixes CI).
+
 ## [0.1.0a5] — 2026-04-20
 
 ### Added
