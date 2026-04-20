@@ -29,3 +29,26 @@ All case studies available at: https://newsletter.systemdesign.one
 
 > Save this for later & RT to help others ace system design.
 > Follow @systemdesignone + turn on notifications.
+
+---
+
+## Merged from Top-10-System-Design-Questions-in-Interviews.md
+
+### Common Interview Design Questions (practice list)
+
+These generic design questions complement the real-world case studies above:
+
+1. Design a URL Shortener
+2. Design a Rate Limiter
+3. **Design a Distributed Cache**
+4. **Design a Load Balancer**
+5. Design a Notification System
+6. Design a News / Twitter Feed system
+7. Design a Chat / Messaging system
+8. Design a File Storage system
+9. Design a Payment system
+10. **Design a Job Queue / Background processing system**
+
+*(Bold = not covered by the case studies above)*
+
+Source: [@Umesh__digital](https://x.com/Umesh__digital/status/2045786698794041511)

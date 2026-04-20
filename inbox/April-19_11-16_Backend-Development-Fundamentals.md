@@ -75,3 +75,41 @@ channel: Job Search (Telegram)
 - Integration testing
 - E2E testing
 - Test-driven development (TDD)
+
+---
+
+## Merged from Backend-Engineering-Roadmap.md
+
+### Programming Foundations
+- Data structures & algorithms
+- OOP and functional programming
+- Design patterns
+- Clean code principles
+
+### Specific Tools & Platforms (not listed above)
+- Kubernetes (container orchestration)
+- Cloud platforms (AWS/GCP/Azure)
+- Infrastructure as Code (Terraform)
+- Logging: ELK stack
+- Metrics: Prometheus/Grafana
+- Distributed tracing: OpenTelemetry
+- OWASP Top 10
+- Secrets management
+
+> Recommended Ebook for Deep Backend Engineering Mastery: https://codewithdhanian.gumroad.com/l/ungqng
+
+Source: [@e_opore](https://x.com/e_opore/status/2045780983803207825)
+
+---
+
+## Merged from This-Job-Market-for-Software-Developers.md
+
+### What the 2026 Job Market Actually Demands
+
+- **Problem solving** — Not just LeetCode: actual debugging, reading broken code, fixing messy production issues
+- **Passkeys** — Modern passwordless authentication (in addition to OAuth2, JWT, sessions)
+- **Zero trust basics** — Security model beyond perimeter defense
+- **Structured concurrency** — Beyond basic async: race conditions, backpressure
+- **GitOps** — Deployment pattern alongside CI/CD and rollbacks
+
+Source: [@0xlelouch_](https://x.com/0xlelouch_/status/2043640713003581880)

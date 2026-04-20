@@ -134,3 +134,54 @@ channel: Job Search (Telegram)
 118. Notification System
 119. Payment System
 120. URL Shortener
+
+---
+
+## Merged from System-Design-Cheatsheet-2026.md
+
+**Interview Priority Ordering** *(based on 60+ interviews at Amazon, Google, Uber, Salesforce, Walmart, Confluence & Deliveroo)*
+
+If preparing again in 2026, master these topics in this order:
+1. Scalability Fundamentals — Horizontal vs vertical scaling, stateless design
+2. Load Balancing — Algorithms, health checks, sticky sessions
+3. Caching — Cache-aside, write-through, write-back, TTL, eviction policies
+4. Database Design — SQL vs NoSQL selection criteria, indexing, sharding, replication
+5. Message Queues — Kafka, RabbitMQ, at-least-once vs exactly-once delivery
+6. API Design — REST principles, rate limiting, versioning, pagination
+7. Distributed Systems — CAP theorem, consistency models, consensus
+8. Microservices — Service decomposition, inter-service communication, service mesh
+9. CDN & Edge — Static vs dynamic content, geo-distribution
+10. Monitoring & Observability — Metrics, logging, tracing, alerting
+
+Source: [@system_monarch](https://x.com/system_monarch/status/2044035465477796033)
+
+---
+
+## Merged from Getting-Started-with-System-Design.md
+
+**System Design One Newsletter — Article Links for Top 20 Concepts**
+
+All resources available at: https://newsletter.systemdesign.one (200K+ software engineers)
+
+1. System Design Concepts — Core fundamentals
+2. The CS Stack 101 — Computer science foundations
+3. Frontend System Design Concepts — Frontend architecture patterns
+4. Microservices Lessons from Netflix — Real-world microservices at scale
+5. Modular Monolith Architecture — When monolith makes sense
+6. Redis Use Cases — Caching, pub/sub, rate limiting and more
+7. How RPC Actually Works — Remote procedure calls explained
+8. How Message Queues Work — Async communication patterns
+9. How JWT Works — JSON Web Token internals
+10. How Does HTTPS Work — TLS, certificates, handshakes
+11. How Bloom Filters Work — Probabilistic data structures
+12. How Service Discovery Works — Dynamic service registration
+13. How Consistent Hashing Works — Distribution without reshuffling
+14. API Versioning — A Deep Dive — Strategies and trade-offs
+15. How Idempotent API Works — Preventing duplicate operations
+16. Saga Design Pattern — Distributed transactions
+17. How Databases Keep Passwords Securely — Hashing and salting
+18. API Design Best Practices — RESTful design principles
+19. How Websockets Work — Persistent bidirectional connections
+20. Distributed Systems 101 — Foundations of distributed computing
+
+Source: [@systemdesignone](https://x.com/systemdesignone/status/2044391574646182320)
