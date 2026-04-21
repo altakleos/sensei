@@ -8,6 +8,11 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 
 ## Index
 
+### In Progress
+| Plan | Feature | Status |
+|------|---------|--------|
+| [hints-transcript-fixture](hints-transcript-fixture.md) | Tier-1 hints fixture + ADR 0017/0018/0019 graduation | planned |
+
 ### Shipped
 | Plan | Feature | Status |
 |------|---------|--------|
