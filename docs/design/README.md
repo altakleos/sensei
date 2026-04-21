@@ -10,7 +10,10 @@ For the full development model, see `docs/development-process.md`.
 | 2 | [Review Protocol Orchestration](review-protocol.md) | Nine-step read/rank/ask/classify/write loop realizing the review-protocol spec | accepted |
 | 3 | [Release Workflow](release-workflow.md) | Three-job GitHub Actions release pipeline with OIDC trusted publishing and `ci/check_package_contents.py` wheel validator | accepted |
 | 4 | [Transcript Fixtures](transcript-fixtures.md) | Behavioural-verification artifacts that assert LLM-interpreted protocols respect their spec invariants; pytest loader with tier-1 lexical checks free in CI | accepted |
-| 5 | [Parallel Agent Execution](parallel-agents.md) | Worktree isolation for concurrent LLM agents with setup/teardown scripts | draft |
+| 5 | [Behavioral Modes](behavioral-modes.md) | How the engine composes per-mode files into a single principle set, triggers transitions, and enforces the assessor exception | accepted |
+| 6 | [Curriculum Graph](curriculum-graph.md) | DAG-based curriculum engine with mutate_graph, frontier scoring, and goal schema validation | accepted |
+| 7 | [Folder Structure](folder-structure.md) | Canonical layout for `sensei init` scaffolded folders and divergences from the original ideation sketch | accepted |
+| 8 | [Hints Ingestion](hints-ingestion.md) | File-drop inbox pipeline with hint_decay scoring, YAML schema validation, and curriculum priority biasing | accepted |
 
 ## Template
 

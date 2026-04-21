@@ -134,7 +134,7 @@ git push origin v0.1.1
 
 `sensei upgrade` should sweep stale `.sensei.old.*` and `tmp*` directories from a prior interrupted run on every invocation. No manual cleanup is needed after a SIGKILL'd upgrade — the next `sensei upgrade` run (including an "already up to date" no-op) reclaims them automatically.
 
-*(Pending: `sensei upgrade` is currently a stub; this behaviour lands when the command is implemented. Not blocking for the first publish.)*
+*Implemented in v0.1.0a10. The cleanup runs automatically on every `sensei upgrade` invocation.*
 
 ## Rollback: Users on a Bad Version
 
