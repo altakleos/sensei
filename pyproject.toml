@@ -63,11 +63,12 @@ select = ["E", "F", "W", "I", "UP", "B", "SIM"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-# Coverage floor reflects the measured baseline at the v0.1.0a9 cut (~63%). Low coverage on
-# frontier.py and mutate_graph.py is a measurement artifact: their tests invoke the
-# scripts via subprocess, which pytest-cov cannot observe. Follow-up: convert those
-# tests to direct main() calls to boost observed coverage, then ratchet the floor up.
-addopts = "--cov=sensei --cov-report=term-missing --cov-fail-under=60"
+# Coverage floor was 60% at v0.1.0a9 (measured 63%, depressed by subprocess-invoked
+# tests pytest-cov couldn't observe). After converting test_frontier.py and
+# test_mutate_graph.py to direct main(argv) calls, observed coverage is ~81%;
+# the floor is ratcheted to 80%. Remaining low-coverage modules: migrate.py (~42%)
+# and hint_decay.py (~69%) — follow-up to add direct-main tests for them too.
+addopts = "--cov=sensei --cov-report=term-missing --cov-fail-under=80"
 
 [tool.coverage.run]
 source = ["src/sensei"]

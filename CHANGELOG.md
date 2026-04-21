@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+- test: convert `tests/test_frontier.py` and `tests/test_mutate_graph.py` from subprocess-only invocations to direct `main(argv) + capsys` calls (keeping one subprocess smoke per file as an ADR-0006 CLI-entry regression guard). Coverage jumps from 63% to 81% — the gap was a pytest-cov measurement artifact, not a testing gap. `--cov-fail-under` ratcheted from 60 → 80. Remaining low-coverage modules: `migrate.py` (~42%) and `hint_decay.py` (~69%); follow-up to convert their subprocess tests as well.
+
 ## [0.1.0a9] — 2026-04-21
 
 - fix: atomic writes in migrate and mutate_graph — profile.yaml and goal files can no longer be corrupted by interrupted writes (refs ADR-0004 atomicity contract)
