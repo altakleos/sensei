@@ -9,13 +9,13 @@
 [![Tests](https://github.com/altakleos/sensei/actions/workflows/verify.yml/badge.svg)](https://github.com/altakleos/sensei/actions/workflows/verify.yml)
 [![License](https://img.shields.io/github/license/altakleos/sensei)](LICENSE)
 
+</div>
+
 ```bash
 pip install sensei-tutor
 sensei init ~/learning
 cd ~/learning            # open with any LLM coding agent
 ```
-
-</div>
 
 ---
 
