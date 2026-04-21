@@ -170,7 +170,7 @@ python .sensei/scripts/global_knowledge.py --profile instance/profile.yaml --top
 If `known == true`: the learner already mastered this elsewhere. Collapse the node:
 
 ```
-python .sensei/scripts/mutate_graph.py collapse --topic <topic> --curriculum instance/goals/<slug>.yaml
+python .sensei/scripts/mutate_graph.py --operation collapse --node <topic> --curriculum instance/goals/<slug>.yaml
 ```
 
 Say: "You already know [topic] from previous work. Skipping ahead."
@@ -179,7 +179,7 @@ Recompute the frontier and activate the next topic. Repeat the global knowledge 
 
 **If not globally known:** proceed with teaching.
 
-Run `scripts/frontier.py --curriculum instance/goals/<slug>.yaml` to compute the frontier. Use the returned ordered list to select the next topic. If `instance/hints.yaml` exists, pass `--hints instance/hints.yaml` to incorporate learner-declared priority signals.
+Run `python .sensei/scripts/frontier.py --curriculum instance/goals/<slug>.yaml` to compute the frontier. Use the returned ordered list to select the next topic. If `instance/hints.yaml` exists, pass `--hints instance/hints.yaml` to incorporate learner-declared priority signals.
 
 If no node is currently `active`, activate the first frontier topic:
 
@@ -257,10 +257,15 @@ These transitions are triggered by learner intent expressed in natural language.
    ```
    python .sensei/scripts/frontier.py --curriculum instance/goals/<slug>.yaml
    ```
-4. Identify stale topics:
+4. Identify stale topics. For each completed topic `<slug>` in the curriculum whose `last_seen` appears in `instance/profile.yaml`'s `expertise_map`, run:
    ```
-   python .sensei/scripts/decay.py --profile instance/profile.yaml --curriculum instance/goals/<slug>.yaml
+   python .sensei/scripts/decay.py \
+     --last-seen <topic.last_seen> \
+     --half-life-days <config.memory.half_life_days> \
+     --now <utc> \
+     --stale-threshold <config.memory.stale_threshold>
    ```
+   Collect slugs whose output has `"stale": true`.
 5. Report: "Resuming [goal]. You left off at [active topic]. [N] topics are getting stale."
 6. Offer: continue where you left off, or review stale topics first?
 7. Proceed to Step 6 (begin teaching) based on learner's choice.

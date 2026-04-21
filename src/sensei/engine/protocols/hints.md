@@ -28,10 +28,15 @@ At session start: list `instance/inbox/`, compute SHA-256 per file, compare agai
 Do not block. Then run decay recomputation:
 
 ```
-python .sensei/scripts/hint_decay.py --registry instance/hints/hints.yaml --half-life-days <hints.half_life_days> --now <utc>
+python .sensei/scripts/hint_decay.py \
+  --hints-file instance/hints/hints.yaml \
+  --half-life-days <hints.half_life_days> \
+  --expire-threshold <hints.expire_threshold> \
+  --expire-after-days <hints.expire_after_days> \
+  --now <utc>
 ```
 
-For any active hint where freshness < `hints.expire_threshold`: set status → `expired`, move file to archive.
+`hint_decay.py` recomputes `freshness` and marks any active/triaged hint as `status: expired` when freshness drops below `hints.expire_threshold` or age exceeds `hints.expire_after_days`. Read the updated list from stdout and write it back to `instance/hints/hints.yaml`. For any entry now `status: expired`, move the file from `instance/hints/active/` to `instance/hints/archive/`.
 
 ---
 

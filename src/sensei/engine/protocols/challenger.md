@@ -18,7 +18,7 @@ Strengthen mastery through structured challenges that push the learner beyond co
 Choose a topic. Priority order:
 1. Topic the learner explicitly requests ("challenge me on caching")
 2. Recently completed topic (mastery fresh, ready to stress-test)
-3. Topic with high mastery approaching stale threshold (run `python .sensei/scripts/decay.py --profile instance/profile.yaml` — pick topics with `stale: false` but freshness < 0.6)
+3. Topic with high mastery approaching stale threshold — for each completed topic `<slug>` with its `last_seen` from `instance/profile.yaml`'s `expertise_map`, run `python .sensei/scripts/decay.py --last-seen <topic.last_seen> --half-life-days <config.memory.half_life_days> --now <utc> --stale-threshold <config.memory.stale_threshold>`, then pick slugs with `"stale": false` but `freshness` < 0.6
 4. Active topic the learner claims to understand (verify depth)
 
 If no topic has mastery ≥ solid: "Nothing to challenge yet. Let's learn first." → hand off to `protocols/tutor.md`.
