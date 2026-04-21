@@ -10,7 +10,11 @@ The release mechanism and its invariants are documented in the spec [`docs/specs
 
 Before tagging any release, run the Tier-2 behavioural E2E on your workstation. CI cannot run this — the `claude` CLI and API credentials are workstation-only.
 
+Activate the project venv first — `pyproject.toml` sets `addopts = "--cov=..."`, which requires `pytest-cov` from the dev extras. Without the venv, the system `pytest` will reject `--cov=*` and `--no-cov` alike.
+
 ```bash
+source .venv/bin/activate   # or ./.venv/bin/pytest ... if you prefer not to activate
+
 # Option A (API key):
 ANTHROPIC_API_KEY=sk-ant-... pytest tests/e2e/ -v --no-cov
 
