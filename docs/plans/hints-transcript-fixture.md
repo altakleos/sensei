@@ -2,7 +2,7 @@
 feature: hints-transcript-fixture
 serves: docs/specs/hints.md
 design: docs/design/transcript-fixtures.md
-status: planned
+status: done
 date: 2026-04-21
 ---
 # Plan: Hints Transcript Fixture + ADR Graduation
