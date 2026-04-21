@@ -89,6 +89,67 @@ def _engine_source() -> Path:
     return engine_dir
 
 
+def _atomic_replace_engine(src: Path, sensei_dir: Path, version: str) -> None:
+    """Install or replace `sensei_dir` with a fresh copy of `src`, atomically.
+
+    Honors the per-upgrade atomicity contract documented in ADR-0004 and
+    `docs/operations/release-playbook.md`: the learner's existing `.sensei/`
+    is preserved across any failure of the copy step, and is recoverable
+    after a crash during the short swap window.
+
+    Algorithm (platform-agnostic, three-step swap):
+      1. Copy the engine bundle to a sibling `.sensei.tmp/`.
+      2. If `.sensei/` exists, rename it aside to `.sensei.old/`.
+      3. Rename `.sensei.tmp/` into place as `.sensei/`.
+      4. Remove `.sensei.old/`.
+
+    Crash recovery: if a previous run died between steps 2 and 3, the next
+    call (or any subsequent `sensei` command that invokes this helper) sees
+    `.sensei.old/` present and `.sensei/` missing, and restores the old.
+    Leftover `.sensei.tmp/` from a prior failed copy is always cleaned first.
+    """
+    parent = sensei_dir.parent
+    tmp_dir = parent / ".sensei.tmp"
+    old_dir = parent / ".sensei.old"
+
+    # Crash recovery from a prior interrupted swap.
+    if old_dir.exists() and not sensei_dir.exists():
+        old_dir.rename(sensei_dir)
+    elif old_dir.exists() and sensei_dir.exists():
+        # Prior run completed the new install but died before cleanup.
+        shutil.rmtree(old_dir)
+
+    # Clean leftover temp from a prior failed copy.
+    if tmp_dir.exists():
+        shutil.rmtree(tmp_dir)
+
+    # Step 1 — copy bundle to temp. Any failure here leaves `.sensei/` intact.
+    try:
+        shutil.copytree(src, tmp_dir)
+        (tmp_dir / ".sensei-version").write_text(f"{version}\n", encoding="utf-8")
+    except Exception:
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+        raise
+
+    # Steps 2–3 — swap aside + install new.
+    swapped_aside = False
+    try:
+        if sensei_dir.exists():
+            sensei_dir.rename(old_dir)
+            swapped_aside = True
+        tmp_dir.rename(sensei_dir)
+    except Exception:
+        # Best-effort rollback: put the old dir back if we moved it.
+        if swapped_aside and old_dir.exists() and not sensei_dir.exists():
+            old_dir.rename(sensei_dir)
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+        raise
+
+    # Step 4 — remove the aside. `.sensei/` is now authoritative.
+    if old_dir.exists():
+        shutil.rmtree(old_dir, ignore_errors=True)
+
+
 def _write_shim(root: Path, rel_path: str, content: str) -> None:
     target = root / rel_path
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -121,12 +182,9 @@ def init(target: Path, force: bool, learner_id: str) -> None:
             f"Instance already exists at {sensei_dir}. "
             f"Run `sensei upgrade` to update the engine, or re-run with --force to reinitialize."
         )
-    if sensei_dir.exists() and force:
-        shutil.rmtree(sensei_dir)
 
-    # Copy the engine bundle into .sensei/.
-    shutil.copytree(_engine_source(), sensei_dir)
-    (sensei_dir / ".sensei-version").write_text(f"{__version__}\n", encoding="utf-8")
+    # Install engine bundle into .sensei/ atomically.
+    _atomic_replace_engine(_engine_source(), sensei_dir, __version__)
 
     # Instance config directory + seed profile.
     (target / "instance").mkdir(exist_ok=True)
@@ -259,10 +317,8 @@ def upgrade(target: Path) -> None:
         click.echo(f"Already at {__version__}. Nothing to upgrade.")
         return
 
-    # Replace engine bundle (instance/ is preserved)
-    shutil.rmtree(sensei_dir)
-    shutil.copytree(_engine_source(), sensei_dir)
-    (sensei_dir / ".sensei-version").write_text(f"{__version__}\n", encoding="utf-8")
+    # Replace engine bundle atomically (instance/ is untouched).
+    _atomic_replace_engine(_engine_source(), sensei_dir, __version__)
 
     click.echo(f"Upgraded .sensei/ from {old_version} → {__version__}")
 

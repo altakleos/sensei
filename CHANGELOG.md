@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 - fix: atomic writes in migrate and mutate_graph — profile.yaml and goal files can no longer be corrupted by interrupted writes (refs ADR-0004 atomicity contract)
 - fix: protocol prose now matches script CLIs — `goal.md`, `tutor.md`, `hints.md`, and `challenger.md` had subprocess invocations with wrong flag names and positional verbs that would cause LLM-executed commands to fail (e.g., `mutate_graph.py collapse --topic` → `--operation collapse --node`, `hint_decay.py --registry` → `--hints-file` with required `--expire-threshold` and `--expire-after-days`). New CI linter (`tests/ci/test_protocol_script_consistency.py`) imports each script, captures its argparse, and validates every protocol invocation against it.
+- fix: `sensei upgrade` and `sensei init --force` swap the `.sensei/` engine bundle atomically via a copy-to-temp + aside + rename-in-place sequence. A failed copy or interrupted swap no longer destroys the learner's existing `.sensei/`, and a crash mid-swap is recovered on the next invocation (honors the atomicity contract in `docs/operations/release-playbook.md` and ADR-0004).
 
 ## [0.1.0a8] — 2026-04-20
 
