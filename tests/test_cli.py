@@ -101,12 +101,37 @@ def test_init_force_preserves_instance_profile(tmp_path: Path) -> None:
     assert profile_path.read_text(encoding="utf-8") == custom_content
 
 
-def test_init_learner_id_with_braces(tmp_path: Path) -> None:
+@pytest.mark.parametrize("learner_id", ["alice", "learner-01", "ab_cd", "A", "x" * 64])
+def test_init_accepts_valid_learner_id(tmp_path: Path, learner_id: str) -> None:
     runner = CliRunner()
-    result = runner.invoke(main, ["init", str(tmp_path), "--learner-id", "test{1}"])
+    result = runner.invoke(main, ["init", str(tmp_path), "--learner-id", learner_id])
     assert result.exit_code == 0, result.output
     profile = yaml.safe_load((tmp_path / "instance" / "profile.yaml").read_text())
-    assert profile["learner_id"] == "test{1}"
+    assert profile["learner_id"] == learner_id
+
+
+@pytest.mark.parametrize(
+    "bad_id",
+    [
+        "",  # empty
+        "x" * 65,  # too long
+        "has space",  # whitespace
+        "name\nwith\nnewlines",  # YAML-injecting characters
+        "name: injected",  # yaml key-ish content
+        "name'with'quotes",
+        "name{braces}",
+        "name/slash",
+        "name.dot",  # conservative — dots rejected too
+    ],
+)
+def test_init_rejects_invalid_learner_id(tmp_path: Path, bad_id: str) -> None:
+    runner = CliRunner()
+    result = runner.invoke(main, ["init", str(tmp_path), "--learner-id", bad_id])
+    assert result.exit_code != 0
+    assert "learner-id" in result.output.lower() or "learner_id" in result.output.lower()
+    # No instance was scaffolded.
+    assert not (tmp_path / ".sensei").exists()
+    assert not (tmp_path / "instance").exists()
 
 
 # _atomic_replace_engine — atomicity contract per ADR-0004.
