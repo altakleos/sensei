@@ -35,6 +35,18 @@ def _parse_iso(raw: str) -> datetime:
     return dt
 
 
+def freshness_score(elapsed_days: float, half_life_days: float) -> float:
+    """Canonical exponential-decay freshness: ``2 ** (-elapsed_days / half_life_days)``.
+
+    Pure arithmetic. Use this from any site that needs the raw retention score
+    and already has ``elapsed_days`` computed. For stale classification plus
+    ``days_until_stale``, use :func:`freshness` instead.
+    """
+    if half_life_days <= 0:
+        raise ValueError(f"half_life_days must be positive, got {half_life_days}")
+    return float(2.0 ** (-elapsed_days / half_life_days))
+
+
 def freshness(
     last_seen: datetime,
     half_life_days: float,
@@ -50,8 +62,6 @@ def freshness(
         days_until_stale — days remaining until freshness drops to threshold
                            (0.0 if already stale)
     """
-    if half_life_days <= 0:
-        raise ValueError(f"half_life_days must be positive, got {half_life_days}")
     if not 0.0 < stale_threshold <= 1.0:
         raise ValueError(
             f"stale_threshold must be in (0, 1], got {stale_threshold}"
@@ -61,7 +71,7 @@ def freshness(
 
     elapsed_seconds = (now - last_seen).total_seconds()
     elapsed_days = elapsed_seconds / 86_400.0
-    fresh_score = 2.0 ** (-elapsed_days / half_life_days)
+    fresh_score = freshness_score(elapsed_days, half_life_days)
 
     # freshness hits threshold when elapsed_days / half_life_days = -log2(threshold)
     stale_at_days = -math.log2(stale_threshold) * half_life_days

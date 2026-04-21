@@ -75,7 +75,12 @@ When a transition fires, swap which mode file supplies full content and which su
 If the learner opens a session without specifying what to work on, select the highest-priority active goal:
 
 ```
-python .sensei/scripts/goal_priority.py --goals-dir instance/goals/ --profile instance/profile.yaml --now <utc>
+python .sensei/scripts/goal_priority.py \
+  --goals-dir instance/goals/ \
+  --profile instance/profile.yaml \
+  --half-life-days <config.memory.half_life_days> \
+  --stale-threshold <config.memory.stale_threshold> \
+  --now <utc>
 ```
 
 If the result is non-empty, load the top-ranked goal and say:

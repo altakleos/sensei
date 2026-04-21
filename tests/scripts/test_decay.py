@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from sensei.engine.scripts.decay import freshness, main
+from sensei.engine.scripts.decay import freshness, freshness_score, main
 
 
 def _utc(y: int, mo: int, d: int) -> datetime:
@@ -95,6 +95,18 @@ def test_main_emits_json(capsys: pytest.CaptureFixture[str]) -> None:
     parsed = json.loads(capsys.readouterr().out)
     assert parsed["freshness"] == pytest.approx(0.5)
     assert parsed["stale"] is False
+
+
+def test_freshness_score_pure_math() -> None:
+    """Canonical helper: 2^(-elapsed/half_life). Fresh at 0 days, 0.5 at half-life."""
+    assert freshness_score(0.0, 7.0) == pytest.approx(1.0)
+    assert freshness_score(7.0, 7.0) == pytest.approx(0.5)
+    assert freshness_score(14.0, 7.0) == pytest.approx(0.25)
+
+
+def test_freshness_score_rejects_non_positive_half_life() -> None:
+    with pytest.raises(ValueError, match="half_life_days"):
+        freshness_score(1.0, 0.0)
 
 
 def test_script_runs_as_subprocess() -> None:

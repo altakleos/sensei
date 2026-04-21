@@ -6,7 +6,13 @@ and scores each by priority weight, decay risk, and recency.
 Invoked by the engine as:
     python goal_priority.py --goals-dir instance/goals \\
                             --profile instance/profile.yaml \\
+                            --half-life-days <config.memory.half_life_days> \\
+                            --stale-threshold <config.memory.stale_threshold> \\
                             [--now 2026-04-20T00:00:00Z]
+
+``--half-life-days`` and ``--stale-threshold`` are optional; they default to
+the engine's shipped defaults (7.0 and 0.5). Pass them explicitly to honor
+instance-level overrides from ``instance/config.yaml``.
 
 Exits 0 and prints a JSON object with a sorted ``goals`` list to stdout.
 Exits 1 on invalid input (missing directory, bad YAML).
@@ -24,8 +30,8 @@ from typing import Any
 import yaml
 
 _PRIORITY_WEIGHT: dict[str, int] = {"high": 3, "normal": 2, "low": 1}
-_HALF_LIFE_DAYS = 7.0
-_STALE_THRESHOLD = 0.5
+_DEFAULT_HALF_LIFE_DAYS = 7.0
+_DEFAULT_STALE_THRESHOLD = 0.5
 
 
 def _parse_iso(raw: str) -> datetime:
@@ -37,12 +43,18 @@ def _parse_iso(raw: str) -> datetime:
     return dt
 
 
-def _is_stale(last_seen: str, now: datetime) -> bool:
+def _is_stale(last_seen: str, now: datetime, half_life_days: float, stale_threshold: float) -> bool:
     elapsed = (now - _parse_iso(last_seen)).total_seconds() / 86_400.0
-    return bool(2.0 ** (-elapsed / _HALF_LIFE_DAYS) < _STALE_THRESHOLD)
+    return bool(2.0 ** (-elapsed / half_life_days) < stale_threshold)
 
 
-def score_goal(goal: dict[str, Any], profile: dict[str, Any], now: datetime) -> dict[str, Any] | None:
+def score_goal(
+    goal: dict[str, Any],
+    profile: dict[str, Any],
+    now: datetime,
+    half_life_days: float = _DEFAULT_HALF_LIFE_DAYS,
+    stale_threshold: float = _DEFAULT_STALE_THRESHOLD,
+) -> dict[str, Any] | None:
     """Score a single goal. Returns None if goal should be skipped."""
     status = goal.get("status", "")
     if status != "active":
@@ -66,7 +78,7 @@ def score_goal(goal: dict[str, Any], profile: dict[str, Any], now: datetime) -> 
             ls = _parse_iso(entry["last_seen"])
             if most_recent is None or ls > most_recent:
                 most_recent = ls
-            if _is_stale(entry["last_seen"], now):
+            if _is_stale(entry["last_seen"], now, half_life_days, stale_threshold):
                 stale_count += 1
 
     # Recency boost: 0–5 points, more recent = higher.
@@ -86,6 +98,18 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0] if __doc__ else None)
     parser.add_argument("--goals-dir", required=True, help="Directory containing goal YAML files")
     parser.add_argument("--profile", required=True, help="Path to profile.yaml")
+    parser.add_argument(
+        "--half-life-days",
+        type=float,
+        default=_DEFAULT_HALF_LIFE_DAYS,
+        help=f"Decay half-life in days (default: {_DEFAULT_HALF_LIFE_DAYS})",
+    )
+    parser.add_argument(
+        "--stale-threshold",
+        type=float,
+        default=_DEFAULT_STALE_THRESHOLD,
+        help=f"Freshness below this is stale (default: {_DEFAULT_STALE_THRESHOLD})",
+    )
     parser.add_argument("--now", default=None, help="ISO-8601 timestamp (default: wall clock)")
     args = parser.parse_args(argv)
 
@@ -111,7 +135,11 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     now = _parse_iso(args.now) if args.now else datetime.now(tz=timezone.utc)
-    scored = [s for g in goals if (s := score_goal(g, profile, now)) is not None]
+    scored = [
+        s
+        for g in goals
+        if (s := score_goal(g, profile, now, args.half_life_days, args.stale_threshold)) is not None
+    ]
     scored.sort(key=lambda x: float(x["score"]), reverse=True)
     print(json.dumps({"goals": scored}))
     return 0

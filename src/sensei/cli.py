@@ -268,6 +268,8 @@ def status(target: Path) -> None:
         # Stale topics (due for review)
         from datetime import datetime, timezone
 
+        from sensei.engine.scripts.decay import freshness_score
+
         now = datetime.now(tz=timezone.utc)
         defaults_path = sensei_dir / "defaults.yaml"
         defaults = yaml.safe_load(defaults_path.read_text()) if defaults_path.exists() else {}
@@ -286,8 +288,7 @@ def status(target: Path) -> None:
             try:
                 last_seen = datetime.fromisoformat(str(last_seen_str).replace("Z", "+00:00"))
                 elapsed = (now - last_seen).total_seconds() / 86400.0
-                freshness = 2.0 ** (-elapsed / half_life)
-                if freshness < threshold:
+                if freshness_score(elapsed, half_life) < threshold:
                     stale.append(slug)
             except (ValueError, TypeError):
                 stale.append(slug)

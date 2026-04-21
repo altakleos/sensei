@@ -157,3 +157,42 @@ class TestGoalPriority:
         prof = _write_yaml(tmp_path, "profile.yaml", _profile({}))
         rc = gp_main(["--goals-dir", str(tmp_path / "nope"), "--profile", str(prof)])
         assert rc == 1
+
+    def test_half_life_override_affects_stale_count(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Passing --half-life-days shortens/lengthens the stale window — the
+        number of stale completed topics (and thus the score) must change."""
+        goals_dir = tmp_path / "goals"
+        goals_dir.mkdir()
+        _write_yaml(goals_dir, "g.yaml", _goal("g", priority="normal", nodes={
+            "t1": {"state": "completed", "prerequisites": []},
+            "t2": {"state": "completed", "prerequisites": []},
+        }))
+        # Topics last seen 10 days ago.
+        prof_data = _profile({"t1": "solid", "t2": "solid"})
+        prof_data["expertise_map"]["t1"]["last_seen"] = "2026-04-10T00:00:00Z"
+        prof_data["expertise_map"]["t2"]["last_seen"] = "2026-04-10T00:00:00Z"
+        prof = _write_yaml(tmp_path, "profile.yaml", prof_data)
+
+        # With a 7-day half-life, 10 days elapsed → freshness ≈ 0.37 → stale.
+        rc = gp_main([
+            "--goals-dir", str(goals_dir), "--profile", str(prof),
+            "--half-life-days", "7", "--stale-threshold", "0.5",
+            "--now", "2026-04-20T00:00:00Z",
+        ])
+        assert rc == 0
+        out_7 = json.loads(capsys.readouterr().out)
+        assert "2 stale topics" in out_7["goals"][0]["reason"]
+
+        # With a 30-day half-life, 10 days elapsed → freshness ≈ 0.79 → fresh.
+        rc = gp_main([
+            "--goals-dir", str(goals_dir), "--profile", str(prof),
+            "--half-life-days", "30", "--stale-threshold", "0.5",
+            "--now", "2026-04-20T00:00:00Z",
+        ])
+        assert rc == 0
+        out_30 = json.loads(capsys.readouterr().out)
+        assert "stale topic" not in out_30["goals"][0]["reason"]
+        # The longer half-life goal scores lower (no decay-risk bonus).
+        assert out_30["goals"][0]["score"] < out_7["goals"][0]["score"]
