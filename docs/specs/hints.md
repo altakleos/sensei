@@ -8,8 +8,8 @@ realizes:
 stressed_by:
   - persona-jacundu
 fixtures:
+  - tests/transcripts/hints.md
   - tests/test_hint_decay.py
-fixtures_deferred: "protocols/hints.md is still draft — add end-to-end coverage once ingestion + triage are committed"
 ---
 # Hints
 

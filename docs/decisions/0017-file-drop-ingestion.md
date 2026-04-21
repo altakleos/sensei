@@ -1,10 +1,10 @@
 ---
-status: provisional
+status: accepted
 date: 2026-04-20
 ---
 # ADR-0017: File-Drop Ingestion
 
-> **Provisional (2026-04-21):** Retroactively marked per the v0.1.0a9 methodology gate. `protocols/hints.md` has no transcript fixture or Tier-2 E2E yet; the file-drop ingestion mechanism is covered only by unit tests on `hint_decay.py`. Review on the first fixture or the first real learner session that exercises the inbox end-to-end. See `docs/decisions/README.md` § Status values.
+> **Graduated 2026-04-21:** Was `provisional` from 2026-04-21 (same-day round-trip). The `triage-not-teaching` and `concise-summary` fixtures in `tests/transcripts/hints.md` (synthetic-seed pass on 2026-04-21) demonstrate the file-drop ingestion mechanism behaves as designed under live LLM triage — learner drops heterogeneous content into `instance/inbox/`, the LLM classifies and summarises without teaching leakage. Re-read on graduation: the accepted decision still holds. Real captured-session replacement of the synthetic seed is owed at the next release per `docs/design/transcript-fixtures.md` § Cadence and would be the natural moment to re-examine this ADR again.
 
 ## Context
 

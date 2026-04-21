@@ -1,10 +1,10 @@
 ---
-status: provisional
+status: accepted
 date: 2026-04-20
 ---
 # ADR-0019: Universal Inbox over Typed Drop Zones
 
-> **Provisional (2026-04-21):** Retroactively marked per the v0.1.0a9 methodology gate. The "LLM-classifies-at-triage instead of learner-classifies-at-drop" bet has no behavioural validation — no transcript fixture or Tier-2 E2E shows Claude actually triaging mixed-content inbox items correctly. Review once a hints-protocol fixture or an E2E captures the classify-at-triage loop. See `docs/decisions/README.md` § Status values.
+> **Graduated 2026-04-21:** Was `provisional` from 2026-04-21 (same-day round-trip). The `ambiguity-classification` fixture in `tests/transcripts/hints.md` validates the classify-at-triage bet: a genuinely unclassifiable inbox item (in the synthetic seed, a tweet that doesn't fit the active Rust goal) forces the mentor to ask the learner for clarification or flag for review rather than silently drop. Synthetic-seed pass on 2026-04-21 confirms the invariant is expressible. Re-read on graduation: the accepted decision still holds — LLM triage CAN handle ambiguity gracefully when the protocol says so. Real captured session (next release) will confirm this in the wild.
 
 ## Context
 
