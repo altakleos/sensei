@@ -23,26 +23,13 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [release-communication](release-communication.md) | CHANGELOG + validator | done |
 | [dogfood-verification](dogfood-verification.md) | Transcript fixtures | done |
 | [foundations-layer](foundations-layer.md) | Foundations directory + linter | done |
+| [behavioral-architecture](behavioral-architecture.md) | Decomposition of the ideation monolith's §3 (behavioural modes) — 2 principles, 3 specs, 1 design, 1 ADR | done |
+| [curriculum-engine](curriculum-engine.md) | Decomposition §5 + §4.4 (curriculum) — 1 principle, 3 specs, 1 ADR | done |
+| [interaction-model](interaction-model.md) | Decomposition §4 + §6.1 (interaction model) — 1 principle, 1 design | done |
+| [deep-frontiers-principles](deep-frontiers-principles.md) | Decomposition §2.4 — 3 principles, 1 update | done |
+| [research-and-closure](research-and-closure.md) | Absorbed §8/§9/§10 + cross-reference migration + deletion of the ideation monolith | done |
 
-### PRODUCT-IDEATION Decomposition (Plans 1–5)
-
-Dependency graph:
-```
-Plan 1: behavioral-architecture  ◄── DO FIRST
-  │
-  ├──► Plan 2: curriculum-engine     ─┐
-  ├──► Plan 3: interaction-model     ─┼──► Plan 5: research-and-closure (LAST)
-  └──► Plan 4: deep-frontiers        ─┘
-       (Plans 2, 3, 4 can run in parallel)
-```
-
-| Plan | Scope | Status | Depends on |
-|------|-------|--------|------------|
-| [behavioral-architecture](behavioral-architecture.md) | §3 → 2 principles, 3 specs, 1 design, 1 ADR | planned | — |
-| [curriculum-engine](curriculum-engine.md) | §5 + §4.4 → 1 principle, 3 specs, 1 ADR | planned | Plan 1 |
-| [interaction-model](interaction-model.md) | §4 + §6.1 → 1 principle, 1 design | planned | Plan 1 |
-| [deep-frontiers-principles](deep-frontiers-principles.md) | §2.4 → 3 principles, 1 update | planned | Plan 1 |
-| [research-and-closure](research-and-closure.md) | §8/§9/§10 + cross-ref migration + deletion | planned | Plans 1–4 |
+The last five plans above (`behavioral-architecture` through `research-and-closure`) were a five-step decomposition of an early ideation monolith into the foundations + specs + design + ADR layers. The source document itself was deleted at the end of Plan 5; its content is fully absorbed into the surviving artifacts.
 
 ## Template
 
