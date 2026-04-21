@@ -75,13 +75,13 @@ Migrate all 78 references across 32 files. Zero references to PRODUCT-IDEATION.m
 
 - [ ] AC1: 4 research synthesis docs exist in `docs/research/synthesis/`.
 - [ ] AC2: All 12 unabsorbed §9 resolved questions appear in destination artifacts' Rationale sections.
-- [ ] AC3: `grep -r "PRODUCT-IDEATION" .` returns 0 hits outside plan files.
+- [ ] AC3: `grep -r "PRODUCT-IDEATION" .` returns 0 hits **outside the carve-outs named in § Out of Scope** — i.e. the only remaining hits are (a) plan files under `docs/plans/` (historical records), (b) ADR Context sections under `docs/decisions/` (immutable by ADR rule), and (c) `CHANGELOG.md` narrative entries describing the decomposition.
 - [ ] AC4: `PRODUCT-IDEATION.md` does not exist in the working tree.
 - [ ] AC5: `AGENTS.md` and `README.md` no longer reference PRODUCT-IDEATION.md.
 - [ ] AC6: `ci/check_foundations.py` passes with 0 errors.
 - [ ] AC7: Full test suite green.
 - [ ] AC8: CHANGELOG.md `[Unreleased]` describes the change.
-- [ ] AC9: RESEARCH-BIBLIOGRAPHY.md exists and its one provenance note is updated.
+- [ ] AC9: The canonical research bibliography exists (at `docs/research/bibliography.md`) and its one PRODUCT-IDEATION.md provenance note is updated.
 
 ## Out of Scope
 
@@ -96,3 +96,13 @@ Migrate all 78 references across 32 files. Zero references to PRODUCT-IDEATION.m
 **Why delete instead of archive:** The SDD model should fully absorb source documents. Keeping a "fully-decomposed" monolith creates a gravitational pull — people read it instead of the decomposed artifacts, and it drifts out of sync. Git history is the archive. The working tree should contain only living artifacts.
 
 **ADR References are navigational metadata:** ADR body text (Context, Decision, Consequences) is immutable. References sections serve navigation and are updated when targets move — same as updating a hyperlink when a page moves.
+
+## Post-execution notes (2026-04-21 review)
+
+A review after the plan shipped surfaced two cases where the original ACs as written didn't match the executed outcome. Both were internal drift, not errors in the executed work:
+
+1. **AC3's grep invariant vs. § Out of Scope's ADR immutability**. The original AC3 read "`grep -r 'PRODUCT-IDEATION' .` returns 0 hits outside plan files" without carving out ADR Context sections. But § Out of Scope explicitly preserved ADR Context as immutable. Those two clauses couldn't both hold; execution correctly followed § Out of Scope, leaving five ADRs (0001, 0007, 0012, 0013, 0014, 0015) with Context-section references. AC3 has been rewritten above to name the carve-outs (plan files, ADR Context sections, CHANGELOG narrative) explicitly. The lesson: a plan asserting a global grep invariant against a rule-immutable subset must phrase the grep as filter-aware, not bare.
+
+2. **RESEARCH-BIBLIOGRAPHY.md relocation**. The original AC9 asserted the bibliography would remain at the repo root under its original filename. During or shortly after execution of this plan — as part of the foundations-layer migration — the file moved to `docs/research/bibliography.md` (alongside the new `synthesis/` directory). The content and provenance update shipped; only the path changed. AC9 above has been rewritten to reference the current canonical location.
+
+No executed work needs to be re-done. This is a documentation-only correction to bring the shipped plan's ACs into literal agreement with reality.
