@@ -73,7 +73,9 @@ def test_valid_references_ok(tmp_path: Path) -> None:
     _spec_file(tmp_path, "my-feature", realizes=["P-prose-is-code"])
     errors, warnings = cfn.check(tmp_path / "foundations", tmp_path / "specs")
     assert errors == [], errors
-    assert warnings == []
+    # No reference-resolution or orphan warnings. (Fixture-naming is a separate
+    # concern tested in its own cases below.)
+    assert not any("does not resolve" in w or "not referenced" in w for w in warnings), warnings
 
 
 def test_broken_realizes_fails(tmp_path: Path) -> None:
@@ -177,6 +179,71 @@ def test_main_warnings_as_errors_blocks_on_orphan(tmp_path: Path) -> None:
         ]
     )
     assert rc == 1
+
+
+def _spec_with_fixtures(
+    tmp_path: Path,
+    name: str,
+    realizes: list[str] | None = None,
+    fixtures: list[str] | None = None,
+    fixtures_deferred: str | None = None,
+) -> Path:
+    """Variant of _spec_file that adds fixture-naming frontmatter fields."""
+    p = tmp_path / "specs" / f"{name}.md"
+    fm_lines = ["---", "status: accepted", "date: 2026-04-20"]
+    if realizes is not None:
+        fm_lines.append("realizes: [" + ", ".join(f"{v!r}" for v in realizes) + "]")
+    if fixtures is not None:
+        fm_lines.append("fixtures: [" + ", ".join(f"{v!r}" for v in fixtures) + "]")
+    if fixtures_deferred is not None:
+        fm_lines.append(f"fixtures_deferred: {fixtures_deferred!r}")
+    fm_lines.append("---")
+    _write(p, "\n".join(fm_lines) + f"\n# {name}\n")
+    return p
+
+
+def test_spec_with_fixtures_emits_no_fixture_warning(tmp_path: Path) -> None:
+    _principle_file(tmp_path, "P-prose-is-code", kind="technical")
+    _spec_with_fixtures(
+        tmp_path,
+        "named",
+        realizes=["P-prose-is-code"],
+        fixtures=["tests/scripts/test_check_profile.py"],
+    )
+    errors, warnings = cfn.check(tmp_path / "foundations", tmp_path / "specs")
+    assert errors == [], errors
+    assert not any("names no 'fixtures:'" in w for w in warnings)
+
+
+def test_spec_without_fixtures_or_defer_emits_warning(tmp_path: Path) -> None:
+    _principle_file(tmp_path, "P-prose-is-code", kind="technical")
+    _spec_with_fixtures(tmp_path, "unnamed", realizes=["P-prose-is-code"])
+    errors, warnings = cfn.check(tmp_path / "foundations", tmp_path / "specs")
+    assert errors == [], errors
+    assert any(
+        "unnamed.md" in w and "names no 'fixtures:'" in w for w in warnings
+    ), warnings
+
+
+def test_spec_with_fixtures_deferred_suppresses_warning(tmp_path: Path) -> None:
+    _principle_file(tmp_path, "P-prose-is-code", kind="technical")
+    _spec_with_fixtures(
+        tmp_path,
+        "deferred",
+        realizes=["P-prose-is-code"],
+        fixtures_deferred="awaiting first learner session",
+    )
+    errors, warnings = cfn.check(tmp_path / "foundations", tmp_path / "specs")
+    assert errors == [], errors
+    assert not any("deferred.md" in w and "fixtures" in w for w in warnings)
+
+
+def test_spec_without_realizes_or_serves_emits_no_fixture_warning(tmp_path: Path) -> None:
+    """Specs that don't claim to realize/serve anything aren't required to name fixtures."""
+    _spec_with_fixtures(tmp_path, "bare")
+    errors, warnings = cfn.check(tmp_path / "foundations", tmp_path / "specs")
+    assert errors == [], errors
+    assert not any("bare.md" in w and "fixtures" in w for w in warnings)
 
 
 def test_real_repo_passes() -> None:

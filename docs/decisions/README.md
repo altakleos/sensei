@@ -25,3 +25,12 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0017 | [File-Drop Ingestion](0017-file-drop-ingestion.md) | accepted |
 | 0018 | [Curriculum Boosting over Rewriting](0018-curriculum-boosting.md) | accepted |
 | 0019 | [Universal Inbox over Typed Drop Zones](0019-universal-inbox.md) | accepted |
+
+## Status values
+
+- `accepted` — decision is committed; behavior is required to match.
+- `accepted (lite)` — ADR-lite format per [ADR-0005](0005-adr-lite-format.md); same weight as accepted.
+- `provisional` — accepted on current evidence, but flagged for review after the first learner-session or protocol-fixture evidence lands. A `provisional` ADR is a commitment to revisit, not a deferral of the decision. Auto-review when (a) the protocol it governs gains a passing transcript fixture, or (b) a superseding ADR proves the original wrong.
+- `superseded` — replaced by a later ADR. The superseding ADR's number must be referenced in the original's header so readers can navigate forward.
+
+**Authors of new ADRs should prefer `provisional`** when a decision governs a protocol still in `draft` at `src/sensei/engine/protocols/`, or when the decision turns on a design property no fixture has yet validated. This couples new decisions to verification evidence per [ADR-0011](0011-transcript-fixtures.md).
