@@ -9,6 +9,10 @@ build/
 venv/
 .env
 .pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
 
 # IDE
 .vscode/
