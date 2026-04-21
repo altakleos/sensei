@@ -1,8 +1,10 @@
 ---
-status: accepted
+status: provisional
 date: 2026-04-20
 ---
 # ADR-0018: Curriculum Boosting over Rewriting
+
+> **Provisional (2026-04-21):** Retroactively marked per the v0.1.0a9 methodology gate. Boost math is covered by `tests/test_frontier.py::test_hints_boost_ordering`, but no transcript fixture or Tier-2 E2E proves the behaviour is pedagogically sensible under live LLM execution — learners may not notice the boost (see "Subtle influence" consequence below). Review once a hints-protocol fixture or an E2E exercises boosted-topic ordering in practice. See `docs/decisions/README.md` § Status values.
 
 ## Context
 

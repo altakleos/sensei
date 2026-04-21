@@ -1,8 +1,10 @@
 ---
-status: accepted
+status: provisional
 date: 2026-04-20
 ---
 # ADR-0019: Universal Inbox over Typed Drop Zones
+
+> **Provisional (2026-04-21):** Retroactively marked per the v0.1.0a9 methodology gate. The "LLM-classifies-at-triage instead of learner-classifies-at-drop" bet has no behavioural validation — no transcript fixture or Tier-2 E2E shows Claude actually triaging mixed-content inbox items correctly. Review once a hints-protocol fixture or an E2E captures the classify-at-triage loop. See `docs/decisions/README.md` § Status values.
 
 ## Context
 

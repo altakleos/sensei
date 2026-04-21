@@ -22,9 +22,9 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0014 | [Principles Over State Machines for LLM Pedagogy](0014-principles-over-state-machines.md) | accepted |
 | 0015 | [Unified Goal-Processing Pipeline with Type-Sensitive Parameters](0015-unified-goal-pipeline.md) | accepted |
 | 0016 | [Git Worktrees for Multi-Agent Filesystem Isolation](0016-worktree-agent-isolation.md) | accepted |
-| 0017 | [File-Drop Ingestion](0017-file-drop-ingestion.md) | accepted |
-| 0018 | [Curriculum Boosting over Rewriting](0018-curriculum-boosting.md) | accepted |
-| 0019 | [Universal Inbox over Typed Drop Zones](0019-universal-inbox.md) | accepted |
+| 0017 | [File-Drop Ingestion](0017-file-drop-ingestion.md) | provisional |
+| 0018 | [Curriculum Boosting over Rewriting](0018-curriculum-boosting.md) | provisional |
+| 0019 | [Universal Inbox over Typed Drop Zones](0019-universal-inbox.md) | provisional |
 
 ## Status values
 

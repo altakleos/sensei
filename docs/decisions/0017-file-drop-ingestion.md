@@ -1,8 +1,10 @@
 ---
-status: accepted
+status: provisional
 date: 2026-04-20
 ---
 # ADR-0017: File-Drop Ingestion
+
+> **Provisional (2026-04-21):** Retroactively marked per the v0.1.0a9 methodology gate. `protocols/hints.md` has no transcript fixture or Tier-2 E2E yet; the file-drop ingestion mechanism is covered only by unit tests on `hint_decay.py`. Review on the first fixture or the first real learner session that exercises the inbox end-to-end. See `docs/decisions/README.md` § Status values.
 
 ## Context
 
