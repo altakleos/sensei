@@ -14,7 +14,7 @@ For the full development model, see `docs/development-process.md`.
 | [Goal Lifecycle Transitions](goal-lifecycle-transitions.md) | accepted |
 | [Hints](hints.md) | accepted |
 | [Learner Profile](learner-profile.md) | accepted |
-| [Performance Training](performance-training.md) | draft |
+| [Performance Training](performance-training.md) | accepted |
 | [Release Communication](release-communication.md) | accepted |
 | [Release Process](release-process.md) | accepted |
 | [Review Protocol](review-protocol.md) | accepted |

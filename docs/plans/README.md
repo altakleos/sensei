@@ -34,6 +34,11 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [mermaid-diagrams](mermaid-diagrams.md) | Mermaid diagram enhancement pass | done |
 | [parallel-worktrees](parallel-worktrees.md) | Parallel agent worktrees | done |
 
+### In Progress
+| Plan | Feature | Status |
+|------|---------|--------|
+| [performance-training-v1](performance-training-v1.md) | Performance training phase overlay (stages 1–4) — config, schema, phase protocol, engine wiring, goal protocol integration | done |
+
 The last five plans above (`behavioral-architecture` through `research-and-closure`) were a five-step decomposition of an early ideation monolith into the foundations + specs + design + ADR layers. The source document itself was deleted at the end of Plan 5; its content is fully absorbed into the surviving artifacts.
 
 ## Template

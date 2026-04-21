@@ -14,6 +14,7 @@ For the full development model, see `docs/development-process.md`.
 | 6 | [Curriculum Graph](curriculum-graph.md) | DAG-based curriculum engine with mutate_graph, frontier scoring, and goal schema validation | accepted |
 | 7 | [Folder Structure](folder-structure.md) | Canonical layout for `sensei init` scaffolded folders and divergences from the original ideation sketch | accepted |
 | 8 | [Hints Ingestion](hints-ingestion.md) | File-drop inbox pipeline with hint_decay scoring, YAML schema validation, and curriculum priority biasing | accepted |
+| 9 | [Performance Training](performance-training.md) | Phase overlay composition: single phase protocol loaded as additional context layer when performance phase is active | accepted |
 
 ## Template
 

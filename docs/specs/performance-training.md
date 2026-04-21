@@ -1,12 +1,13 @@
 ---
-status: draft
+status: accepted
 date: 2026-04-20
 realizes:
   - P-mentor-relationship
   - P-mastery-before-progress
 stressed_by:
   - persona-jacundu
-fixtures_deferred: "spec is draft; the Performance Preparation Stack is scaffolded prose, not implemented behaviour — fixtures land with the first overlay protocol commit"
+fixtures:
+  - tests/transcripts/performance_training.md
 ---
 # Performance Training
 
@@ -22,8 +23,12 @@ Rather than introducing a fifth mode or a separate agent, performance training o
 
 - **Performance training is a phase, not a fifth mode.** It is a journey phase that modifies the behavior of existing modes (Tutor, Challenger, Assessor, Reviewer). It does not introduce new modes, new agents, or a separate interaction pattern. The four-mode model remains the complete set of behavioral modes.
 - **The six-stage stack is ordered.** The stages — learn → automate → verbalize → time pressure → simulated evaluation → full mock — form a progression. A learner does not skip to full mock without having passed through earlier stages for the relevant material. Each stage builds on the readiness established by the previous one.
-- **Each stage modifies existing mode behaviors.** Tutor adds time awareness (pacing, clock management, when to move on). Challenger adds interview-style pressure (format constraints, curveball variations, thinking-aloud requirements). Assessor simulates evaluation conditions (timed problems, realistic scoring, no hints). No stage invents behavior outside the existing mode definitions.
-- **Entry requires sufficient mastery across relevant curriculum.** Performance training is not a shortcut. The learner must have demonstrated adequate mastery of the underlying topics before the phase activates. Rushing a learner into timed mocks on material they haven't learned violates P-mastery-before-progress.
+- **Each stage modifies existing mode behaviors.** Tutor adds time awareness (pacing, clock management, when to move on). Challenger adds interview-style pressure (format constraints, curveball variations, thinking-aloud requirements). Assessor simulates evaluation conditions (timed problems, realistic scoring, no hints). No stage invents behavior outside the existing mode definitions. Observable behavioral deltas when the performance phase is active:
+  - **Tutor:** adds time awareness cues ("you have ~3 minutes left on this type of problem"), pacing guidance (when to move on vs. when to dig in), and format-specific framing (e.g., "in an interview setting, you'd explain this as…").
+  - **Challenger:** adds interview-style pressure (unexpected follow-ups, constraint mutations mid-problem), format constraints (whiteboard-only, no IDE, verbal-first), and thinking-aloud requirements ("walk me through your reasoning as you go").
+  - **Assessor:** simulates evaluation conditions — timed, scored, no hints, no encouragement. The assessor exception applies with additional realism constraints: clock visible, scoring rubric disclosed upfront, no partial-credit negotiation. [V2]
+  - **Reviewer:** targets weak spots identified during the performance phase for spaced retrieval. Review priority shifts toward topics where performance-phase attempts revealed execution gaps (knew the concept but failed under pressure).
+- **Entry requires sufficient mastery across relevant curriculum.** Performance training is not a shortcut. The learner must have demonstrated adequate mastery of the underlying topics before the phase activates. Rushing a learner into timed mocks on material they haven't learned violates P-mastery-before-progress. The entry threshold is configurable via `performance_training.mastery_gate` in `defaults.yaml`, defaulting to `solid` — the same required level used by `mastery_check.py`. This means the learner must be at or above the `solid` mastery level on relevant topics before the performance phase activates.
 
 <!-- Diagram: illustrates §Invariants — performance preparation stack -->
 ```mermaid
@@ -35,6 +40,19 @@ flowchart LR
     S --> M[Full mock]
 ```
 *Figure 1. Performance Preparation Stack: six ordered stages, each building on the previous.*
+
+## Stage Definitions
+
+| # | Stage | Dominant Mode(s) | Observable Behavioral Delta | Scope |
+|---|-------|-------------------|----------------------------|-------|
+| 1 | **Learn** | Tutor | Tutor frames material in the shape the performance format demands (e.g., "in an interview you'd phrase this as…"). No time pressure yet — focus is on format-aware understanding. | V1 |
+| 2 | **Automate** | Tutor → Challenger | Repetition until recall is fluent. Tutor drills pattern recognition; Challenger introduces minor variations. The learner should produce correct answers without deliberation. | V1 |
+| 3 | **Verbalize** | Challenger | Learner explains solutions aloud. Challenger enforces thinking-aloud requirements and probes for clarity. Builds the "narrate while solving" skill that interviews and oral exams demand. | V1 |
+| 4 | **Time pressure** | Challenger + Tutor | Clock is introduced. Challenger sets time constraints; Tutor adds pacing guidance ("move on — you've spent too long here"). Problems are familiar; the new variable is speed. | V1 |
+| 5 | **Simulated evaluation** | Assessor + Challenger | Assessor runs timed, scored problems under realistic conditions (no hints, no encouragement). Challenger adds curveball follow-ups. Scoring rubric disclosed upfront. | V2 |
+| 6 | **Full mock** | Assessor + Reviewer | End-to-end simulation of the target event (full-length mock interview, timed exam). Reviewer debriefs afterward, targeting execution gaps for spaced retrieval. | V2 |
+
+Stages 1–4 are V1 scope. Stages 5–6 (simulated evaluation and full mock) are deferred to V2 — they depend on the mock interview protocol and realistic scoring rubrics that are out of scope for this spec.
 
 ## Rationale
 

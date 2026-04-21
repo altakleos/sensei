@@ -294,6 +294,69 @@ After every `mutate_graph.py complete` or `collapse` operation:
 
 ---
 
+## Performance Phase Activation
+
+**Triggers:** "I have an interview coming up" / "Prepare me for the exam" / "Start performance training" / learner expresses a performance event (interview, exam, certification) for the current goal.
+
+1. **Identify the event.** Extract from the learner's message:
+   - `event_type` — one of `interview`, `exam`, `certification`. If unclear, ask: "Is this for an interview, an exam, or a certification?"
+   - `event_date` — target date if mentioned, else `null`.
+
+2. **Check the mastery gate.** The learner must have demonstrated mastery at or above `config.performance_training.mastery_gate` (default: `solid`) on the goal's completed nodes. Run:
+
+   ```
+   python .sensei/scripts/mastery_check.py \
+     --profile instance/profile.yaml \
+     --topic <active-topic> \
+     --required <config.performance_training.mastery_gate>
+   ```
+
+   Run this for each completed node in the goal. Parse the output. If any relevant topic's mastery level is below the gate threshold:
+   - Explain what gaps remain: "You're not ready for performance training yet. [Topic X] and [Topic Y] need more work. Let's strengthen those first."
+   - Do NOT activate the phase. Continue normal learning.
+
+3. **Activate the phase.** If the gate is met, update the goal file:
+
+   ```yaml
+   performance_training:
+     active: true
+     stage: 1
+     entered_at: <current UTC ISO-8601>
+     event_type: <interview|exam|certification>
+     event_date: <date or null>
+   ```
+
+   Validate with `check_goal.py`. If validation fails, fix and retry (same error-handling as Step 5).
+
+4. **Inform the learner.** Say: "Performance training is active. We're starting at stage 1 — learning [topic] in [event_type] format. No time pressure yet."
+
+5. **Load the phase protocol.** Read `protocols/performance-training.md` in full. Apply the overlay matching the current active mode. Proceed with stage 1 behavior.
+
+---
+
+## Performance Phase Stage Advancement
+
+When the performance phase is active, evaluate stage progression after each learner interaction. The phase protocol (`protocols/performance-training.md` §Stage Progression Rules) defines the criteria for each transition.
+
+1. **Check progression criteria.** Based on the current stage:
+   - **Stage 1 → 2:** Learner demonstrates correct format-aware understanding. Mentor judgment — no counter.
+   - **Stage 2 → 3:** Learner produces `config.performance_training.stage_thresholds.automate` correct fluent recalls.
+   - **Stage 3 → 4:** Learner delivers `config.performance_training.stage_thresholds.verbalize` clear verbal explanations.
+   - **Stage 4 → [V2]:** Learner solves `config.performance_training.stage_thresholds.time_pressure` timed problems within budget. V1 stops at stage 4.
+
+2. **Advance the stage.** Update the goal file:
+
+   ```yaml
+   performance_training:
+     stage: <new_stage_number>
+   ```
+
+   Validate with `check_goal.py`.
+
+3. **Inform the learner briefly.** Example: "You're fluent on these patterns. Adding the clock now — stage 4." Do not over-explain the stage model.
+
+---
+
 ## Silence profile (binding)
 
 - Tutor mode: ask more than tell. Target ~40% silence (questions, pauses, letting the learner think).
