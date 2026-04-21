@@ -70,8 +70,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--now", default=None, help="ISO-8601 current time (default: wall clock)")
     args = parser.parse_args(argv)
 
-    with open(args.hints_file) as f:
-        data = yaml.safe_load(f)
+    from pathlib import Path
+
+    path = Path(args.hints_file)
+    if not path.is_file():
+        print(f"error: hints file not found: {path}", file=sys.stderr)
+        return 1
+
+    try:
+        with path.open("r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+    except yaml.YAMLError as exc:
+        print(f"error: yaml parse error: {exc}", file=sys.stderr)
+        return 1
 
     if not isinstance(data, dict) or "hints" not in data:
         print("error: hints file must contain a top-level 'hints' key", file=sys.stderr)

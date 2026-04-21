@@ -105,30 +105,30 @@ def migrate_instance(instance_dir: Path) -> list[str]:
     return migrated
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> int:
     import argparse
 
     parser = argparse.ArgumentParser(description="Migrate Sensei instance files")
     parser.add_argument("--file", type=Path, help="Single file to migrate")
     parser.add_argument("--type", choices=["profile", "goal"], help="File type (required with --file)")
     parser.add_argument("--instance", type=Path, help="Instance directory to migrate all files")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if args.file:
         if not args.type:
             parser.error("--type required with --file")
         migrated = migrate_file(args.file, args.type)
-        result = {"file": str(args.file), "migrated": migrated}
+        result: dict[str, Any] = {"file": str(args.file), "migrated": migrated}
     elif args.instance:
         results = migrate_instance(args.instance)
         result = {"instance": str(args.instance), "migrated": results}
     else:
         parser.error("Provide --file or --instance")
-        return
+        return 1  # unreachable; parser.error calls sys.exit(2)
 
     print(json.dumps(result))
-    sys.exit(0)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
