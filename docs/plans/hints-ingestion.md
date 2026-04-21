@@ -18,7 +18,7 @@ date: 2026-04-20
 - [x] T7: N/A — inbox/ files are source-repo seed data, not instance data
 - [x] T8: Write tests for hint_decay.py → `tests/test_hint_decay.py` (depends: T3)
 - [x] T9: Write tests for folder scaffolding → `tests/test_init.py` (depends: T6)
-- [~] T10: End-to-end validation — drop a hint file, run triage, verify hints.yaml populated (depends: T4, T6). **NOTE:** Partial coverage shipped as a Tier-1 transcript fixture (`tests/transcripts/hints.md` + `hints.dogfood.md`, per ADR-0011) that lexically validates mentor-facing triage invariants. The full Tier-2 form — headless Claude Code invoked against a seeded inbox, asserting `hints.yaml` mutation on disk — has not shipped. Tracked as a follow-up alongside the existing Tier-2 E2Es for `goal` and `assess` in `tests/e2e/`.
+- [x] T10: End-to-end validation — drop a hint file, run triage, verify hints.yaml populated (depends: T4, T6). Covered at two tiers: (a) Tier-1 lexical validation via `tests/transcripts/hints.md` + `hints.dogfood.md` (per ADR-0011); (b) Tier-2 behavioural validation via `tests/e2e/test_hints_protocol_e2e.py`, which seeds `instance/inbox/` with two representative hints, invokes headless Claude Code, and asserts `hints.yaml` gains ≥1 registered entry and the inbox is drained. Runs as part of the manual pre-release gate.
 
 ## Acceptance Criteria
 
