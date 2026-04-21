@@ -49,6 +49,7 @@ REQUIRED_FILES: tuple[str, ...] = (
     "sensei/engine/scripts/decay.py",
     "sensei/engine/scripts/classify_confidence.py",
     "sensei/engine/schemas/profile.schema.json",
+    "sensei/engine/templates/AGENTS.md",
 )
 
 REQUIRED_DIRS: tuple[str, ...] = (

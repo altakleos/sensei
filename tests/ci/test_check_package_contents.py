@@ -44,6 +44,7 @@ def _good_files(version: str = "0.0.0") -> dict[str, str | bytes]:
         "sensei/engine/scripts/decay.py": "# decay\n",
         "sensei/engine/scripts/classify_confidence.py": "# classify\n",
         "sensei/engine/schemas/profile.schema.json": "{}",
+        "sensei/engine/templates/AGENTS.md": "# AGENTS.md boot document template\n",
         "sensei/engine/prompts/README.md": "# prompts\n",
         "sensei/engine/profiles/README.md": "# profiles\n",
         "sensei-0.0.0.dist-info/METADATA": "Name: sensei\n",

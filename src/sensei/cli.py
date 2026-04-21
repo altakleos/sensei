@@ -45,29 +45,6 @@ _SHIMS: dict[str, str] = {
     ".aiassistant/rules/sensei.md": "Read and follow the instructions in `AGENTS.md` at the instance root.\n",
 }
 
-_AGENTS_MD = """# AGENTS.md — Sensei Boot Document
-
-You are operating a Sensei learning-environment instance. Follow the boot chain below.
-
-## Boot Chain
-
-1. Read `.sensei/engine.md` — the kernel. It defines the dispatch table and invariants.
-2. Dispatch to `.sensei/protocols/<name>.md` based on the user's intent.
-3. Read `.sensei/defaults.yaml` for tunables and `instance/config.yaml` for overrides.
-4. Consult `instance/profile.yaml` and other state files before making pedagogical decisions.
-
-## Key Constraints
-
-- Never teach during assessment (ADR forthcoming — mentor behavioral invariants).
-- After two failed attempts at the same concept, diagnose prerequisites before a third explanation.
-- Silence is a first-class action. Short responses are the default; long responses are the exception.
-
-## References
-
-- `.sensei/engine.md` — kernel and dispatch table
-- `.sensei/README.md` — engine contents overview (if present)
-"""
-
 _INSTANCE_CONFIG_YAML = """# Instance-level overrides for Sensei defaults.
 # Leave empty to use engine defaults from .sensei/defaults.yaml.
 """
@@ -223,8 +200,15 @@ def init(target: Path, force: bool, learner_id: str) -> None:
     if not hints_registry.exists():
         hints_registry.write_text("schema_version: 1\nhints: []\n", encoding="utf-8")
 
-    # AGENTS.md + tool shims (ADR-0003).
-    (target / "AGENTS.md").write_text(_AGENTS_MD, encoding="utf-8")
+    # AGENTS.md + tool shims (ADR-0003). The boot document is bundled in the
+    # engine (see src/sensei/engine/templates/AGENTS.md) rather than baked into
+    # the CLI source, so it stays in sync with engine.md / protocols / schemas
+    # any time the bundle is refreshed. `.sensei/` was just written above, so
+    # the template is always readable from there.
+    agents_template = sensei_dir / "templates" / "AGENTS.md"
+    (target / "AGENTS.md").write_text(
+        agents_template.read_text(encoding="utf-8"), encoding="utf-8"
+    )
     for rel_path, content in _SHIMS.items():
         _write_shim(target, rel_path, content)
 
@@ -380,6 +364,7 @@ def verify(target: Path) -> None:
         "protocols/modes/challenger.md",
         "protocols/modes/reviewer.md",
         "schemas/profile.schema.json",
+        "templates/AGENTS.md",
     ]
     for rel in expected:
         if not (sensei_dir / rel).exists():
