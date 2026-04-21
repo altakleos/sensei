@@ -51,6 +51,18 @@ Load the `## Summary` section only (not the full content) from the other three m
 
 These brief summaries let you recognize when a transition is warranted without diluting attention on the active mode's instructions.
 
+### Step 2.5: Load phase overlay (if active)
+
+Check the current goal's `performance_training.active` field. If `true`, load `protocols/performance-training.md` in full as an additional context layer after the active mode. The composed context becomes:
+
+```
+personality.md (full) + active_mode.md (full) + inactive §Summaries + performance-training.md (full)
+```
+
+The phase protocol contains per-mode overlay sections (`## When Tutor is Active`, etc.). Apply the section matching the current active mode. The phase modifies mode behavior — it does not replace it. See ADR-0020.
+
+If `performance_training.active` is `false` or the field is absent, skip this step. Composition is unchanged from Step 2.
+
 ### Step 3: Transition rules
 
 After each learner turn, evaluate whether a mode transition is warranted. Transitions are invisible to the learner — you shift tone, you don't announce mode changes.
@@ -119,6 +131,7 @@ When the learner expresses a specific operational intent, dispatch to the corres
 | "Resume [goal]" / "Back to [goal]" / "Continue [goal]" | `protocols/goal.md` §Resume | accepted |
 | "Drop this goal" / "I don't want to learn X" | `protocols/goal.md` §Abandon | accepted |
 | "How am I doing?" / "Show my progress" | `protocols/status.md` | accepted |
+| "I have an interview coming up" / "Prepare me for the exam" / "Start performance training" | `protocols/goal.md` §Performance Phase Activation | accepted |
 
 For intents without a dedicated protocol, operate in the appropriate mode using that mode's behavioral instructions directly. The mode files ARE the protocol for general interaction.
 
@@ -197,12 +210,18 @@ Current config keys:
 - `cross_goal.deadline_weight` — urgency multiplier for imminent deadlines in `goal_priority.py` (default: 5.0). Higher values make approaching deadlines dominate priority ranking.
 - `cross_goal.min_session_minutes` — minimum per-goal time allocation in `session_allocator.py` (default: 5). Goals that would receive fewer minutes are dropped from the session plan.
 - `cross_goal.review_dedup` — enable cross-goal review deduplication in `review_scheduler.py` (default: true). When enabled, a topic stale in multiple goals produces one review item, not one per goal.
+- `performance_training.mastery_gate` — minimum mastery level to enter the performance phase (default: `solid`). The learner must be at or above this ordinal level on relevant topics before the phase activates. Consumed by `protocols/goal.md` §Performance Phase Activation.
+- `performance_training.stage_thresholds.automate` — correct fluent recalls needed to advance past stage 2 (default: 3).
+- `performance_training.stage_thresholds.verbalize` — clear verbal explanations needed to advance past stage 3 (default: 2).
+- `performance_training.stage_thresholds.time_pressure` — timed problems solved within budget to advance past stage 4 (default: 3).
 
 ## References
 
 - [`protocols/personality.md`](protocols/personality.md) — base personality (always loaded)
 - [`protocols/modes/`](protocols/modes/) — four behavioral mode files
+- [`protocols/performance-training.md`](protocols/performance-training.md) — performance phase overlay (loaded when phase is active)
 - [`protocols/review.md`](protocols/review.md) — the review protocol
 - [`docs/specs/behavioral-modes.md`](../../../docs/specs/behavioral-modes.md) — what modes guarantee
 - [`docs/design/behavioral-modes.md`](../../../docs/design/behavioral-modes.md) — how composition works
 - [`docs/decisions/0013-context-composition.md`](../../../docs/decisions/0013-context-composition.md) — why this composition model
+- [`docs/decisions/0020-phase-overlay-composition.md`](../../../docs/decisions/0020-phase-overlay-composition.md) — phase overlay composition

@@ -25,6 +25,7 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0017 | [File-Drop Ingestion](0017-file-drop-ingestion.md) | accepted |
 | 0018 | [Curriculum Boosting over Rewriting](0018-curriculum-boosting.md) | accepted |
 | 0019 | [Universal Inbox over Typed Drop Zones](0019-universal-inbox.md) | accepted |
+| 0020 | [Phase Overlay Composition — Single Phase Protocol](0020-phase-overlay-composition.md) | provisional |
 
 ## Status values
 

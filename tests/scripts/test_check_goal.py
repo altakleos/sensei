@@ -191,3 +191,75 @@ def test_main_invalid_file(tmp_path: Path, capsys):
 def test_main_missing_file(tmp_path: Path, capsys):
     rc = main(["--goal", str(tmp_path / "nope.yaml")])
     assert rc == 1
+
+
+# --- performance_training field tests ---
+
+
+def _valid_goal_with_performance_training() -> dict:
+    goal = _valid_goal()
+    goal["performance_training"] = {
+        "active": True,
+        "stage": 1,
+        "entered_at": "2026-04-21T14:00:00Z",
+        "event_type": "interview",
+        "event_date": "2026-05-12T00:00:00Z",
+    }
+    return goal
+
+
+def test_performance_training_valid():
+    status, errors = validate_goal(_valid_goal_with_performance_training())
+    assert status == "ok"
+    assert errors == []
+
+
+def test_performance_training_missing_is_optional():
+    """performance_training is not required — omitting it is valid."""
+    goal = _valid_goal()
+    assert "performance_training" not in goal
+    status, errors = validate_goal(goal)
+    assert status == "ok"
+    assert errors == []
+
+
+def test_performance_training_null_optional_fields():
+    goal = _valid_goal()
+    goal["performance_training"] = {
+        "active": False,
+        "stage": 1,
+        "entered_at": None,
+        "event_type": None,
+        "event_date": None,
+    }
+    status, errors = validate_goal(goal)
+    assert status == "ok"
+    assert errors == []
+
+
+def test_performance_training_stage_out_of_range():
+    goal = _valid_goal_with_performance_training()
+    goal["performance_training"]["stage"] = 7
+    status, errors = validate_goal(goal)
+    assert status != "ok"
+
+
+def test_performance_training_stage_zero_invalid():
+    goal = _valid_goal_with_performance_training()
+    goal["performance_training"]["stage"] = 0
+    status, errors = validate_goal(goal)
+    assert status != "ok"
+
+
+def test_performance_training_invalid_event_type():
+    goal = _valid_goal_with_performance_training()
+    goal["performance_training"]["event_type"] = "hackathon"
+    status, errors = validate_goal(goal)
+    assert status != "ok"
+
+
+def test_performance_training_additional_properties_rejected():
+    goal = _valid_goal_with_performance_training()
+    goal["performance_training"]["extra_field"] = "nope"
+    status, errors = validate_goal(goal)
+    assert status != "ok"

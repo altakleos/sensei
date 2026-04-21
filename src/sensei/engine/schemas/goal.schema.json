@@ -90,6 +90,9 @@
       ],
       "format": "date-time",
       "description": "Optional ISO-8601 UTC deadline for this goal. Used by priority scoring for urgency."
+    },
+    "performance_training": {
+      "$ref": "#/$defs/PerformanceTraining"
     }
   },
   "$defs": {
@@ -163,6 +166,57 @@
           "type": "boolean",
           "default": false,
           "description": "When true, the node requires in-context mastery proof even if the topic is globally known."
+        }
+      }
+    },
+    "PerformanceTraining": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Performance phase state. Tracks whether the goal is in performance training and the current stage.",
+      "required": [
+        "active",
+        "stage"
+      ],
+      "properties": {
+        "active": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the performance training phase is currently active for this goal."
+        },
+        "stage": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "description": "Current stage in the Performance Preparation Stack (1-6)."
+        },
+        "entered_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time",
+          "description": "ISO-8601 UTC timestamp when the performance phase was activated."
+        },
+        "event_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "interview",
+            "exam",
+            "certification",
+            null
+          ],
+          "description": "The type of performance event the learner is preparing for."
+        },
+        "event_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time",
+          "description": "ISO-8601 UTC target date for the performance event."
         }
       }
     }

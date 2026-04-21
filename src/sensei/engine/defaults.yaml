@@ -35,3 +35,11 @@ cross_goal:
   deadline_weight: 5.0      # urgency multiplier for imminent deadlines in goal_priority.py
   min_session_minutes: 5    # minimum per-goal time allocation in session_allocator.py
   review_dedup: true        # enable cross-goal review deduplication in review_scheduler.py
+
+performance_training:
+  # Performance phase tunables (consumed by protocols/performance-training.md via goal protocol).
+  mastery_gate: solid        # minimum mastery level to enter phase (ordinal: shaky < solid < deep)
+  stage_thresholds:
+    automate: 3              # correct fluent recalls to advance past stage 2
+    verbalize: 2             # clear verbal explanations to advance past stage 3
+    time_pressure: 3         # timed problems solved within budget to advance past stage 4

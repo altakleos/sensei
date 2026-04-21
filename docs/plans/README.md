@@ -30,6 +30,11 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [research-and-closure](research-and-closure.md) | Absorbed §8/§9/§10 + cross-reference migration + deletion of the ideation monolith | done |
 | [cross-goal-intelligence](cross-goal-intelligence.md) | All 4 cross-goal invariants: re-demonstration override, review dedup, deadline priority + session allocation, decay-aware resume | done |
 
+### In Progress
+| Plan | Feature | Status |
+|------|---------|--------|
+| [performance-training-v1](performance-training-v1.md) | Performance training phase overlay (stages 1–4) — config, schema, phase protocol, engine wiring, goal protocol integration | done |
+
 The last five plans above (`behavioral-architecture` through `research-and-closure`) were a five-step decomposition of an early ideation monolith into the foundations + specs + design + ADR layers. The source document itself was deleted at the end of Plan 5; its content is fully absorbed into the surviving artifacts.
 
 ## Template
