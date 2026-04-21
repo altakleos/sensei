@@ -11,6 +11,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 ### Shipped
 | Plan | Feature | Status |
 |------|---------|--------|
+| [hints-transcript-fixture](hints-transcript-fixture.md) | Tier-1 hints fixture + ADR 0017/0018/0019 graduation | done |
 | [v0.1.0a9-cut](v0.1.0a9-cut.md) | v0.1.0a9 gap-closing cut (cleanup + verification floor + E2E + vision narrowing + methodology gate) | done |
 | [adopt-sdd-from-sprue](adopt-sdd-from-sprue.md) | SDD method adoption | done |
 | [ci-verify-workflow](ci-verify-workflow.md) | GitHub Actions CI | done |
