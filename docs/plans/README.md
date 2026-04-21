@@ -29,7 +29,6 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [deep-frontiers-principles](deep-frontiers-principles.md) | Decomposition §2.4 — 3 principles, 1 update | done |
 | [research-and-closure](research-and-closure.md) | Absorbed §8/§9/§10 + cross-reference migration + deletion of the ideation monolith | done |
 | [cross-goal-intelligence](cross-goal-intelligence.md) | All 4 cross-goal invariants: re-demonstration override, review dedup, deadline priority + session allocation, decay-aware resume | done |
-
 | [curriculum-graph](curriculum-graph.md) | Curriculum graph — frontier, mutations, validation | done |
 | [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
 | [mermaid-diagrams](mermaid-diagrams.md) | Mermaid diagram enhancement pass | done |

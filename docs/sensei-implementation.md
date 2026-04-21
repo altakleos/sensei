@@ -78,12 +78,3 @@ Sensei-specific pedagogical principles (the seven pillars from `docs/foundations
 | "What is Sensei as a product?" | [`docs/foundations/vision.md`](foundations/vision.md) |
 | "Where are the tunables?" | `src/sensei/engine/defaults.yaml` |
 | "Which ADRs have been accepted?" | [`decisions/README.md`](decisions/README.md) |
-DME.md) |
-tions/vision.md`](foundations/vision.md) |
-| "Where are the tunables?" | `src/sensei/engine/defaults.yaml` |
-| "Which ADRs have been accepted?" | [`decisions/README.md`](decisions/README.md) |
-DME.md) |
-(decisions/README.md) |
-DME.md) |
-(decisions/README.md) |
-DME.md) |
