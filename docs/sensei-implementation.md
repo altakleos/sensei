@@ -25,9 +25,9 @@ flowchart TD
 ```
 *Figure 1. Implementation artifacts feed into verification: protocols verified by transcript fixtures, helpers by pytest, config by schema assertions, all by CI linter rules.*
 
-> **Status: scaffolding.** Sensei is in the ideation-plus-scaffolding phase. The tables below describe the *intended* shape of Implementation and Verification, but most artifacts are placeholders. Load-bearing principles will be committed as they crystallize from the first real protocol. The runtime architecture question is resolved — see [ADR-0006](decisions/0006-hybrid-runtime-architecture.md).
+> **Status: active.** The tables below describe the shape of Implementation and Verification as shipped. The runtime architecture is resolved — see [ADR-0006](decisions/0006-hybrid-runtime-architecture.md).
 
-## Implementation Layer (planned)
+## Implementation Layer
 
 Implementation in Sensei is realized across three artifact types, all under `src/sensei/engine/`:
 
@@ -35,7 +35,7 @@ Implementation in Sensei is realized across three artifact types, all under `src
 |---|---|---|---|
 | Prose-as-code protocols | `src/sensei/engine/protocols/*.md` | LLM runtime | Judgment-requiring operations (mode selection, observation, decision) |
 | Tunable configuration | `src/sensei/engine/defaults.yaml` | Both | Thresholds, vocabularies, limits, heuristics |
-| Deterministic helpers | `src/sensei/engine/scripts/*.py` (non-`check-*`) | CPython | Mechanical work (config loading; scoring/scheduling math once runtime-code question is resolved) |
+| Deterministic helpers | `src/sensei/engine/scripts/*.py` (non-`check_*`) | CPython | Mechanical work (config loading; scoring/scheduling math once runtime-code question is resolved) |
 
 ### Runtime Architecture (resolved by ADR-0006)
 
@@ -44,23 +44,23 @@ Implementation in Sensei is realized across three artifact types, all under `src
 **V1 helper inventory** (ships with the first protocol):
 
 1. `scripts/config.py` — deep-merge loader (already shipped).
-2. `scripts/mastery-check.py` — mastery-threshold gate for the assessor exception (§3.6).
-3. `scripts/classify-confidence.py` — confidence × correctness → 4-quadrant label (§8.5).
+2. `scripts/mastery_check.py` — mastery-threshold gate for the assessor exception.
+3. `scripts/classify_confidence.py` — confidence × correctness → 4-quadrant label.
 4. `scripts/decay.py` — forgetting-curve freshness arithmetic.
-5. `scripts/check-*.py` — schema validators, one per instance state file (added as schemas land).
+5. `scripts/check_*.py` — schema validators, one per instance state file (added as schemas land).
 
 **V2 deferrals** (separate ADR when needed): FSRS full scheduler, FIRe fractional credit propagation, per-student-per-topic speed calibration, affect detection.
 
 See [`decisions/0006-hybrid-runtime-architecture.md`](decisions/0006-hybrid-runtime-architecture.md) for the full rationale, invocation-style decision, and deferred MCP path.
 
-## Verification Layer (planned)
+## Verification Layer
 
 Verification in Sensei is the set of artifacts that confirm Implementation met its specs. Once specs exist, every spec invariant that can be checked mechanically will have a check.
 
 | Artifact type | Location | Executor | Role |
 |---|---|---|---|
-| Executable assertions | `src/sensei/engine/scripts/check-*.py` | CPython | Structural checks (frontmatter, schemas, yaml shape) |
-| Rule catalog | `memory/rules.yaml` (in instance) | CPython via `verify.py` | Registry of invariants with their check commands |
+| Executable assertions | `src/sensei/engine/scripts/check_*.py` | CPython | Structural checks (frontmatter, schemas, yaml shape) |
+| Rule catalog (planned) | `memory/rules.yaml` (in instance) | CPython via `verify.py` | Registry of invariants with their check commands — not yet implemented |
 | Top-level runner | `sensei verify` (CLI) | CPython | Entry point for CI and inline invocation |
 | Transcript fixtures | `tests/transcripts/<protocol>.md` + `<protocol>.dogfood.md` | pytest (tier-1, lexical) / LLM-as-judge (tier-2, operator-local) | Assert the LLM interpreting a protocol respects the invariants its spec declares. See [ADR-0011](decisions/0011-transcript-fixtures.md) and [design/transcript-fixtures.md](design/transcript-fixtures.md). |
 
@@ -78,3 +78,12 @@ Sensei-specific pedagogical principles (the seven pillars from `docs/foundations
 | "What is Sensei as a product?" | [`docs/foundations/vision.md`](foundations/vision.md) |
 | "Where are the tunables?" | `src/sensei/engine/defaults.yaml` |
 | "Which ADRs have been accepted?" | [`decisions/README.md`](decisions/README.md) |
+DME.md) |
+tions/vision.md`](foundations/vision.md) |
+| "Where are the tunables?" | `src/sensei/engine/defaults.yaml` |
+| "Which ADRs have been accepted?" | [`decisions/README.md`](decisions/README.md) |
+DME.md) |
+(decisions/README.md) |
+DME.md) |
+(decisions/README.md) |
+DME.md) |
