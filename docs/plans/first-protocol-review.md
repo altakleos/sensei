@@ -50,12 +50,12 @@ Resolved during T2 design:
 
 ## Acceptance Criteria
 
-- [ ] AC1: `docs/specs/review-protocol.md` and `docs/design/review-protocol.md` exist and cross-link
-- [ ] AC2: `src/sensei/engine/protocols/review.md` exists, loads cleanly in Claude Code reading `AGENTS.md`, and the dispatch in `engine.md` reflects it
-- [ ] AC3: Integration tests synthesize a profile and simulate a review session, asserting stale-first ordering and correct write-back
-- [ ] AC4: `sensei init` seeds a valid `profile.yaml` that passes `sensei verify` (or `python scripts/check_profile.py`) immediately after `init`
-- [ ] AC5: `sensei verify` and CI remain green (43+/43+ tests)
-- [ ] AC6: Manual dogfood — open a test instance in Claude Code, boot via `AGENTS.md`, request review, observe that the protocol actually fires through the helpers
+- [x] AC1: `docs/specs/review-protocol.md` and `docs/design/review-protocol.md` exist and cross-link
+- [x] AC2: `src/sensei/engine/protocols/review.md` exists, loads cleanly in Claude Code reading `AGENTS.md`, and the dispatch in `engine.md` reflects it
+- [x] AC3: Integration tests synthesize a profile and simulate a review session, asserting stale-first ordering and correct write-back
+- [x] AC4: `sensei init` seeds a valid `profile.yaml` that passes `sensei verify` (or `python scripts/check_profile.py`) immediately after `init`
+- [x] AC5: `sensei verify` and CI remain green (43+/43+ tests)
+- [x] AC6: Manual dogfood — open a test instance in Claude Code, boot via `AGENTS.md`, request review, observe that the protocol actually fires through the helpers
 
 ## Out of Scope
 

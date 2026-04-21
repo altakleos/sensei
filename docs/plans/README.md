@@ -68,3 +68,14 @@ date: YYYY-MM-DD
 - [ ] AC2: <what must be true when done>
 - [ ] verify passes
 ```
+
+## Checkbox convention
+
+Plans use GFM `- [ ]` / `- [x]` checkboxes for tasks and acceptance criteria. A task's checkbox reflects whether the task has actually shipped:
+
+- **`status: planned` or `status: in-progress`** — tasks remain `- [ ]` until their work lands.
+- **`status: done`** — every task and acceptance criterion must be `- [x]` or explicitly deferred with a `NOTE:` explaining why (e.g. "item dropped during execution, see NOTE below"). A `done` plan with unticked items is an internal contradiction — a reader can't tell *shipped* from *skipped* from *forgotten*.
+- **Partial deferrals** are fine and expected — not every plan's ACs survive first contact with reality. Deferrals should be marked explicitly, not left silently unticked. An acceptable in-body form is `- [~] AC7: ... (deferred to follow-up — see NOTE)`, with the rationale captured in a `NOTE:` or a "Post-execution notes" section at the bottom of the plan.
+
+The rule exists because plans are permanent historical records. A future reader (or a future agent running a swarm analysis) should be able to answer "did this plan fully ship?" from the checkbox state alone, without re-deriving it from the codebase.
+
