@@ -6,6 +6,24 @@ The release mechanism and its invariants are documented in the spec [`docs/specs
 
 **Prerequisites before the first real release:** PyPI project registration, PyPI trusted-publisher configuration, GitHub Environment `pypi` setup, and capturing the environment ID below. See `docs/plans/release-workflow.md` § Prerequisites for the exact steps.
 
+## Pre-release gate (manual)
+
+Before tagging any release, run the Tier-2 behavioural E2E on your workstation. CI cannot run this — the `claude` CLI and API credentials are workstation-only.
+
+```bash
+# Option A (API key):
+ANTHROPIC_API_KEY=sk-ant-... pytest tests/e2e/ -v --no-cov
+
+# Option B (OAuth Claude Code user):
+SENSEI_E2E=1 pytest tests/e2e/ -v --no-cov
+```
+
+`--no-cov` is required because `pytest-cov` would otherwise fail the threshold on a single-test invocation whose coverage surface is tiny.
+
+Expected: one test passes (`test_goal_protocol_produces_schema_valid_goal`) — headless Claude Code reads `AGENTS.md`, dispatches to `goal`, and emits a schema-valid goal file in `instance/goals/`. A red result means either the `goal` protocol prose regressed or the schema did. **Do not tag** until the gate is green.
+
+Skip only with an explicit CHANGELOG note recording why (e.g. upstream Claude Code outage).
+
 ## Normal Release
 
 1. Ensure `main` is green (CI verified across Python 3.10–3.13).

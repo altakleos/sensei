@@ -27,6 +27,19 @@ The pytest loader in `conftest.py` discovers fixture files, pairs each with its 
 4. Update the frontmatter `agent`, `model`, and `captured` fields.
 5. Run `pytest tests/transcripts/` — green means the LLM respected every fixture. Red means either the protocol drifted (fix the protocol) or the fixture is over-strict (loosen).
 
+## Verification tiers
+
+Prose-as-code correctness is checked at four tiers. ADR-0011 introduced Tier 1; Tier 2 landed at the a9 cut.
+
+| Tier | Runs | What it checks | When |
+|------|------|----------------|------|
+| 0 | default pytest | script CLI ↔ protocol prose consistency (`tests/ci/test_protocol_script_consistency.py`), schema round-trip of emitted YAML (`tests/test_schema_validation.py`), unit tests of helper functions | every PR, CI-gated |
+| 1 | default pytest | lexical assertions on captured `.dogfood.md` transcripts (forbidden phrases, required regexes) via `conftest.py` parametrization | every PR, CI-gated; missing dogfood → `SKIPPED` (not failure) |
+| 2 | **manual pre-release** | one scripted E2E in `tests/e2e/` that invokes headless Claude Code against a fresh Sensei instance and asserts the emitted goal file validates against `goal.schema.json` | before each release tag, maintainer workstation |
+| 3 | **deferred post-a9** | LLM-in-CI matrix across multiple protocols + agents, cost-capped, nightly only | not yet |
+
+Tier 2 skips in default CI because runners lack the `claude` binary and API credentials. Opt in with `ANTHROPIC_API_KEY=...` or `SENSEI_E2E=1` plus `pytest tests/e2e/ --no-cov`. See `docs/operations/release-playbook.md` § Pre-release gate.
+
 ## References
 
 - Design: [`docs/design/transcript-fixtures.md`](../../docs/design/transcript-fixtures.md)
