@@ -15,6 +15,7 @@ For the full development model, see `docs/development-process.md`.
 | 7 | [Folder Structure](folder-structure.md) | Canonical layout for `sensei init` scaffolded folders and divergences from the original ideation sketch | accepted |
 | 8 | [Hints Ingestion](hints-ingestion.md) | File-drop inbox pipeline with hint_decay scoring, YAML schema validation, and curriculum priority biasing | accepted |
 | 9 | [Performance Training](performance-training.md) | Phase overlay composition: single phase protocol loaded as additional context layer when performance phase is active | accepted |
+| 10 | [Cross-Goal Intelligence](cross-goal-intelligence.md) | Pipeline topology for 5 cross-goal scripts: priority ranking, session allocation, review scheduling, resume planning, global knowledge | accepted |
 
 ## Template
 
