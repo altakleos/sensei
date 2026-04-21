@@ -63,7 +63,7 @@ select = ["E", "F", "W", "I", "UP", "B", "SIM"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-# Coverage floor reflects the measured baseline at the a9 cut (~63%). Low coverage on
+# Coverage floor reflects the measured baseline at the v0.1.0a9 cut (~63%). Low coverage on
 # frontier.py and mutate_graph.py is a measurement artifact: their tests invoke the
 # scripts via subprocess, which pytest-cov cannot observe. Follow-up: convert those
 # tests to direct main() calls to boost observed coverage, then ratchet the floor up.
