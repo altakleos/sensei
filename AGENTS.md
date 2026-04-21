@@ -29,7 +29,7 @@ sensei/
 │   ├── design/                 (technical architecture)
 │   ├── decisions/              (ADRs 0001–0005 so far)
 │   ├── plans/                  (task breakdowns)
-│   ├── operations/             (runbooks — empty for now)
+│   ├── operations/             (operational runbooks: release, worktrees, context budget)
 │   └── research/               (promoted librarian reports)
 ├── src/sensei/
 │   ├── __init__.py
@@ -64,3 +64,4 @@ sensei/
 - [`docs/sensei-implementation.md`](docs/sensei-implementation.md) — Sensei's instantiation
 - [`docs/decisions/README.md`](docs/decisions/README.md) — ADR index
 - [`docs/foundations/vision.md`](docs/foundations/vision.md) — product vision
+- [`docs/operations/README.md`](docs/operations/README.md) — operational runbooks (release, worktrees, context budget)
