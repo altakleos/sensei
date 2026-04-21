@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 - fix: `sensei upgrade` and `sensei init --force` swap the `.sensei/` engine bundle atomically via a copy-to-temp + aside + rename-in-place sequence. A failed copy or interrupted swap no longer destroys the learner's existing `.sensei/`, and a crash mid-swap is recovered on the next invocation (honors the atomicity contract in `docs/operations/release-playbook.md` and ADR-0004).
 - fix: `goal_priority.py` now honors `instance/config.yaml` overrides of `memory.half_life_days` and `memory.stale_threshold` via new `--half-life-days` and `--stale-threshold` CLI flags (previously hardcoded to 7.0 and 0.5, so learner overrides silently did not apply to goal ranking). `engine.md` session-start invocation updated to pass the config values.
 - refactor: `sensei status` now imports `freshness_score` from `decay.py` instead of reimplementing `2**(-elapsed/half_life)` inline, eliminating drift risk across call sites that share the exponential-decay formula.
+- test: synthetic seed transcript at `tests/transcripts/assess.dogfood.md` unblocks the four previously-skipped `assess` fixtures (assessor-silence, no-teaching-during-assessment, gate-result-reported, two-failure-diagnosis). Covers all three protocol branches — pass, one-more, and two-failure prerequisite diagnosis — in one file. Marked `status: seed` per the `review.dogfood.md` precedent; replace with a real captured session at the next release per `docs/design/transcript-fixtures.md` § Cadence.
 
 ## [0.1.0a8] — 2026-04-20
 
