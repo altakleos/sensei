@@ -1,6 +1,6 @@
 # Sensei
 
-A pip-installable CLI that scaffolds a learning-environment folder. The user opens that folder with any LLM agent (Claude Code, Cursor, Kiro, Copilot, Aider, …) and the agent becomes an adaptive mentor guided by prose-as-code context files and a living learner profile.
+A pip-installable CLI that scaffolds a learning-environment folder. The user opens that folder with an LLM coding agent (dogfooded on Claude Code and Kiro; shims for Cursor, Copilot, Windsurf, Cline, Roo, AI Assistant) and the agent becomes an adaptive mentor guided by prose-as-code context files and a living learner profile.
 
 > **Status:** active development. The product vision lives in [`docs/foundations/vision.md`](docs/foundations/vision.md); the contributor process lives in [`docs/development-process.md`](docs/development-process.md).
 

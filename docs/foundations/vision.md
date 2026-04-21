@@ -6,7 +6,7 @@ date: 2026-04-20
 
 ## Identity
 
-**Sensei** is a pip-installable CLI tool (`sensei-tutor` on PyPI) that scaffolds a learning-environment folder. The user then opens that folder with any LLM agent — Claude Code, Cursor, Kiro, Copilot, Aider, or any coding-agent that reads a root boot document — and the agent becomes an adaptive, multi-agent tutor guided by prose-as-code context files and a living learner profile.
+**Sensei** is a pip-installable CLI tool (`sensei-tutor` on PyPI) that scaffolds a learning-environment folder. The user then opens that folder with an LLM coding agent that reads a root boot document. Sensei has been dogfooded on Claude Code and Kiro; shims for Cursor, Copilot, Windsurf, Cline, Roo, and AI Assistant are provided (see `src/sensei/cli.py` `_SHIMS`) but await further validation. The agent becomes an adaptive, multi-agent tutor guided by prose-as-code context files and a living learner profile.
 
 Sensei is three things at once:
 
@@ -41,7 +41,7 @@ Sensei is not "AI that helps you learn Rust faster." Sensei is "AI that develops
 ## Key Properties
 
 - **Personal learning tool** — single-user, not a community platform.
-- **Agent-agnostic** — works with any LLM that reads project context through a root boot document.
+- **Agent-portable by design** — the protocol files are plain markdown; any LLM coding agent that reads a root boot document can execute them. Portability is a design property; today the validated agent list is Claude Code and Kiro (both dogfood-exercised end-to-end). Shims for Cursor, Copilot, Windsurf, Cline, Roo, and AI Assistant are provided and await further validation.
 - **Offline-first** — all state is local files, git-trackable, portable across machines.
 - **Four behavioural modes** — tutor, assessor, challenger, reviewer — emerging from one principle-driven mentor, not four separate agents. (See the `mentor-relationship` principle and the assessor-exception rules in the review-protocol spec.)
 - **Truly adaptive** — the learner profile evolves with every interaction.
