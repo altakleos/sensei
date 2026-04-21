@@ -51,6 +51,7 @@ sensei/
 ## Key Constraints
 
 - `docs/development-process.md` is **project-agnostic**. Do not mention pedagogy, learner, mentor, tutor, curriculum, or Sensei the product in it. Sensei-specific material lives in `docs/sensei-implementation.md`.
+- **Process rules belong in `docs/development-process.md`**. README files in artifact directories (`specs/`, `design/`, `plans/`, `decisions/`, `foundations/`) carry indexes, templates, and pointers — not process definitions. When adding a new process concept, put it in the method doc and add a pointer from the relevant README.
 - ADRs are immutable once accepted. To reverse one, write a superseding ADR.
 - The product vision has been fully decomposed into docs/foundations/ (principles, personas, vision) and docs/specs/ (protocols, features). `docs/research/bibliography.md` is the curated research catalog.
 
