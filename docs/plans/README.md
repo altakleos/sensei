@@ -29,6 +29,10 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [deep-frontiers-principles](deep-frontiers-principles.md) | Decomposition §2.4 — 3 principles, 1 update | done |
 | [research-and-closure](research-and-closure.md) | Absorbed §8/§9/§10 + cross-reference migration + deletion of the ideation monolith | done |
 | [cross-goal-intelligence](cross-goal-intelligence.md) | All 4 cross-goal invariants: re-demonstration override, review dedup, deadline priority + session allocation, decay-aware resume | done |
+| [curriculum-graph](curriculum-graph.md) | Curriculum graph — frontier, mutations, validation | done |
+| [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
+| [mermaid-diagrams](mermaid-diagrams.md) | Mermaid diagram enhancement pass | done |
+| [parallel-worktrees](parallel-worktrees.md) | Parallel agent worktrees | done |
 
 The last five plans above (`behavioral-architecture` through `research-and-closure`) were a five-step decomposition of an early ideation monolith into the foundations + specs + design + ADR layers. The source document itself was deleted at the end of Plan 5; its content is fully absorbed into the surviving artifacts.
 
@@ -59,11 +63,5 @@ date: YYYY-MM-DD
 
 ## Checkbox convention
 
-Plans use GFM `- [ ]` / `- [x]` checkboxes for tasks and acceptance criteria. A task's checkbox reflects whether the task has actually shipped:
-
-- **`status: planned` or `status: in-progress`** — tasks remain `- [ ]` until their work lands.
-- **`status: done`** — every task and acceptance criterion must be `- [x]` or explicitly deferred with a `NOTE:` explaining why (e.g. "item dropped during execution, see NOTE below"). A `done` plan with unticked items is an internal contradiction — a reader can't tell *shipped* from *skipped* from *forgotten*.
-- **Partial deferrals** are fine and expected — not every plan's ACs survive first contact with reality. Deferrals should be marked explicitly, not left silently unticked. An acceptable in-body form is `- [~] AC7: ... (deferred to follow-up — see NOTE)`, with the rationale captured in a `NOTE:` or a "Post-execution notes" section at the bottom of the plan.
-
-The rule exists because plans are permanent historical records. A future reader (or a future agent running a swarm analysis) should be able to answer "did this plan fully ship?" from the checkbox state alone, without re-deriving it from the codebase.
+See [`development-process.md § Checkbox convention`](../development-process.md#checkbox-convention) for the full rules. In brief: `- [x]` = shipped, `- [~]` = explicitly deferred with rationale, unticked `- [ ]` on a `done` plan = contradiction.
 

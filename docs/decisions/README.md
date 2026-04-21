@@ -25,12 +25,55 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0017 | [File-Drop Ingestion](0017-file-drop-ingestion.md) | accepted |
 | 0018 | [Curriculum Boosting over Rewriting](0018-curriculum-boosting.md) | accepted |
 | 0019 | [Universal Inbox over Typed Drop Zones](0019-universal-inbox.md) | accepted |
+| 0020 | [Release Self-Bypass for Solo Maintainer](0020-release-self-bypass.md) | provisional |
 
 ## Status values
 
-- `accepted` — decision is committed; behavior is required to match.
-- `accepted (lite)` — ADR-lite format per [ADR-0005](0005-adr-lite-format.md); same weight as accepted.
-- `provisional` — accepted on current evidence, but flagged for review after the first learner-session or protocol-fixture evidence lands. A `provisional` ADR is a commitment to revisit, not a deferral of the decision. Auto-review when (a) the protocol it governs gains a passing transcript fixture, or (b) a superseding ADR proves the original wrong.
-- `superseded` — replaced by a later ADR. The superseding ADR's number must be referenced in the original's header so readers can navigate forward.
+See [`development-process.md § Status values`](../development-process.md#status-values) for definitions. In brief: `accepted`, `accepted (lite)`, `provisional` (prefer for draft-governed decisions), `superseded`.
 
-**Authors of new ADRs should prefer `provisional`** when a decision governs a protocol still in `draft` at `src/sensei/engine/protocols/`, or when the decision turns on a design property no fixture has yet validated. This couples new decisions to verification evidence per [ADR-0011](0011-transcript-fixtures.md).
+## Templates
+
+### Full ADR
+
+```
+---
+status: provisional
+date: YYYY-MM-DD
+---
+# ADR-NNNN: <Decision Title>
+
+## Context
+
+What situation or problem prompted this decision?
+
+## Decision
+
+What was decided.
+
+## Alternatives Considered
+
+- **Alternative A** — description. Rejected because...
+- **Alternative B** — description. Rejected because...
+
+## Consequences
+
+What follows from this decision. What becomes easier or harder.
+```
+
+### ADR-lite
+
+```
+---
+status: provisional
+weight: lite
+date: YYYY-MM-DD
+protocols: [<protocol-name>]
+---
+# ADR-NNNN: <Decision Title>
+
+**Decision:** What was decided.
+
+**Why:** One-paragraph rationale.
+
+**Alternative:** What was considered instead and why it lost.
+```

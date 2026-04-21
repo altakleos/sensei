@@ -59,6 +59,4 @@ What this spec explicitly does NOT cover.
 - Link to relevant ADRs once they exist.
 ```
 
-The foundation backreference fields (`serves:`, `realizes:`, `stressed_by:`) are optional but encouraged. Each referenced slug is validated against `docs/foundations/`; a broken reference fails CI. See [`docs/foundations/README.md`](../foundations/README.md) for linkage conventions.
-
-**Fixture-naming convention.** Any spec claiming to `realize:` a principle or `serve:` a foundation should name at least one concrete fixture that proves it — a test file under `tests/`, a transcript fixture under `tests/transcripts/`, or a Tier-2 E2E under `tests/e2e/`. If no fixture yet exists, use `fixtures_deferred:` with a reason (e.g. `"awaiting first learner session"`). `ci/check_foundations.py` warns when neither is present; the warning is scheduled to hard-fail after two releases. Couples new decisions to verification evidence per [ADR-0011](../decisions/0011-transcript-fixtures.md) and the v0.1.0a9 methodology gate.
+The foundation backreference fields (`serves:`, `realizes:`, `stressed_by:`) are optional but encouraged. See [`development-process.md § Fixture-naming convention`](../development-process.md#fixture-naming-convention) for the full fixture-naming rules and [`docs/foundations/README.md`](../foundations/README.md) for linkage conventions.
