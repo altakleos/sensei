@@ -12,6 +12,9 @@ realizes:
   - P-scripts-compute-protocols-judge
 stressed_by:
   - persona-jacundu
+fixtures:
+  - tests/transcripts/review.md
+  - tests/scripts/test_review_protocol.py
 ---
 # Review Protocol
 

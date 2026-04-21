@@ -6,6 +6,9 @@ realizes:
   - P-learner-is-not-the-goal
 stressed_by:
   - persona-jacundu
+fixtures:
+  - tests/scripts/test_check_goal.py
+  - tests/test_schema_validation.py
 ---
 # Goal Lifecycle Transitions
 

@@ -4,6 +4,11 @@ date: 2026-04-20
 realizes:
   - P-curriculum-is-hypothesis
   - P-forgetting-curve-is-curriculum
+fixtures:
+  - tests/test_frontier.py
+  - tests/test_mutate_graph.py
+  - tests/test_curriculum_integration.py
+  - tests/scripts/test_check_goal.py
 ---
 # Curriculum Graph
 

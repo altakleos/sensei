@@ -4,6 +4,8 @@ date: 2026-04-20
 realizes:
   - P-validators-close-the-loop
   - P-cross-link-dont-duplicate
+fixtures:
+  - tests/ci/test_check_package_contents.py
 ---
 # Release Communication
 

@@ -6,6 +6,7 @@ realizes:
   - P-mastery-before-progress
 stressed_by:
   - persona-jacundu
+fixtures_deferred: "spec is draft; the Performance Preparation Stack is scaffolded prose, not implemented behaviour — fixtures land with the first overlay protocol commit"
 ---
 # Performance Training
 

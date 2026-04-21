@@ -9,6 +9,10 @@ realizes:
   - P-emotion-cognition-are-one
 stressed_by:
   - persona-jacundu
+fixtures:
+  - tests/transcripts/assess.md
+  - tests/transcripts/review.md
+fixtures_deferred: "tutor and challenger modes lack dedicated transcript fixtures — backfill when those .dogfood.md captures land"
 ---
 # Behavioral Modes
 

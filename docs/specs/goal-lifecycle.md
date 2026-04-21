@@ -6,6 +6,9 @@ realizes:
   - P-know-the-learner
 stressed_by:
   - persona-jacundu
+fixtures:
+  - tests/e2e/test_goal_protocol_e2e.py
+  - tests/scripts/test_check_goal.py
 ---
 # Goal Lifecycle
 

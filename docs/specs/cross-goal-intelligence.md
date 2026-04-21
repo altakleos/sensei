@@ -7,6 +7,10 @@ realizes:
   - P-transfer-is-the-goal
 stressed_by:
   - persona-jacundu
+fixtures:
+  - tests/scripts/test_global_knowledge.py
+  - tests/scripts/test_goal_priority.py
+  - tests/test_cross_goal.py
 ---
 # Cross-Goal Intelligence
 

@@ -10,6 +10,10 @@ realizes:
   - P-cross-link-dont-duplicate
 stressed_by:
   - persona-jacundu
+fixtures:
+  - tests/scripts/test_check_profile.py
+  - tests/test_schema_validation.py
+  - tests/test_migrate.py
 ---
 # Learner Profile
 
