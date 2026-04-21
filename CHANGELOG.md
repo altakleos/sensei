@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+- test: third Tier-2 behavioural E2E — `tests/e2e/test_hints_protocol_e2e.py` seeds `instance/inbox/` with two representative hint files, invokes headless Claude Code against the `hints` triage protocol, and asserts `instance/hints/hints.yaml` gains at least one registered entry while the inbox is drained. Completes the E2E trio (goal + assess + hints); closes the T10 deferral in `docs/plans/hints-ingestion.md`. Runs as part of the manual pre-release gate; total gate now ~4–6 min for three tests.
+
 - test: convert `tests/test_frontier.py` and `tests/test_mutate_graph.py` from subprocess-only invocations to direct `main(argv) + capsys` calls (keeping one subprocess smoke per file as an ADR-0006 CLI-entry regression guard). Coverage jumps from 63% to 81% — the gap was a pytest-cov measurement artifact, not a testing gap. `--cov-fail-under` ratcheted from 60 → 80.
 - fix: `hint_decay.py` now returns exit code 1 cleanly on missing hints file or YAML parse errors (previously propagated `FileNotFoundError` / raised uncaught). Aligns with every other engine script's `is_file() + return 1` pattern.
 - refactor: `migrate.main()` signature normalized to `main(argv: list[str] | None = None) -> int` — matches every other engine script, enables direct `main(...)` testing without subprocess. `__main__` block wraps with `sys.exit(main())`. No caller change (`sensei upgrade` uses `migrate_instance()` directly, not `main()`).
