@@ -24,7 +24,12 @@ SENSEI_E2E=1 pytest tests/e2e/ -v --no-cov
 
 `--no-cov` is required because `pytest-cov` would otherwise fail the threshold on a single-test invocation whose coverage surface is tiny.
 
-Expected: one test passes (`test_goal_protocol_produces_schema_valid_goal`) — headless Claude Code reads `AGENTS.md`, dispatches to `goal`, and emits a schema-valid goal file in `instance/goals/`. A red result means either the `goal` protocol prose regressed or the schema did. **Do not tag** until the gate is green.
+Expected: both Tier-2 tests pass — headless Claude Code reads `AGENTS.md`, dispatches to the named protocol, and emits the expected artifact:
+
+- `test_goal_protocol_produces_schema_valid_goal` — dispatches to `goal`, writes a schema-valid goal file to `instance/goals/`.
+- `test_assess_protocol_updates_profile_with_attempts` — dispatches to `assess`, increments `attempts` and `correct` in `instance/profile.yaml` for a pre-seeded topic.
+
+Each run takes ~60–90s on a cold Claude Code cache; two tests is ~2–3 minutes total. A red result means either a protocol prose regression or a schema drift. **Do not tag** until the gate is green.
 
 Skip only with an explicit CHANGELOG note recording why (e.g. upstream Claude Code outage).
 
