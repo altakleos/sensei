@@ -35,14 +35,7 @@ Slugs are the `id:` frontmatter field in each foundation file — `vision` (fixe
 
 ## Enforcement
 
-`ci/check_foundations.py` hard-fails on:
-
-- Any `serves:` / `realizes:` / `stressed_by:` / `stresses:` slug that does not resolve to an existing foundation file of the correct type.
-- Any principle with `kind:` outside `{pedagogical, technical, product}`.
-
-Warns on (non-blocking at v1):
-
-- Any accepted principle that is not referenced by any spec. This will promote to hard-fail in a later ADR once the backreference wiring has settled.
+See [`development-process.md § Foundations`](../development-process.md#foundations) for the method-level enforcement rules. Sensei's concrete validator is `ci/check_foundations.py`.
 
 ## Migration
 

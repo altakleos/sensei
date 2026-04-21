@@ -11,7 +11,7 @@ Before the six layers sit the **Foundations** — cross-cutting source material 
 Three sub-namespaces under `docs/foundations/`:
 
 - **Vision** (`docs/foundations/vision.md`) — a single narrative document describing the product's identity, mission, and non-goals. Read first by every contributor and every LLM-agent session.
-- **Principles** (`docs/foundations/principles/<slug>.md`) — cross-cutting stances the project commits to, one per file. Distinguished by a `kind:` frontmatter field: `pedagogical` (project-specific design stances that shape product behaviour), `technical` (how artifacts are built), or `product` (broader-than-any-one-spec user promises). TOGAF-flavoured shape: Statement / Rationale / Implications / Exceptions and Tensions / Source.
+- **Principles** (`docs/foundations/principles/<slug>.md`) — cross-cutting stances the project commits to, one per file. Distinguished by a `kind:` frontmatter field: `pedagogical` (project-specific design stances that shape product behaviour), `technical` (how artifacts are built), or `product` (broader-than-any-one-spec user promises). TOGAF-flavoured shape: Statement / Rationale / Implications / Exceptions and Tensions / Source. When a stance could sit in two categories, prefer `pedagogical` over `product`, and `technical` over `pedagogical` — the more specific tag wins.
 - **Personas** (`docs/foundations/personas/<slug>.md`) — design-stressing user scenarios. Distinct from specs: specs describe product guarantees; personas describe users whose presence stress-tests those guarantees. Each persona carries an `owner:` and a `stresses:` list pointing at the specs and principles it exercises.
 
 ### Linkage to the six layers
@@ -25,6 +25,8 @@ Feature specs link upward to foundations via optional frontmatter:
 Personas link downward via `stresses: [<spec-slug>, <P-slug>, ...]` pointing at the artifacts they stress-test.
 
 These links are machine-verifiable. Projects should ship a validator that asserts every slug resolves to an existing foundation file of the correct type; broken references are a release-blocking error, not a warning. The validator's concrete form is a project-instantiation choice.
+
+The validator hard-fails on broken slugs and invalid `kind:` values. It warns (non-blocking) when an accepted principle is not referenced by any spec — scheduled to promote to hard-fail once backreference wiring has settled.
 
 ### Lifecycle and migration
 
@@ -81,6 +83,15 @@ ADRs follow a consistent format: YAML frontmatter (`status`, `date`), then Conte
 
 ADRs live in `docs/decisions/`. See `docs/decisions/README.md` for the full index.
 
+### Status values
+
+- `accepted` — decision is committed; behavior must match.
+- `accepted (lite)` — ADR-lite format per ADR-0005; same weight as `accepted`.
+- `provisional` — accepted on current evidence, flagged for review when verification evidence lands (e.g., the protocol it governs gains a passing transcript fixture, or a superseding ADR proves the original wrong). A commitment to revisit, not a deferral.
+- `superseded` — replaced by a later ADR. The superseding ADR's number must appear in the original's header.
+
+Authors of new ADRs should prefer `provisional` when the decision governs a feature still in draft or when no fixture has yet validated the design property the decision turns on.
+
 ### Plans
 
 A plan is an ordered task breakdown written AFTER design and BEFORE implementation. It tells the implementing agent exactly what to build, in what order, touching which files. Plans are the bridge between "we know HOW to build it" (design) and "we're building it" (implement).
@@ -90,6 +101,15 @@ Plans are feature-scoped, not mechanism-scoped. A plan answers: What are the ord
 Plans are committed to the feature branch as the first commit and kept as permanent records after the feature ships. They serve as historical records of how features were built — useful for understanding implementation decisions that don't rise to ADR level.
 
 Plans live in `docs/plans/`. See `docs/plans/README.md` for the template.
+
+### Checkbox convention
+
+Plans use GFM `- [ ]` / `- [x]` checkboxes. A task's checkbox reflects whether the task has shipped:
+
+- **`status: done`** — every task must be `- [x]` or explicitly deferred with `- [~]` and a `NOTE:` explaining why. A `done` plan with unticked items is an internal contradiction.
+- **Partial deferrals** — mark as `- [~] T7: ... (deferred — see NOTE)` with rationale in a post-execution notes section.
+
+The rule exists because plans are permanent records. A future reader must determine "shipped vs. skipped vs. forgotten" from checkbox state alone.
 
 ### Implementation
 
@@ -163,8 +183,8 @@ When introducing a new user-visible capability:
 1. **Spec** — Write or update a spec capturing product intent. What problem does this solve? What properties must the output have? What invariants must hold?
 2. **Design Doc** — Write a design doc proposing architecture. Which components, how data flows, what trade-offs. (May be skipped when the conditions in § "When to Skip a Design Doc" are met.)
 3. **ADRs** — As design decisions crystallize, capture each in an ADR. Not every design decision needs an ADR — only those where the choice was non-obvious or where viable alternatives existed.
-4. **Plan** — Write a task breakdown in `docs/plans/<feature>.md`. Ordered steps, file paths, acceptance criteria. Commit this as the first commit on the feature branch.
-5. **Branch** — Create a feature branch (`feat/<slug>`). The plan is the first commit. All subsequent implementation and verification commits land here.
+4. **Branch** — Create a feature branch (`feat/<slug>`).
+5. **Plan** — Write a task breakdown in `docs/plans/<feature>.md`. Ordered steps, file paths, acceptance criteria. Commit this as the first commit on the feature branch. All subsequent implementation and verification commits land here.
 6. **Implementation** — Build or modify the artifacts that produce the behavior. These may be code, prose instructions, configuration, or any combination the project's instantiation allows.
 7. **Verification** — Write or extend checks to assert the new invariants hold.
 8. **Pull Request** — Open a PR, review, merge to `main`.
@@ -183,6 +203,20 @@ When the change modifies HOW an existing feature works without changing WHAT it 
 ### Bug Fix or Tuning: Implementation or Verification Only
 
 The simplest path. A threshold is wrong, a check has a bug, a configuration value needs adjustment. Touch only the affected layer. No spec, no design doc, no ADR unless the fix reveals a design flaw that requires a decision.
+
+### Worked examples
+
+Classifying a change into the right path is the most consequential routing decision in this method. These examples illustrate the reasoning:
+
+| Change | Path | Why |
+|---|---|---|
+| Add a new CLI command with new output | Full Stack | New user-visible capability → needs spec, design, plan |
+| Add a new output section to an existing command | Full Stack (light) | New guarantee to users → spec update, maybe plan, skip design if pattern instantiation |
+| Change the default threshold for a scoring algorithm | Behavioral Change | Same mechanism, different parameter → no spec, maybe ADR-lite if the default encodes a design choice |
+| Reorder output sections for readability | Behavioral Change | Same content, different presentation → no spec, no ADR |
+| Fix a regex that rejects valid input | Bug Fix | Broken behavior → touch implementation + test only |
+| Adjust a config value that was set too aggressively | Bug Fix | Tuning → touch config only |
+| Add a new mode to an existing command | Full Stack | New capability → spec (what the mode guarantees), design (how it composes with existing modes) |
 
 ---
 
@@ -218,6 +252,18 @@ graph TD
 
 **ADRs are retrospective, not prescriptive.** ADRs explain why the implementation and design are the way they are. They are the archaeological record, not the blueprint. Reading ADRs tells a future contributor "why was it done this way?" — the answer to the question that specs (what) and design docs (how) don't address.
 
+## Document Authority
+
+When two documents disagree, authority flows from abstract to concrete:
+
+1. **Specs** — product invariants. If a spec says X must hold, X must hold.
+2. **ADRs** — committed decisions. If an ADR says Y was decided, Y stands until superseded.
+3. **Design Docs** — architectural intent. May drift as implementation evolves.
+4. **Plans / Operations** — procedures. Must conform to specs and ADRs, not the reverse.
+5. **AGENTS.md / README files** — entry points and indexes. Summaries here defer to the canonical source they reference.
+
+If an operational runbook contradicts a spec invariant, the spec wins and the runbook must be updated (or the spec must be formally relaxed via a new ADR).
+
 ---
 
 ## When to Write a Spec
@@ -231,7 +277,11 @@ A spec is warranted when:
 
 A spec is NOT needed for: implementation refactors, config tuning, single-artifact fixes, adding checks, adding a new output type that follows existing patterns.
 
-Specs use a lightweight format: YAML frontmatter (`status`, `date`), then sections for Intent, Invariants, Rationale, and links to related Decisions. See `docs/specs/README.md` for the template.
+Specs use a lightweight format: YAML frontmatter (`status`, `date`, plus optional foundation backreferences `serves`, `realizes`, `stressed_by`, and fixture fields `fixtures`, `fixtures_deferred`), then sections for Intent, Invariants, Rationale, Out of Scope, and Decisions. See `docs/specs/README.md` for the template.
+
+### Fixture-naming convention
+
+Any spec claiming to `realize:` a principle or `serve:` a foundation should name at least one concrete fixture that proves it — a test file, a transcript fixture, or an E2E test. If no fixture yet exists, use `fixtures_deferred:` with a reason. The project's CI validator warns when neither is present; the warning is scheduled to promote to hard-fail after two releases.
 
 ## When to Write a Plan
 
@@ -280,7 +330,7 @@ A design doc is warranted when:
 
 A design doc is NOT needed for: threshold tuning, bug fixes, adding content to an existing output type, extending a vocabulary.
 
-Design docs use a lightweight format: YAML frontmatter (`status`, `date`), then sections for Overview, Context, Architecture, Interfaces, and links to related Specs and Decisions. See `docs/design/README.md` for the template.
+Design docs use a lightweight format: YAML frontmatter (`status`, `date`, `implements`), then sections for Context, Specs, Architecture, Interfaces, and Decisions. See `docs/design/README.md` for the template.
 
 ### When to Skip a Design Doc
 
@@ -308,6 +358,8 @@ Warranted when:
 - A future reader might ask "why was it done this way?" and need a full narrative.
 - The decision constrains future work (establishing an invariant, choosing a data format, picking an architecture pattern).
 - The decision was debated or reversed a previous approach.
+
+When in doubt whether a decision warrants a full ADR or an ADR-lite, default to full ADR. The cost of over-documenting a decision is low; the cost of under-documenting one that a future contributor needs to understand is high.
 
 ### ADR-lite (~12 lines)
 
@@ -362,6 +414,16 @@ Don't force them. A flat list of invariants doesn't need a diagram. A narrative 
 
 ---
 
+## Glossary
+
+Terms used throughout this document with specific meanings:
+
+- **Behavioral change** — a modification that changes HOW an existing feature works without changing WHAT it guarantees. The spec invariants remain the same; the implementation or configuration changes. Example: changing a default threshold, reordering output sections, switching an algorithm.
+- **Component boundary** — a distinct functional unit in the project's architecture. What constitutes a component is a project-instantiation choice. Typical boundaries: a script, a protocol, a schema, a configuration surface, a CLI command.
+- **Spec invariant** — a property declared in a spec's Invariants section that verification must check. Spec invariants are product-level guarantees that survive implementation changes.
+- **Non-trivial change** — a change that touches multiple files, introduces new behavior, or requires ordering of steps. The heuristic: if the change needs a plan to execute correctly, it is non-trivial.
+- **Pattern instantiation** — implementing a feature by following an architecture already documented in an accepted ADR or design doc, without introducing new mechanisms or cross-component interactions.
+
 ## References
 
 - [sensei-implementation.md](sensei-implementation.md) — this project's instantiation of Implementation and Verification
@@ -369,3 +431,4 @@ Don't force them. A flat list of invariants doesn't need a diagram. A narrative 
 - [docs/specs/README.md](specs/README.md) — spec index and template
 - [docs/design/README.md](design/README.md) — design doc index
 - [docs/plans/README.md](plans/README.md) — plan template
+- [docs/operations/README.md](operations/README.md) — operational runbooks (release, parallel agents, context budget)
