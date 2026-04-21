@@ -161,7 +161,7 @@ Not every change touches every layer. The path through the stack depends on the 
 When introducing a new user-visible capability:
 
 1. **Spec** — Write or update a spec capturing product intent. What problem does this solve? What properties must the output have? What invariants must hold?
-2. **Design Doc** — Write a design doc proposing architecture. Which components, how data flows, what trade-offs.
+2. **Design Doc** — Write a design doc proposing architecture. Which components, how data flows, what trade-offs. (May be skipped when the conditions in § "When to Skip a Design Doc" are met.)
 3. **ADRs** — As design decisions crystallize, capture each in an ADR. Not every design decision needs an ADR — only those where the choice was non-obvious or where viable alternatives existed.
 4. **Plan** — Write a task breakdown in `docs/plans/<feature>.md`. Ordered steps, file paths, acceptance criteria. Commit this as the first commit on the feature branch.
 5. **Branch** — Create a feature branch (`feat/<slug>`). The plan is the first commit. All subsequent implementation and verification commits land here.
@@ -281,6 +281,19 @@ A design doc is warranted when:
 A design doc is NOT needed for: threshold tuning, bug fixes, adding content to an existing output type, extending a vocabulary.
 
 Design docs use a lightweight format: YAML frontmatter (`status`, `date`), then sections for Overview, Context, Architecture, Interfaces, and links to related Specs and Decisions. See `docs/design/README.md` for the template.
+
+### When to Skip a Design Doc
+
+A design doc may be skipped when **all four** conditions hold:
+
+1. **Pattern instantiation** — the feature follows an architecture already documented in an accepted ADR or design doc. No new mechanism is introduced.
+2. **Single-concern scope** — the feature touches one component boundary (e.g., one script + one schema, or one configuration surface). No novel cross-component interactions.
+3. **Spec carries the reasoning** — the spec's Rationale section explains the *why* sufficiently that a design doc would only restate it with file paths.
+4. **Plan exists** — a plan captures the file-level breakdown that a design doc's Architecture section would have provided.
+
+When skipping, the plan's frontmatter should declare `design: "Follows ADR-NNNN"` (referencing the ADR or design doc whose pattern is being instantiated) so the skip is auditable, not silent.
+
+**Watch for false skips.** If a "pattern instantiation" feature produces a new ADR during implementation, that signals the feature was more novel than assumed. Add a retrospective design doc in that case.
 
 ## When to Write an ADR
 
