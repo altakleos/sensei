@@ -29,7 +29,7 @@ Expected: both Tier-2 tests pass — headless Claude Code reads `AGENTS.md`, dis
 - `test_goal_protocol_produces_schema_valid_goal` — dispatches to `goal`, writes a schema-valid goal file to `instance/goals/`.
 - `test_assess_protocol_updates_profile_with_attempts` — dispatches to `assess`, increments `attempts` and `correct` in `instance/profile.yaml` for a pre-seeded topic.
 
-Each run takes ~60–90s on a cold Claude Code cache; two tests is ~2–3 minutes total. A red result means either a protocol prose regression or a schema drift. **Do not tag** until the gate is green.
+Each run takes ~60–120s on a cold Claude Code cache; two tests is ~3–5 minutes total (one real combined run measured ~4 min). A red result means either a protocol prose regression or a schema drift. **Do not tag** until the gate is green.
 
 Skip only with an explicit CHANGELOG note recording why (e.g. upstream Claude Code outage).
 
