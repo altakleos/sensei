@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+- fix: atomic writes in migrate and mutate_graph — profile.yaml and goal files can no longer be corrupted by interrupted writes (refs ADR-0004 atomicity contract)
+
 ## [0.1.0a8] — 2026-04-20
 
 ### Fixed

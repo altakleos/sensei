@@ -25,6 +25,8 @@ from typing import Any
 
 import yaml
 
+from sensei.engine.scripts._atomic import atomic_write_text
+
 _DONE_STATES = frozenset({"collapsed", "completed"})
 _EXCLUDED_STATES = frozenset({"collapsed", "active", "completed", "expanded"})
 
@@ -218,8 +220,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # Write back
     data["nodes"] = nodes
-    with path.open("w", encoding="utf-8") as fh:
-        yaml.safe_dump(data, fh, default_flow_style=False, sort_keys=False)
+    atomic_write_text(path, yaml.safe_dump(data, default_flow_style=False, sort_keys=False))
 
     return _success(args.operation, args.node, new_state, nodes)
 

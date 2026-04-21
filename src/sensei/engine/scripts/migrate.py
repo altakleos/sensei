@@ -20,6 +20,8 @@ from typing import Any
 
 import yaml
 
+from sensei.engine.scripts._atomic import atomic_write_text
+
 # Current schema versions (must match *.schema.json const values)
 CURRENT_PROFILE_VERSION = 0
 CURRENT_GOAL_VERSION = 0
@@ -83,7 +85,7 @@ def migrate_file(path: Path, file_type: str) -> bool:
     if old_version == target:
         return False
 
-    path.write_text(yaml.dump(data, default_flow_style=False, sort_keys=False), encoding="utf-8")
+    atomic_write_text(path, yaml.dump(data, default_flow_style=False, sort_keys=False))
     return True
 
 
