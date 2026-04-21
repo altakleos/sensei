@@ -49,12 +49,14 @@ def _persona_file(tmp_path: Path, slug: str, stresses: list[str] | None = None, 
     return p
 
 
-def _spec_file(tmp_path: Path, name: str, serves=None, realizes=None, stressed_by=None) -> Path:
+def _spec_file(tmp_path: Path, name: str, serves=None, realizes=None, stressed_by=None, fixtures=None, fixtures_deferred=None) -> Path:
     p = tmp_path / "specs" / f"{name}.md"
     fm_lines = ["---", "status: accepted", "date: 2026-04-20"]
-    for field, value in [("serves", serves), ("realizes", realizes), ("stressed_by", stressed_by)]:
+    for field, value in [("serves", serves), ("realizes", realizes), ("stressed_by", stressed_by), ("fixtures", fixtures)]:
         if value is not None:
             fm_lines.append(f"{field}: [" + ", ".join(f"{v!r}" for v in value) + "]")
+    if fixtures_deferred is not None:
+        fm_lines.append(f"fixtures_deferred: {fixtures_deferred!r}")
     fm_lines.append("---")
     _write(p, "\n".join(fm_lines) + f"\n# {name}\n")
     return p
@@ -70,11 +72,9 @@ def test_empty_foundations_ok(tmp_path: Path) -> None:
 
 def test_valid_references_ok(tmp_path: Path) -> None:
     _principle_file(tmp_path, "P-prose-is-code", kind="technical")
-    _spec_file(tmp_path, "my-feature", realizes=["P-prose-is-code"])
+    _spec_file(tmp_path, "my-feature", realizes=["P-prose-is-code"], fixtures=["tests/test_something.py"])
     errors, warnings = cfn.check(tmp_path / "foundations", tmp_path / "specs")
     assert errors == [], errors
-    # No reference-resolution or orphan warnings. (Fixture-naming is a separate
-    # concern tested in its own cases below.)
     assert not any("does not resolve" in w or "not referenced" in w for w in warnings), warnings
 
 
@@ -110,7 +110,7 @@ def test_invalid_kind_fails(tmp_path: Path) -> None:
 def test_vision_resolves(tmp_path: Path) -> None:
     vision = tmp_path / "foundations" / "vision.md"
     _write(vision, "---\nstatus: accepted\ndate: 2026-04-20\n---\n# Vision\n")
-    _spec_file(tmp_path, "my-feature", serves=["vision"])
+    _spec_file(tmp_path, "my-feature", serves=["vision"], fixtures=["tests/test_something.py"])
     errors, _ = cfn.check(tmp_path / "foundations", tmp_path / "specs")
     assert errors == [], errors
 
@@ -215,14 +215,13 @@ def test_spec_with_fixtures_emits_no_fixture_warning(tmp_path: Path) -> None:
     assert not any("names no 'fixtures:'" in w for w in warnings)
 
 
-def test_spec_without_fixtures_or_defer_emits_warning(tmp_path: Path) -> None:
+def test_spec_without_fixtures_or_defer_emits_error(tmp_path: Path) -> None:
     _principle_file(tmp_path, "P-prose-is-code", kind="technical")
     _spec_with_fixtures(tmp_path, "unnamed", realizes=["P-prose-is-code"])
     errors, warnings = cfn.check(tmp_path / "foundations", tmp_path / "specs")
-    assert errors == [], errors
     assert any(
-        "unnamed.md" in w and "names no 'fixtures:'" in w for w in warnings
-    ), warnings
+        "unnamed.md" in e and "names no 'fixtures:'" in e for e in errors
+    ), errors
 
 
 def test_spec_with_fixtures_deferred_suppresses_warning(tmp_path: Path) -> None:

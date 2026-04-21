@@ -5,14 +5,13 @@ Validates that:
   existing foundation file of the matching type.
 - Every `stresses:` slug in any persona resolves to a spec or foundation.
 - Every principle file carries a valid `kind:` in {pedagogical, technical, product}.
+- Any spec declaring `realizes:` or `serves:` that names neither `fixtures:`
+  nor `fixtures_deferred:`. Couples new decisions to verification evidence per
+  ADR-0011. Promoted from warn to hard-fail at v0.1.0a11.
 
 Warns (non-blocking at v1):
 - Any accepted principle not referenced by any spec. Will promote to hard-fail
   in a later ADR once the backreference wiring has settled.
-- Any spec declaring `realizes:` or `serves:` that names neither `fixtures:`
-  nor `fixtures_deferred:`. Couples new decisions to verification evidence per
-  ADR-0011 and the v0.1.0a9 methodology gate. Scheduled to hard-fail after two
-  releases.
 
 Exit codes:
     0 — all checks pass (warnings may be present)
@@ -153,14 +152,14 @@ def check(foundations_root: Path, specs_root: Path) -> tuple[list[str], list[str
                     referenced.add(ref)
 
         # Fixture-naming check: specs claiming to realize a principle or serve
-        # a foundation must name a fixture (or explicitly defer). Warn-only at
-        # v0.1.0a9; scheduled to hard-fail after two releases per ADR-0011 and
-        # the v0.1.0a9 methodology gate.
+        # a foundation must name a fixture (or explicitly defer). Promoted from
+        # warn to hard-fail at v0.1.0a11 per ADR-0011 and the v0.1.0a9
+        # methodology gate (two-release schedule met).
         has_ref = bool(fm.get("realizes") or fm.get("serves"))
         has_fixtures = bool(fm.get("fixtures"))
         has_defer = bool(fm.get("fixtures_deferred"))
         if has_ref and not (has_fixtures or has_defer):
-            warnings.append(
+            errors.append(
                 f"{spec_path}: spec declares 'realizes:'/'serves:' but names no "
                 f"'fixtures:' and no 'fixtures_deferred:' reason. See "
                 f"docs/decisions/0011-transcript-fixtures.md."
