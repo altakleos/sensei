@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import click
 import pytest
 import yaml
 from click.testing import CliRunner
 
 from sensei import __version__
-from sensei.cli import _atomic_replace_engine, main
+from sensei.cli import _atomic_replace_engine, _engine_source, main
 
 
 def _init_instance(runner: CliRunner, target: Path) -> None:
@@ -253,3 +255,218 @@ def test_upgrade_leaves_instance_intact_on_failure(
     # Both survive.
     assert (inst / ".sensei" / "engine.md").exists()
     assert "preserved" in profile_path.read_text()
+
+
+# --- _engine_source error path ---
+
+
+def test_engine_source_raises_when_bundle_missing(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """If the installed package has no engine/ directory, _engine_source raises ClickException."""
+    import sensei
+
+    empty = tmp_path / "fake_pkg"
+    empty.mkdir()
+    (empty / "__init__.py").write_text("", encoding="utf-8")
+    monkeypatch.setattr(sensei, "__file__", str(empty / "__init__.py"))
+
+    with pytest.raises(click.ClickException, match="Engine bundle not found"):
+        _engine_source()
+
+
+# --- _atomic_replace_engine: prior run completed but died before cleanup ---
+
+
+def test_atomic_replace_cleans_old_dir_when_both_exist(tmp_path: Path) -> None:
+    """A prior run can die between step 3 (rename tmp → real) and step 4 (rmtree old);
+    the next invocation finds both `.sensei/` AND `.sensei.old/` present and must
+    clean the stale aside rather than overwrite the current install with it."""
+    src = _fake_engine(tmp_path / "src")
+    sensei_dir = tmp_path / "inst" / ".sensei"
+    sensei_dir.parent.mkdir()
+    # Existing install:
+    sensei_dir.mkdir()
+    (sensei_dir / "engine.md").write_text("# current\n", encoding="utf-8")
+    # Leftover stale aside from a prior run that died between step 3 and step 4:
+    old_dir = sensei_dir.parent / ".sensei.old"
+    old_dir.mkdir()
+    (old_dir / "STALE").write_text("stale", encoding="utf-8")
+
+    _atomic_replace_engine(src, sensei_dir, "4.0.0")
+
+    assert (sensei_dir / "engine.md").read_text() == "# fake\n"
+    assert (sensei_dir / ".sensei-version").read_text() == "4.0.0\n"
+    assert not old_dir.exists()
+
+
+# --- status: uncovered branches ---
+
+
+def test_status_reports_profile_not_found(tmp_path: Path) -> None:
+    runner = CliRunner()
+    _init_instance(runner, tmp_path)
+    (tmp_path / "instance" / "profile.yaml").unlink()
+    result = runner.invoke(main, ["status", str(tmp_path)])
+    assert result.exit_code == 0
+    assert "Profile:  not found" in result.output
+
+
+def test_status_reports_invalid_profile_not_a_mapping(tmp_path: Path) -> None:
+    runner = CliRunner()
+    _init_instance(runner, tmp_path)
+    (tmp_path / "instance" / "profile.yaml").write_text("- just\n- a\n- list\n")
+    result = runner.invoke(main, ["status", str(tmp_path)])
+    assert result.exit_code == 0
+    assert "invalid (not a mapping)" in result.output
+
+
+def test_status_summarises_mastery_breakdown(tmp_path: Path) -> None:
+    """With expertise_map populated, status prints the mastery-level counts."""
+    runner = CliRunner()
+    _init_instance(runner, tmp_path)
+    now_iso = datetime.now(tz=timezone.utc).isoformat()
+    profile = {
+        "schema_version": 0,
+        "learner_id": "alice",
+        "expertise_map": {
+            "t1": {"mastery": "solid", "confidence": 0.8, "last_seen": now_iso, "attempts": 5, "correct": 4},
+            "t2": {"mastery": "developing", "confidence": 0.5, "last_seen": now_iso, "attempts": 3, "correct": 2},
+            "t3": {"mastery": "mastered", "confidence": 0.9, "last_seen": now_iso, "attempts": 8, "correct": 8},
+        },
+    }
+    (tmp_path / "instance" / "profile.yaml").write_text(yaml.safe_dump(profile))
+    result = runner.invoke(main, ["status", str(tmp_path)])
+    assert result.exit_code == 0
+    assert "Topics:   3" in result.output
+    assert "Mastery:" in result.output
+    # Fresh topics → no stale line.
+    assert "Stale:" not in result.output
+
+
+def test_status_flags_stale_topics(tmp_path: Path) -> None:
+    """Topics with old last_seen timestamps should surface under a Stale:  header."""
+    runner = CliRunner()
+    _init_instance(runner, tmp_path)
+    old_iso = (datetime.now(tz=timezone.utc) - timedelta(days=60)).isoformat()
+    profile = {
+        "schema_version": 0,
+        "learner_id": "alice",
+        "expertise_map": {
+            f"topic-{i}": {
+                "mastery": "solid",
+                "confidence": 0.7,
+                "last_seen": old_iso,
+                "attempts": 4,
+                "correct": 3,
+            }
+            for i in range(7)  # more than 5 to exercise the "... and N more" tail
+        },
+    }
+    (tmp_path / "instance" / "profile.yaml").write_text(yaml.safe_dump(profile))
+    result = runner.invoke(main, ["status", str(tmp_path)])
+    assert result.exit_code == 0
+    assert "Stale:    7 topics due for review" in result.output
+    assert "... and 2 more" in result.output
+
+
+def test_status_tolerates_malformed_last_seen(tmp_path: Path) -> None:
+    """A topic with a garbage last_seen string should still appear as stale, not crash status."""
+    runner = CliRunner()
+    _init_instance(runner, tmp_path)
+    profile = {
+        "schema_version": 0,
+        "learner_id": "alice",
+        "expertise_map": {
+            "garbage": {
+                "mastery": "solid",
+                "confidence": 0.7,
+                "last_seen": "not-a-real-date",
+                "attempts": 1,
+                "correct": 1,
+            },
+            "absent-timestamp": {
+                "mastery": "developing",
+                "confidence": 0.5,
+                "last_seen": "",
+                "attempts": 1,
+                "correct": 0,
+            },
+        },
+    }
+    (tmp_path / "instance" / "profile.yaml").write_text(yaml.safe_dump(profile))
+    result = runner.invoke(main, ["status", str(tmp_path)])
+    assert result.exit_code == 0
+    assert "Stale:    2 topics" in result.output
+
+
+# --- upgrade: migration-applied + already-current paths ---
+
+
+def test_upgrade_reports_already_current_migrations(tmp_path: Path) -> None:
+    """After a real version bump, the migration helper runs and reports 'schemas already current'
+    when nothing needs migrating (CURRENT_PROFILE_VERSION is still 0)."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    runner.invoke(main, ["init", str(inst)])
+    (inst / ".sensei" / ".sensei-version").write_text("0.0.0\n")
+    result = runner.invoke(main, ["upgrade", str(inst)])
+    assert result.exit_code == 0
+    assert "Instance schemas already current." in result.output
+
+
+# --- verify: failure output paths ---
+
+
+def test_verify_reports_missing_engine_file(tmp_path: Path) -> None:
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / ".sensei" / "engine.md").unlink()
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "FAIL" in result.output
+    assert "missing: .sensei/engine.md" in result.output
+
+
+def test_verify_reports_missing_profile(tmp_path: Path) -> None:
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / "instance" / "profile.yaml").unlink()
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "missing: instance/profile.yaml" in result.output
+
+
+def test_verify_reports_invalid_profile_yaml(tmp_path: Path) -> None:
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / "instance" / "profile.yaml").write_text("{{{\n")
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "profile: invalid YAML" in result.output
+
+
+def test_verify_reports_profile_not_a_mapping(tmp_path: Path) -> None:
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / "instance" / "profile.yaml").write_text("- item\n")
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "profile: not a YAML mapping" in result.output
+
+
+def test_verify_reports_profile_validation_errors(tmp_path: Path) -> None:
+    """A profile that parses but fails validate_profile should be reported."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    # Empty learner_id violates minLength:1 per profile.schema.json.
+    (inst / "instance" / "profile.yaml").write_text(
+        "schema_version: 0\nlearner_id: \"\"\nexpertise_map: {}\n"
+    )
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "FAIL" in result.output
+    assert "profile:" in result.output
