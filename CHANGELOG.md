@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 - fix: `goal_priority.py` now honors `instance/config.yaml` overrides of `memory.half_life_days` and `memory.stale_threshold` via new `--half-life-days` and `--stale-threshold` CLI flags (previously hardcoded to 7.0 and 0.5, so learner overrides silently did not apply to goal ranking). `engine.md` session-start invocation updated to pass the config values.
 - refactor: `sensei status` now imports `freshness_score` from `decay.py` instead of reimplementing `2**(-elapsed/half_life)` inline, eliminating drift risk across call sites that share the exponential-decay formula.
 - test: synthetic seed transcript at `tests/transcripts/assess.dogfood.md` unblocks the four previously-skipped `assess` fixtures (assessor-silence, no-teaching-during-assessment, gate-result-reported, two-failure-diagnosis). Covers all three protocol branches — pass, one-more, and two-failure prerequisite diagnosis — in one file. Marked `status: seed` per the `review.dogfood.md` precedent; replace with a real captured session at the next release per `docs/design/transcript-fixtures.md` § Cadence.
+- fix: cleanup — CLI module docstring no longer calls `status`/`upgrade`/`verify` "stubs" (all three are fully implemented); removed an unresolved `>>>>>>> plan/cross-goal` merge marker from the 0.1.0a4 section; `hint_decay.py` imports PyYAML unconditionally like every other engine script (PyYAML is a hard dependency).
 
 ## [0.1.0a8] — 2026-04-20
 
@@ -47,7 +48,6 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ### Added
 
->>>>>>> plan/cross-goal
 - Cross-goal intelligence: `scripts/global_knowledge.py` (checks if a topic is mastered globally across goals), `scripts/goal_priority.py` (ranks active goals by priority + decay risk + recency). Goal protocol gains decay-aware re-entry (Step 2.5) and global knowledge skip (Step 6). Engine auto-selects highest-priority goal at session start.
 - Goal lifecycle transitions: pause, resume, abandon, and automatic completion. Goals persist across transitions with full progress preservation.
 - Schema migration in `sensei upgrade`: detects profile schema version mismatches and applies forward migrations automatically.

@@ -23,10 +23,7 @@ import sys
 from datetime import datetime, timezone
 from typing import Any
 
-try:
-    import yaml
-except ImportError:
-    yaml = None  # type: ignore[assignment]
+import yaml
 
 
 def _parse_iso(raw: str) -> datetime:
@@ -72,10 +69,6 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--expire-after-days", type=int, required=True, help="Hard cap age in days")
     parser.add_argument("--now", default=None, help="ISO-8601 current time (default: wall clock)")
     args = parser.parse_args(argv)
-
-    if yaml is None:
-        print("error: PyYAML is required. Install with: pip install pyyaml", file=sys.stderr)
-        return 1
 
     with open(args.hints_file) as f:
         data = yaml.safe_load(f)

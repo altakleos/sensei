@@ -2,9 +2,9 @@
 
 Subcommands:
     init <target>   Scaffold a Sensei instance at <target>.
-    status          Report instance state (stub).
-    upgrade         Update .sensei/ to the installed package version (stub).
-    verify          Run validators (stub).
+    status          Report instance state.
+    upgrade         Update .sensei/ to the installed package version.
+    verify          Run validators.
 """
 
 from __future__ import annotations
