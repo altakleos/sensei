@@ -19,20 +19,28 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [0.1.0a9] — 2026-04-21
 
-- fix: atomic writes in migrate and mutate_graph — profile.yaml and goal files can no longer be corrupted by interrupted writes (refs ADR-0004 atomicity contract)
-- fix: protocol prose now matches script CLIs — `goal.md`, `tutor.md`, `hints.md`, and `challenger.md` had subprocess invocations with wrong flag names and positional verbs that would cause LLM-executed commands to fail (e.g., `mutate_graph.py collapse --topic` → `--operation collapse --node`, `hint_decay.py --registry` → `--hints-file` with required `--expire-threshold` and `--expire-after-days`). New CI linter (`tests/ci/test_protocol_script_consistency.py`) imports each script, captures its argparse, and validates every protocol invocation against it.
-- fix: `sensei upgrade` and `sensei init --force` swap the `.sensei/` engine bundle atomically via a copy-to-temp + aside + rename-in-place sequence. A failed copy or interrupted swap no longer destroys the learner's existing `.sensei/`, and a crash mid-swap is recovered on the next invocation (honors the atomicity contract in `docs/operations/release-playbook.md` and ADR-0004).
-- fix: `goal_priority.py` now honors `instance/config.yaml` overrides of `memory.half_life_days` and `memory.stale_threshold` via new `--half-life-days` and `--stale-threshold` CLI flags (previously hardcoded to 7.0 and 0.5, so learner overrides silently did not apply to goal ranking). `engine.md` session-start invocation updated to pass the config values.
-- refactor: `sensei status` now imports `freshness_score` from `decay.py` instead of reimplementing `2**(-elapsed/half_life)` inline, eliminating drift risk across call sites that share the exponential-decay formula.
-- test: synthetic seed transcript at `tests/transcripts/assess.dogfood.md` unblocks the four previously-skipped `assess` fixtures (assessor-silence, no-teaching-during-assessment, gate-result-reported, two-failure-diagnosis). Covers all three protocol branches — pass, one-more, and two-failure prerequisite diagnosis — in one file. Marked `status: seed` per the `review.dogfood.md` precedent; replace with a real captured session at the next release per `docs/design/transcript-fixtures.md` § Cadence.
-- fix: cleanup — CLI module docstring no longer calls `status`/`upgrade`/`verify` "stubs" (all three are fully implemented); removed an unresolved `>>>>>>> plan/cross-goal` merge marker from the 0.1.0a4 section; `hint_decay.py` imports PyYAML unconditionally like every other engine script (PyYAML is a hard dependency).
-- test: new coverage for cross-goal intelligence — `tests/scripts/test_global_knowledge.py` exercises the mastery-level threshold (`solid` and above are "known globally") and the CLI error paths; `tests/scripts/test_goal_priority.py` directly guards the a6 regression by asserting `paused`/`completed`/`abandoned` goals never appear in rankings, plus priority ordering, decay-risk scoring, and `--half-life-days` override honoring. `tests/test_schema_validation.py` round-trips valid/invalid profile + goal fixtures against the JSON schemas and checks that `migrate_profile` output still validates (guards the a6 goal-shape regression class).
-- chore: pytest-cov wired into the verify gate (`pytest>=7`, `pytest-cov>=5`). Coverage floor set at 60% as the measured v0.1.0a9 baseline; `frontier.py` and `mutate_graph.py` read low because their tests invoke the scripts via subprocess, which pytest-cov cannot observe. Follow-up: convert those tests to direct `main(argv)` calls and ratchet the floor upward.
-- test: Tier-2 behavioural E2E for the `goal` protocol (`tests/e2e/test_goal_protocol_e2e.py`). Scaffolds a fresh instance, invokes headless Claude Code (`claude -p --permission-mode acceptEdits`), and asserts the emitted `instance/goals/*.yaml` validates against `goal.schema.json`. Runs as a manual pre-release gate (see `docs/operations/release-playbook.md`); skipped in default CI when `claude` is missing or neither `ANTHROPIC_API_KEY` nor `SENSEI_E2E` is set. Tier structure documented in `tests/transcripts/README.md` per ADR-0011.
-- docs: vision and README narrow the overclaimed "any LLM agent" / "agent-agnostic" language to "agent-portable by design" and name Claude Code and Kiro as the dogfood-validated agents. Shims for Cursor, Copilot, Windsurf, Cline, Roo, and AI Assistant remain in place awaiting further validation. Aider dropped from vision prose (no Aider shim exists today).
-- docs: `docs/decisions/README.md` now documents the `provisional` ADR status for decisions that govern still-`draft` protocols or design properties no fixture has yet validated. Existing ADRs unchanged; authors of new ADRs should prefer `provisional` in those cases.
-- chore: `ci/check_foundations.py` now warns (non-blocking) when a spec declares `realizes:` or `serves:` but names neither `fixtures:` nor `fixtures_deferred:`. Twelve existing specs currently emit this warning and will be backfilled incrementally. Warning is scheduled to hard-fail after two releases to match ADR-0011's "prose verified by prose" discipline.
-- docs: `docs/specs/README.md` spec template grows `fixtures:` and `fixtures_deferred:` fields plus a short section explaining the fixture-naming convention. Couples new decisions to verification evidence per ADR-0011 and the v0.1.0a9 methodology gate.
+### Fixed
+
+- Atomic writes in migrate and mutate_graph — profile.yaml and goal files can no longer be corrupted by interrupted writes (refs ADR-0004 atomicity contract).
+- Protocol prose now matches script CLIs — `goal.md`, `tutor.md`, `hints.md`, and `challenger.md` had subprocess invocations with wrong flag names and positional verbs that would cause LLM-executed commands to fail. New CI linter (`tests/ci/test_protocol_script_consistency.py`) validates every protocol invocation against its script's argparse.
+- `sensei upgrade` and `sensei init --force` swap the `.sensei/` engine bundle atomically via a copy-to-temp + aside + rename-in-place sequence. A failed copy or interrupted swap no longer destroys the learner's existing `.sensei/`.
+- `goal_priority.py` now honors `instance/config.yaml` overrides of `memory.half_life_days` and `memory.stale_threshold` via new CLI flags (previously hardcoded).
+- Cleanup — CLI module docstring no longer calls `status`/`upgrade`/`verify` "stubs"; removed an unresolved merge marker from the v0.1.0a4 section; `hint_decay.py` imports PyYAML unconditionally.
+
+### Changed
+
+- `sensei status` now imports `freshness_score` from `decay.py` instead of reimplementing the formula inline, eliminating drift risk.
+- Vision and README narrow "any LLM agent" language to "agent-portable by design" and name Claude Code and Kiro as dogfood-validated agents.
+
+### Added
+
+- Synthetic seed transcript at `tests/transcripts/assess.dogfood.md` unblocks the four previously-skipped `assess` fixtures. Marked `status: seed`; replace with a real captured session at the next release.
+- Cross-goal intelligence test coverage — `test_global_knowledge.py`, `test_goal_priority.py`, `test_schema_validation.py`.
+- pytest-cov wired into the verify gate. Coverage floor set at 60% as the v0.1.0a9 baseline.
+- Tier-2 behavioural E2E for the `goal` protocol (`tests/e2e/test_goal_protocol_e2e.py`). Manual pre-release gate.
+- `provisional` ADR status documented in `docs/decisions/README.md`.
+- `ci/check_foundations.py` warns when specs with `realizes:` lack `fixtures:`. Scheduled to hard-fail after two releases.
+- Spec template gains `fixtures:` and `fixtures_deferred:` fields per ADR-0011 methodology gate.
 
 ## [0.1.0a8] — 2026-04-20
 
@@ -140,5 +148,14 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a1...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a10...HEAD
+[0.1.0a10]: https://github.com/altakleos/sensei/compare/v0.1.0a9...v0.1.0a10
+[0.1.0a9]: https://github.com/altakleos/sensei/compare/v0.1.0a8...v0.1.0a9
+[0.1.0a8]: https://github.com/altakleos/sensei/compare/v0.1.0a7...v0.1.0a8
+[0.1.0a7]: https://github.com/altakleos/sensei/compare/v0.1.0a6...v0.1.0a7
+[0.1.0a6]: https://github.com/altakleos/sensei/compare/v0.1.0a5...v0.1.0a6
+[0.1.0a5]: https://github.com/altakleos/sensei/compare/v0.1.0a4...v0.1.0a5
+[0.1.0a4]: https://github.com/altakleos/sensei/compare/v0.1.0a3...v0.1.0a4
+[0.1.0a3]: https://github.com/altakleos/sensei/compare/v0.1.0a2...v0.1.0a3
+[0.1.0a2]: https://github.com/altakleos/sensei/compare/v0.1.0a1...v0.1.0a2
 [0.1.0a1]: https://github.com/altakleos/sensei/releases/tag/v0.1.0a1
