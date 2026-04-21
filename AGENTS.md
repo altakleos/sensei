@@ -56,6 +56,7 @@ sensei/
 
 - **Commit messages** — prefer [Conventional Commits](https://www.conventionalcommits.org/) prefixes (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`). Convention only, no CI gate.
 - **Changelog** — append every user-visible change to `## [Unreleased]` in `CHANGELOG.md` in the same commit that introduces it. Don't batch at release time. Per [docs/specs/release-communication.md](docs/specs/release-communication.md). Refactors, internal tests, and docs-only edits don't need a changelog entry.
+- **Version references** — always write pre-release versions in full (`v0.1.0a9` or `0.1.0a9`), never the bare suffix (`a9`). A bare suffix is a PEP 440 pre-release marker that attaches to any `X.Y.Z`, so "post-a9" or "a9 cut" is ambiguous across future releases (e.g. `v7.8.9a9` is also "a9"). Applies to prose, filenames, code comments, commit messages, and CHANGELOG entries. Inside a compound like `v0.1.0a9` the suffix is fine — the leading `v0.1.0` disambiguates.
 
 ## References
 
