@@ -8,6 +8,11 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 
 ## Index
 
+### In Progress
+| Plan | Feature | Status |
+|------|---------|--------|
+| [a9-cut](a9-cut.md) | v0.1.0a9 gap-closing cut (cleanup + verification floor + E2E + vision narrowing + methodology gate) | planned |
+
 ### Shipped
 | Plan | Feature | Status |
 |------|---------|--------|

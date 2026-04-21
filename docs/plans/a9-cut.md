@@ -1,0 +1,130 @@
+---
+feature: a9-cut
+serves: (no new spec — closes gaps surfaced by the 2026-04-21 swarm-analysis)
+design: (no new design doc — all changes extend existing ADR-0011 tiering, `ci/check_foundations.py`, and `tests/` layout)
+status: planned
+date: 2026-04-21
+---
+# Plan: v0.1.0a9 Cut — Close Highest-Value Gaps Before Next Release
+
+Five bundled PRs land before the a9 tag. Closes the surface-defects, adds a deterministic verification floor, proves the `goal` protocol end-to-end against headless Claude Code, narrows overclaimed vision prose to the real dogfood evidence base (Claude Code + Kiro), and adds a soft methodology gate coupling new decisions to verification.
+
+## Phases
+
+### Phase 1 — Surface cleanup bundle
+
+- [ ] T1: Strip `" (stub)"` from `src/sensei/cli.py:5-7` docstring entries for `status`, `upgrade`, `verify`. All three are fully implemented. → `src/sensei/cli.py`
+- [ ] T2: Delete the `>>>>>>> plan/cross-goal` line at `CHANGELOG.md:50`. Leaves the `### Added` section intact. → `CHANGELOG.md`
+- [ ] T3: Replace `src/sensei/engine/scripts/hint_decay.py:25-28` conditional yaml import (`try: import yaml; except ImportError: yaml = None`) with bare `import yaml`; drop the downstream `if yaml is None` guard at lines 76-78. PyYAML is a hard dependency in `pyproject.toml`; all other scripts import it bare. → `src/sensei/engine/scripts/hint_decay.py`
+- [ ] T4: Append one `fix:` line to `## [Unreleased]` in `CHANGELOG.md` summarising T1–T3. → `CHANGELOG.md`
+
+**NOTE:** The original plan-mode draft listed a fourth item — fixing duplicated quick-look lines in `README.md:10-12`. Verification on implementation showed the README block is already correct (`pip install -e .` / `sensei init ~/learning` / `cd ~/learning`). Item dropped.
+- [ ] T6: Verify `pytest -v`, `ruff check .`, `mypy` all green. No behavior change expected.
+
+### Phase 2 — Deterministic verification floor
+
+- [ ] T7: Add `pytest-cov>=5.0` to `[project.optional-dependencies]` dev list. → `pyproject.toml`
+- [ ] T8: Add `[tool.pytest.ini_options]` with `testpaths = ["tests"]` and `addopts = "--cov=sensei --cov-report=term-missing --cov-fail-under=80"`. Add `[tool.coverage.run]` with `source = ["src/sensei"]` and `omit = ["src/sensei/engine/scripts/*"]`. → `pyproject.toml`
+- [ ] T9: Create `tests/scripts/test_global_knowledge.py` mirroring `tests/scripts/test_mastery_check.py` style. Import `check` and `main` from `sensei.engine.scripts.global_knowledge`. Assertions:
+  - empty profile → `{"topic": t, "known": False, "mastery": 0.0}`
+  - mastery `"solid"` → `known=True`, correct mastery float
+  - mastery `"developing"` → `known=False`
+  - mastery `"mastered"` → mastery float 1.0
+  - `main(["--profile", missing, "--topic", "x"])` → exit code 1
+  - `main` on corrupt YAML → exit code 1. Verify mastery-string → float mapping by reading the source before asserting floats.
+  → `tests/scripts/test_global_knowledge.py`
+- [ ] T10: Create `tests/scripts/test_goal_priority.py` mirroring `tests/scripts/test_check_goal.py`. Import `score_goal`, `main`, `_DEFAULT_HALF_LIFE_DAYS`, `_DEFAULT_STALE_THRESHOLD`. Assertions:
+  - `score_goal({"status": "paused", ...}, {}, NOW)` → `None` (**direct regression guard for the a6 bug**)
+  - `score_goal` on `completed` goal → `None`
+  - high > normal > low priority scores (three-goal ordering)
+  - goal with a completed node whose `last_seen` is old scores higher than one with fresh state (decay-risk term present)
+  - `main(...)` emits JSON sorted high→low via `capsys` (see `tests/scripts/test_decay.py` for the pattern)
+  - pass `--now` explicitly — no wall-clock dependency
+  → `tests/scripts/test_goal_priority.py`
+- [ ] T11: Create `tests/test_schema_validation.py`. Parametrize over `profile.schema.json` + `goal.schema.json` with one valid and one invalid fixture each. Third test: round-trip `migrate_profile(v0_input)` against `profile.schema.json`. Uses `jsonschema.validate` (already a production dep). → `tests/test_schema_validation.py`
+- [ ] T12: Append CHANGELOG entries for new tests + pytest-cov wiring. → `CHANGELOG.md`
+- [ ] T13: Verify `pip install -e '.[dev]'`, `pytest -v` all green with coverage ≥ 80% on `src/sensei`. **Decision point:** if floor cannot be met first run due to CLI/engine-copy paths, drop threshold to the measured baseline and file a follow-up — do NOT pad tests to hit the number.
+
+### Phase 3 — Scripted E2E against headless Claude Code
+
+- [ ] T14: Create `tests/e2e/__init__.py` (empty). → `tests/e2e/__init__.py`
+- [ ] T15: Create `tests/e2e/fixtures/learner-wants-rust.md` — short prose description of a learner wanting to learn Rust, suitable as first-turn input to the `goal` protocol. → `tests/e2e/fixtures/learner-wants-rust.md`
+- [ ] T16: Create `tests/e2e/test_goal_protocol_e2e.py`. Skeleton:
+  - `@pytest.mark.skipif(shutil.which("claude") is None, reason="headless claude CLI not installed")`
+  - `@pytest.mark.skipif(not os.environ.get("ANTHROPIC_API_KEY"), reason="ANTHROPIC_API_KEY unset")`
+  - scaffold `sensei init tmp_path` via `CliRunner`
+  - invoke `subprocess.run([CLAUDE_BIN, "--print", "--permission-mode", "acceptEdits", prompt], cwd=tmp_path, timeout=300)`
+  - assert a `*.yaml` file appears in `tmp_path/instance/goals/` and `jsonschema.validate`s against `goal.schema.json`
+  - **Verify `claude --help` for current flag syntax before committing** — permission-mode syntax may have evolved.
+  → `tests/e2e/test_goal_protocol_e2e.py`
+- [ ] T17: Add a "Pre-release gate (manual)" section to `docs/operations/release-playbook.md` documenting `ANTHROPIC_API_KEY=... pytest tests/e2e/ -v` and naming it as a gate; skip only with CHANGELOG note. → `docs/operations/release-playbook.md`
+- [ ] T18: Add a Tier-0/1/2/3 note to `tests/transcripts/README.md` (or `docs/sensei-implementation.md`) referencing ADR-0011 and placing the new E2E as Tier 2. Do not create a new ADR — this extends existing tiering. → `tests/transcripts/README.md` (preferred) or `docs/sensei-implementation.md`
+- [ ] T19: Append CHANGELOG entry. → `CHANGELOG.md`
+- [ ] T20: Verify locally with `ANTHROPIC_API_KEY` exported: `pytest tests/e2e/ -v` → one test passes. In CI: skipped (no API key, no `claude` binary); `pytest -v` remains green.
+
+### Phase 4 — Narrow vision and README to match dogfood evidence
+
+Dogfood evidence base is **Claude Code and Kiro** (both exercised end-to-end). Shims exist for Cursor, Copilot, Windsurf, Cline, Roo, and AI Assistant but are unexercised.
+
+- [ ] T21: Edit `docs/foundations/vision.md` line 9. Replace the "any LLM agent — Claude Code, Cursor, Kiro, Copilot, Aider, or any coding-agent that reads a root boot document" phrasing with: "an LLM coding agent that reads a root boot document. Sensei has been dogfooded on Claude Code and Kiro; shims for Cursor, Copilot, Windsurf, Cline, Roo, and AI Assistant are provided (see `src/sensei/cli.py` `_SHIMS`) but await further validation." Drop Aider (no Aider shim in `_SHIMS`). → `docs/foundations/vision.md`
+- [ ] T22: Edit `docs/foundations/vision.md` line 44. Replace "**Agent-agnostic** — works with any LLM that reads project context through a root boot document." with: "**Agent-portable by design** — the protocol files are plain markdown; any LLM coding agent that reads a root boot document can execute them. Portability is a design property; today the validated agent list is Claude Code and Kiro (both dogfood-exercised end-to-end). Shims for Cursor, Copilot, Windsurf, Cline, Roo, and AI Assistant are provided and await further validation." → `docs/foundations/vision.md`
+- [ ] T23: Edit `README.md:3` to match: "…the user opens that folder with an LLM coding agent (dogfooded on Claude Code and Kiro; shims for Cursor, Copilot, Windsurf, Cline, Roo, AI Assistant)…" Keep line 16 (ADR-0003 reference) unchanged. → `README.md`
+- [ ] T24: Append CHANGELOG entry. → `CHANGELOG.md`
+- [ ] T25: Verify `python ci/check_foundations.py` exits 0 (no frontmatter changes); `pytest -v` unaffected; smoke-read edited sections.
+
+### Phase 5 — Methodology gate: `provisional` ADR status + fixture-naming lint
+
+Gate, not freeze. Couples new decisions to verification without stopping the pen.
+
+- [ ] T26: Add a "Status values" section to `docs/decisions/README.md` after the ADR index, documenting `accepted`, `accepted (lite)`, `provisional` (accepted on current evidence but flagged for review after first learner-session or protocol-fixture evidence), and `superseded`. Authors should prefer `provisional` when a decision governs a protocol still `draft` in `src/sensei/engine/protocols/`. **Do NOT retroactively mark existing ADRs** — that is a v1.0 follow-up. → `docs/decisions/README.md`
+- [ ] T27: Extend `ci/check_foundations.py` with `check_fixture_naming(specs)`: for every spec frontmatter with `realizes:` or `serves:`, warn (stdout, non-blocking) if neither `fixtures:` nor `fixtures_deferred: <reason>` is present. Warning references `docs/decisions/0011-transcript-fixtures.md`. → `ci/check_foundations.py`
+- [ ] T28: Add three tests to `tests/ci/test_check_foundations.py`:
+  - spec with `realizes:` and `fixtures:` → no warning
+  - spec with `realizes:` and no `fixtures:` / no `fixtures_deferred:` → warning emitted
+  - spec with `fixtures_deferred: "awaiting first learner session"` → no warning
+  → `tests/ci/test_check_foundations.py`
+- [ ] T29: Add the fixture-naming convention to `docs/specs/README.md` — extend the spec template with `fixtures:` / `fixtures_deferred:` fields and add a short paragraph explaining the convention. (**Deviation from the scratchpad plan**, which suggested `release-communication.md`. `release-communication.md` is scoped to CHANGELOG discipline, not spec authoring. `specs/README.md` holds the spec template and is the natural home.) → `docs/specs/README.md`
+- [ ] T30: Append two CHANGELOG entries — one docs (provisional status), one chore (fixture-naming warning, hard-fail after two releases). → `CHANGELOG.md`
+- [ ] T31: Verify `python ci/check_foundations.py` exits 0 (warnings allowed); `pytest tests/ci/test_check_foundations.py -v` green. Capture the warning output in the CHANGELOG entry for Phase 5.
+
+### Phase 6 — Pre-release verification
+
+- [ ] T32: In a clean checkout, `pip install -e '.[dev]'` then `pytest -v` — all tests green; coverage ≥ 80%; `tests/e2e/` skipped.
+- [ ] T33: `ruff check .` and `mypy` green.
+- [ ] T34: `python ci/check_foundations.py` exits 0; emits fixture-naming warnings for specs lacking declarations.
+- [ ] T35: `grep -n ">>>>>>> " CHANGELOG.md` returns empty.
+- [ ] T36: Manual pre-release gate on workstation: `ANTHROPIC_API_KEY=... pytest tests/e2e/ -v` — one test passes, schema-valid goal file produced. **If this fails, do NOT tag a9.**
+- [ ] T37: Smoke-read `README.md` and `docs/foundations/vision.md` — no "any LLM agent" or "agent-agnostic" unqualified.
+- [ ] T38: Tag `v0.1.0a9` per `docs/operations/release-playbook.md`.
+
+## Acceptance Criteria
+
+- [ ] AC1: `git log --oneline main..HEAD` shows five distinct PRs (one per phase 1–5), in order.
+- [ ] AC2: No `>>>>>>> ` merge markers remain in `CHANGELOG.md`.
+- [ ] AC3: `src/sensei` coverage ≥ 80% (or a measured baseline with follow-up filed).
+- [ ] AC4: Headless Claude Code can produce a schema-valid goal file against the unchanged `goal` protocol on a fresh instance (manual pre-release gate passes).
+- [ ] AC5: `docs/foundations/vision.md` and `README.md` name only Claude Code and Kiro as validated agents; other shims are described as awaiting validation.
+- [ ] AC6: `ci/check_foundations.py` emits non-blocking warnings for specs lacking `fixtures:` declarations; new tests for the check pass.
+- [ ] AC7: `docs/decisions/README.md` documents `provisional` status; no existing ADRs were retroactively restatused in this release.
+- [ ] AC8: `v0.1.0a9` tag exists on `main`.
+
+## Out of Scope
+
+- LLM-in-CI nightly matrix (Claude Haiku on tutor/assess/goal). **Post-a9.**
+- `--learner-id` input-validation hardening at `src/sensei/cli.py:197-200` (regex + `yaml.safe_dump` refactor). **v1.0.**
+- Externalize `_AGENTS_MD` + `_STARTER_PROFILE_YAML` into `src/sensei/engine/templates/`. **v1.0.**
+- `SECURITY.md` at repo root. **v1.0.**
+- `docs/operations/context-budget.md` measuring boot-chain token cost across modes. **v1.0.**
+- Retroactive `provisional` marking of existing ADRs. **v1.0.**
+- Mutation testing, coverage-diff reports. **Deferred.**
+- Cross-agent E2E matrix (Cursor/Copilot/Kiro/etc). Only Claude Code is automatable via headless CLI today.
+
+## Notes
+
+**Why Claude Code for the E2E and not Kiro** — both agents are validated via dogfooding, but only Claude Code ships a `claude --print` headless CLI suitable for automated invocation. Kiro is IDE-gated. Covering Kiro with an automated E2E would require IDE extension harness work not in scope.
+
+**Why `tests/e2e/` skips instead of fails in CI** — headless Claude Code and `ANTHROPIC_API_KEY` are workstation-only, not in GitHub Actions runners. The skip-on-absent pattern mirrors the existing `tests/transcripts/` dogfood-missing skip (see ADR-0011). Pre-release execution is manual and gated in the release playbook.
+
+**Why fixture-naming is warn-only for now** — every existing spec would emit a warning today. Tightening to fail-on-error before backfilling would block all merges. Backfill happens incrementally per-spec; hard-fail activates after two releases (tracked in CHANGELOG).
+
+**Decision-point language on coverage threshold** — the 80% floor is a target, not a wall. If first measurement comes in lower, adjust `--cov-fail-under` to the baseline and file a follow-up task rather than write tests purely to hit a number. Coverage theater is an explicit anti-pattern for this plan.
