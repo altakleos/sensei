@@ -8,14 +8,10 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 
 ## Index
 
-### In Progress
-| Plan | Feature | Status |
-|------|---------|--------|
-| [v0.1.0a9-cut](v0.1.0a9-cut.md) | v0.1.0a9 gap-closing cut (cleanup + verification floor + E2E + vision narrowing + methodology gate) | planned |
-
 ### Shipped
 | Plan | Feature | Status |
 |------|---------|--------|
+| [v0.1.0a9-cut](v0.1.0a9-cut.md) | v0.1.0a9 gap-closing cut (cleanup + verification floor + E2E + vision narrowing + methodology gate) | done |
 | [adopt-sdd-from-sprue](adopt-sdd-from-sprue.md) | SDD method adoption | done |
 | [ci-verify-workflow](ci-verify-workflow.md) | GitHub Actions CI | done |
 | [learner-profile-v1](learner-profile-v1.md) | Learner profile schema + validators | done |
