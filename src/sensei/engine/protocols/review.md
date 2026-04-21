@@ -41,7 +41,7 @@ flowchart TD
 - Profile: `instance/profile.yaml`
 - Engine defaults: `.sensei/defaults.yaml`
 - Instance overrides: `instance/config.yaml`
-- Helpers: `.sensei/scripts/check_profile.py`, `.sensei/scripts/decay.py`, `.sensei/scripts/classify_confidence.py`
+- Helpers: `.sensei/scripts/check_profile.py`, `.sensei/scripts/decay.py`, `.sensei/scripts/review_scheduler.py`, `.sensei/scripts/classify_confidence.py`
 
 Current UTC timestamp is generated with `date -u +%Y-%m-%dT%H:%M:%SZ` whenever the protocol needs "now".
 
@@ -63,28 +63,25 @@ Then go to Step 9. No writes in this session.
 
 ## Step 2 — Enumerate stale topics
 
-Read `instance/profile.yaml`, `.sensei/defaults.yaml`, and (if present) `instance/config.yaml`. Mentally deep-merge the two config files with the instance overriding. Extract:
+Read `.sensei/defaults.yaml` and (if present) `instance/config.yaml`. Mentally deep-merge the two config files with the instance overriding. Extract:
 
 - `half_life_days` ← `config.memory.half_life_days`
 - `stale_threshold` ← `config.memory.stale_threshold`
 
-For each slug in `expertise_map`, run:
+Run a single cross-goal review scheduling invocation:
 
 ```
-python .sensei/scripts/decay.py \
-  --last-seen <topic.last_seen> \
+python .sensei/scripts/review_scheduler.py \
+  --goals-dir instance/goals \
+  --profile instance/profile.yaml \
   --half-life-days <half_life_days> \
-  --now <current-utc> \
-  --stale-threshold <stale_threshold>
+  --stale-threshold <stale_threshold> \
+  --now <current-utc>
 ```
 
-Collect `{slug, freshness}` for each topic whose output has `"stale": true`. If an invocation fails (exit ≠ 0), treat that topic as not-stale for this session — do not end the session on a single failure.
+Parse the JSON array from stdout. Each element has `{topic, freshness, elapsed_days, goals}`. This is the stale list — topics are already deduplicated across goals (a topic stale in two goals appears once, with the lowest freshness) and sorted by freshness ascending.
 
-If *every* invocation fails, say:
-
-> Something is wrong with the decay helper — ending the session.
-
-and go to Step 9.
+If the invocation fails (exit ≠ 0), fall back to treating all completed topics in the profile as review candidates: read `instance/profile.yaml` and collect every slug in `expertise_map` as a candidate with `freshness: 0.0`.
 
 ## Step 3 — Exit if nothing is due
 
@@ -96,7 +93,7 @@ Then go to Step 9.
 
 ## Step 4 — Rank candidates
 
-Sort the stale topics by `freshness` ascending (lowest first — most stale wins). Break ties by `last_seen` ascending (oldest first). Call this the ranked queue. Do not re-rank inside the loop.
+The stale list from Step 2 is already sorted by `freshness` ascending (lowest first — most stale wins) by `review_scheduler.py`. Use it directly as the ranked queue. Do not re-rank inside the loop.
 
 ## Step 5 — Pose a single retrieval question
 
@@ -210,8 +207,7 @@ Treat any of the following learner utterances as a request to exit: `stop`, `tha
 | Condition | Response |
 |---|---|
 | Step 1 validation fails | Surface error; go to Step 9. No writes. |
-| A single decay call fails | Skip that topic; continue. |
-| All decay calls fail | Error message; go to Step 9. |
+| review_scheduler.py fails | Fall back to all completed topics as candidates; continue. |
 | classify_confidence fails | Error message; go to Step 9 without writing. |
 | Profile write produces an invalid profile | Revert on disk; error message; go to Step 9. |
 | Learner emits a stop signal | Discard in-flight state; go to Step 9. |

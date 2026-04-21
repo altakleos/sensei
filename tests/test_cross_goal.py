@@ -93,6 +93,22 @@ class TestGlobalKnowledge:
         rc = gk_main(["--profile", str(tmp_path / "nope.yaml"), "--topic", "x"])
         assert rc == 1
 
+    def test_redemonstration_override_integration(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Integration: profile says mastered + goal requires re-demonstration → known=false."""
+        prof = _write_yaml(tmp_path, "profile.yaml", _profile({"hash-maps": "mastered"}))
+        goal = _goal("sys-prog", nodes={
+            "hash-maps": {"state": "completed", "prerequisites": [], "require_redemonstration": True},
+        })
+        goal_path = _write_yaml(tmp_path, "goal.yaml", goal)
+        rc = gk_main(["--profile", str(prof), "--topic", "hash-maps", "--goal", str(goal_path)])
+        assert rc == 0
+        out = json.loads(capsys.readouterr().out)
+        assert out["known"] is False
+        assert out["redemonstration_required"] is True
+        assert out["mastery"] == 1.0
+
 
 # ---------------------------------------------------------------------------
 # goal_priority tests
@@ -196,3 +212,183 @@ class TestGoalPriority:
         assert "stale topic" not in out_30["goals"][0]["reason"]
         # The longer half-life goal scores lower (no decay-risk bonus).
         assert out_30["goals"][0]["score"] < out_7["goals"][0]["score"]
+
+
+# ---------------------------------------------------------------------------
+# Cross-goal integration test — exercises all four invariants (T26)
+# ---------------------------------------------------------------------------
+
+class TestCrossGoalIntegration:
+    """Multi-goal scenario exercising all four cross-goal invariants.
+
+    Setup: two goals sharing 'recursion'. Profile has 'recursion' mastered
+    but stale (last seen 30 days ago). Goal A requires re-demonstration on
+    'recursion'. Goal B has an imminent deadline.
+    """
+
+    @pytest.fixture()
+    def scenario(self, tmp_path: Path):
+        """Build the shared multi-goal scenario files."""
+        goals_dir = tmp_path / "goals"
+        goals_dir.mkdir()
+
+        # Goal A: requires re-demonstration on 'recursion'.
+        goal_a = _goal("algo-deep-dive", priority="normal", nodes={
+            "recursion": {
+                "state": "completed",
+                "prerequisites": [],
+                "require_redemonstration": True,
+            },
+            "sorting": {"state": "completed", "prerequisites": ["recursion"]},
+        })
+        goal_a_path = _write_yaml(goals_dir, "algo-deep-dive.yaml", goal_a)
+
+        # Goal B: imminent deadline, also depends on 'recursion'.
+        goal_b = _goal("interview-prep", priority="normal", nodes={
+            "recursion": {"state": "completed", "prerequisites": []},
+            "dynamic-programming": {"state": "in_progress", "prerequisites": ["recursion"]},
+        })
+        goal_b["deadline"] = "2026-04-22T00:00:00Z"
+        goal_b_path = _write_yaml(goals_dir, "interview-prep.yaml", goal_b)
+
+        # Profile: 'recursion' mastered but stale (30 days), 'sorting' solid and stale.
+        prof_data = _profile({"recursion": "mastered", "sorting": "solid"})
+        prof_data["expertise_map"]["recursion"]["last_seen"] = "2026-03-21T00:00:00Z"
+        prof_data["expertise_map"]["sorting"]["last_seen"] = "2026-03-21T00:00:00Z"
+        prof_path = _write_yaml(tmp_path, "profile.yaml", prof_data)
+
+        return {
+            "goals_dir": goals_dir,
+            "goal_a_path": goal_a_path,
+            "goal_b_path": goal_b_path,
+            "prof_path": prof_path,
+            "now": "2026-04-20T00:00:00Z",
+        }
+
+    def test_invariant1_global_knowledge_redemonstration(
+        self, scenario: dict, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Invariant 1: global_knowledge with --goal returns known=false for
+        the re-demonstration goal, known=true without --goal."""
+        s = scenario
+
+        # Without --goal: recursion is mastered → known=true.
+        rc = gk_main(["--profile", str(s["prof_path"]), "--topic", "recursion"])
+        assert rc == 0
+        out = json.loads(capsys.readouterr().out)
+        assert out["known"] is True
+
+        # With --goal pointing to goal A (require_redemonstration) → known=false.
+        rc = gk_main([
+            "--profile", str(s["prof_path"]),
+            "--topic", "recursion",
+            "--goal", str(s["goal_a_path"]),
+        ])
+        assert rc == 0
+        out = json.loads(capsys.readouterr().out)
+        assert out["known"] is False
+        assert out["redemonstration_required"] is True
+
+        # With --goal pointing to goal B (no re-demo) → known=true.
+        rc = gk_main([
+            "--profile", str(s["prof_path"]),
+            "--topic", "recursion",
+            "--goal", str(s["goal_b_path"]),
+        ])
+        assert rc == 0
+        out = json.loads(capsys.readouterr().out)
+        assert out["known"] is True
+
+    def test_invariant2_review_deduplication(
+        self, scenario: dict, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Invariant 2: review_scheduler deduplicates 'recursion' across both
+        goals — one entry, not two."""
+        from sensei.engine.scripts.review_scheduler import main as rs_main
+
+        s = scenario
+        rc = rs_main([
+            "--goals-dir", str(s["goals_dir"]),
+            "--profile", str(s["prof_path"]),
+            "--half-life-days", "7",
+            "--stale-threshold", "0.5",
+            "--now", s["now"],
+        ])
+        assert rc == 0
+        reviews = json.loads(capsys.readouterr().out)
+
+        # 'recursion' appears exactly once despite being in both goals.
+        recursion_entries = [r for r in reviews if r["topic"] == "recursion"]
+        assert len(recursion_entries) == 1
+        # The deduplicated entry references both goals.
+        assert set(recursion_entries[0]["goals"]) == {"algo-deep-dive", "interview-prep"}
+
+        # 'sorting' also stale, appears once (only in goal A).
+        sorting_entries = [r for r in reviews if r["topic"] == "sorting"]
+        assert len(sorting_entries) == 1
+
+    def test_invariant3_priority_and_allocation(
+        self, scenario: dict, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Invariant 3: goal_priority ranks the deadline goal higher;
+        session_allocator produces allocations."""
+        from sensei.engine.scripts.session_allocator import allocate_session
+
+        s = scenario
+
+        # Priority ranking: deadline goal should rank higher.
+        rc = gp_main([
+            "--goals-dir", str(s["goals_dir"]),
+            "--profile", str(s["prof_path"]),
+            "--now", s["now"],
+        ])
+        assert rc == 0
+        priority_out = json.loads(capsys.readouterr().out)
+        slugs = [g["slug"] for g in priority_out["goals"]]
+        assert slugs[0] == "interview-prep", "deadline goal should rank first"
+
+        # Session allocation: feed priority output into allocator.
+        result = allocate_session(priority_out["goals"], session_minutes=60)
+        assert len(result["allocations"]) >= 1
+        alloc_slugs = [a["slug"] for a in result["allocations"]]
+        assert "interview-prep" in alloc_slugs
+
+    def test_invariant4_resume_planner_stale_topics(
+        self, scenario: dict, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Invariant 4: resume_planner on a paused goal produces review_first
+        with stale topics."""
+        from sensei.engine.scripts.resume_planner import main as rp_main
+
+        s = scenario
+
+        # Pause goal A and run resume_planner against it.
+        paused_goal = _goal("algo-deep-dive", status="paused", nodes={
+            "recursion": {
+                "state": "completed",
+                "prerequisites": [],
+                "require_redemonstration": True,
+            },
+            "sorting": {"state": "completed", "prerequisites": ["recursion"]},
+        })
+        paused_goal["paused_at"] = "2026-03-21T00:00:00Z"
+        paused_path = s["goal_a_path"]
+        paused_path.write_text(yaml.safe_dump(paused_goal), encoding="utf-8")
+
+        rc = rp_main([
+            "--goal", str(paused_path),
+            "--profile", str(s["prof_path"]),
+            "--half-life-days", "7",
+            "--stale-threshold", "0.5",
+            "--now", s["now"],
+        ])
+        assert rc == 0
+        plan = json.loads(capsys.readouterr().out)
+
+        assert plan["recommended_action"] == "review_first"
+        stale_slugs = [t["slug"] for t in plan["stale_topics"]]
+        assert "recursion" in stale_slugs
+        assert "sorting" in stale_slugs
+        # Sorted by freshness ascending (most decayed first).
+        freshness_values = [t["freshness"] for t in plan["stale_topics"]]
+        assert freshness_values == sorted(freshness_values)

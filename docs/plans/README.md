@@ -28,6 +28,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [interaction-model](interaction-model.md) | Decomposition §4 + §6.1 (interaction model) — 1 principle, 1 design | done |
 | [deep-frontiers-principles](deep-frontiers-principles.md) | Decomposition §2.4 — 3 principles, 1 update | done |
 | [research-and-closure](research-and-closure.md) | Absorbed §8/§9/§10 + cross-reference migration + deletion of the ideation monolith | done |
+| [cross-goal-intelligence](cross-goal-intelligence.md) | All 4 cross-goal invariants: re-demonstration override, review dedup, deadline priority + session allocation, decay-aware resume | done |
 
 The last five plans above (`behavioral-architecture` through `research-and-closure`) were a five-step decomposition of an early ideation monolith into the foundations + specs + design + ADR layers. The source document itself was deleted at the end of Plan 5; its content is fully absorbed into the surviving artifacts.
 

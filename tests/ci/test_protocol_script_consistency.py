@@ -36,6 +36,9 @@ _INVOKED_SCRIPTS: frozenset[str] = frozenset({
     "hint_decay",
     "mastery_check",
     "mutate_graph",
+    "resume_planner",
+    "review_scheduler",
+    "session_allocator",
 })
 
 # Matches `python[3] [prefix-path/]<script>.py <args-up-to-eol-or-backtick>`.

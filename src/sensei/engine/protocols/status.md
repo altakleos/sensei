@@ -32,6 +32,8 @@ Stop. Do not proceed.
 3. Read `instance/hints/hints.yaml` → count unprocessed hints.
 4. Run `python .sensei/scripts/frontier.py --curriculum <path>` → next 3 frontier topics.
 5. For each completed topic, run `python .sensei/scripts/decay.py --last-seen <last_seen> --half-life-days <config.memory.half_life_days> --now <utc-now> --stale-threshold <config.memory.stale_threshold>`. Collect topics where `"stale": true`.
+6. Run `python .sensei/scripts/goal_priority.py --goals-dir instance/goals/ --profile instance/profile.yaml --half-life-days <config.memory.half_life_days> --stale-threshold <config.memory.stale_threshold> --now <utc-now>` → ranked goal list.
+7. Pipe the ranked goal list into `python .sensei/scripts/session_allocator.py --goals-json <priority_output> --session-minutes <estimated_session_length> --min-minutes <config.cross_goal.min_session_minutes>` → per-goal time allocations. If `session_allocator.py` fails, skip time budgets — show priority-ranked goals without allocations.
 
 If a helper fails, skip that data point — do not abort.
 
@@ -45,9 +47,10 @@ Present a concise narrative (5–8 sentences max). Structure:
 
 1. **One-sentence overall** — goal progress + mastery headline.
 2. **Current focus + frontier** — what they're studying, what's next.
-3. **Stale warning** (only if stale count > 0) — e.g., "2 topics are getting rusty — want to review?"
-4. **Hints nudge** (only if pending > 0) — e.g., "You have 3 unprocessed hints in your inbox."
-5. **Offer choices** — end with: "Want to continue learning, review stale topics, or process your hints?"
+3. **Session plan** (only if allocations available) — present per-goal time budgets as a suggested session plan, e.g., "Suggested session: ~25 min on Python basics, ~15 min on Git fundamentals." If allocations were unavailable (script failed), skip this line.
+4. **Stale warning** (only if stale count > 0) — e.g., "2 topics are getting rusty — want to review?"
+5. **Hints nudge** (only if pending > 0) — e.g., "You have 3 unprocessed hints in your inbox."
+6. **Offer choices** — end with: "Want to continue learning, review stale topics, or process your hints?"
 
 If no goal exists, replace the structure with:
 

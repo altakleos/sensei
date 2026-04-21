@@ -83,9 +83,20 @@ python .sensei/scripts/goal_priority.py \
   --now <utc>
 ```
 
-If the result is non-empty, load the top-ranked goal and say:
+If the result is non-empty, allocate time across the ranked goals:
+
+```
+python .sensei/scripts/session_allocator.py \
+  --goals-json <priority_output_file> \
+  --session-minutes <estimated_session_length> \
+  --min-minutes <config.cross_goal.min_session_minutes>
+```
+
+Present the allocations as a suggested session plan, then load the top-ranked goal and say:
 
 > Continuing with [goal expressed_as]. [reason from priority script]
+
+If `session_allocator.py` fails, fall back to showing priority-ranked goals without time budgets.
 
 Then proceed to the goal protocol's Step 6 (begin teaching the active topic).
 
@@ -131,6 +142,51 @@ python3 .sensei/scripts/<script>.py --args
 
 If you get `ModuleNotFoundError: No module named 'jsonschema'` or `'yaml'`, the current Python doesn't have the dependencies. Fix: `pip install jsonschema pyyaml` in the active environment, or use the Python from the sensei-tutor installation.
 
+### Script Registry
+
+#### review_scheduler.py — cross-goal review deduplication and scheduling
+
+Reads all active/paused goal files and the learner profile, computes freshness for every completed topic, deduplicates topics appearing in multiple goals (keeps lowest freshness), and outputs a ranked JSON list sorted by freshness ascending.
+
+```
+python .sensei/scripts/review_scheduler.py \
+  --goals-dir instance/goals/ \
+  --profile instance/profile.yaml \
+  --half-life-days <config.memory.half_life_days> \
+  --stale-threshold <config.memory.stale_threshold> \
+  [--now <utc>]
+```
+
+Exit 0: JSON list of `{topic, freshness, elapsed_days, goals}` to stdout. Exit 1: invalid input.
+
+#### session_allocator.py — per-goal time budget allocation
+
+Takes the ranked goal list from `goal_priority.py` (via file or stdin) and a session-minutes budget, allocates minutes per goal proportional to score. Goals below the minimum allocation are dropped.
+
+```
+python .sensei/scripts/session_allocator.py \
+  --goals-json <path> \
+  --session-minutes <int> \
+  [--min-minutes <config.cross_goal.min_session_minutes>]
+```
+
+Exit 0: JSON `{allocations: [{slug, minutes, reason}], dropped: [...]}` to stdout. Exit 1: invalid input.
+
+#### resume_planner.py — decay-aware resume planning
+
+Reads a single goal file and the learner profile, computes freshness for completed nodes, identifies stale topics, recomputes the curriculum frontier, and outputs a resume plan.
+
+```
+python .sensei/scripts/resume_planner.py \
+  --goal instance/goals/<slug>.yaml \
+  --profile instance/profile.yaml \
+  --half-life-days <config.memory.half_life_days> \
+  --stale-threshold <config.memory.stale_threshold> \
+  [--now <utc>]
+```
+
+Exit 0: JSON `{stale_topics: [{slug, freshness, elapsed_days}], frontier: [slugs], recommended_action: "review_first" | "continue"}` to stdout. Exit 1: invalid input.
+
 ## Configuration
 
 All tunables live in `defaults.yaml` (engine) and are overridden by `instance/config.yaml` (learner instance). Protocols reference values via `config.dotpath` notation.
@@ -138,6 +194,9 @@ All tunables live in `defaults.yaml` (engine) and are overridden by `instance/co
 Current config keys:
 - `memory.half_life_days` — forgetting-curve half-life (default: 7)
 - `memory.stale_threshold` — freshness below which a topic is due for review (default: 0.5)
+- `cross_goal.deadline_weight` — urgency multiplier for imminent deadlines in `goal_priority.py` (default: 5.0). Higher values make approaching deadlines dominate priority ranking.
+- `cross_goal.min_session_minutes` — minimum per-goal time allocation in `session_allocator.py` (default: 5). Goals that would receive fewer minutes are dropped from the session plan.
+- `cross_goal.review_dedup` — enable cross-goal review deduplication in `review_scheduler.py` (default: true). When enabled, a topic stale in multiple goals produces one review item, not one per goal.
 
 ## References
 

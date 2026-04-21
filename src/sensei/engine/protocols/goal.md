@@ -252,23 +252,28 @@ These transitions are triggered by learner intent expressed in natural language.
 **Triggers:** "resume [goal]" / "back to [goal]" / "continue [goal]"
 
 1. If another goal is currently active, pause it first (run §Pause).
-2. Set `status: active` in the target goal file.
-3. Recompute the frontier:
+2. Set `status: active` in the target goal file. Set `resumed_at` to the current UTC timestamp. Clear `paused_at` (set to `null`).
+3. Compute a decay-aware resume plan:
    ```
-   python .sensei/scripts/frontier.py --curriculum instance/goals/<slug>.yaml
-   ```
-4. Identify stale topics. For each completed topic `<slug>` in the curriculum whose `last_seen` appears in `instance/profile.yaml`'s `expertise_map`, run:
-   ```
-   python .sensei/scripts/decay.py \
-     --last-seen <topic.last_seen> \
+   python .sensei/scripts/resume_planner.py \
+     --goal instance/goals/<slug>.yaml \
+     --profile instance/profile.yaml \
      --half-life-days <config.memory.half_life_days> \
-     --now <utc> \
-     --stale-threshold <config.memory.stale_threshold>
+     --stale-threshold <config.memory.stale_threshold> \
+     --now <utc>
    ```
-   Collect slugs whose output has `"stale": true`.
-5. Report: "Resuming [goal]. You left off at [active topic]. [N] topics are getting stale."
-6. Offer: continue where you left off, or review stale topics first?
-7. Proceed to Step 6 (begin teaching) based on learner's choice.
+   Parse the JSON output. The result contains `stale_topics` (sorted by freshness ascending), `frontier` (recomputed from current node states), and `recommended_action` (`"review_first"` or `"continue"`).
+
+   If `resume_planner.py` fails (exit ≠ 0), fall back to continuing from the frontier without a decay check — run `python .sensei/scripts/frontier.py --curriculum instance/goals/<slug>.yaml` and proceed as if `recommended_action` were `"continue"`.
+4. If `recommended_action` is `"review_first"`:
+   - Report: "Resuming [goal]. You left off at [active topic]. [N] topics are getting stale: [list stale topic slugs]."
+   - Offer: continue where you left off, or review stale topics first?
+   - If the learner chooses review: route to the review protocol for the stale topics.
+   - If the learner chooses continue: proceed to Step 6 (begin teaching).
+5. If `recommended_action` is `"continue"`:
+   - Report: "Resuming [goal]. You left off at [active topic]. Everything looks fresh."
+   - Proceed to Step 6 (begin teaching).
+6. Use the `frontier` from the resume plan to select the next topic if no node is currently `active`.
 
 ### Abandon
 

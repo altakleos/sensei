@@ -56,6 +56,9 @@ def _check_cross_field(goal: dict[str, Any]) -> list[str]:
                 )
 
     # (c) No cycles — Kahn's algorithm (topological sort)
+    # Note: require_redemonstration (boolean) has no cross-field constraints.
+    # It is valid on any node regardless of state — the flag is consumed by
+    # global_knowledge.py at query time, not validated structurally here.
     in_degree: dict[str, int] = {slug: 0 for slug in nodes}
     for slug, node in nodes.items():
         for prereq in node.get("prerequisites", []):

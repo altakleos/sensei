@@ -16,6 +16,7 @@ import pytest
 import yaml
 
 from sensei.engine.scripts.goal_priority import (
+    _DEFAULT_DEADLINE_WEIGHT,
     _DEFAULT_HALF_LIFE_DAYS,
     _DEFAULT_STALE_THRESHOLD,
     main,
@@ -52,12 +53,16 @@ def _profile(expertise: dict | None = None) -> dict:
     }
 
 
-# --- score_goal filtering: non-active goals return None (regression guard a6) ---
+# --- score_goal filtering: paused goals included, completed/abandoned skipped ---
 
 
-def test_paused_goal_returns_none() -> None:
-    """a6 regression guard: paused goals MUST NOT appear in priority rankings."""
-    assert score_goal(_goal(status="paused"), _profile(), NOW) is None
+def test_paused_goal_included_with_status_marker() -> None:
+    """Paused goals appear in output with status='paused' and score=0."""
+    result = score_goal(_goal(status="paused"), _profile(), NOW)
+    assert result is not None
+    assert result["status"] == "paused"
+    assert result["score"] == 0
+    assert result["reason"] == "paused"
 
 
 def test_completed_goal_returns_none() -> None:
@@ -152,10 +157,10 @@ def test_main_sorts_goals_by_score_desc(
     assert ordered == ["high-one", "normal-one", "low-one"]
 
 
-def test_main_skips_paused_goals_end_to_end(
+def test_main_includes_paused_goals_end_to_end(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    """Paused goals must not appear in the ranked output — a6 regression at CLI layer."""
+    """Paused goals appear in ranked output with status marker — active goals rank first."""
     goals_dir, profile_path = _write_instance(
         tmp_path,
         [
@@ -176,7 +181,11 @@ def test_main_skips_paused_goals_end_to_end(
     assert rc == 0
     parsed = json.loads(capsys.readouterr().out)
     slugs = [g["slug"] for g in parsed["goals"]]
-    assert slugs == ["active-one"]
+    assert "active-one" in slugs
+    assert "paused-one" in slugs
+    paused = next(g for g in parsed["goals"] if g["slug"] == "paused-one")
+    assert paused["status"] == "paused"
+    assert paused["score"] == 0
 
 
 def test_main_missing_goals_dir_returns_1(
@@ -275,6 +284,42 @@ def test_defaults_match_engine_shipped_values() -> None:
     """If defaults.yaml ships different values, update accordingly."""
     assert _DEFAULT_HALF_LIFE_DAYS == 7.0
     assert _DEFAULT_STALE_THRESHOLD == 0.5
+    assert _DEFAULT_DEADLINE_WEIGHT == 5.0
+
+
+# --- deadline urgency ---
+
+
+def test_imminent_deadline_scores_higher() -> None:
+    """A goal with an imminent deadline scores higher than the same goal without."""
+    base = _goal(goal_id="no-dl")
+    with_dl = _goal(goal_id="dl")
+    with_dl["deadline"] = "2026-04-23T00:00:00Z"  # 2 days away from NOW
+    no_dl = score_goal(base, _profile(), NOW)
+    dl = score_goal(with_dl, _profile(), NOW)
+    assert no_dl is not None and dl is not None
+    assert dl["score"] > no_dl["score"]
+    assert "deadline urgency" in dl["reason"]
+
+
+def test_distant_deadline_minimal_boost() -> None:
+    """A goal with a deadline 100 days away gets a tiny urgency boost."""
+    g = _goal(goal_id="far")
+    g["deadline"] = "2026-07-30T00:00:00Z"  # ~100 days from NOW
+    result = score_goal(g, _profile(), NOW)
+    assert result is not None
+    # Urgency = 5.0 * (1/100) = 0.05 — negligible vs base score of 20.
+    assert "deadline urgency" in result["reason"]
+    base = score_goal(_goal(), _profile(), NOW)
+    assert base is not None
+    assert result["score"] - base["score"] < 1.0
+
+
+def test_no_deadline_no_urgency() -> None:
+    """A goal without a deadline field gets no urgency term."""
+    result = score_goal(_goal(), _profile(), NOW)
+    assert result is not None
+    assert "deadline" not in result["reason"]
 
 
 def test_script_runs_as_subprocess(tmp_path: Path) -> None:

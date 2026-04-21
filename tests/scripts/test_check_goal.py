@@ -115,6 +115,62 @@ def test_no_active_node_valid():
     assert status == "ok"
 
 
+# --- deadline field tests ---
+
+
+def test_valid_deadline():
+    goal = _valid_goal()
+    goal["deadline"] = "2026-06-01T00:00:00Z"
+    status, errors = validate_goal(goal)
+    assert status == "ok"
+    assert errors == []
+
+
+def test_null_deadline():
+    goal = _valid_goal()
+    goal["deadline"] = None
+    status, errors = validate_goal(goal)
+    assert status == "ok"
+    assert errors == []
+
+
+def test_missing_deadline_is_optional():
+    """deadline is not required — omitting it is valid."""
+    goal = _valid_goal()
+    assert "deadline" not in goal
+    status, errors = validate_goal(goal)
+    assert status == "ok"
+    assert errors == []
+
+
+# --- require_redemonstration field tests ---
+
+
+def test_require_redemonstration_true():
+    goal = _valid_goal()
+    goal["nodes"]["load-balancing"]["require_redemonstration"] = True
+    status, errors = validate_goal(goal)
+    assert status == "ok"
+    assert errors == []
+
+
+def test_require_redemonstration_false():
+    goal = _valid_goal()
+    goal["nodes"]["load-balancing"]["require_redemonstration"] = False
+    status, errors = validate_goal(goal)
+    assert status == "ok"
+    assert errors == []
+
+
+def test_missing_require_redemonstration_is_optional():
+    """require_redemonstration is not required — omitting it is valid."""
+    goal = _valid_goal()
+    assert "require_redemonstration" not in goal["nodes"]["load-balancing"]
+    status, errors = validate_goal(goal)
+    assert status == "ok"
+    assert errors == []
+
+
 def test_main_valid_file(tmp_path: Path, capsys):
     goal = _valid_goal()
     path = tmp_path / "goal.yaml"

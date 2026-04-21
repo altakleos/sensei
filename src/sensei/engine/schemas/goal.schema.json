@@ -82,6 +82,14 @@
       ],
       "format": "date-time",
       "description": "ISO timestamp when goal was last resumed (null if never resumed)"
+    },
+    "deadline": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "Optional ISO-8601 UTC deadline for this goal. Used by priority scoring for urgency."
     }
   },
   "$defs": {
@@ -150,6 +158,11 @@
           ],
           "default": null,
           "description": "Parent topic slug if this node was a gap-fill spawn, else null."
+        },
+        "require_redemonstration": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, the node requires in-context mastery proof even if the topic is globally known."
         }
       }
     }

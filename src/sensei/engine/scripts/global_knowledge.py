@@ -33,21 +33,37 @@ _SCORES: dict[str, float] = {
 _KNOWN_THRESHOLD = _LEVELS.index("solid")  # rank 3
 
 
-def check(profile: dict[str, Any], topic: str) -> dict[str, Any]:
-    """Return knowledge status for *topic* given a parsed profile dict."""
+def check(profile: dict[str, Any], topic: str, *, goal: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Return knowledge status for *topic* given a parsed profile dict.
+
+    When *goal* is provided and the topic's node has
+    ``require_redemonstration: true``, the result overrides ``known`` to
+    ``False`` and includes ``redemonstration_required: true``.
+    """
     expertise = profile.get("expertise_map") or {}
     entry = expertise.get(topic)
     if entry is None:
         return {"topic": topic, "known": False, "mastery": 0.0}
     mastery = entry.get("mastery", "none")
     known = _LEVELS.index(mastery) >= _KNOWN_THRESHOLD
-    return {"topic": topic, "known": known, "mastery": _SCORES.get(mastery, 0.0)}
+    result: dict[str, Any] = {"topic": topic, "known": known, "mastery": _SCORES.get(mastery, 0.0)}
+
+    # Per-goal re-demonstration override (cross-goal intelligence invariant 1).
+    if goal is not None and known:
+        nodes = goal.get("nodes") or {}
+        node = nodes.get(topic)
+        if node is not None and node.get("require_redemonstration") is True:
+            result["known"] = False
+            result["redemonstration_required"] = True
+
+    return result
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0] if __doc__ else None)
     parser.add_argument("--profile", required=True, help="Path to profile.yaml")
     parser.add_argument("--topic", required=True, help="Topic slug to check")
+    parser.add_argument("--goal", default=None, help="Optional path to goal YAML file for re-demonstration check")
     args = parser.parse_args(argv)
 
     path = Path(args.profile)
@@ -66,7 +82,20 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"error": "top-level yaml must be a mapping"}))
         return 1
 
-    print(json.dumps(check(profile, args.topic)))
+    goal = None
+    if args.goal:
+        goal_path = Path(args.goal)
+        if not goal_path.is_file():
+            print(json.dumps({"error": f"goal file not found: {goal_path}"}))
+            return 1
+        try:
+            with goal_path.open("r", encoding="utf-8") as fh:
+                goal = yaml.safe_load(fh)
+        except yaml.YAMLError as exc:
+            print(json.dumps({"error": f"yaml parse error: {exc}"}))
+            return 1
+
+    print(json.dumps(check(profile, args.topic, goal=goal)))
     return 0
 
 
