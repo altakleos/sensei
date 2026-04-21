@@ -154,8 +154,7 @@ Before tagging:
 
 ## Approving PyPI Publish from the Terminal
 
-The `pypi` GitHub Environment requires reviewer approval. The `gh` CLI
-cannot approve deployments directly, but the API can:
+The `pypi` GitHub Environment is configured with a `required_reviewers` protection rule. For a **solo-maintainer release** the gate currently **self-bypasses** and the publish step runs without pausing. See § "Self-bypass caveat" below before assuming the approval command is necessary.
 
 ```bash
 # Find the run ID for the release
@@ -164,7 +163,7 @@ gh run list --workflow=release.yml --limit 3
 # Check pending deployment (confirms it's waiting)
 gh api repos/altakleos/sensei/actions/runs/<RUN_ID>/pending_deployments
 
-# Approve
+# Approve (only reachable when the gate actually pauses — see caveat below)
 gh api repos/altakleos/sensei/actions/runs/<RUN_ID>/pending_deployments \
   --method POST \
   --field 'environment_ids[]=14342694313' \
@@ -173,6 +172,20 @@ gh api repos/altakleos/sensei/actions/runs/<RUN_ID>/pending_deployments \
 ```
 
 The environment ID `14342694313` is stable — the `pypi` environment in `altakleos/sensei`. Only the run ID changes per release.
+
+### Self-bypass caveat
+
+The `pypi` environment's `required_reviewers` rule lists exactly one reviewer (`makutaku`) and has `prevent_self_review: false`. GitHub Environments auto-approve a deployment when the initiator is also the sole reviewer and self-review is allowed — so when the maintainer pushes a release tag from their own credentials, the `publish` job runs immediately without pausing, and `pending_deployments` returns an empty list.
+
+Discovered during the v0.1.0a9 release: the entire release workflow (verify matrix + build + publish) completed in 1m9s with zero manual approval step. PyPI received the artifact as designed.
+
+This is not a defect — it is how the environment is configured. If you want the gate to be a real pause for self-triggered releases, choose one of:
+
+1. **Add a co-reviewer** to the `pypi` environment (teammate, bot account, or personal secondary account).
+2. **Set `prevent_self_review: true`** in the environment's required-reviewers protection rule. Your own tag pushes will then pause for a second reviewer to approve.
+3. **Set `can_admins_bypass: false`** on the environment to prevent admin bypass as well, if you want the rule to apply even to org-admin actions.
+
+Until one of the above is configured, treat the documented approval flow above as applicable only to deployments triggered by someone other than the sole reviewer (e.g. a future contributor's release push), or as a dry-run reference.
 
 ## References
 
