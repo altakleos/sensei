@@ -27,13 +27,13 @@ Implements the `release-process` spec via the mechanism in `design/release-workf
 
 ## Acceptance Criteria
 
-- [ ] AC1: `ci/check_package_contents.py` handles all four documented exit conditions with unit tests for each.
-- [ ] AC2: `tests/ci/test_check_package_contents.py` exercises happy path, every missing-required-file variant, every forbidden-path variant, and the version-mismatch case against synthetic wheels built in the test.
-- [ ] AC3: `.github/workflows/release.yml` has exactly three jobs with explicit `needs` dependency; `publish` uses `pypa/gh-action-pypi-publish@release/v1` with `permissions.id-token: write`; references the `pypi` environment.
-- [ ] AC4: The tag filter matches every semver and prerelease form listed in the design; does not match arbitrary tags like `release-2026-04`.
-- [ ] AC5: `docs/operations/release-playbook.md` no longer contains the aspirational-status preamble. It references the spec, design, and ADR-0009.
-- [ ] AC6: `verify.yml` still passes on `main` after this plan lands (no regressions in existing tests).
-- [ ] AC7: Suite count grows by at least 6 tests (happy + 3 failure categories × 1+ case each, conservatively).
+- [x] AC1: `ci/check_package_contents.py` handles all four documented exit conditions with unit tests for each.
+- [x] AC2: `tests/ci/test_check_package_contents.py` exercises happy path, every missing-required-file variant, every forbidden-path variant, and the version-mismatch case against synthetic wheels built in the test.
+- [x] AC3: `.github/workflows/release.yml` has exactly three jobs with explicit `needs` dependency; `publish` uses `pypa/gh-action-pypi-publish@release/v1` with `permissions.id-token: write`; references the `pypi` environment.
+- [x] AC4: The tag filter matches every semver and prerelease form listed in the design; does not match arbitrary tags like `release-2026-04`.
+- [x] AC5: `docs/operations/release-playbook.md` no longer contains the aspirational-status preamble. It references the spec, design, and ADR-0009.
+- [x] AC6: `verify.yml` still passes on `main` after this plan lands (no regressions in existing tests).
+- [x] AC7: Suite count grows by at least 6 tests (happy + 3 failure categories × 1+ case each, conservatively).
 
 ## Prerequisites (maintainer, outside this plan)
 

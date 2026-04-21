@@ -25,29 +25,29 @@ Decomposes `PRODUCT-IDEATION.md` §4 (Interaction Model, §4.1–4.5) and §6.1 
 
 ## Phase 1 — Foundation principle (single commit)
 
-- [ ] T1: `docs/foundations/principles/learner-is-not-the-goal.md` — kind: product. Statement: the learner is a persistent identity; goals are transient workspaces. The profile lives above goals, knowledge transfers across them, and goals can be created, paused, and retired without affecting the learner's identity or accumulated knowledge. This constrains the folder structure, the profile spec, and every future goal-management spec. Captures §4.3. → `docs/foundations/principles/learner-is-not-the-goal.md`
+- [x] T1: `docs/foundations/principles/learner-is-not-the-goal.md` — kind: product. Statement: the learner is a persistent identity; goals are transient workspaces. The profile lives above goals, knowledge transfers across them, and goals can be created, paused, and retired without affecting the learner's identity or accumulated knowledge. This constrains the folder structure, the profile spec, and every future goal-management spec. Captures §4.3. → `docs/foundations/principles/learner-is-not-the-goal.md`
 
 ## Phase 2 — Verify existing coverage + folder structure rationale (single commit)
 
-- [ ] T2: Verify §4.1 coverage — confirm `cli.py` implements the "minimal CLI" contract (init scaffolds, everything else is conversation). No new artifact needed; add a §4.1 citation to ADR-0004 References if missing. → verify
-- [ ] T3: Verify §4.2 coverage — confirm `vision.md` Key Properties captures "conversation-first." If the specific phrasing "no artificial separation between setup and learning" is missing, add it. → `docs/foundations/vision.md`
-- [ ] T4: Verify §4.5 coverage — confirm ADR-0004 + `vision.md` capture full portability (git-trackable, Dropbox-syncable, copy to new laptop). No new artifact needed. → verify
-- [ ] T5: `docs/design/folder-structure.md` — design doc capturing the rationale for the canonical folder layout that `sensei init` creates. Documents the divergences between §6.1's aspirational sketch and the actual implementation (e.g., `instance/profile.yaml` not `.sensei/profile.yaml`). Documents where future components will land (goal workspaces, agent mode files) without specifying them. This is a design rationale doc, not a spec — the folder structure is an emergent property of component specs. → `docs/design/folder-structure.md`
+- [x] T2: Verify §4.1 coverage — confirm `cli.py` implements the "minimal CLI" contract (init scaffolds, everything else is conversation). No new artifact needed; add a §4.1 citation to ADR-0004 References if missing. → verify
+- [x] T3: Verify §4.2 coverage — confirm `vision.md` Key Properties captures "conversation-first." If the specific phrasing "no artificial separation between setup and learning" is missing, add it. → `docs/foundations/vision.md`
+- [x] T4: Verify §4.5 coverage — confirm ADR-0004 + `vision.md` capture full portability (git-trackable, Dropbox-syncable, copy to new laptop). No new artifact needed. → verify
+- [x] T5: `docs/design/folder-structure.md` — design doc capturing the rationale for the canonical folder layout that `sensei init` creates. Documents the divergences between §6.1's aspirational sketch and the actual implementation (e.g., `instance/profile.yaml` not `.sensei/profile.yaml`). Documents where future components will land (goal workspaces, agent mode files) without specifying them. This is a design rationale doc, not a spec — the folder structure is an emergent property of component specs. → `docs/design/folder-structure.md`
 
 ## Phase 3 — Wiring + verification (single commit)
 
-- [ ] T6: Wire `P-learner-is-not-the-goal` into existing specs — add to `realizes:` on `learner-profile.md` (the profile is root-level, not per-goal). → `docs/specs/learner-profile.md`
-- [ ] T7: Run `ci/check_foundations.py` — confirm 0 errors. → verify
-- [ ] T8: Full test suite green. → verify
-- [ ] T9: Append Unreleased entry to `CHANGELOG.md`. → `CHANGELOG.md`
+- [x] T6: Wire `P-learner-is-not-the-goal` into existing specs — add to `realizes:` on `learner-profile.md` (the profile is root-level, not per-goal). → `docs/specs/learner-profile.md`
+- [x] T7: Run `ci/check_foundations.py` — confirm 0 errors. → verify
+- [x] T8: Full test suite green. → verify
+- [x] T9: Append Unreleased entry to `CHANGELOG.md`. → `CHANGELOG.md`
 
 ## Acceptance Criteria
 
-- [ ] AC1: `P-learner-is-not-the-goal` principle exists with status: accepted.
-- [ ] AC2: `docs/design/folder-structure.md` exists documenting the canonical layout and §6.1 divergences.
-- [ ] AC3: §4.1, §4.2, §4.5 verified as already captured — no new artifacts, citations added where missing.
-- [ ] AC4: `ci/check_foundations.py` passes with 0 errors.
-- [ ] AC5: CHANGELOG.md `[Unreleased]` describes the change.
+- [x] AC1: `P-learner-is-not-the-goal` principle exists with status: accepted.
+- [x] AC2: `docs/design/folder-structure.md` exists documenting the canonical layout and §6.1 divergences.
+- [x] AC3: §4.1, §4.2, §4.5 verified as already captured — no new artifacts, citations added where missing.
+- [x] AC4: `ci/check_foundations.py` passes with 0 errors.
+- [x] AC5: CHANGELOG.md `[Unreleased]` describes the change.
 
 ## Out of Scope
 

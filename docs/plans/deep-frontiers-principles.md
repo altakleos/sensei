@@ -24,23 +24,23 @@ Migrates the four Deep Frontiers subsections from `PRODUCT-IDEATION.md` §2.4 in
 
 ## Phase 1 — Three new principles (single commit)
 
-- [ ] T1: `docs/foundations/principles/metacognition-is-the-multiplier.md` — kind: pedagogical. Statement: teaching the learner to plan, monitor, calibrate, and seek help strategically accelerates all future learning. Metacognitive skills are the multiplier on every other pedagogical investment. The forethought phase has the highest measured AI impact (g=1.613). Captures §2.4.1. → `docs/foundations/principles/metacognition-is-the-multiplier.md`
-- [ ] T2: `docs/foundations/principles/emotion-cognition-are-one.md` — kind: pedagogical. Statement: confusion correlates with deep learning more than any other emotion, but has a shelf life. Motivation requires autonomy, competence, and relatedness (SDT), not rewards. Emotional state is learning infrastructure, not a side effect to manage. Captures §2.4.2. → `docs/foundations/principles/emotion-cognition-are-one.md`
-- [ ] T3: `docs/foundations/principles/transfer-is-the-goal.md` — kind: pedagogical. Statement: learning that doesn't transfer is inert knowledge. Comparison is the cognitive engine of transfer. Vary surface features, require discrimination, prompt self-explanation, interleave across domains. What feels like good learning often produces poor transfer. Captures §2.4.3. → `docs/foundations/principles/transfer-is-the-goal.md`
+- [x] T1: `docs/foundations/principles/metacognition-is-the-multiplier.md` — kind: pedagogical. Statement: teaching the learner to plan, monitor, calibrate, and seek help strategically accelerates all future learning. Metacognitive skills are the multiplier on every other pedagogical investment. The forethought phase has the highest measured AI impact (g=1.613). Captures §2.4.1. → `docs/foundations/principles/metacognition-is-the-multiplier.md`
+- [x] T2: `docs/foundations/principles/emotion-cognition-are-one.md` — kind: pedagogical. Statement: confusion correlates with deep learning more than any other emotion, but has a shelf life. Motivation requires autonomy, competence, and relatedness (SDT), not rewards. Emotional state is learning infrastructure, not a side effect to manage. Captures §2.4.2. → `docs/foundations/principles/emotion-cognition-are-one.md`
+- [x] T3: `docs/foundations/principles/transfer-is-the-goal.md` — kind: pedagogical. Statement: learning that doesn't transfer is inert knowledge. Comparison is the cognitive engine of transfer. Vary surface features, require discrimination, prompt self-explanation, interleave across domains. What feels like good learning often produces poor transfer. Captures §2.4.3. → `docs/foundations/principles/transfer-is-the-goal.md`
 
 ## Phase 2 — Update P-know-the-learner + wiring (single commit)
 
-- [ ] T4: Update `docs/foundations/principles/know-the-learner.md` — absorb remaining §2.4.4 content: expertise reversal effect detail, Kirschner vs Kapur resolution via sequencing, filter bubble risk, negotiated adaptivity. Add to Implications or Exceptions-and-Tensions sections. → `docs/foundations/principles/know-the-learner.md`
-- [ ] T5: Run `ci/check_foundations.py` — confirm 0 errors. New principles will show as orphan warnings (no spec references them yet); that's expected and correct. → verify
-- [ ] T6: Full test suite green. → verify
-- [ ] T7: Append Unreleased entry to `CHANGELOG.md`. → `CHANGELOG.md`
+- [x] T4: Update `docs/foundations/principles/know-the-learner.md` — absorb remaining §2.4.4 content: expertise reversal effect detail, Kirschner vs Kapur resolution via sequencing, filter bubble risk, negotiated adaptivity. Add to Implications or Exceptions-and-Tensions sections. → `docs/foundations/principles/know-the-learner.md`
+- [x] T5: Run `ci/check_foundations.py` — confirm 0 errors. New principles will show as orphan warnings (no spec references them yet); that's expected and correct. → verify
+- [x] T6: Full test suite green. → verify
+- [x] T7: Append Unreleased entry to `CHANGELOG.md`. → `CHANGELOG.md`
 
 ## Acceptance Criteria
 
-- [ ] AC1: Three new principles exist with status: accepted — `P-metacognition-is-the-multiplier`, `P-emotion-cognition-are-one`, `P-transfer-is-the-goal`.
-- [ ] AC2: `P-know-the-learner` updated with §2.4.4 content (expertise reversal, negotiated adaptivity).
-- [ ] AC3: `ci/check_foundations.py` passes with 0 errors (orphan warnings expected and acceptable).
-- [ ] AC4: CHANGELOG.md `[Unreleased]` describes the change.
+- [x] AC1: Three new principles exist with status: accepted — `P-metacognition-is-the-multiplier`, `P-emotion-cognition-are-one`, `P-transfer-is-the-goal`.
+- [x] AC2: `P-know-the-learner` updated with §2.4.4 content (expertise reversal, negotiated adaptivity).
+- [x] AC3: `ci/check_foundations.py` passes with 0 errors (orphan warnings expected and acceptable).
+- [x] AC4: CHANGELOG.md `[Unreleased]` describes the change.
 
 ## Out of Scope
 
