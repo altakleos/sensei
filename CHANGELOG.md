@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a13] — 2026-04-22
+
+### Fixed
+
+- `sensei upgrade` now triggers `instance/` → `learner/` rename for users upgrading from pre-v0.1.0a11 versions. Previously the migration guard only checked for `learner/` existence, so the rename was never invoked.
+
 ## [0.1.0a12] — 2026-04-22
 
 ### Added
@@ -220,7 +226,8 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a12...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a13...HEAD
+[0.1.0a13]: https://github.com/altakleos/sensei/compare/v0.1.0a12...v0.1.0a13
 [0.1.0a12]: https://github.com/altakleos/sensei/compare/v0.1.0a11...v0.1.0a12
 [0.1.0a11]: https://github.com/altakleos/sensei/compare/v0.1.0a10...v0.1.0a11
 [0.1.0a10]: https://github.com/altakleos/sensei/compare/v0.1.0a9...v0.1.0a10
