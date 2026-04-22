@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a16] — 2026-04-22
+
 ### Added
 
 - **Emotional state tracking** — learner profile now tracks emotional state (engagement, frustration, agency) as structured fields. Assessment and review protocols are affect-aware. Degradation chain (confusion → frustration → boredom → disengagement) monitored with configurable intervention thresholds.
