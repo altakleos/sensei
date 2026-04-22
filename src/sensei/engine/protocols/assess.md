@@ -152,6 +152,10 @@ End the assessment protocol. The learner is now in tutor mode working on the pre
 
 ---
 
+## Affect-aware session decisions
+
+At assessment start, read `emotional_state` from `learner/profile.yaml`. If `frustration` is `frustrated` or `overwhelmed`, or `agency` is `dependent`, consider deferring the assessment or reordering topics to start with the learner's strongest area. These are session-level decisions only — do NOT add scaffolding, hints, or encouragement to individual items (assessor exception holds).
+
 ## Silence profile (binding)
 
 - Default to the shortest response that accomplishes the step.

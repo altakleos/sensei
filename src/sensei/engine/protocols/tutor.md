@@ -86,7 +86,7 @@ Evaluate these after every learner turn:
 
 **Hint integration.** If an active hint's topics match the current teaching topic, reference it: "You bookmarked something about this — [hint content]. Let's use that as a starting point."
 
-**Overwhelm detection.** If the learner gives 2+ confused or frustrated responses consecutively, activate the crisis script from `modes/tutor.md`: simplify, shrink scope, offer a break.
+**Overwhelm detection.** If the learner gives 2+ confused or frustrated responses consecutively, activate the crisis script from `modes/tutor.md`: simplify, shrink scope, offer a break. When overwhelm is detected, update `emotional_state` in `learner/profile.yaml` immediately: set `frustration` to the observed level and `agency` to `dependent`. If `frustration` reaches the `degradation_intervention_threshold` from `.sensei/defaults.yaml`, activate the crisis script.
 
 ## Two-failure rule
 

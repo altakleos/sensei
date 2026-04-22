@@ -54,6 +54,10 @@ def _check_cross_field(profile: dict[str, Any]) -> list[str]:
 def validate_profile(profile: dict[str, Any]) -> tuple[str, list[str]]:
     """Validate a parsed profile dict.
 
+    Migrates the profile to the current schema version before validating,
+    so older profiles (e.g. schema_version 0 without emotional_state) are
+    accepted during the transition period.
+
     Returns a tuple (status, errors) where status is one of:
         "ok"           — profile is valid
         "schema"       — schema violations (also returned when required field missing)
@@ -61,6 +65,13 @@ def validate_profile(profile: dict[str, Any]) -> tuple[str, list[str]]:
 
     `errors` lists human-readable error messages.
     """
+    from sensei.engine.scripts.migrate import migrate_profile
+
+    try:
+        profile = migrate_profile(dict(profile))
+    except (ValueError, KeyError):
+        pass  # migration failed; fall through to schema validation which will report the real error
+
     schema = _load_schema()
     validator = Draft202012Validator(schema)
     schema_errors = sorted(validator.iter_errors(profile), key=lambda e: list(e.absolute_path))

@@ -9,7 +9,7 @@
   "properties": {
     "schema_version": {
       "type": "integer",
-      "const": 0,
+      "const": 1,
       "description": "Profile schema version. Bump on any field-semantics change."
     },
     "learner_id": {
@@ -26,6 +26,31 @@
         "^[a-z][a-z0-9-]*$": { "$ref": "#/$defs/TopicState" }
       },
       "additionalProperties": false
+    },
+    "emotional_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "LLM-assessed emotional signals. Updated mid-session when shifts are detected.",
+      "properties": {
+        "engagement": {
+          "type": "string",
+          "enum": ["flow", "active", "passive", "disengaged", "unknown"]
+        },
+        "frustration": {
+          "type": "string",
+          "enum": ["none", "confused", "frustrated", "overwhelmed", "unknown"]
+        },
+        "agency": {
+          "type": "string",
+          "enum": ["autonomous", "guided", "dependent", "unknown"]
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 UTC timestamp of last update."
+        }
+      },
+      "required": ["engagement", "frustration", "agency", "updated_at"]
     }
   },
   "$defs": {

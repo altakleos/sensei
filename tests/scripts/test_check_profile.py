@@ -79,9 +79,9 @@ def test_invalid_topic_slug_fails() -> None:
     assert status == "schema"
 
 
-def test_schema_version_must_be_zero() -> None:
+def test_schema_version_must_be_current() -> None:
     profile = _valid_profile()
-    profile["schema_version"] = 1
+    profile["schema_version"] = 99
     status, errors = validate_profile(profile)
     assert status == "schema"
 
