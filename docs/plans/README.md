@@ -32,6 +32,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [goal-lifecycle-transitions](goal-lifecycle-transitions.md) | Goal lifecycle transitions — pause, resume, abandon, complete (retroactive) | done |
 | [assessment-protocol](assessment-protocol.md) | Assessment protocol — mastery gating, two-failure diagnosis (retroactive) | done |
 | [e2e-kiro-support](e2e-kiro-support.md) | Tool-agnostic E2E tests — Kiro CLI + Claude Code | done |
+| [e2e-review-protocol](e2e-review-protocol.md) | Review protocol E2E test — stale topic selection + profile update | done |
 | [curriculum-graph](curriculum-graph.md) | Curriculum graph — frontier, mutations, validation | done |
 | [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
 | [mermaid-diagrams](mermaid-diagrams.md) | Mermaid diagram enhancement pass | done |
