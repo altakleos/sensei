@@ -47,7 +47,7 @@ def _seed_profile_with_topic(instance_dir: Path, topic: str) -> dict:
     at mastery 'developing' with attempts=0, correct=0."""
     profile_path = instance_dir / "learner" / "profile.yaml"
     profile = {
-        "schema_version": 0,
+        "schema_version": 1,
         "learner_id": "e2e",
         "expertise_map": {
             topic: {
