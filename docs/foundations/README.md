@@ -43,6 +43,7 @@ Moving an invariant between layers (feature spec ↔ principle, principle ↔ vi
 
 ## References
 
+- [Traceability Matrix](traceability.md) — research → principles → protocols cross-reference
 - [ADR-0012: Adopt `docs/foundations/` for Cross-Cutting Concerns](../decisions/0012-foundations-layer.md)
 - [`docs/development-process.md § Foundations`](../development-process.md#foundations)
 - [`docs/sensei-implementation.md`](../sensei-implementation.md) — Sensei-specific instantiation pointers
