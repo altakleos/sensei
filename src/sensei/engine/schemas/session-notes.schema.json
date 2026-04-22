@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sensei.dev/schemas/session-notes.schema.json",
+  "title": "Sensei Session Notes",
+  "description": "Cross-session mentor observations (learner/session-notes.yaml). Incremental writes during session, summary + seeds at session close.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sessions"],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 0,
+      "description": "Session notes schema version. Bump on any field-semantics change."
+    },
+    "sessions": {
+      "type": "array",
+      "maxItems": 50,
+      "description": "Chronological list of session observation records. Oldest entries are retired when the cap is reached.",
+      "items": { "$ref": "#/$defs/SessionEntry" }
+    }
+  },
+  "$defs": {
+    "SessionEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "observations"],
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 UTC timestamp of session start."
+        },
+        "goal": {
+          "type": "string",
+          "description": "Goal slug for the primary goal worked on during this session."
+        },
+        "topics_covered": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Topic slugs covered during this session."
+        },
+        "observations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Observation" },
+          "description": "Mentor observations recorded incrementally during the session."
+        },
+        "summary": {
+          "type": "string",
+          "description": "Prose summary of the session. Written at session close."
+        },
+        "next_session_seeds": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Concrete action items for the next session. Written at session close."
+        }
+      }
+    },
+    "Observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "detail"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["misconception", "breakthrough", "effective_strategy", "emotional_shift"],
+          "description": "Category of observation. Fixed set — may only grow through a formal decision."
+        },
+        "topic": {
+          "type": "string",
+          "description": "Topic slug this observation relates to (optional — some observations are topic-independent)."
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Free-text description of the observation."
+        }
+      }
+    }
+  }
+}

@@ -36,6 +36,11 @@ cross_goal:
   min_session_minutes: 5    # minimum per-goal time allocation in session_allocator.py
   review_dedup: true        # enable cross-goal review deduplication in review_scheduler.py
 
+session_notes:
+  # Session notes tunables (consumed by engine.md session-start and session-close).
+  load_count: 3          # number of recent session notes loaded at session start
+  max_entries: 50        # maximum sessions retained before oldest are retired
+
 performance_training:
   # Performance phase tunables (consumed by protocols/performance-training.md via goal protocol).
   mastery_gate: solid        # minimum mastery level to enter phase (ordinal: shaky < solid < deep)

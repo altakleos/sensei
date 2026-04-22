@@ -139,6 +139,50 @@ If `session_allocator.py` fails, fall back to showing priority-ranked goals with
 
 After the opener, proceed to the goal protocol's Step 6 (begin teaching the active topic).
 
+## Session Start — Load Session Notes
+
+After loading the profile and goal, read `learner/session-notes.yaml`. Take the last `config.session_notes.load_count` entries (default 3) from the `sessions` array. Use these recent notes to inform the adaptive session opener:
+
+- If the most recent note has `next_session_seeds`, use them to shape the opening question or topic selection.
+- If recent notes show a recurring `misconception` on the same topic, address it proactively.
+- If recent notes show an `effective_strategy`, prefer that teaching approach.
+
+Do NOT surface session notes content to the learner. They are mentor memory — use them to adapt your approach, not to narrate your reasoning.
+
+If `learner/session-notes.yaml` does not exist or is empty, proceed normally without notes context.
+
+## Mid-Session — Record Observations
+
+When you detect any of the following during a session, immediately write an observation to `learner/session-notes.yaml`:
+
+| Signal | Observation type |
+|--------|-----------------|
+| Learner exhibits a factual error or flawed mental model | `misconception` |
+| Learner makes a conceptual leap or connects ideas unprompted | `breakthrough` |
+| A teaching approach, analogy, or exercise produces visible understanding | `effective_strategy` |
+| Learner's engagement, frustration, or confidence visibly shifts | `emotional_shift` |
+
+**Write procedure:**
+1. Read `learner/session-notes.yaml`.
+2. If no session entry exists for the current session, create one with `date` (current UTC ISO-8601) and an empty `observations` array. Set `goal` to the current goal slug if one is active.
+3. Append the new observation to the last session entry's `observations` array. Include `topic` if the observation relates to a specific topic.
+4. Write the file atomically.
+
+Do NOT batch observations. Each observation is written as soon as it is detected. This ensures observations survive abrupt session termination.
+
+## Session Close — Write Summary and Seeds
+
+When the learner explicitly ends the session (says goodbye, asks to stop, or signals they are done):
+
+1. Read `learner/session-notes.yaml`.
+2. Add `topics_covered` to the current session entry — the list of topic slugs worked on during this session.
+3. Write a `summary` — a brief prose synthesis of the session's key observations and patterns. One to three sentences.
+4. Write `next_session_seeds` — two to four concrete action items for the next session (what to revisit, what to drill, what question to open with).
+5. If the `sessions` array now exceeds `config.session_notes.max_entries` (default 50), remove the oldest entries from the beginning of the array until it is within the limit.
+6. Write the file atomically.
+
+If the session ends without an explicit close (learner disappears), the observations already written survive. Only the summary and seeds are lost — this is acceptable per the spec.
+
 ## Dispatch Table
 
 When the learner expresses a specific operational intent, dispatch to the corresponding protocol. Protocols run within the active mode — they inherit the mode's behavioral constraints.
@@ -239,6 +283,8 @@ Current config keys:
 - `performance_training.stage_thresholds.automate` — correct fluent recalls needed to advance past stage 2 (default: 3).
 - `performance_training.stage_thresholds.verbalize` — clear verbal explanations needed to advance past stage 3 (default: 2).
 - `performance_training.stage_thresholds.time_pressure` — timed problems solved within budget to advance past stage 4 (default: 3).
+- `session_notes.load_count` — number of recent session notes loaded at session start (default: 3). Consumed by engine.md §Session Start — Load Session Notes.
+- `session_notes.max_entries` — maximum sessions retained before oldest are retired (default: 50). Consumed by engine.md §Session Close — Write Summary and Seeds.
 
 ## References
 

@@ -228,6 +228,11 @@ def init(target: Path, force: bool, learner_id: str) -> None:
             encoding="utf-8",
         )
 
+    # Session notes file.
+    session_notes = target / "learner" / "session-notes.yaml"
+    if not session_notes.exists():
+        session_notes.write_text("schema_version: 0\nsessions: []\n", encoding="utf-8")
+
     # Hints ingestion directories and registry.
     (target / "learner" / "inbox").mkdir(exist_ok=True)
     (target / "learner" / "inbox" / ".gitkeep").write_text(
@@ -427,6 +432,7 @@ def verify(target: Path) -> None:
         "protocols/modes/challenger.md",
         "protocols/modes/reviewer.md",
         "schemas/profile.schema.json",
+        "schemas/session-notes.schema.json",
         "templates/AGENTS.md",
     ]
     for rel in expected:
@@ -450,6 +456,26 @@ def verify(target: Path) -> None:
             errors.append(f"profile: invalid YAML — {exc}")
     else:
         errors.append("missing: learner/profile.yaml")
+
+    session_notes_path = target / "learner" / "session-notes.yaml"
+    if session_notes_path.exists():
+        try:
+            import json
+
+            import jsonschema
+
+            notes_data = yaml.safe_load(session_notes_path.read_text())
+            if isinstance(notes_data, dict):
+                schema_path = sensei_dir / "schemas" / "session-notes.schema.json"
+                if schema_path.exists():
+                    schema = json.loads(schema_path.read_text())
+                    validator = jsonschema.Draft202012Validator(schema)
+                    for err in sorted(validator.iter_errors(notes_data), key=lambda e: list(e.absolute_path)):
+                        errors.append(f"session-notes: {list(err.absolute_path) or '<root>'}: {err.message}")
+            else:
+                errors.append("session-notes: not a YAML mapping")
+        except yaml.YAMLError as exc:
+            errors.append(f"session-notes: invalid YAML — {exc}")
 
     if errors:
         click.echo("FAIL")

@@ -53,12 +53,38 @@ VALID_GOAL = {
     },
 }
 
+VALID_SESSION_NOTES = {
+    "schema_version": 0,
+    "sessions": [
+        {
+            "date": "2026-04-22T18:30:00Z",
+            "goal": "system-design-interviews",
+            "topics_covered": ["notification-systems", "requirements-gathering"],
+            "observations": [
+                {
+                    "type": "misconception",
+                    "topic": "requirements-gathering",
+                    "detail": "Jumps to infrastructure before clarifying requirements",
+                },
+                {
+                    "type": "breakthrough",
+                    "topic": "notification-systems",
+                    "detail": "Connected partitioning to ordering guarantees unprompted",
+                },
+            ],
+            "summary": "Persistent pattern of skipping requirements phase.",
+            "next_session_seeds": ["Start with a requirements-only exercise"],
+        }
+    ],
+}
+
 
 @pytest.mark.parametrize(
     ("schema_file", "fixture"),
     [
         ("profile.schema.json", VALID_PROFILE),
         ("goal.schema.json", VALID_GOAL),
+        ("session-notes.schema.json", VALID_SESSION_NOTES),
     ],
 )
 def test_valid_fixture_passes_schema(schema_file: str, fixture: dict) -> None:
@@ -157,3 +183,78 @@ def test_migrate_profile_on_current_version_is_noop() -> None:
     original = dict(VALID_PROFILE)
     migrated = migrate_profile(dict(original))
     assert migrated == original
+
+
+# --- Session notes schema tests ---
+
+
+def test_session_notes_empty_sessions_valid() -> None:
+    doc = {"schema_version": 0, "sessions": []}
+    jsonschema.validate(doc, _load_schema("session-notes.schema.json"))
+
+
+def test_session_notes_invalid_observation_type_rejected() -> None:
+    bad = {
+        "schema_version": 0,
+        "sessions": [
+            {
+                "date": "2026-04-22T18:30:00Z",
+                "observations": [{"type": "insight", "detail": "something"}],
+            }
+        ],
+    }
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, _load_schema("session-notes.schema.json"))
+
+
+def test_session_notes_missing_date_rejected() -> None:
+    bad = {
+        "schema_version": 0,
+        "sessions": [{"observations": []}],
+    }
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, _load_schema("session-notes.schema.json"))
+
+
+def test_session_notes_missing_observation_detail_rejected() -> None:
+    bad = {
+        "schema_version": 0,
+        "sessions": [
+            {
+                "date": "2026-04-22T18:30:00Z",
+                "observations": [{"type": "misconception"}],
+            }
+        ],
+    }
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, _load_schema("session-notes.schema.json"))
+
+
+def test_session_notes_observation_without_topic_valid() -> None:
+    """Topic is optional — emotional_shift and effective_strategy may be topic-independent."""
+    doc = {
+        "schema_version": 0,
+        "sessions": [
+            {
+                "date": "2026-04-22T18:30:00Z",
+                "observations": [
+                    {"type": "emotional_shift", "detail": "Frustrated early, engaged after breakthrough"}
+                ],
+            }
+        ],
+    }
+    jsonschema.validate(doc, _load_schema("session-notes.schema.json"))
+
+
+def test_session_notes_session_without_summary_valid() -> None:
+    """Summary is optional — may be absent if session ended abruptly."""
+    doc = {
+        "schema_version": 0,
+        "sessions": [
+            {
+                "date": "2026-04-22T18:30:00Z",
+                "observations": [{"type": "breakthrough", "detail": "Got it"}],
+            }
+        ],
+    }
+    jsonschema.validate(doc, _load_schema("session-notes.schema.json"))

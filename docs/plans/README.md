@@ -39,6 +39,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 ### In Progress
 | Plan | Feature | Status |
 |------|---------|--------|
+| [session-notes](session-notes.md) | Session notes — structured cross-session mentor memory | done |
 | [performance-training-v1](performance-training-v1.md) | Performance training phase overlay (stages 1–4) — config, schema, phase protocol, engine wiring, goal protocol integration | done |
 | [performance-training-v2](performance-training-v2.md) | Performance training stages 5-6 — simulated evaluation + full mock | done |
 

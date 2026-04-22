@@ -17,6 +17,7 @@ For the full development model, see `docs/development-process.md`.
 | 9 | [Performance Training](performance-training.md) | Phase overlay composition: single phase protocol loaded as additional context layer when performance phase is active | accepted |
 | 10 | [Cross-Goal Intelligence](cross-goal-intelligence.md) | Pipeline topology for 5 cross-goal scripts: priority ranking, session allocation, review scheduling, resume planning, global knowledge | accepted |
 | 11 | [Goal Lifecycle](goal-lifecycle.md) | Conversational goal-creation pipeline: three-unknowns triage, curriculum DAG generation, and script orchestration | accepted |
+| 12 | [Session Notes](session-notes.md) | Single-file storage for cross-session mentor observations with incremental writes and bounded retention | accepted |
 
 ## Template
 

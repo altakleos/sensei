@@ -44,6 +44,10 @@ def test_init_creates_instance(tmp_path: Path) -> None:
     hints_reg = yaml.safe_load((target / "learner" / "hints" / "hints.yaml").read_text())
     assert hints_reg == {"schema_version": 1, "hints": []}
 
+    # Session notes file.
+    session_notes = yaml.safe_load((target / "learner" / "session-notes.yaml").read_text())
+    assert session_notes == {"schema_version": 0, "sessions": []}
+
     # Boot document and shims.
     assert (target / "AGENTS.md").is_file()
     assert (target / "CLAUDE.md").read_text().strip() == "See @AGENTS.md"
