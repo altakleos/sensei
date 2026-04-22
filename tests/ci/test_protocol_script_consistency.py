@@ -27,6 +27,7 @@ assert _PROTOCOLS_DIR.is_dir(), f"protocols directory not found: {_PROTOCOLS_DIR
 # Subprocess-invokable scripts. Internal-only modules (__init__, _atomic,
 # config, migrate) are excluded — they are never called from protocol prose.
 _INVOKED_SCRIPTS: frozenset[str] = frozenset({
+    "calibration_tracker",
     "check_goal",
     "check_profile",
     "classify_confidence",

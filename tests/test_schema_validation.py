@@ -24,7 +24,7 @@ def _load_schema(name: str) -> dict:
 
 
 VALID_PROFILE = {
-    "schema_version": 1,
+    "schema_version": 2,
     "learner_id": "alice",
     "expertise_map": {
         "hash-maps": {
@@ -39,6 +39,12 @@ VALID_PROFILE = {
         "engagement": "unknown",
         "frustration": "unknown",
         "agency": "unknown",
+        "updated_at": "1970-01-01T00:00:00Z",
+    },
+    "metacognitive_state": {
+        "calibration_accuracy": None,
+        "planning_tendency": "unknown",
+        "help_seeking": "unknown",
         "updated_at": "1970-01-01T00:00:00Z",
     },
 }
@@ -286,7 +292,7 @@ def test_profile_with_emotional_state_valid() -> None:
 def test_profile_without_emotional_state_valid() -> None:
     """emotional_state is optional — profiles without it still validate."""
     profile = {k: v for k, v in VALID_PROFILE.items() if k != "emotional_state"}
-    profile["schema_version"] = 1
+    profile["schema_version"] = 2
     jsonschema.validate(profile, _load_schema("profile.schema.json"))
 
 
@@ -340,9 +346,117 @@ def test_migrate_v0_profile_adds_emotional_state() -> None:
         "expertise_map": {},
     }
     migrated = migrate_profile(v0_profile)
-    assert migrated["schema_version"] == 1
+    assert migrated["schema_version"] == 2
     assert migrated["emotional_state"]["engagement"] == "unknown"
     assert migrated["emotional_state"]["frustration"] == "unknown"
     assert migrated["emotional_state"]["agency"] == "unknown"
     assert migrated["emotional_state"]["updated_at"] == "1970-01-01T00:00:00Z"
+    assert migrated["metacognitive_state"]["calibration_accuracy"] is None
+    assert migrated["metacognitive_state"]["planning_tendency"] == "unknown"
+    assert migrated["metacognitive_state"]["help_seeking"] == "unknown"
+    assert migrated["metacognitive_state"]["updated_at"] == "1970-01-01T00:00:00Z"
+    jsonschema.validate(migrated, _load_schema("profile.schema.json"))
+
+
+# --- Metacognitive state schema tests ---
+
+
+def test_profile_with_metacognitive_state_valid() -> None:
+    """Profile with all metacognitive_state fields validates."""
+    profile = {
+        **VALID_PROFILE,
+        "metacognitive_state": {
+            "calibration_accuracy": 0.85,
+            "planning_tendency": "proactive",
+            "help_seeking": "strategic",
+            "updated_at": "2026-04-22T18:30:00Z",
+        },
+    }
+    jsonschema.validate(profile, _load_schema("profile.schema.json"))
+
+
+def test_profile_without_metacognitive_state_valid() -> None:
+    """metacognitive_state is optional — profiles without it still validate."""
+    profile = {k: v for k, v in VALID_PROFILE.items() if k != "metacognitive_state"}
+    profile["schema_version"] = 2
+    jsonschema.validate(profile, _load_schema("profile.schema.json"))
+
+
+def test_metacognitive_state_null_calibration_valid() -> None:
+    """calibration_accuracy can be null (insufficient data)."""
+    profile = {
+        **VALID_PROFILE,
+        "metacognitive_state": {
+            "calibration_accuracy": None,
+            "planning_tendency": "unknown",
+            "help_seeking": "unknown",
+            "updated_at": "1970-01-01T00:00:00Z",
+        },
+    }
+    jsonschema.validate(profile, _load_schema("profile.schema.json"))
+
+
+def test_metacognitive_state_invalid_planning_tendency_rejected() -> None:
+    bad = {
+        **VALID_PROFILE,
+        "metacognitive_state": {
+            "calibration_accuracy": 0.5,
+            "planning_tendency": "lazy",
+            "help_seeking": "strategic",
+            "updated_at": "2026-04-22T18:30:00Z",
+        },
+    }
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, _load_schema("profile.schema.json"))
+
+
+def test_metacognitive_state_invalid_help_seeking_rejected() -> None:
+    bad = {
+        **VALID_PROFILE,
+        "metacognitive_state": {
+            "calibration_accuracy": 0.5,
+            "planning_tendency": "proactive",
+            "help_seeking": "passive",
+            "updated_at": "2026-04-22T18:30:00Z",
+        },
+    }
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, _load_schema("profile.schema.json"))
+
+
+def test_metacognitive_state_missing_required_field_rejected() -> None:
+    bad = {
+        **VALID_PROFILE,
+        "metacognitive_state": {
+            "calibration_accuracy": 0.5,
+            "planning_tendency": "proactive",
+            # help_seeking missing
+            "updated_at": "2026-04-22T18:30:00Z",
+        },
+    }
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, _load_schema("profile.schema.json"))
+
+
+def test_migrate_v1_profile_adds_metacognitive_state() -> None:
+    """Migration from v1 to v2 adds metacognitive_state with all-unknown/null defaults."""
+    v1_profile = {
+        "schema_version": 1,
+        "learner_id": "alice",
+        "expertise_map": {},
+        "emotional_state": {
+            "engagement": "active",
+            "frustration": "none",
+            "agency": "autonomous",
+            "updated_at": "2026-04-22T18:30:00Z",
+        },
+    }
+    migrated = migrate_profile(v1_profile)
+    assert migrated["schema_version"] == 2
+    assert migrated["metacognitive_state"]["calibration_accuracy"] is None
+    assert migrated["metacognitive_state"]["planning_tendency"] == "unknown"
+    assert migrated["metacognitive_state"]["help_seeking"] == "unknown"
+    assert migrated["metacognitive_state"]["updated_at"] == "1970-01-01T00:00:00Z"
+    # Emotional state preserved
+    assert migrated["emotional_state"]["engagement"] == "active"
     jsonschema.validate(migrated, _load_schema("profile.schema.json"))
