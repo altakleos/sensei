@@ -1,5 +1,5 @@
 ---
-status: provisional
+status: accepted
 date: 2026-04-21
 ---
 # ADR-0021: Phase Overlay Composition — Single Phase Protocol

@@ -25,9 +25,9 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0017 | [File-Drop Ingestion](0017-file-drop-ingestion.md) | accepted |
 | 0018 | [Curriculum Boosting over Rewriting](0018-curriculum-boosting.md) | accepted |
 | 0019 | [Universal Inbox over Typed Drop Zones](0019-universal-inbox.md) | accepted |
-| 0020 | [Release Self-Bypass for Solo Maintainer](0020-release-self-bypass.md) | provisional |
+| 0020 | [Release Self-Bypass for Solo Maintainer](0020-release-self-bypass.md) | accepted |
 | 0022 | [Shell Wrapper for Script Interpreter Resolution](0022-script-runner-wrapper.md) | accepted (lite) |
-| 0021 | [Phase Overlay Composition — Single Phase Protocol](0021-phase-overlay-composition.md) | provisional |
+| 0021 | [Phase Overlay Composition — Single Phase Protocol](0021-phase-overlay-composition.md) | accepted |
 
 ## Status values
 

@@ -1,5 +1,5 @@
 ---
-status: provisional
+status: accepted
 weight: lite
 date: 2026-04-21
 protocols: []
