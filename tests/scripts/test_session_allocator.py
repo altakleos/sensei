@@ -11,7 +11,6 @@ import pytest
 
 from sensei.engine.scripts.session_allocator import allocate_session, main
 
-
 # --- allocate_session library function ---
 
 

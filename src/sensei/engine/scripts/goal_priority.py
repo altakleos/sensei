@@ -165,7 +165,9 @@ def main(argv: list[str] | None = None) -> int:
     scored = [
         s
         for g in goals
-        if (s := score_goal(g, profile, now, args.half_life_days, args.stale_threshold, args.deadline_weight)) is not None
+        if (
+            s := score_goal(g, profile, now, args.half_life_days, args.stale_threshold, args.deadline_weight)
+        ) is not None
     ]
     scored.sort(key=lambda x: float(x["score"]), reverse=True)
     print(json.dumps({"goals": scored}))

@@ -49,10 +49,14 @@ def _persona_file(tmp_path: Path, slug: str, stresses: list[str] | None = None, 
     return p
 
 
-def _spec_file(tmp_path: Path, name: str, serves=None, realizes=None, stressed_by=None, fixtures=None, fixtures_deferred=None) -> Path:
+def _spec_file(
+    tmp_path: Path, name: str, serves=None, realizes=None, stressed_by=None, fixtures=None, fixtures_deferred=None
+) -> Path:
     p = tmp_path / "specs" / f"{name}.md"
     fm_lines = ["---", "status: accepted", "date: 2026-04-20"]
-    for field, value in [("serves", serves), ("realizes", realizes), ("stressed_by", stressed_by), ("fixtures", fixtures)]:
+    for field, value in [
+        ("serves", serves), ("realizes", realizes), ("stressed_by", stressed_by), ("fixtures", fixtures)
+    ]:
         if value is not None:
             fm_lines.append(f"{field}: [" + ", ".join(f"{v!r}" for v in value) + "]")
     if fixtures_deferred is not None:
