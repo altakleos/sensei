@@ -111,6 +111,8 @@ Rules for generation:
 
 **Valid node states:** `active` (currently being taught — at most ONE), `spawned` (not yet started), `collapsed` (skip — already known), `completed` (mastered), `expanded` (needs sub-topics). For initial generation, use only `active` (one node) and `spawned` (all others).
 
+**Concept tags:** For each node, assign 1–3 `concept_tags` — lowercase slug-format abstract concepts (e.g., `"hash-maps"`, `"recursion"`, `"network-partitioning"`). Tags name the transferable knowledge, not the goal-specific application. Two goals teaching the same underlying concept under different names should share tags.
+
 Write the goal file to `learner/goals/<slug>.yaml` in **exactly** this format:
 
 ```yaml
@@ -127,12 +129,15 @@ nodes:
   <topic-slug>:
     state: active
     prerequisites: []
+    concept_tags: [<abstract-concept>]
   <topic-slug>:
     state: spawned
     prerequisites: [<prerequisite-slug>]
+    concept_tags: [<concept-a>, <concept-b>]
   <topic-slug>:
     state: spawned
     prerequisites: [<slug-a>, <slug-b>]
+    concept_tags: [<concept>]
   # ... 5-12 topics total
 ```
 

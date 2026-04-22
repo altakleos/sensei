@@ -68,6 +68,8 @@ Read `.sensei/defaults.yaml` and (if present) `learner/config.yaml`. Mentally de
 - `half_life_days` ← `config.memory.half_life_days`
 - `stale_threshold` ← `config.memory.stale_threshold`
 
+**Concept-aware review.** Before invoking `review_scheduler.py`, scan all active goal files for `concept_tags` on completed nodes. Build a concept→slugs mapping (e.g., `{"recursion": ["recursion", "recursive-backtracking"]}`). If any stale topic shares concept tags with a topic recently reviewed in another goal, that topic gets partial freshness credit — evidence of recall, not proof. Pass the mapping as `--concept-map '<json>'` to the scheduler.
+
 Run a single cross-goal review scheduling invocation:
 
 ```

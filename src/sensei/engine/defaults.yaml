@@ -38,6 +38,7 @@ cross_goal:
   deadline_weight: 5.0      # urgency multiplier for imminent deadlines in goal_priority.py
   min_session_minutes: 5    # minimum per-goal time allocation in session_allocator.py
   review_dedup: true        # enable cross-goal review deduplication in review_scheduler.py
+  concept_dedup: true       # enable concept-aware deduplication (in addition to slug-level) in review_scheduler.py
 
 session_notes:
   # Session notes tunables (consumed by engine.md session-start and session-close).

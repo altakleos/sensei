@@ -434,3 +434,68 @@ class TestCrossGoalIntegration:
         # Sorted by freshness ascending (most decayed first).
         freshness_values = [t["freshness"] for t in plan["stale_topics"]]
         assert freshness_values == sorted(freshness_values)
+
+
+# ---------------------------------------------------------------------------
+# Concept-aware cross-goal integration tests (T39)
+# ---------------------------------------------------------------------------
+
+class TestConceptAwareCrossGoal:
+    """Two goals with different slugs but shared concept tags."""
+
+    def test_concept_dedup_review_scheduler(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """review_scheduler with concept_map deduplicates different-slug topics
+        sharing a concept tag — keeps the stalest."""
+        from sensei.engine.scripts.review_scheduler import main as rs_main
+
+        goals_dir = tmp_path / "goals"
+        goals_dir.mkdir()
+
+        # Goal A: "hash-maps" with concept tag "hash-tables"
+        _write_yaml(goals_dir, "data-structures.yaml", _goal("data-structures", nodes={
+            "hash-maps": {"state": "completed", "prerequisites": [], "concept_tags": ["hash-tables"]},
+        }))
+        # Goal B: "hash-table-perf" with concept tag "hash-tables"
+        _write_yaml(goals_dir, "sys-prog.yaml", _goal("sys-prog", nodes={
+            "hash-table-perf": {"state": "completed", "prerequisites": [], "concept_tags": ["hash-tables"]},
+        }))
+
+        prof_data = _profile({"hash-maps": "solid", "hash-table-perf": "solid"})
+        prof_data["expertise_map"]["hash-maps"]["last_seen"] = "2026-03-21T00:00:00Z"
+        prof_data["expertise_map"]["hash-table-perf"]["last_seen"] = "2026-04-10T00:00:00Z"
+        prof = _write_yaml(tmp_path, "profile.yaml", prof_data)
+
+        concept_map = {"hash-tables": ["hash-maps", "hash-table-perf"]}
+        rc = rs_main([
+            "--goals-dir", str(goals_dir),
+            "--profile", str(prof),
+            "--half-life-days", "7",
+            "--stale-threshold", "0.5",
+            "--now", "2026-04-20T00:00:00Z",
+            "--concept-map", json.dumps(concept_map),
+        ])
+        assert rc == 0
+        reviews = json.loads(capsys.readouterr().out)
+        assert len(reviews) == 1
+        assert reviews[0]["topic"] == "hash-maps"  # stalest
+
+    def test_concept_evidence_global_knowledge(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """global_knowledge with --concept-peers reports evidence from a known
+        peer topic sharing concept tags."""
+        prof_data = _profile({"hash-maps": "mastered"})
+        prof = _write_yaml(tmp_path, "profile.yaml", prof_data)
+
+        rc = gk_main([
+            "--profile", str(prof),
+            "--topic", "hash-table-perf",
+            "--concept-peers", '["hash-maps"]',
+        ])
+        assert rc == 0
+        out = json.loads(capsys.readouterr().out)
+        assert out["known"] is False
+        assert out["concept_evidence"] is True
+        assert out["evidence_from"] == "hash-maps"

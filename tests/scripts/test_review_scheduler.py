@@ -276,3 +276,76 @@ def test_fresh_topic_excluded(tmp_path: Path) -> None:
     now = datetime(2026, 4, 20, tzinfo=timezone.utc)
     result = schedule_reviews(goals_dir, prof, now=now)
     assert result == []
+
+
+# --- (j) concept-aware dedup: topics sharing concept tags are deduplicated ---
+
+
+def test_concept_dedup_keeps_stalest(tmp_path: Path) -> None:
+    """Topics sharing a concept tag are deduplicated — stalest kept."""
+    goals_dir, prof = _setup(
+        tmp_path,
+        [
+            _goal("goal-a", nodes={"hash-maps": {"state": "completed", "prerequisites": []}}),
+            _goal("goal-b", nodes={"hash-table-perf": {"state": "completed", "prerequisites": []}}),
+        ],
+        _profile({
+            "hash-maps": "2026-03-21T00:00:00Z",       # 30 days → very stale
+            "hash-table-perf": "2026-04-10T00:00:00Z",  # 10 days → stale
+        }),
+    )
+    from datetime import datetime, timezone
+
+    now = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    concept_map = {"hash-tables": ["hash-maps", "hash-table-perf"]}
+    result = schedule_reviews(goals_dir, prof, now=now, concept_map=concept_map)
+    assert len(result) == 1
+    assert result[0]["topic"] == "hash-maps"  # stalest kept
+
+
+def test_concept_dedup_without_flag_slug_only(tmp_path: Path) -> None:
+    """Without concept_map, different slugs are NOT deduplicated."""
+    goals_dir, prof = _setup(
+        tmp_path,
+        [
+            _goal("goal-a", nodes={"hash-maps": {"state": "completed", "prerequisites": []}}),
+            _goal("goal-b", nodes={"hash-table-perf": {"state": "completed", "prerequisites": []}}),
+        ],
+        _profile({
+            "hash-maps": "2026-03-21T00:00:00Z",
+            "hash-table-perf": "2026-04-10T00:00:00Z",
+        }),
+    )
+    from datetime import datetime, timezone
+
+    now = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    result = schedule_reviews(goals_dir, prof, now=now)
+    assert len(result) == 2  # no concept dedup without the flag
+
+
+def test_concept_dedup_unrelated_topics_preserved(tmp_path: Path) -> None:
+    """Topics not sharing concepts are preserved even with concept_map."""
+    goals_dir, prof = _setup(
+        tmp_path,
+        [
+            _goal("g", nodes={
+                "hash-maps": {"state": "completed", "prerequisites": []},
+                "hash-table-perf": {"state": "completed", "prerequisites": []},
+                "recursion": {"state": "completed", "prerequisites": []},
+            }),
+        ],
+        _profile({
+            "hash-maps": "2026-03-21T00:00:00Z",
+            "hash-table-perf": "2026-04-10T00:00:00Z",
+            "recursion": "2026-04-05T00:00:00Z",
+        }),
+    )
+    from datetime import datetime, timezone
+
+    now = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    concept_map = {"hash-tables": ["hash-maps", "hash-table-perf"]}
+    result = schedule_reviews(goals_dir, prof, now=now, concept_map=concept_map)
+    topics = [r["topic"] for r in result]
+    assert "hash-maps" in topics      # stalest of the concept group
+    assert "recursion" in topics       # unrelated, preserved
+    assert "hash-table-perf" not in topics  # deduped

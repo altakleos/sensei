@@ -37,17 +37,32 @@ _SCORES: dict[str, float] = {
 _KNOWN_THRESHOLD = _LEVELS.index("solid")  # rank 3
 
 
-def check(profile: dict[str, Any], topic: str, *, goal: dict[str, Any] | None = None) -> dict[str, Any]:
+def check(profile: dict[str, Any], topic: str, *, goal: dict[str, Any] | None = None, concept_peers: list[str] | None = None) -> dict[str, Any]:
     """Return knowledge status for *topic* given a parsed profile dict.
 
     When *goal* is provided and the topic's node has
     ``require_redemonstration: true``, the result overrides ``known`` to
     ``False`` and includes ``redemonstration_required: true``.
+
+    When *concept_peers* is provided (list of topic slugs sharing concept
+    tags, resolved by the protocol) and the topic is not directly known,
+    checks if any peer is known. If so, returns ``concept_evidence: true``
+    — evidence, not proof.
     """
     expertise = profile.get("expertise_map") or {}
     entry = expertise.get(topic)
     if entry is None:
-        return {"topic": topic, "known": False, "mastery": 0.0}
+        result: dict[str, Any] = {"topic": topic, "known": False, "mastery": 0.0}
+        # Concept-level evidence: topic not in profile but a peer with shared
+        # concept tags is known globally.
+        if concept_peers:
+            for peer in concept_peers:
+                peer_entry = expertise.get(peer)
+                if peer_entry and _LEVELS.index(peer_entry.get("mastery", "none")) >= _KNOWN_THRESHOLD:
+                    result["concept_evidence"] = True
+                    result["evidence_from"] = peer
+                    break
+        return result
     mastery = entry.get("mastery", "none")
     known = _LEVELS.index(mastery) >= _KNOWN_THRESHOLD
     result: dict[str, Any] = {"topic": topic, "known": known, "mastery": _SCORES.get(mastery, 0.0)}
@@ -68,6 +83,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--profile", required=True, help="Path to profile.yaml")
     parser.add_argument("--topic", required=True, help="Topic slug to check")
     parser.add_argument("--goal", default=None, help="Optional path to goal YAML file for re-demonstration check")
+    parser.add_argument(
+        "--concept-peers",
+        default=None,
+        help="JSON list of topic slugs sharing concept tags (resolved by protocol)",
+    )
     args = parser.parse_args(argv)
 
     path = Path(args.profile)
@@ -99,7 +119,7 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps({"error": f"yaml parse error: {exc}"}))
             return 1
 
-    print(json.dumps(check(profile, args.topic, goal=goal)))
+    print(json.dumps(check(profile, args.topic, goal=goal, concept_peers=json.loads(args.concept_peers) if args.concept_peers else None)))
     return 0
 
 
