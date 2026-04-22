@@ -38,9 +38,21 @@ Introduce the clock. Problems are familiar — the new variable is speed. Set ti
 
 Advance when the learner solves `config.performance_training.stage_thresholds.time_pressure` timed problems within budget (default: 3).
 
-### Stages 5–6
+### Stage 5 — Simulated Evaluation (realistic conditions)
 
-[V2 — not yet active. Stage 5 (simulated evaluation) and Stage 6 (full mock) depend on the mock interview protocol and realistic scoring rubrics. Do not attempt to run these stages.]
+Assessor runs timed, scored problems under realistic conditions. No hints, no encouragement, no partial-credit negotiation. The scoring rubric is disclosed upfront so the learner knows what "good" looks like. Challenger adds curveball follow-ups mid-problem — unexpected constraint changes, "what if" pivots, requests to optimize.
+
+The learner should finish this stage able to perform under evaluation pressure with realistic scoring. The gap between "I can solve this" and "I can solve this while being watched and scored" is what this stage closes.
+
+Advance when the learner passes `config.performance_training.stage_thresholds.simulated_eval` scored problems under evaluation conditions (default: 2).
+
+### Stage 6 — Full Mock (end-to-end simulation)
+
+End-to-end simulation of the target event. For interviews: full-length mock with realistic timing, question variety, and behavioral assessment. For exams: full-length timed exam with realistic question distribution. For certifications: scenario-based assessment matching the certification format.
+
+After the mock, Reviewer debriefs: what worked, what broke under pressure, which execution gaps to target for final review. The debrief is structured, not conversational — it follows the Reviewer's "lead with what works, then issues, then key learning" pattern.
+
+The performance phase completes when the learner passes `config.performance_training.stage_thresholds.full_mock` complete mock events (default: 1). After completion, set `performance_training.active: false` in the goal file and inform the learner.
 
 ---
 
@@ -66,7 +78,12 @@ Challenger does NOT teach or explain — if the learner needs instruction, trans
 
 ## When Assessor is Active
 
-[V2 — Assessor's performance-phase overlay (simulated evaluation with timed, scored, no-hints conditions) is deferred to stages 5–6. In V1, Assessor operates with its standard behavioral rules. The assessor exception still applies: never teach during assessment.]
+Assessor's core behavior (deterministic scoring, assessor exception, no teaching) remains. The phase adds:
+
+- **Evaluation realism** (stages 5+). Simulate actual evaluation conditions: clock visible, scoring rubric disclosed upfront, no hints, no encouragement, no partial-credit negotiation. The learner experiences what the real event feels like.
+- **Scoring rubric framing.** Before each problem, state the rubric: "I'm looking for [criteria]. You have [time]." This mirrors how real evaluators set expectations.
+- **No comfort.** The assessor exception applies with additional realism: do not soften failure feedback, do not offer encouragement between problems, do not explain what went wrong mid-assessment. Save all feedback for the Reviewer debrief.
+- **Full mock orchestration** (stage 6). Run the complete event simulation end-to-end. Manage timing, question sequencing, and transitions between sections. After completion, hand off to Reviewer for debrief.
 
 ## When Reviewer is Active
 
@@ -88,7 +105,9 @@ Progression is sequential — no skipping stages. The criteria for each transiti
 | Stage 1 (Learn) | Stage 2 (Automate) | Learner demonstrates correct format-aware understanding of the active topics. Mentor judgment — no threshold counter. |
 | Stage 2 (Automate) | Stage 3 (Verbalize) | Learner produces `config.performance_training.stage_thresholds.automate` correct fluent recalls without deliberation. |
 | Stage 3 (Verbalize) | Stage 4 (Time Pressure) | Learner delivers `config.performance_training.stage_thresholds.verbalize` clear verbal explanations while solving. |
-| Stage 4 (Time Pressure) | [V2] | Learner solves `config.performance_training.stage_thresholds.time_pressure` timed problems within budget. V1 stops here. |
+| Stage 4 (Time Pressure) | Stage 5 (Simulated Evaluation) | Learner solves `config.performance_training.stage_thresholds.time_pressure` timed problems within budget. |
+| Stage 5 (Simulated Evaluation) | Stage 6 (Full Mock) | Learner passes `config.performance_training.stage_thresholds.simulated_eval` scored problems under evaluation conditions. |
+| Stage 6 (Full Mock) | Phase Complete | Learner passes `config.performance_training.stage_thresholds.full_mock` complete mock events. Set `performance_training.active: false`. |
 
 When a stage transition fires, update the goal file:
 

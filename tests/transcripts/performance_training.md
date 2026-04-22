@@ -38,6 +38,27 @@ fixtures:
       - "clock is ticking"
       - "you have 5 minutes"
       - "speed up"
+  - name: simulated-evaluation-realism
+    what_it_pins: |
+      Stage 5 assessor overlay applies evaluation realism — no hints,
+      rubric disclosed, clock visible.
+    forbidden_phrases:
+      - "Here's a hint"
+      - "Don't worry"
+      - "Good try"
+      - "Let me help"
+    required_one_of:
+      - '(?i)rubric'
+      - '(?i)scoring'
+      - '(?i)you have \\d+ minutes'
+  - name: full-mock-debrief
+    what_it_pins: |
+      Stage 6 ends with structured Reviewer debrief — what worked,
+      issues, key learning.
+    required_one_of:
+      - '(?i)what worked'
+      - '(?i)debrief'
+      - '(?i)execution gap'
 ---
 
 # Performance Training — Transcript Fixtures
@@ -57,5 +78,13 @@ Details in frontmatter.
 Details in frontmatter.
 
 ## Fixture: no-time-pressure-stage-1
+
+Details in frontmatter.
+
+## Fixture: simulated-evaluation-realism
+
+Details in frontmatter.
+
+## Fixture: full-mock-debrief
 
 Details in frontmatter.

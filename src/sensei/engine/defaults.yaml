@@ -43,3 +43,5 @@ performance_training:
     automate: 3              # correct fluent recalls to advance past stage 2
     verbalize: 2             # clear verbal explanations to advance past stage 3
     time_pressure: 3         # timed problems solved within budget to advance past stage 4
+    simulated_eval: 2        # scored problems passed under evaluation conditions to advance past stage 5
+    full_mock: 1             # complete mock events passed to complete the performance phase

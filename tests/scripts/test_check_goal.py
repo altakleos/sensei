@@ -263,3 +263,31 @@ def test_performance_training_additional_properties_rejected():
     goal["performance_training"]["extra_field"] = "nope"
     status, errors = validate_goal(goal)
     assert status != "ok"
+
+
+def test_performance_training_stage_5_valid(tmp_path: Path) -> None:
+    goal = _valid_goal()
+    goal["performance_training"] = {
+        "active": True,
+        "stage": 5,
+        "entered_at": "2026-04-22T00:00:00Z",
+        "event_type": "interview",
+        "event_date": "2026-05-12T00:00:00Z",
+    }
+    p = tmp_path / "goal.yaml"
+    p.write_text(yaml.dump(goal))
+    assert main(["--goal", str(p)]) == 0
+
+
+def test_performance_training_stage_6_valid(tmp_path: Path) -> None:
+    goal = _valid_goal()
+    goal["performance_training"] = {
+        "active": True,
+        "stage": 6,
+        "entered_at": "2026-04-22T00:00:00Z",
+        "event_type": "exam",
+        "event_date": None,
+    }
+    p = tmp_path / "goal.yaml"
+    p.write_text(yaml.dump(goal))
+    assert main(["--goal", str(p)]) == 0
