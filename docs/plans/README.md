@@ -31,6 +31,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [cross-goal-intelligence](cross-goal-intelligence.md) | All 4 cross-goal invariants: re-demonstration override, review dedup, deadline priority + session allocation, decay-aware resume | done |
 | [goal-lifecycle-transitions](goal-lifecycle-transitions.md) | Goal lifecycle transitions — pause, resume, abandon, complete (retroactive) | done |
 | [assessment-protocol](assessment-protocol.md) | Assessment protocol — mastery gating, two-failure diagnosis (retroactive) | done |
+| [e2e-kiro-support](e2e-kiro-support.md) | Tool-agnostic E2E tests — Kiro CLI + Claude Code | done |
 | [curriculum-graph](curriculum-graph.md) | Curriculum graph — frontier, mutations, validation | done |
 | [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
 | [mermaid-diagrams](mermaid-diagrams.md) | Mermaid diagram enhancement pass | done |
