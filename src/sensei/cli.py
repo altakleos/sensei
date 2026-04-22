@@ -361,7 +361,7 @@ def upgrade(target: Path) -> None:
     # data if a subsequent migration failed.
     learner_dir = target / "learner"
     migrated: list[str] = []
-    if learner_dir.exists():
+    if learner_dir.exists() or (target / "instance").exists():
         from sensei.engine.scripts.migrate import migrate_instance
 
         migrated = migrate_instance(learner_dir)
