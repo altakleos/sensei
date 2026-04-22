@@ -51,4 +51,4 @@ stateDiagram-v2
 
 ## Source
 
-Pedagogical Pillar (original, §2.4.2). Immordino-Yang & Damasio on emotion-cognition integration. D'Mello & Graesser on confusion as learning-correlated emotion. Self-Determination Theory (Ryan & Deci). Loewenstein's information gap theory of curiosity.
+Pedagogical Pillar (original, §2.4.2). Immordino-Yang & Damasio on emotion-cognition integration. D'Mello & Graesser on confusion as learning-correlated emotion. Self-Determination Theory (Ryan & Deci). Loewenstein's information gap theory of curiosity. [Bibliography #24] (affective dynamics), [Bibliography #25] (anticipatory affect).

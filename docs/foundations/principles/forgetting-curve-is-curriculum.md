@@ -28,4 +28,4 @@ Too-early review is wasted effort; too-late review means relearning from scratch
 
 ## Source
 
-Pedagogical Pillar 5 (original). FSRS algorithm (Ye 2022); Ebbinghaus forgetting curve; Math Academy's FIRe model (see `docs/research/synthesis/accelerated-performance.md`).
+Pedagogical Pillar 5 (original). FSRS algorithm (Ye 2022); Ebbinghaus forgetting curve; Math Academy's FIRe model (see `docs/research/synthesis/accelerated-performance.md`). [Bibliography #14] (FSRS), [Bibliography #41] (MEMORIZE), [Bibliography #58] (Math Academy FIRe).

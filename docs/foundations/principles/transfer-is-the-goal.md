@@ -36,4 +36,4 @@ Comparison is the cognitive engine of transfer. Gentner's research demonstrates 
 
 ## Source
 
-Pedagogical Pillar (original, §2.4.3). Whitehead on inert knowledge. Gentner on structural comparison and 3x transfer improvement. Chi on self-explanation effect. Bjork & Bjork on desirable difficulties.
+Pedagogical Pillar (original, §2.4.3). Whitehead on inert knowledge. Gentner on structural comparison and 3x transfer improvement. Chi on self-explanation effect. Bjork & Bjork on desirable difficulties. [Bibliography #23] (Bjork desirable difficulties).

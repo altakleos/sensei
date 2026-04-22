@@ -27,4 +27,4 @@ Most learning systems let the learner move on at 70% understanding. Bloom's 2-si
 
 ## Source
 
-Pedagogical Pillar 3 (original). Bloom (1984), VanLehn (2011), Fletcher & Morrison (2012) — 2-sigma and DARPA Digital Tutor.
+Pedagogical Pillar 3 (original). Bloom (1984), VanLehn (2011), Fletcher & Morrison (2012) — 2-sigma and DARPA Digital Tutor. [Bibliography #21] (Bloom/VanLehn/Fletcher), [Bibliography #58] (Math Academy mastery gates).

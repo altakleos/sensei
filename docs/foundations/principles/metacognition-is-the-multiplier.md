@@ -35,4 +35,4 @@ As Immordino-Yang's work establishes, metacognition operates at the intersection
 
 ## Source
 
-Pedagogical Pillar (original, §2.4.1). Kapur on forethought phase effect size (g=1.613). Immordino-Yang & Damasio on the inseparability of emotion, cognition, and metacognition. Self-Determination Theory (Ryan & Deci) on self-regulation.
+Pedagogical Pillar (original, §2.4.1). Kapur on forethought phase effect size (g=1.613). Immordino-Yang & Damasio on the inseparability of emotion, cognition, and metacognition. Self-Determination Theory (Ryan & Deci) on self-regulation. [Bibliography #19] (AI & learner autonomy meta-analysis), [Bibliography #15] (MetaCLASS).

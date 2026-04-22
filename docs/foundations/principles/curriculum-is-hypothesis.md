@@ -36,4 +36,4 @@ This stance dissolves the cold-start problem. There is no onboarding phase, no i
 
 ## Source
 
-Technical Principle (original). Curriculum as constraint satisfaction (§5.1), Generate → Probe → Reshape model (§5.2), cold start dissolves when first lesson is assessment (§5.6), accuracy risk scales with domain certainty (§5.7). See `docs/specs/goal-lifecycle.md` and `docs/specs/curriculum-graph.md` for the decomposed specifications.
+Technical Principle (original). Curriculum as constraint satisfaction (§5.1), Generate → Probe → Reshape model (§5.2), cold start dissolves when first lesson is assessment (§5.6), accuracy risk scales with domain certainty (§5.7). See `docs/specs/goal-lifecycle.md` and `docs/specs/curriculum-graph.md` for the decomposed specifications. [Bibliography #56] (LLM-Assisted Curriculum), [Bibliography #57] (Prerequisite Inference).

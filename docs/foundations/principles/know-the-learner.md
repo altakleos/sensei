@@ -34,4 +34,4 @@ Per the Jacundu persona's meta-insight (see `docs/foundations/personas/jacundu.m
 
 ## Source
 
-Pedagogical Pillar 7 (original) and Jacundu persona meta-pillar insight. Self-Determination Theory (Ryan & Deci) on individual variation in motivational needs.
+Pedagogical Pillar 7 (original) and Jacundu persona meta-pillar insight. Self-Determination Theory (Ryan & Deci) on individual variation in motivational needs. [Bibliography #1] (IntelliCode learner model), [Bibliography #24] (affect detection).

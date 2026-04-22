@@ -28,4 +28,4 @@ The ultimate goal of any tutor is to make itself unnecessary. Scaffolding that w
 
 ## Source
 
-Pedagogical Pillar 6 (original). dos Santos & Birdwell, "The Surging Zone of No Development" (2025).
+Pedagogical Pillar 6 (original). dos Santos & Birdwell, "The Surging Zone of No Development" (2025). [Bibliography #16] (Zone of No Development), [Bibliography #17] (Enhanced Cognitive Scaffolding), [Bibliography #18] (Adaptive Scaffolding).

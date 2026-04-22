@@ -33,4 +33,4 @@ The four-modes-from-one-personality framing matters because separate-agent archi
 
 ## Source
 
-Pedagogical Pillar (original, §2.3 Relationship Model, §3.2 One Mentor, Principle-Driven Behavior). Self-Determination Theory on motivation; research on mentor-mentee relationship quality.
+Pedagogical Pillar (original, §2.3 Relationship Model, §3.2 One Mentor, Principle-Driven Behavior). Self-Determination Theory on motivation; research on mentor-mentee relationship quality. [Bibliography #5] (LearnLM), [Bibliography #9] (TeachLM).

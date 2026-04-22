@@ -29,4 +29,4 @@ Research on LLM-based tutors (MetaCLASS, Rice University 2025) documents a "comp
 
 ## Source
 
-Pedagogical Pillar 1 (original). MetaCLASS research on LLM intervention bias.
+Pedagogical Pillar 1 (original). MetaCLASS research on LLM intervention bias. [Bibliography #15] (MetaCLASS).

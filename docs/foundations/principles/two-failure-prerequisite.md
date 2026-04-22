@@ -48,4 +48,4 @@ flowchart TD
 
 ## Source
 
-Technical Principle (original, §3.8 — The Two-Failure Principle). Math Academy's finding on explanation quality vs. prerequisite completeness (see `docs/research/synthesis/accelerated-performance.md`). The "rusty vs never-learned" detection framework from `src/sensei/engine/scripts/classify_confidence.py`.
+Technical Principle (original, §3.8 — The Two-Failure Principle). Math Academy's finding on explanation quality vs. prerequisite completeness (see `docs/research/synthesis/accelerated-performance.md`). The "rusty vs never-learned" detection framework from `src/sensei/engine/scripts/classify_confidence.py`. [Bibliography #58] (Math Academy).
