@@ -20,6 +20,7 @@ For the full development model, see `docs/development-process.md`.
 | 12 | [Session Notes](session-notes.md) | Single-file storage for cross-session mentor observations with incremental writes and bounded retention | accepted |
 | 13 | [Emotional State Tracking](emotional-state-tracking.md) | LLM-as-sensor emotional classification with three-dimension enum model, staleness-gated persistence, and affect-aware protocol adaptations | accepted |
 | 14 | [Interleaving](interleaving.md) | Post-sort round-robin reorder of review candidates by area for discriminative contrast | accepted |
+| 15 | [Metacognitive State Tracking](metacognitive-tracking.md) | Three-dimension metacognitive model with calibration tracking, fading scaffolding, and coaching adaptations | draft |
 
 ## Template
 
