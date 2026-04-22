@@ -8,11 +8,12 @@ For the full development model, see `docs/development-process.md`.
 |------|--------|
 | [Assessment Protocol](assessment-protocol.md) | accepted |
 | [Behavioral Modes](behavioral-modes.md) | accepted |
-| [Cross-Goal Intelligence](cross-goal-intelligence.md) | accepted |
+| [Cross-Goal Intelligence](cross-goal-intelligence.md) | draft |
 | [Curriculum Graph](curriculum-graph.md) | accepted |
 | [Goal Lifecycle](goal-lifecycle.md) | accepted |
 | [Goal Lifecycle Transitions](goal-lifecycle-transitions.md) | accepted |
 | [Hints](hints.md) | accepted |
+| [Interleaving](interleaving.md) | draft |
 | [Learner Profile](learner-profile.md) | accepted |
 | [Performance Training](performance-training.md) | accepted |
 | [Release Communication](release-communication.md) | accepted |
