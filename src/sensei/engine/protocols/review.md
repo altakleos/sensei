@@ -70,6 +70,8 @@ Read `.sensei/defaults.yaml` and (if present) `learner/config.yaml`. Mentally de
 
 **Concept-aware review.** Before invoking `review_scheduler.py`, scan all active goal files for `concept_tags` on completed nodes. Build a concept→slugs mapping (e.g., `{"recursion": ["recursion", "recursive-backtracking"]}`). If any stale topic shares concept tags with a topic recently reviewed in another goal, that topic gets partial freshness credit — evidence of recall, not proof. Pass the mapping as `--concept-map '<json>'` to the scheduler.
 
+**Interleaving.** For each stale completed topic, determine its area: the top-level DAG branch it belongs to (walk `prerequisites` to the root ancestor) for within-goal topics, or the `goal_id` for cross-goal topics. Build a slug→area mapping. Read `interleaving.enabled`, `interleaving.intensity`, and `interleaving.min_mastery` from config. If enabled, pass `--interleave --interleave-intensity <intensity> --min-mastery <min_mastery> --topic-areas '<json>'` to the scheduler. Do NOT label topics with their area when presenting questions — the learner must identify the problem type (discriminative contrast).
+
 Run a single cross-goal review scheduling invocation:
 
 ```

@@ -40,6 +40,12 @@ cross_goal:
   review_dedup: true        # enable cross-goal review deduplication in review_scheduler.py
   concept_dedup: true       # enable concept-aware deduplication (in addition to slug-level) in review_scheduler.py
 
+interleaving:
+  # Interleaving tunables (consumed by review_scheduler.py via review protocol).
+  enabled: true             # master switch for interleaving post-sort
+  intensity: 0.7            # 0=blocked (stale-first only), 1=fully interleaved
+  min_mastery: 0.3          # topics below this get blocked practice, not interleaved
+
 session_notes:
   # Session notes tunables (consumed by engine.md session-start and session-close).
   load_count: 3          # number of recent session notes loaded at session start

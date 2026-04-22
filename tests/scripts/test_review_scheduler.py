@@ -349,3 +349,217 @@ def test_concept_dedup_unrelated_topics_preserved(tmp_path: Path) -> None:
     assert "hash-maps" in topics      # stalest of the concept group
     assert "recursion" in topics       # unrelated, preserved
     assert "hash-table-perf" not in topics  # deduped
+
+
+# --- (k) interleaving: round-robin alternates between areas ---
+
+
+def test_interleave_round_robin(tmp_path: Path) -> None:
+    """With interleaving at intensity 1.0, topics alternate between areas."""
+    goals_dir, prof = _setup(
+        tmp_path,
+        [
+            _goal("g", nodes={
+                "net-1": {"state": "completed", "prerequisites": []},
+                "net-2": {"state": "completed", "prerequisites": []},
+                "stor-1": {"state": "completed", "prerequisites": []},
+                "stor-2": {"state": "completed", "prerequisites": []},
+            }),
+        ],
+        _profile({
+            "net-1": "2026-03-01T00:00:00Z",   # stalest in networking
+            "net-2": "2026-03-10T00:00:00Z",   # less stale in networking
+            "stor-1": "2026-03-05T00:00:00Z",  # stalest in storage
+            "stor-2": "2026-03-15T00:00:00Z",  # less stale in storage
+        }),
+    )
+    from datetime import datetime, timezone
+
+    now = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    topic_areas = {
+        "net-1": "networking", "net-2": "networking",
+        "stor-1": "storage", "stor-2": "storage",
+    }
+    result = schedule_reviews(
+        goals_dir, prof, now=now,
+        interleave=True, interleave_intensity=1.0,
+        topic_areas=topic_areas, min_mastery=0.3,
+    )
+    topics = [r["topic"] for r in result]
+    # Round-robin: stalest overall first, then alternate areas.
+    # net-1 (stalest), stor-1 (stalest in storage), net-2, stor-2
+    assert len(topics) == 4
+    # Consecutive topics should alternate areas
+    areas = [topic_areas[t] for t in topics]
+    for i in range(len(areas) - 1):
+        assert areas[i] != areas[i + 1], f"Adjacent topics {topics[i]} and {topics[i+1]} share area {areas[i]}"
+
+
+# --- (l) interleaving: intensity 0 preserves stale-first order ---
+
+
+def test_interleave_intensity_zero_preserves_order(tmp_path: Path) -> None:
+    """Intensity 0.0 returns original stale-first order."""
+    goals_dir, prof = _setup(
+        tmp_path,
+        [
+            _goal("g", nodes={
+                "net-1": {"state": "completed", "prerequisites": []},
+                "net-2": {"state": "completed", "prerequisites": []},
+                "stor-1": {"state": "completed", "prerequisites": []},
+            }),
+        ],
+        _profile({
+            "net-1": "2026-03-01T00:00:00Z",
+            "net-2": "2026-03-10T00:00:00Z",
+            "stor-1": "2026-03-05T00:00:00Z",
+        }),
+    )
+    from datetime import datetime, timezone
+
+    now = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    topic_areas = {"net-1": "networking", "net-2": "networking", "stor-1": "storage"}
+
+    # Without interleaving
+    baseline = schedule_reviews(goals_dir, prof, now=now)
+    # With interleaving at intensity 0
+    result = schedule_reviews(
+        goals_dir, prof, now=now,
+        interleave=True, interleave_intensity=0.0,
+        topic_areas=topic_areas, min_mastery=0.3,
+    )
+    assert [r["topic"] for r in result] == [r["topic"] for r in baseline]
+
+
+# --- (m) interleaving: min_mastery excludes low-mastery topics ---
+
+
+def test_interleave_min_mastery_excludes_novice(tmp_path: Path) -> None:
+    """Topics below min_mastery get blocked practice (front of list, not interleaved)."""
+    # Custom profile with one low-mastery topic
+    profile = {
+        "schema_version": 0,
+        "learner_id": "alice",
+        "expertise_map": {
+            "net-1": {"mastery": "solid", "confidence": 0.8, "last_seen": "2026-03-10T00:00:00Z", "attempts": 5, "correct": 4},
+            "stor-1": {"mastery": "solid", "confidence": 0.8, "last_seen": "2026-03-05T00:00:00Z", "attempts": 5, "correct": 4},
+            "novice": {"mastery": 0.1, "confidence": 0.3, "last_seen": "2026-03-01T00:00:00Z", "attempts": 1, "correct": 0},
+        },
+    }
+    goals_dir = tmp_path / "goals"
+    goals_dir.mkdir()
+    _write_yaml(goals_dir / "g.yaml", _goal("g", nodes={
+        "net-1": {"state": "completed", "prerequisites": []},
+        "stor-1": {"state": "completed", "prerequisites": []},
+        "novice": {"state": "completed", "prerequisites": []},
+    }))
+    prof = _write_yaml(tmp_path / "profile.yaml", profile)
+
+    from datetime import datetime, timezone
+
+    now = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    topic_areas = {"net-1": "networking", "stor-1": "storage", "novice": "consensus"}
+    result = schedule_reviews(
+        goals_dir, prof, now=now,
+        interleave=True, interleave_intensity=1.0,
+        topic_areas=topic_areas, min_mastery=0.3,
+    )
+    topics = [r["topic"] for r in result]
+    # Novice topic (mastery 0.1 < 0.3) should be first (blocked practice)
+    assert topics[0] == "novice"
+
+
+# --- (n) interleaving: single area has no effect ---
+
+
+def test_interleave_single_area_no_effect(tmp_path: Path) -> None:
+    """When all topics are in one area, interleaving preserves stale-first order."""
+    goals_dir, prof = _setup(
+        tmp_path,
+        [
+            _goal("g", nodes={
+                "t1": {"state": "completed", "prerequisites": []},
+                "t2": {"state": "completed", "prerequisites": []},
+            }),
+        ],
+        _profile({
+            "t1": "2026-03-01T00:00:00Z",
+            "t2": "2026-03-10T00:00:00Z",
+        }),
+    )
+    from datetime import datetime, timezone
+
+    now = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    topic_areas = {"t1": "same-area", "t2": "same-area"}
+    result = schedule_reviews(
+        goals_dir, prof, now=now,
+        interleave=True, interleave_intensity=1.0,
+        topic_areas=topic_areas, min_mastery=0.3,
+    )
+    assert [r["topic"] for r in result] == ["t1", "t2"]
+
+
+# --- (o) interleaving: disabled flag preserves original behavior ---
+
+
+def test_interleave_disabled_preserves_order(tmp_path: Path) -> None:
+    """With interleave=False, topic_areas is ignored."""
+    goals_dir, prof = _setup(
+        tmp_path,
+        [
+            _goal("g", nodes={
+                "net-1": {"state": "completed", "prerequisites": []},
+                "stor-1": {"state": "completed", "prerequisites": []},
+            }),
+        ],
+        _profile({
+            "net-1": "2026-03-01T00:00:00Z",
+            "stor-1": "2026-03-05T00:00:00Z",
+        }),
+    )
+    from datetime import datetime, timezone
+
+    now = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    baseline = schedule_reviews(goals_dir, prof, now=now)
+    result = schedule_reviews(
+        goals_dir, prof, now=now,
+        interleave=False, interleave_intensity=1.0,
+        topic_areas={"net-1": "networking", "stor-1": "storage"},
+    )
+    assert [r["topic"] for r in result] == [r["topic"] for r in baseline]
+
+
+# --- (p) interleaving: CLI flags accepted via subprocess ---
+
+
+def test_interleave_cli_flags(tmp_path: Path) -> None:
+    """Interleaving CLI flags are accepted without error."""
+    goals_dir, prof = _setup(
+        tmp_path,
+        [_goal("g", nodes={"t1": {"state": "completed", "prerequisites": []}})],
+        _profile({"t1": "2026-03-21T00:00:00Z"}),
+    )
+    script = (
+        Path(__file__).resolve().parents[2]
+        / "src"
+        / "sensei"
+        / "engine"
+        / "scripts"
+        / "review_scheduler.py"
+    )
+    result = subprocess.run(
+        [
+            sys.executable, str(script),
+            "--goals-dir", str(goals_dir),
+            "--profile", str(prof),
+            "--now", NOW_ISO,
+            "--interleave",
+            "--interleave-intensity", "0.7",
+            "--topic-areas", '{"t1": "area-a"}',
+            "--min-mastery", "0.3",
+        ],
+        capture_output=True, text=True, check=True,
+    )
+    parsed = json.loads(result.stdout)
+    assert len(parsed) == 1
+    assert parsed[0]["topic"] == "t1"
