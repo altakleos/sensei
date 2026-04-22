@@ -45,6 +45,8 @@ Constraints (from `modes/tutor.md`): ask more than tell (~40% silence), never le
 
 After explaining, pose a comprehension check. This is NOT a quiz (that's `assess.md`) — it tests whether the explanation landed. Examples: "In your own words, why does X matter here?" / "What would happen if we changed Y?" / "How does this connect to [previously learned topic]?"
 
+For non-trivial probes, prompt forethought before the learner answers: "What's your approach? What do you think the key challenge is?" Do not skip this for efficiency — forethought is the highest-leverage metacognitive intervention (g=1.613). Omit for simple recall questions.
+
 Wait for the response. Classify:
 
 ```
@@ -61,7 +63,7 @@ Wait for the response. Classify:
 
 ## Step 5 — Consolidation
 
-Before advancing: (1) ask the learner to summarize what they learned (retrieval practice), (2) connect to their goal: "This matters for your [goal] because…", (3) if downstream dependents exist, preview: "Next we'll look at [topic], which builds on this."
+Before advancing: (1) ask the learner to summarize what they learned (retrieval practice), (2) connect to their goal: "This matters for your [goal] because…", (3) if downstream dependents exist, preview: "Next we'll look at [topic], which builds on this." (4) Prompt reflection on process: "What was confusing at first? What made it click?" — surface the learner's learning process, not just the content.
 
 ## Step 6 — Advance
 
@@ -119,6 +121,6 @@ If the learner fails the same probe twice after reshaping:
 - Mode: `protocols/modes/tutor.md` — Assessment: `protocols/assess.md` — Goal: `protocols/goal.md`
 
 <!-- PROVENANCE
-Principles: P-ask-dont-tell, P-silence-is-teaching, P-two-failure-prerequisite, P-productive-failure, P-learner-self-sufficiency, P-forgetting-curve-is-curriculum
+Principles: P-ask-dont-tell, P-silence-is-teaching, P-two-failure-prerequisite, P-productive-failure, P-learner-self-sufficiency, P-forgetting-curve-is-curriculum, P-metacognition-is-the-multiplier
 Synthesis: learning-science.md §Teaching Methods (Ranked by Effectiveness), learning-science.md §Self-Regulated Learning & AI
 -->
