@@ -21,7 +21,7 @@ The pytest loader in `conftest.py` discovers fixture files, pairs each with its 
 
 ## Capturing a dogfood transcript
 
-1. `sensei init /tmp/dogfood` and hand-edit `/tmp/dogfood/instance/profile.yaml` so it has several topics at varying freshness (some stale).
+1. `sensei init /tmp/dogfood` and hand-edit `/tmp/dogfood/learner/profile.yaml` so it has several topics at varying freshness (some stale).
 2. Open the folder with the target LLM agent (Claude Code, Cursor, etc.) and type `review` to trigger the protocol.
 3. Paste the session verbatim into the `.dogfood.md` file. Prefix each learner message with `[LEARNER]` and each mentor message with `[MENTOR]`. Anything outside a turn (framing, blank lines) is ignored by the loader.
 4. Update the frontmatter `agent`, `model`, and `captured` fields.

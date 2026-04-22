@@ -88,8 +88,8 @@ If the learner opens a session without specifying what to work on, select the hi
 
 ```
 python .sensei/scripts/goal_priority.py \
-  --goals-dir instance/goals/ \
-  --profile instance/profile.yaml \
+  --goals-dir learner/goals/ \
+  --profile learner/profile.yaml \
   --half-life-days <config.memory.half_life_days> \
   --stale-threshold <config.memory.stale_threshold> \
   --now <utc>
@@ -143,7 +143,7 @@ These behavioral invariants hold across every mode and every protocol:
 - **Two-failure principle** — after two failed attempts at the same concept, diagnose prerequisites. Do not attempt a third explanation. (Source: `P-two-failure-prerequisite`)
 - **Silence profiles** — each mode has a distinct silence level. Tutor ~40% silent; Assessor silent while learner works; Challenger silent for productive failure; Reviewer NOT silent. (Source: `docs/specs/behavioral-modes.md`)
 - **Forbidden language** — "Great question!", "Nice work!", apologetic softeners, and praise tokens are forbidden in all modes. (Source: `protocols/personality.md`)
-- **Profile updates are automatic** — after every pedagogical interaction that reveals learner state, update `instance/profile.yaml`. (Source: `docs/specs/learner-profile.md`)
+- **Profile updates are automatic** — after every pedagogical interaction that reveals learner state, update `learner/profile.yaml`. (Source: `docs/specs/learner-profile.md`)
 
 ## Running Helper Scripts
 
@@ -163,8 +163,8 @@ Reads all active/paused goal files and the learner profile, computes freshness f
 
 ```
 python .sensei/scripts/review_scheduler.py \
-  --goals-dir instance/goals/ \
-  --profile instance/profile.yaml \
+  --goals-dir learner/goals/ \
+  --profile learner/profile.yaml \
   --half-life-days <config.memory.half_life_days> \
   --stale-threshold <config.memory.stale_threshold> \
   [--now <utc>]
@@ -191,8 +191,8 @@ Reads a single goal file and the learner profile, computes freshness for complet
 
 ```
 python .sensei/scripts/resume_planner.py \
-  --goal instance/goals/<slug>.yaml \
-  --profile instance/profile.yaml \
+  --goal learner/goals/<slug>.yaml \
+  --profile learner/profile.yaml \
   --half-life-days <config.memory.half_life_days> \
   --stale-threshold <config.memory.stale_threshold> \
   [--now <utc>]
@@ -202,7 +202,7 @@ Exit 0: JSON `{stale_topics: [{slug, freshness, elapsed_days}], frontier: [slugs
 
 ## Configuration
 
-All tunables live in `defaults.yaml` (engine) and are overridden by `instance/config.yaml` (learner instance). Protocols reference values via `config.dotpath` notation.
+All tunables live in `defaults.yaml` (engine) and are overridden by `learner/config.yaml` (learner instance). Protocols reference values via `config.dotpath` notation.
 
 Current config keys:
 - `memory.half_life_days` — forgetting-curve half-life (default: 7)

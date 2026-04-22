@@ -48,7 +48,7 @@ def test_upgrade_replaces_engine(tmp_path: Path) -> None:
     (tmp_path / "inst" / ".sensei" / ".sensei-version").write_text("0.0.0\n")
     # Write custom profile to verify it's preserved
     profile_content = "schema_version: 0\nlearner_id: alice\nexpertise_map: {}\n"
-    (tmp_path / "inst" / "instance" / "profile.yaml").write_text(profile_content)
+    (tmp_path / "inst" / "learner" / "profile.yaml").write_text(profile_content)
     result = runner.invoke(main, ["upgrade", str(tmp_path / "inst")])
     assert result.exit_code == 0
     assert "0.0.0" in result.output
@@ -58,7 +58,7 @@ def test_upgrade_replaces_engine(tmp_path: Path) -> None:
     new_ver = (tmp_path / "inst" / ".sensei" / ".sensei-version").read_text().strip()
     assert new_ver == __version__
     # Instance preserved
-    profile = (tmp_path / "inst" / "instance" / "profile.yaml").read_text()
+    profile = (tmp_path / "inst" / "learner" / "profile.yaml").read_text()
     assert "alice" in profile
 
 
@@ -92,7 +92,7 @@ def test_version_flag() -> None:
 def test_init_force_preserves_instance_profile(tmp_path: Path) -> None:
     runner = CliRunner()
     _init_instance(runner, tmp_path)
-    profile_path = tmp_path / "instance" / "profile.yaml"
+    profile_path = tmp_path / "learner" / "profile.yaml"
     custom_content = "schema_version: 0\nlearner_id: custom\nexpertise_map: {}\n"
     profile_path.write_text(custom_content, encoding="utf-8")
 
@@ -106,7 +106,7 @@ def test_init_accepts_valid_learner_id(tmp_path: Path, learner_id: str) -> None:
     runner = CliRunner()
     result = runner.invoke(main, ["init", str(tmp_path), "--learner-id", learner_id])
     assert result.exit_code == 0, result.output
-    profile = yaml.safe_load((tmp_path / "instance" / "profile.yaml").read_text())
+    profile = yaml.safe_load((tmp_path / "learner" / "profile.yaml").read_text())
     assert profile["learner_id"] == learner_id
 
 
@@ -131,7 +131,7 @@ def test_init_rejects_invalid_learner_id(tmp_path: Path, bad_id: str) -> None:
     assert "learner-id" in result.output.lower() or "learner_id" in result.output.lower()
     # No instance was scaffolded.
     assert not (tmp_path / ".sensei").exists()
-    assert not (tmp_path / "instance").exists()
+    assert not (tmp_path / "learner").exists()
 
 
 # _atomic_replace_engine — atomicity contract per ADR-0004.
@@ -262,12 +262,12 @@ def test_atomic_replace_rollback_on_final_rename_failure(
 def test_upgrade_leaves_instance_intact_on_failure(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """End-to-end: a failed `sensei upgrade` must preserve both .sensei/ and instance/."""
+    """End-to-end: a failed `sensei upgrade` must preserve both .sensei/ and learner/."""
     runner = CliRunner()
     inst = tmp_path / "inst"
     runner.invoke(main, ["init", str(inst)])
     (inst / ".sensei" / ".sensei-version").write_text("0.0.0\n")
-    profile_path = inst / "instance" / "profile.yaml"
+    profile_path = inst / "learner" / "profile.yaml"
     profile_path.write_text("schema_version: 0\nlearner_id: preserved\nexpertise_map: {}\n")
 
     def fail_copy(*_args: object, **_kwargs: object) -> None:
@@ -329,7 +329,7 @@ def test_atomic_replace_cleans_old_dir_when_both_exist(tmp_path: Path) -> None:
 def test_status_reports_profile_not_found(tmp_path: Path) -> None:
     runner = CliRunner()
     _init_instance(runner, tmp_path)
-    (tmp_path / "instance" / "profile.yaml").unlink()
+    (tmp_path / "learner" / "profile.yaml").unlink()
     result = runner.invoke(main, ["status", str(tmp_path)])
     assert result.exit_code == 0
     assert "Profile:  not found" in result.output
@@ -338,7 +338,7 @@ def test_status_reports_profile_not_found(tmp_path: Path) -> None:
 def test_status_reports_invalid_profile_not_a_mapping(tmp_path: Path) -> None:
     runner = CliRunner()
     _init_instance(runner, tmp_path)
-    (tmp_path / "instance" / "profile.yaml").write_text("- just\n- a\n- list\n")
+    (tmp_path / "learner" / "profile.yaml").write_text("- just\n- a\n- list\n")
     result = runner.invoke(main, ["status", str(tmp_path)])
     assert result.exit_code == 0
     assert "invalid (not a mapping)" in result.output
@@ -358,7 +358,7 @@ def test_status_summarises_mastery_breakdown(tmp_path: Path) -> None:
             "t3": {"mastery": "mastered", "confidence": 0.9, "last_seen": now_iso, "attempts": 8, "correct": 8},
         },
     }
-    (tmp_path / "instance" / "profile.yaml").write_text(yaml.safe_dump(profile))
+    (tmp_path / "learner" / "profile.yaml").write_text(yaml.safe_dump(profile))
     result = runner.invoke(main, ["status", str(tmp_path)])
     assert result.exit_code == 0
     assert "Topics:   3" in result.output
@@ -386,7 +386,7 @@ def test_status_flags_stale_topics(tmp_path: Path) -> None:
             for i in range(7)  # more than 5 to exercise the "... and N more" tail
         },
     }
-    (tmp_path / "instance" / "profile.yaml").write_text(yaml.safe_dump(profile))
+    (tmp_path / "learner" / "profile.yaml").write_text(yaml.safe_dump(profile))
     result = runner.invoke(main, ["status", str(tmp_path)])
     assert result.exit_code == 0
     assert "Stale:    7 topics due for review" in result.output
@@ -417,7 +417,7 @@ def test_status_tolerates_malformed_last_seen(tmp_path: Path) -> None:
             },
         },
     }
-    (tmp_path / "instance" / "profile.yaml").write_text(yaml.safe_dump(profile))
+    (tmp_path / "learner" / "profile.yaml").write_text(yaml.safe_dump(profile))
     result = runner.invoke(main, ["status", str(tmp_path)])
     assert result.exit_code == 0
     assert "Stale:    2 topics" in result.output
@@ -456,17 +456,17 @@ def test_verify_reports_missing_profile(tmp_path: Path) -> None:
     runner = CliRunner()
     inst = tmp_path / "inst"
     _init_instance(runner, inst)
-    (inst / "instance" / "profile.yaml").unlink()
+    (inst / "learner" / "profile.yaml").unlink()
     result = runner.invoke(main, ["verify", str(inst)])
     assert result.exit_code == 1
-    assert "missing: instance/profile.yaml" in result.output
+    assert "missing: learner/profile.yaml" in result.output
 
 
 def test_verify_reports_invalid_profile_yaml(tmp_path: Path) -> None:
     runner = CliRunner()
     inst = tmp_path / "inst"
     _init_instance(runner, inst)
-    (inst / "instance" / "profile.yaml").write_text("{{{\n")
+    (inst / "learner" / "profile.yaml").write_text("{{{\n")
     result = runner.invoke(main, ["verify", str(inst)])
     assert result.exit_code == 1
     assert "profile: invalid YAML" in result.output
@@ -476,7 +476,7 @@ def test_verify_reports_profile_not_a_mapping(tmp_path: Path) -> None:
     runner = CliRunner()
     inst = tmp_path / "inst"
     _init_instance(runner, inst)
-    (inst / "instance" / "profile.yaml").write_text("- item\n")
+    (inst / "learner" / "profile.yaml").write_text("- item\n")
     result = runner.invoke(main, ["verify", str(inst)])
     assert result.exit_code == 1
     assert "profile: not a YAML mapping" in result.output
@@ -488,7 +488,7 @@ def test_verify_reports_profile_validation_errors(tmp_path: Path) -> None:
     inst = tmp_path / "inst"
     _init_instance(runner, inst)
     # Empty learner_id violates minLength:1 per profile.schema.json.
-    (inst / "instance" / "profile.yaml").write_text(
+    (inst / "learner" / "profile.yaml").write_text(
         "schema_version: 0\nlearner_id: \"\"\nexpertise_map: {}\n"
     )
     result = runner.invoke(main, ["verify", str(inst)])

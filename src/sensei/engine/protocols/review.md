@@ -38,9 +38,9 @@ flowchart TD
 
 ## Paths assumed
 
-- Profile: `instance/profile.yaml`
+- Profile: `learner/profile.yaml`
 - Engine defaults: `.sensei/defaults.yaml`
-- Instance overrides: `instance/config.yaml`
+- Learner overrides: `learner/config.yaml`
 - Helpers: `.sensei/scripts/check_profile.py`, `.sensei/scripts/decay.py`, `.sensei/scripts/review_scheduler.py`, `.sensei/scripts/classify_confidence.py`
 
 Current UTC timestamp is generated with `date -u +%Y-%m-%dT%H:%M:%SZ` whenever the protocol needs "now".
@@ -52,7 +52,7 @@ Current UTC timestamp is generated with `date -u +%Y-%m-%dT%H:%M:%SZ` whenever t
 Run:
 
 ```
-python .sensei/scripts/check_profile.py --profile instance/profile.yaml
+python .sensei/scripts/check_profile.py --profile learner/profile.yaml
 ```
 
 Parse the single JSON line from stdout. If `status` is not `"ok"` (or exit code is non-zero), say exactly:
@@ -63,7 +63,7 @@ Then go to Step 9. No writes in this session.
 
 ## Step 2 — Enumerate stale topics
 
-Read `.sensei/defaults.yaml` and (if present) `instance/config.yaml`. Mentally deep-merge the two config files with the instance overriding. Extract:
+Read `.sensei/defaults.yaml` and (if present) `learner/config.yaml`. Mentally deep-merge the two config files with the instance overriding. Extract:
 
 - `half_life_days` ← `config.memory.half_life_days`
 - `stale_threshold` ← `config.memory.stale_threshold`
@@ -72,8 +72,8 @@ Run a single cross-goal review scheduling invocation:
 
 ```
 python .sensei/scripts/review_scheduler.py \
-  --goals-dir instance/goals \
-  --profile instance/profile.yaml \
+  --goals-dir learner/goals \
+  --profile learner/profile.yaml \
   --half-life-days <half_life_days> \
   --stale-threshold <stale_threshold> \
   --now <current-utc>
@@ -81,7 +81,7 @@ python .sensei/scripts/review_scheduler.py \
 
 Parse the JSON array from stdout. Each element has `{topic, freshness, elapsed_days, goals}`. This is the stale list — topics are already deduplicated across goals (a topic stale in two goals appears once, with the lowest freshness) and sorted by freshness ascending.
 
-If the invocation fails (exit ≠ 0), fall back to treating all completed topics in the profile as review candidates: read `instance/profile.yaml` and collect every slug in `expertise_map` as a candidate with `freshness: 0.0`.
+If the invocation fails (exit ≠ 0), fall back to treating all completed topics in the profile as review candidates: read `learner/profile.yaml` and collect every slug in `expertise_map` as a candidate with `freshness: 0.0`.
 
 ## Step 3 — Exit if nothing is due
 
@@ -146,10 +146,10 @@ In memory, update the topic's state per the V1 rule:
 - `mastery` unchanged.
 - `confidence` unchanged.
 
-Write the updated `instance/profile.yaml`. Then re-validate:
+Write the updated `learner/profile.yaml`. Then re-validate:
 
 ```
-python .sensei/scripts/check_profile.py --profile instance/profile.yaml
+python .sensei/scripts/check_profile.py --profile learner/profile.yaml
 ```
 
 If validation fails, restore the previous file contents, say:

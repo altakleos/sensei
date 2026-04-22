@@ -12,7 +12,7 @@ implements:
 
 ## Specs
 
-- [learner-profile](../specs/learner-profile.md) — the profile that lives at `instance/profile.yaml`
+- [learner-profile](../specs/learner-profile.md) — the profile that lives at `learner/profile.yaml`
 - [P-learner-is-not-the-goal](../foundations/principles/learner-is-not-the-goal.md) — the principle that the profile is global, not goal-scoped
 
 ## Canonical Layout (v1)
@@ -26,9 +26,9 @@ implements:
 │   ├── scripts/                     # deterministic helper scripts
 │   ├── .sensei-version              # installed engine version
 │   └── ...
-├── instance/                        # learner-specific state and config
+├── learner/                          # learner-specific state and config
 │   ├── profile.yaml                 # the learner (evolves through conversation)
-│   └── config.yaml                  # instance-level overrides for defaults.yaml
+│   └── config.yaml                  # learner-level overrides for defaults.yaml
 ├── AGENTS.md                        # boot document (read by any LLM agent)
 ├── CLAUDE.md                        # tool shim → AGENTS.md
 ├── .kiro/steering/sensei.md         # tool shim → AGENTS.md
@@ -50,7 +50,7 @@ flowchart TD
         E4[schemas/]
         E5[defaults.yaml]
     end
-    subgraph "Learner-owned (instance/)"
+    subgraph "Learner-owned (learner/)"
         L1[config.yaml]
         L2[profile.yaml]
     end
@@ -65,8 +65,8 @@ flowchart TD
 
 | §6.1 Sketch | Actual (v1) | Rationale |
 |---|---|---|
-| `profile.yaml` at `.sensei/profile.yaml` | `instance/profile.yaml` | The `.sensei/` directory is the engine bundle — overwritten on `sensei upgrade`. Learner state must survive upgrades, so it lives in `instance/`. |
-| `config.yaml` at `.sensei/config.yaml` | `instance/config.yaml` | Same reason: config is learner-owned, not engine-owned. Separating engine defaults from instance overrides follows the overlay pattern. |
+| `profile.yaml` at `.sensei/profile.yaml` | `learner/profile.yaml` | The `.sensei/` directory is the engine bundle — overwritten on `sensei upgrade`. Learner state must survive upgrades, so it lives in `learner/`. |
+| `config.yaml` at `.sensei/config.yaml` | `learner/config.yaml` | Same reason: config is learner-owned, not engine-owned. Separating engine defaults from learner overrides follows the overlay pattern. |
 | `knowledge-state.yaml` at `.sensei/` | Not present | Cross-goal knowledge transfer (§4.4) is deferred. The principle holds but the file doesn't exist until a protocol requires it. |
 | `agents/` directory with per-mode files (`tutor.md`, `assessor.md`, etc.) | Not present | Per ADR-0013, modes are protocol-level concerns — behavioural shifts within a single mentor, not separate agent context files. The dispatch table in `engine.md` handles mode transitions. |
 | Goal workspace folders (`interview-prep/`, `rust-systems/`) | Not present | Goal workspaces are a future feature. They will be created by Sensei during conversation, not by the CLI. |
@@ -76,8 +76,8 @@ flowchart TD
 The following will land in future plans. Their locations are noted here for orientation:
 
 - **Goal workspaces** — top-level sibling directories (e.g., `interview-prep/`) containing `curriculum.yaml`, `progress.yaml`, `exercises/`, `notes/`. Created by the mentor during conversation, never by CLI.
-- **Cross-goal knowledge state** — likely `instance/knowledge-state.yaml`, tracking foundational concepts that span goals. Deferred until a protocol needs it.
-- **Session logs** — location TBD. Likely `instance/sessions/` or within goal workspaces.
+- **Cross-goal knowledge state** — likely `learner/knowledge-state.yaml`, tracking foundational concepts that span goals. Deferred until a protocol needs it.
+- **Session logs** — location TBD. Likely `learner/sessions/` or within goal workspaces.
 
 ## Decisions
 
@@ -87,4 +87,4 @@ The following will land in future plans. Their locations are noted here for orie
 
 ## Notes
 
-The `.sensei/` directory is treated as immutable between upgrades. `sensei upgrade` replaces it wholesale from the installed package. Anything the learner customizes must live in `instance/` or at the instance root.
+The `.sensei/` directory is treated as immutable between upgrades. `sensei upgrade` replaces it wholesale from the installed package. Anything the learner customizes must live in `learner/` or at the instance root.

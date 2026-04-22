@@ -5,8 +5,8 @@ or 'completed', and the node itself is not 'collapsed', 'active', or
 'completed'.
 
 Invoked by protocols as:
-    python frontier.py --curriculum instance/goals/goal/curriculum.yaml \\
-                       [--hints instance/hints/hints.yaml] \\
+    python frontier.py --curriculum learner/goals/goal/curriculum.yaml \\
+                       [--hints learner/hints/hints.yaml] \\
                        [--boost-weight 1.5] [--max-boost 2.0]
 
 Exits 0 and prints a single JSON object to stdout.

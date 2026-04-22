@@ -1,4 +1,4 @@
-"""Validator for instance/profile.yaml (per docs/design/learner-profile-state.md).
+"""Validator for learner/profile.yaml (per docs/design/learner-profile-state.md).
 
 Runs JSON Schema validation followed by cross-field invariants that JSON Schema
 alone cannot express (currently only `correct <= attempts`).

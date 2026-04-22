@@ -65,7 +65,7 @@ sequenceDiagram
 
 The protocol prose maps to these numbered steps. Each step is either a helper invocation (shell subprocess per ADR-0006) or an LLM-side operation. The LLM is responsible for literal step-by-step execution; it may not reorder, skip, or batch.
 
-1. **Load and validate the profile.** Read `instance/profile.yaml`. Invoke `python .sensei/scripts/check_profile.py --profile instance/profile.yaml`. If exit ≠ 0, surface the error to the learner and end the session. Never proceed on an invalid profile.
+1. **Load and validate the profile.** Read `learner/profile.yaml`. Invoke `python .sensei/scripts/check_profile.py --profile learner/profile.yaml`. If exit ≠ 0, surface the error to the learner and end the session. Never proceed on an invalid profile.
 
 2. **Enumerate stale topics.** For each topic in `expertise_map`, invoke `python .sensei/scripts/decay.py --last-seen <topic.last_seen> --half-life-days <config.memory.half_life_days> --now <current-utc> --stale-threshold <config.memory.stale_threshold>`. Collect the topics where `stale == true` along with their freshness scores.
 
@@ -123,7 +123,7 @@ Both keys are added to `defaults.yaml` by T3 (implementation). No per-topic over
 
 | Component | Reads | Writes |
 |---|---|---|
-| `protocols/review.md` (LLM) | `instance/profile.yaml`, `instance/config.yaml`, `.sensei/defaults.yaml` | `instance/profile.yaml` |
+| `protocols/review.md` (LLM) | `learner/profile.yaml`, `learner/config.yaml`, `.sensei/defaults.yaml` | `learner/profile.yaml` |
 | `scripts/check_profile.py` | `profile.schema.json`, `profile.yaml` | stdout JSON |
 | `scripts/decay.py` | (stateless; CLI args only) | stdout JSON |
 | `scripts/classify_confidence.py` | (stateless; CLI args only) | stdout JSON |

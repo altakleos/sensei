@@ -2,7 +2,7 @@
 
 Scaffolds a fresh Sensei instance in a tmp directory, invokes `claude -p` with
 a boot-chain prompt and the learner fixture, and asserts the LLM produced a
-schema-valid goal file under ``instance/goals/``.
+schema-valid goal file under ``learner/goals/``.
 
 This is a Tier-2 check per ADR-0011 — "prose verified by prose" at the LLM
 layer. It runs manually before tagging a release (see
@@ -58,7 +58,7 @@ def _build_prompt(fixture_text: str) -> str:
         "message below.\n\n"
         "Execute the goal protocol to completion IN THIS SINGLE TURN. Do not ask clarifying "
         "questions — the fixture already supplies enough context (the three unknowns and "
-        "a priority). Write the resulting goal file to `instance/goals/<slug>.yaml` and "
+        "a priority). Write the resulting goal file to `learner/goals/<slug>.yaml` and "
         "finish.\n\n"
         "--- learner message begins ---\n"
         f"{fixture_text}\n"
@@ -95,7 +95,7 @@ def test_goal_protocol_produces_schema_valid_goal(tmp_path: Path) -> None:
         f"stdout:\n{completed.stdout}\n\nstderr:\n{completed.stderr}"
     )
 
-    goals_dir = tmp_path / "instance" / "goals"
+    goals_dir = tmp_path / "learner" / "goals"
     goal_files = sorted(goals_dir.glob("*.yaml"))
     assert goal_files, (
         f"No goal file created under {goals_dir}. "

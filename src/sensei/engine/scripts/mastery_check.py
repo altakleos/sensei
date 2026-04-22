@@ -4,7 +4,7 @@ Given a learner profile, a topic slug, and a required mastery level, answer
 whether the learner meets or exceeds the required level on that topic.
 
 Invoked by protocols as:
-    python mastery_check.py --profile instance/profile.yaml \\
+    python mastery_check.py --profile learner/profile.yaml \\
                             --topic recursion --required solid
 
 Exits:

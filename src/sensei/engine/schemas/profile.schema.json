@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://sensei.dev/schemas/profile.schema.json",
   "title": "Sensei Learner Profile",
-  "description": "Per-learner state file (instance/profile.yaml). V1 scope: expertise_map only.",
+  "description": "Per-learner state file (learner/profile.yaml). V1 scope: expertise_map only.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "learner_id", "expertise_map"],

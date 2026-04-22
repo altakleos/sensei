@@ -18,7 +18,7 @@ The [`learner-profile`](../specs/learner-profile.md) spec defines what Sensei tr
 
 ### File Location
 
-A single yaml file at `instance/profile.yaml` in each Sensei instance. Loaded by scripts and protocols via relative paths from the instance root. Never committed to the engine bundle; always an instance artifact.
+A single yaml file at `learner/profile.yaml` in each Sensei instance. Loaded by scripts and protocols via relative paths from the instance root. Never committed to the engine bundle; always a learner artifact.
 
 ### Shape
 
@@ -98,7 +98,7 @@ The validator prints a JSON line summarising what it checked and what failed, so
 Invocation:
 
 ```
-python mastery_check.py --profile instance/profile.yaml --topic recursion --required solid
+python mastery_check.py --profile learner/profile.yaml --topic recursion --required solid
 ```
 
 Semantics:
@@ -117,7 +117,7 @@ The numeric confidence threshold (§3.6 "90% threshold") is deliberately not par
 
 | Component | Role | Consumed By |
 |---|---|---|
-| `instance/profile.yaml` | The per-learner state file | Every protocol that reads learner state |
+| `learner/profile.yaml` | The per-learner state file | Every protocol that reads learner state |
 | `src/sensei/engine/schemas/profile.schema.json` | JSON Schema document | `check_profile.py` |
 | `src/sensei/engine/scripts/check_profile.py` | Schema + cross-field validator | Invoked by protocols before any state-dependent decision |
 | `src/sensei/engine/scripts/mastery_check.py` | Mastery-level gate | Invoked by the assessor-exception enforcement path |

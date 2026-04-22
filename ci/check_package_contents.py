@@ -60,6 +60,7 @@ REQUIRED_DIRS: tuple[str, ...] = (
 
 FORBIDDEN_PREFIXES: tuple[str, ...] = (
     "instance/",
+    "learner/",
     "wiki/",
     "raw/",
     "notebook/",

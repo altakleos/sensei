@@ -28,11 +28,11 @@ note: |
 
 ## Session — Triage of a mixed inbox
 
-The learner has been collecting links and notes over a week. Four items sit in `instance/inbox/`: a Rust ownership blog post, a tweet about async runtimes, a screenshot of a compiler error (genuinely out of context), and a free-form personal note about something the learner wants to revisit. The learner's active goal is "learn Rust for systems programming"; their curriculum has topics `ownership`, `lifetimes`, `async-await`, `traits`.
+The learner has been collecting links and notes over a week. Four items sit in `learner/inbox/`: a Rust ownership blog post, a tweet about async runtimes, a screenshot of a compiler error (genuinely out of context), and a free-form personal note about something the learner wants to revisit. The learner's active goal is "learn Rust for systems programming"; their curriculum has topics `ownership`, `lifetimes`, `async-await`, `traits`.
 
 [LEARNER] process my hints
 
-[MENTOR] Scanning `instance/inbox/`.
+[MENTOR] Scanning `learner/inbox/`.
 
 [MENTOR] I found four items. Triaging:
 

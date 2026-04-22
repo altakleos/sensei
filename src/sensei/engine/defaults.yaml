@@ -1,4 +1,4 @@
-# Sensei engine defaults. Instance config (instance/config.yaml) deep-merges on top of this.
+# Sensei engine defaults. Learner config (learner/config.yaml) deep-merges on top of this.
 # Status: scaffolding. No real tunables yet — sections are placeholders for future work.
 
 schema_version: 0

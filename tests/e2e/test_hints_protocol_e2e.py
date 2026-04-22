@@ -1,10 +1,10 @@
 """End-to-end verification of the hints triage protocol.
 
-Scaffolds a fresh Sensei instance, pre-populates `instance/inbox/` with two
+Scaffolds a fresh Sensei instance, pre-populates `learner/inbox/` with two
 representative hint files (a Rust ownership blog post and a Tokio async
 snippet — both scoped to the same learning goal as the goal E2E), invokes
 `claude -p` with a boot-chain prompt that dispatches to the `hints`
-protocol, and asserts the triage artifact: `instance/hints/hints.yaml` has
+protocol, and asserts the triage artifact: `learner/hints/hints.yaml` has
 at least one registered hint and the inbox has been drained.
 
 Third Tier-2 E2E — completes the hints ADR graduation loop (ADR-0017 /
@@ -45,8 +45,8 @@ pytestmark = [
 
 
 def _seed_inbox(instance_dir: Path) -> list[Path]:
-    """Copy fixture hint files into instance/inbox/. Returns the list of seeded paths."""
-    inbox = instance_dir / "instance" / "inbox"
+    """Copy fixture hint files into learner/inbox/. Returns the list of seeded paths."""
+    inbox = instance_dir / "learner" / "inbox"
     seeded: list[Path] = []
     for src in sorted(FIXTURE_DIR.glob("*.md")):
         if src.name == "README.md":  # the fixture's own README is metadata, not a hint
@@ -63,11 +63,11 @@ def _build_prompt() -> str:
         "and follow the boot chain. The learner just said:\n\n"
         "    process my hints\n\n"
         "Dispatch to the `hints` triage protocol and execute it to completion. "
-        "Treat every markdown file under `instance/inbox/` as a hint the learner "
+        "Treat every markdown file under `learner/inbox/` as a hint the learner "
         "dropped (except any file explicitly named README.md, which is fixture "
         "metadata). For each hint: classify, score relevance, register into "
-        "`instance/hints/hints.yaml`, and move the file from `instance/inbox/` to "
-        "`instance/hints/active/` or `instance/hints/archive/` as the protocol "
+        "`learner/hints/hints.yaml`, and move the file from `learner/inbox/` to "
+        "`learner/hints/active/` or `learner/hints/archive/` as the protocol "
         "directs. Do not teach or explain hint content — this is administrative "
         "triage, not a tutor session.\n"
     )
@@ -80,8 +80,8 @@ def test_hints_protocol_drains_inbox_and_populates_registry(tmp_path: Path) -> N
 
     seeded = _seed_inbox(tmp_path)
     assert len(seeded) >= 2, f"expected ≥2 seeded inbox files, got {len(seeded)}"
-    inbox_dir = tmp_path / "instance" / "inbox"
-    hints_registry = tmp_path / "instance" / "hints" / "hints.yaml"
+    inbox_dir = tmp_path / "learner" / "inbox"
+    hints_registry = tmp_path / "learner" / "hints" / "hints.yaml"
 
     before = yaml.safe_load(hints_registry.read_text(encoding="utf-8"))
     assert before == {"schema_version": 1, "hints": []}, (

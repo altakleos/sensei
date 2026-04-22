@@ -117,7 +117,7 @@ The assessor exception (§3.6) is the ONE area where a hard rule overrides princ
 **Mechanism:** When the assessor emphasis is active, mastery scoring runs as a subprocess to `mastery_check.py` per ADR-0006:
 
 ```
-python .sensei/scripts/mastery_check.py --profile instance/profile.yaml \
+python .sensei/scripts/mastery_check.py --profile learner/profile.yaml \
                                         --topic <topic> --required <level>
 ```
 

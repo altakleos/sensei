@@ -39,9 +39,9 @@ flowchart TD
 
 ## Paths assumed
 
-- Goals directory: `instance/goals/`
+- Goals directory: `learner/goals/`
 - Engine defaults: `.sensei/defaults.yaml`
-- Instance overrides: `instance/config.yaml`
+- Learner overrides: `learner/config.yaml`
 - Helpers: `.sensei/scripts/check_goal.py`
 - Frontier computation: `.sensei/scripts/frontier.py`
 - Graph mutations: `.sensei/scripts/mutate_graph.py`
@@ -64,7 +64,7 @@ Generate a slug from the domain: lowercase, hyphens for spaces, no special chara
 
 ## Step 2 — Check for existing goal
 
-Look in `instance/goals/` for a file matching `<slug>.yaml`. If one exists and its `status` is `active`, say exactly:
+Look in `learner/goals/` for a file matching `<slug>.yaml`. If one exists and its `status` is `active`, say exactly:
 
 > You already have an active goal for [topic]. Want to continue where we left off, or start fresh?
 
@@ -111,7 +111,7 @@ Rules for generation:
 
 **Valid node states:** `active` (currently being taught — at most ONE), `spawned` (not yet started), `collapsed` (skip — already known), `completed` (mastered), `expanded` (needs sub-topics). For initial generation, use only `active` (one node) and `spawned` (all others).
 
-Write the goal file to `instance/goals/<slug>.yaml` in **exactly** this format:
+Write the goal file to `learner/goals/<slug>.yaml` in **exactly** this format:
 
 ```yaml
 schema_version: 0
@@ -143,7 +143,7 @@ nodes:
 Run:
 
 ```
-python .sensei/scripts/check_goal.py --goal instance/goals/<slug>.yaml
+python .sensei/scripts/check_goal.py --goal learner/goals/<slug>.yaml
 ```
 
 Parse the output. If `status` is not `"ok"` (or exit code is non-zero):
@@ -164,13 +164,13 @@ Find the node with state `active` in the curriculum. Transition to tutor mode.
 **Global knowledge check:** Before teaching, check if this topic is already mastered globally:
 
 ```
-python .sensei/scripts/global_knowledge.py --profile instance/profile.yaml --topic <active-topic>
+python .sensei/scripts/global_knowledge.py --profile learner/profile.yaml --topic <active-topic>
 ```
 
 If `known == true`: the learner already mastered this elsewhere. Collapse the node:
 
 ```
-python .sensei/scripts/mutate_graph.py --operation collapse --node <topic> --curriculum instance/goals/<slug>.yaml
+python .sensei/scripts/mutate_graph.py --operation collapse --node <topic> --curriculum learner/goals/<slug>.yaml
 ```
 
 Say: "You already know [topic] from previous work. Skipping ahead."
@@ -179,12 +179,12 @@ Recompute the frontier and activate the next topic. Repeat the global knowledge 
 
 **If not globally known:** proceed with teaching.
 
-Run `python .sensei/scripts/frontier.py --curriculum instance/goals/<slug>.yaml` to compute the frontier. Use the returned ordered list to select the next topic. If `instance/hints.yaml` exists, pass `--hints instance/hints.yaml` to incorporate learner-declared priority signals.
+Run `python .sensei/scripts/frontier.py --curriculum learner/goals/<slug>.yaml` to compute the frontier. Use the returned ordered list to select the next topic. If `learner/hints.yaml` exists, pass `--hints learner/hints.yaml` to incorporate learner-declared priority signals.
 
 If no node is currently `active`, activate the first frontier topic:
 
 ```
-python .sensei/scripts/mutate_graph.py --operation activate --node <slug> --curriculum instance/goals/<slug>.yaml
+python .sensei/scripts/mutate_graph.py --operation activate --node <slug> --curriculum learner/goals/<slug>.yaml
 ```
 
 The first lesson IS the assessment. Start with a probe that reveals whether the learner already knows this topic. The probe should be:
@@ -206,15 +206,15 @@ Wait for the learner's response. Then classify:
   Mark the node completed, then advance the frontier:
 
   ```
-  python .sensei/scripts/mutate_graph.py --operation complete --node <topic-slug> --curriculum instance/goals/<slug>.yaml
-  python .sensei/scripts/frontier.py --curriculum instance/goals/<slug>.yaml
-  python .sensei/scripts/mutate_graph.py --operation activate --node <next-frontier-slug> --curriculum instance/goals/<slug>.yaml
+  python .sensei/scripts/mutate_graph.py --operation complete --node <topic-slug> --curriculum learner/goals/<slug>.yaml
+  python .sensei/scripts/frontier.py --curriculum learner/goals/<slug>.yaml
+  python .sensei/scripts/mutate_graph.py --operation activate --node <next-frontier-slug> --curriculum learner/goals/<slug>.yaml
   ```
 
   If the learner already knows a topic before teaching begins (revealed by the probe), collapse it instead:
 
   ```
-  python .sensei/scripts/mutate_graph.py --operation collapse --node <topic-slug> --curriculum instance/goals/<slug>.yaml
+  python .sensei/scripts/mutate_graph.py --operation collapse --node <topic-slug> --curriculum learner/goals/<slug>.yaml
   ```
 
 - **Shows partial knowledge** (partially correct, or correct but uncertain): Continue teaching from where they are. Fill the gaps without re-explaining what they already know. Proceed in tutor mode.
@@ -224,7 +224,7 @@ Wait for the learner's response. Then classify:
 If teaching reveals a prerequisite gap (the learner lacks knowledge assumed by the current node), spawn a new node to cover it:
 
 ```
-python .sensei/scripts/mutate_graph.py --operation spawn --node <new-slug> --prerequisites <comma-separated-prerequisite-slugs> --curriculum instance/goals/<slug>.yaml
+python .sensei/scripts/mutate_graph.py --operation spawn --node <new-slug> --prerequisites <comma-separated-prerequisite-slugs> --curriculum learner/goals/<slug>.yaml
 ```
 
 Then activate the spawned node and teach it before returning to the original topic.
@@ -243,7 +243,7 @@ These transitions are triggered by learner intent expressed in natural language.
 
 **Triggers:** "pause this goal" / "take a break" / "switch goals" / "put this on hold"
 
-1. Set `status: paused` in the goal file (`instance/goals/<slug>.yaml`).
+1. Set `status: paused` in the goal file (`learner/goals/<slug>.yaml`).
 2. Leave the current active node as-is (will resume from there).
 3. Confirm: "Goal paused. Your progress is saved."
 
@@ -256,15 +256,15 @@ These transitions are triggered by learner intent expressed in natural language.
 3. Compute a decay-aware resume plan:
    ```
    python .sensei/scripts/resume_planner.py \
-     --goal instance/goals/<slug>.yaml \
-     --profile instance/profile.yaml \
+     --goal learner/goals/<slug>.yaml \
+     --profile learner/profile.yaml \
      --half-life-days <config.memory.half_life_days> \
      --stale-threshold <config.memory.stale_threshold> \
      --now <utc>
    ```
    Parse the JSON output. The result contains `stale_topics` (sorted by freshness ascending), `frontier` (recomputed from current node states), and `recommended_action` (`"review_first"` or `"continue"`).
 
-   If `resume_planner.py` fails (exit ≠ 0), fall back to continuing from the frontier without a decay check — run `python .sensei/scripts/frontier.py --curriculum instance/goals/<slug>.yaml` and proceed as if `recommended_action` were `"continue"`.
+   If `resume_planner.py` fails (exit ≠ 0), fall back to continuing from the frontier without a decay check — run `python .sensei/scripts/frontier.py --curriculum learner/goals/<slug>.yaml` and proceed as if `recommended_action` were `"continue"`.
 4. If `recommended_action` is `"review_first"`:
    - Report: "Resuming [goal]. You left off at [active topic]. [N] topics are getting stale: [list stale topic slugs]."
    - Offer: continue where you left off, or review stale topics first?
@@ -306,7 +306,7 @@ After every `mutate_graph.py complete` or `collapse` operation:
 
    ```
    python .sensei/scripts/mastery_check.py \
-     --profile instance/profile.yaml \
+     --profile learner/profile.yaml \
      --topic <active-topic> \
      --required <config.performance_training.mastery_gate>
    ```

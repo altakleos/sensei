@@ -51,7 +51,7 @@ Sensei runs on the user's own machine, reads and writes files under a user-speci
 
 Sensei hands markdown files and YAML configs to an LLM of the user's choice. Anything the LLM subsequently does is the LLM provider's concern, not Sensei's:
 
-- **Prompt-injection via learner-authored content.** A learner who writes adversarial prose into their own `instance/profile.yaml` or their own hints inbox will eventually feed that prose to their own LLM. This is a single-user tool; the learner attacking themselves is not a threat model Sensei defends.
+- **Prompt-injection via learner-authored content.** A learner who writes adversarial prose into their own `learner/profile.yaml` or their own hints inbox will eventually feed that prose to their own LLM. This is a single-user tool; the learner attacking themselves is not a threat model Sensei defends.
 - **LLM output correctness.** Sensei asserts structural invariants on artifacts the LLM produces (via schemas + Tier-2 E2E fixtures) but does not guarantee semantic correctness of the LLM's pedagogical output. A misleading lesson from the agent is not a Sensei vulnerability.
 - **Cross-tenant concerns.** Sensei is explicitly single-user (see `docs/foundations/vision.md` § Non-Goals — "not a community or social platform"). There is no authentication, no multi-user state, and no cross-user isolation to audit.
 - **Supply-chain compromise of the user's LLM provider** (OpenAI, Anthropic, etc.).

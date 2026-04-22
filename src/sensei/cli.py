@@ -21,7 +21,7 @@ import sensei
 from sensei import __version__
 
 # Strict validation for --learner-id: letters, digits, underscore, hyphen;
-# 1–64 characters. The value is interpolated into instance/profile.yaml and
+# 1–64 characters. The value is interpolated into learner/profile.yaml and
 # later embedded in LLM prompts, so we reject any character that could inject
 # YAML, shell metacharacters, or prompt-steering content.
 _LEARNER_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
@@ -45,7 +45,7 @@ _SHIMS: dict[str, str] = {
     ".aiassistant/rules/sensei.md": "Read and follow the instructions in `AGENTS.md` at the instance root.\n",
 }
 
-_INSTANCE_CONFIG_YAML = """# Instance-level overrides for Sensei defaults.
+_LEARNER_CONFIG_YAML = """# Learner-level overrides for Sensei defaults.
 # Leave empty to use engine defaults from .sensei/defaults.yaml.
 """
 
@@ -149,7 +149,7 @@ def main() -> None:
     "--learner-id",
     default="learner",
     show_default=True,
-    help="Identifier written to instance/profile.yaml. Edit later if you prefer a different name.",
+    help="Identifier written to learner/profile.yaml. Edit later if you prefer a different name.",
 )
 def init(target: Path, force: bool, learner_id: str) -> None:
     """Scaffold a new Sensei instance at TARGET."""
@@ -172,31 +172,31 @@ def init(target: Path, force: bool, learner_id: str) -> None:
     # Install engine bundle into .sensei/ atomically.
     _atomic_replace_engine(_engine_source(), sensei_dir, __version__)
 
-    # Instance config directory + seed profile.
-    (target / "instance").mkdir(exist_ok=True)
-    (target / "instance" / "goals").mkdir(exist_ok=True)
-    instance_config = target / "instance" / "config.yaml"
-    if not instance_config.exists():
-        instance_config.write_text(_INSTANCE_CONFIG_YAML, encoding="utf-8")
-    instance_profile = target / "instance" / "profile.yaml"
-    if not instance_profile.exists():
+    # Learner data directory + seed profile.
+    (target / "learner").mkdir(exist_ok=True)
+    (target / "learner" / "goals").mkdir(exist_ok=True)
+    learner_config = target / "learner" / "config.yaml"
+    if not learner_config.exists():
+        learner_config.write_text(_LEARNER_CONFIG_YAML, encoding="utf-8")
+    learner_profile = target / "learner" / "profile.yaml"
+    if not learner_profile.exists():
         profile_body = yaml.safe_dump(
             {"schema_version": 0, "learner_id": learner_id, "expertise_map": {}},
             sort_keys=False,
         )
-        instance_profile.write_text(
+        learner_profile.write_text(
             _STARTER_PROFILE_HEADER + profile_body,
             encoding="utf-8",
         )
 
     # Hints ingestion directories and registry.
-    (target / "instance" / "inbox").mkdir(exist_ok=True)
-    (target / "instance" / "inbox" / ".gitkeep").write_text(
+    (target / "learner" / "inbox").mkdir(exist_ok=True)
+    (target / "learner" / "inbox" / ".gitkeep").write_text(
         "# Drop zone for raw learning hints (URLs, snippets, notes).\n", encoding="utf-8"
     )
-    (target / "instance" / "hints" / "active").mkdir(parents=True, exist_ok=True)
-    (target / "instance" / "hints" / "archive").mkdir(parents=True, exist_ok=True)
-    hints_registry = target / "instance" / "hints" / "hints.yaml"
+    (target / "learner" / "hints" / "active").mkdir(parents=True, exist_ok=True)
+    (target / "learner" / "hints" / "archive").mkdir(parents=True, exist_ok=True)
+    hints_registry = target / "learner" / "hints" / "hints.yaml"
     if not hints_registry.exists():
         hints_registry.write_text("schema_version: 1\nhints: []\n", encoding="utf-8")
 
@@ -214,7 +214,7 @@ def init(target: Path, force: bool, learner_id: str) -> None:
 
     click.echo(f"Created .sensei/ at {sensei_dir}")
     click.echo(f"Wrote AGENTS.md and {len(_SHIMS)} tool-specific shims.")
-    click.echo(f"Seeded instance/profile.yaml with learner_id={learner_id!r}.")
+    click.echo(f"Seeded learner/profile.yaml with learner_id={learner_id!r}.")
     click.echo("Open this folder with any LLM agent to begin.")
 
 
@@ -233,7 +233,7 @@ def status(target: Path) -> None:
     click.echo(f"Engine:   {engine_version}")
 
     # Profile summary
-    profile_path = target / "instance" / "profile.yaml"
+    profile_path = target / "learner" / "profile.yaml"
     if not profile_path.exists():
         click.echo("Profile:  not found")
         return
@@ -315,23 +315,23 @@ def upgrade(target: Path) -> None:
         click.echo(f"Already at {__version__}. Nothing to upgrade.")
         return
 
-    # Replace engine bundle atomically (instance/ is untouched).
+    # Replace engine bundle atomically (learner/ is untouched).
     _atomic_replace_engine(_engine_source(), sensei_dir, __version__)
 
     click.echo(f"Upgraded .sensei/ from {old_version} → {__version__}")
 
-    # Migrate instance state files to current schema versions
-    instance_dir = target / "instance"
-    if instance_dir.exists():
+    # Migrate learner state files to current schema versions
+    learner_dir = target / "learner"
+    if learner_dir.exists():
         from sensei.engine.scripts.migrate import migrate_instance
 
-        migrated = migrate_instance(instance_dir)
+        migrated = migrate_instance(learner_dir)
         if migrated:
             for desc in migrated:
                 click.echo(f"  Migrated: {desc}")
         else:
             click.echo("  Instance schemas already current.")
-    click.echo("Instance data (instance/) preserved.")
+    click.echo("Learner data (learner/) preserved.")
 
 
 @main.command()
@@ -370,7 +370,7 @@ def verify(target: Path) -> None:
         if not (sensei_dir / rel).exists():
             errors.append(f"missing: .sensei/{rel}")
 
-    profile_path = target / "instance" / "profile.yaml"
+    profile_path = target / "learner" / "profile.yaml"
     if profile_path.exists():
         try:
             profile = yaml.safe_load(profile_path.read_text())
@@ -386,7 +386,7 @@ def verify(target: Path) -> None:
         except yaml.YAMLError as exc:
             errors.append(f"profile: invalid YAML — {exc}")
     else:
-        errors.append("missing: instance/profile.yaml")
+        errors.append("missing: learner/profile.yaml")
 
     if errors:
         click.echo("FAIL")

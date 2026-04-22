@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://sensei.dev/schemas/goal.schema.json",
   "title": "Sensei Curriculum Goal",
-  "description": "Per-goal state file (instance/goals/<slug>.yaml). Defines a curriculum DAG with node states and prerequisites. At most one node may be active at any time (cross-field constraint, not enforceable by JSON Schema alone).",
+  "description": "Per-goal state file (learner/goals/<slug>.yaml). Defines a curriculum DAG with node states and prerequisites. At most one node may be active at any time (cross-field constraint, not enforceable by JSON Schema alone).",
   "type": "object",
   "additionalProperties": false,
   "required": [

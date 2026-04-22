@@ -18,7 +18,7 @@ The [curriculum-graph spec](../specs/curriculum-graph.md) defines a DAG of topic
 
 ### Graph State Model
 
-The curriculum lives in `instance/goals/<goal-slug>/curriculum.yaml`:
+The curriculum lives in `learner/goals/<goal-slug>/curriculum.yaml`:
 
 ```yaml
 schema_version: 1
@@ -120,7 +120,7 @@ graph LR
 
 | Component | Role | Consumed By |
 |-----------|------|-------------|
-| `instance/goals/<slug>/curriculum.yaml` | Graph state | All scripts, goal protocol |
+| `learner/goals/<slug>/curriculum.yaml` | Graph state | All scripts, goal protocol |
 | `scripts/frontier.py` | Frontier computation + priority ordering | Goal protocol, hints protocol |
 | `scripts/mutate_graph.py` | Validated graph mutations | Goal protocol, assessment protocol, hints protocol |
 | `scripts/check_goal.py` | Invariant validation (existing) | mutate_graph.py (internal), goal protocol |

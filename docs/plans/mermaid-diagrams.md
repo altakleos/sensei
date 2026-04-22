@@ -28,7 +28,7 @@ Design docs explain HOW. Diagrams here show architecture and orchestration.
 
 - [x] T9: `docs/design/release-workflow.md` — `flowchart LR` showing 3-job pipeline: verify → build-and-check → publish, with OIDC gate and environment approval. → after Architecture
 - [x] T10: `docs/design/learner-profile-state.md` — `stateDiagram-v2` showing mastery enum + TopicState lifecycle with validator gates. → after Fields section
-- [x] T11: `docs/design/folder-structure.md` — `flowchart TD` showing .sensei/ (engine-owned) vs instance/ (learner-owned) vs shim files, with ownership annotations. → after Layout section
+- [x] T11: `docs/design/folder-structure.md` — `flowchart TD` showing .sensei/ (engine-owned) vs learner/ (learner-owned) vs shim files, with ownership annotations. → after Layout section
 - [x] T12: `docs/design/transcript-fixtures.md` — `flowchart TD` showing two-tier verification: fixtures + dogfood → conftest loader → Tier-1 (lexical, CI) / Tier-2 (LLM-as-judge, local). → after Architecture
 - [x] T13: `src/sensei/engine/engine.md` — `flowchart TD` showing boot chain: AGENTS.md → engine.md → dispatch → protocols → helpers. → after the boot chain description
 - [x] T14: `src/sensei/engine/protocols/review.md` — `flowchart TD` showing 9-step loop with error branches (invalid profile → end, no stale → end, learner exits → end). → after Purpose section
@@ -39,7 +39,7 @@ Design docs explain HOW. Diagrams here show architecture and orchestration.
 ADRs record decisions. Diagrams here make the architecture concrete.
 
 - [x] T16: `docs/decisions/0002-agent-bootstrap.md` — `flowchart LR` showing boot chain: AGENTS.md → engine.md → protocols → scripts/prompts/schemas. → after Decision
-- [x] T17: `docs/decisions/0004-sensei-distribution-model.md` — `flowchart TD` showing: pip install (wheel) → sensei init (copy to .sensei/ + instance/ + shims) → sensei upgrade (overwrite .sensei/ only). → after Decision
+- [x] T17: `docs/decisions/0004-sensei-distribution-model.md` — `flowchart TD` showing: pip install (wheel) → sensei init (copy to .sensei/ + learner/ + shims) → sensei upgrade (overwrite .sensei/ only). → after Decision
 - [x] T18: `docs/decisions/0006-hybrid-runtime-architecture.md` — `flowchart TD` showing: Protocols (LLM) ↔ shell subprocess ↔ Scripts (CPython), with v1 helpers listed. → after Decision
 - [x] T19: `docs/decisions/0012-foundations-layer.md` — `flowchart TD` showing foundations above the 6-layer stack with serves/realizes/stressed_by linkage arrows. → after Shape section
 - [x] T20: `docs/decisions/0013-context-composition.md` — `flowchart TD` showing focused loading: base personality (full) + active mode (full) + 3 others (summary only). → after Decision

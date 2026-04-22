@@ -6,8 +6,8 @@ recomputes the curriculum frontier (importing compute_frontier as a library
 call), and outputs a JSON resume plan.
 
 Invoked by the engine as:
-    python resume_planner.py --goal instance/goals/<slug>.yaml \
-                             --profile instance/profile.yaml \
+    python resume_planner.py --goal learner/goals/<slug>.yaml \
+                             --profile learner/profile.yaml \
                              --half-life-days <config.memory.half_life_days> \
                              --stale-threshold <config.memory.stale_threshold> \
                              [--now 2026-04-20T00:00:00Z]

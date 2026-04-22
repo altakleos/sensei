@@ -1,4 +1,4 @@
-"""Validator for instance/goals/<slug>.yaml (per docs/design/curriculum-graph.md).
+"""Validator for learner/goals/<slug>.yaml (per docs/design/curriculum-graph.md).
 
 Runs JSON Schema validation followed by cross-field invariants:
   1. At most one node has state 'active'

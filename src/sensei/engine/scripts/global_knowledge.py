@@ -5,7 +5,7 @@ topic slug has mastery >= solid (i.e. "solid" or "mastered").  Protocols
 use this to collapse (skip) topics the learner already knows.
 
 Invoked by protocols as:
-    python global_knowledge.py --profile instance/profile.yaml --topic hash-maps
+    python global_knowledge.py --profile learner/profile.yaml --topic hash-maps
 
 Exits 0 and prints a single JSON object to stdout.
 Exits 1 on invalid input (missing file, bad YAML).

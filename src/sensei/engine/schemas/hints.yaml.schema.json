@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://sensei.dev/schemas/hints.yaml.schema.json",
   "title": "Sensei Hints Registry",
-  "description": "Hint ingestion registry (instance/hints/hints.yaml). Tracks external hints and their lifecycle.",
+  "description": "Hint ingestion registry (learner/hints/hints.yaml). Tracks external hints and their lifecycle.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "hints"],

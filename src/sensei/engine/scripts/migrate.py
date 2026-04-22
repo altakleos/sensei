@@ -1,6 +1,6 @@
-"""Schema migration for Sensei instance files.
+"""Schema migration for Sensei learner data files.
 
-Upgrades instance state files (profile.yaml, goal files) from older schema
+Upgrades learner state files (profile.yaml, goal files) from older schema
 versions to the current version. Each migration is a function that transforms
 the data dict in place.
 
@@ -8,12 +8,13 @@ Usage (library):
     from sensei.engine.scripts.migrate import migrate_profile, migrate_goal
 
 Usage (CLI):
-    python -m sensei.engine.scripts.migrate --file instance/profile.yaml --type profile
+    python -m sensei.engine.scripts.migrate --file learner/profile.yaml --type profile
 """
 
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -89,18 +90,25 @@ def migrate_file(path: Path, file_type: str) -> bool:
     return True
 
 
-def migrate_instance(instance_dir: Path) -> list[str]:
-    """Migrate all instance files. Returns list of migrated file descriptions."""
+def migrate_instance(learner_dir: Path) -> list[str]:
+    """Migrate all learner data files. Returns list of migrated file descriptions."""
     migrated: list[str] = []
 
-    profile = instance_dir / "profile.yaml"
+    # Rename instance/ → learner/ if the old directory name is still in use.
+    old_dir = learner_dir.parent / "instance"
+    if old_dir.exists() and not learner_dir.exists():
+        os.rename(old_dir, learner_dir)
+        print("Renamed instance/ → learner/ (learner data preserved)")
+        migrated.append("instance/ → learner/ (directory renamed)")
+
+    profile = learner_dir / "profile.yaml"
     if profile.exists() and migrate_file(profile, "profile"):
         migrated.append(f"profile.yaml: schema_version → {CURRENT_PROFILE_VERSION}")
 
     # Migrate goal files (future: when goal workspaces exist)
-    for goal_file in instance_dir.glob("goals/*/goal.yaml"):
+    for goal_file in learner_dir.glob("goals/*/goal.yaml"):
         if migrate_file(goal_file, "goal"):
-            migrated.append(f"{goal_file.relative_to(instance_dir)}: schema_version → {CURRENT_GOAL_VERSION}")
+            migrated.append(f"{goal_file.relative_to(learner_dir)}: schema_version → {CURRENT_GOAL_VERSION}")
 
     return migrated
 
@@ -108,10 +116,10 @@ def migrate_instance(instance_dir: Path) -> list[str]:
 def main(argv: list[str] | None = None) -> int:
     import argparse
 
-    parser = argparse.ArgumentParser(description="Migrate Sensei instance files")
+    parser = argparse.ArgumentParser(description="Migrate Sensei learner data files")
     parser.add_argument("--file", type=Path, help="Single file to migrate")
     parser.add_argument("--type", choices=["profile", "goal"], help="File type (required with --file)")
-    parser.add_argument("--instance", type=Path, help="Instance directory to migrate all files")
+    parser.add_argument("--instance", type=Path, help="Learner data directory to migrate all files")
     args = parser.parse_args(argv)
 
     if args.file:

@@ -13,7 +13,7 @@ See [`../engine.md`](../engine.md) for the dispatch table that maps learner inte
 - [`challenger.md`](challenger.md) — Strengthen mastery via structured challenges that push from recall into application, transfer, and edge cases.
 - [`reviewer.md`](reviewer.md) — Give pedagogical feedback on learner-submitted work that develops self-review skills, not just fixes errors.
 - [`review.md`](review.md) — Spaced-repetition pass over decayed topics: one retrieval question each, record hit/miss, never reteach during review.
-- [`hints.md`](hints.md) — Triage `instance/inbox/`: extract topics, score relevance, deduplicate, cluster, and register into `hints.yaml`.
+- [`hints.md`](hints.md) — Triage `learner/inbox/`: extract topics, score relevance, deduplicate, cluster, and register into `hints.yaml`.
 - [`status.md`](status.md) — On "how am I doing?", gather profile/curriculum/hints/decay data and produce a short progress narrative. Offer choices, do not auto-transition.
 - [`performance-training.md`](performance-training.md) — Phase overlay (not a fifth mode). When `performance_training.active` is true, layers stage-keyed behavior on top of the active mode.
 

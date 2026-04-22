@@ -144,7 +144,7 @@ def test_required_directory_empty(tmp_path: Path, empty_dir_marker: str, expecte
 @pytest.mark.parametrize(
     "forbidden_path",
     [
-        "instance/profile.yaml",
+        "learner/profile.yaml",
         "wiki/index.md",
         "raw/source.txt",
         "notebook/notes.md",

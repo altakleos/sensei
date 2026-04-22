@@ -8,7 +8,7 @@ Hints whose freshness drops below expire_threshold or whose age exceeds
 expire_after_days are marked expired.
 
 Invoked by protocols as:
-    python hint_decay.py --hints-file instance/hints/hints.yaml \\
+    python hint_decay.py --hints-file learner/hints/hints.yaml \\
                          --half-life-days 14 --expire-threshold 0.2 \\
                          --expire-after-days 28 --now 2026-04-20T00:00:00Z
 

@@ -20,7 +20,7 @@ This separation also means the CLI and folder structure reflect the hierarchy: t
 
 ## Implications
 
-- The learner profile lives at the instance level (`instance/profile.yaml`), not inside any goal folder.
+- The learner profile lives at the learner level (`learner/profile.yaml`), not inside any goal folder.
 - Each goal is a workspace with its own curriculum, exercises, and progress — created, paused, and retired independently.
 - Knowledge transfers across goals: starting a new goal means Sensei already knows everything the learner has demonstrated elsewhere. The curriculum it generates is personalized from day one.
 - When a goal is paused, knowledge decays per the forgetting curve. When resumed, Sensei knows what's rusty and starts with targeted review, not from scratch.

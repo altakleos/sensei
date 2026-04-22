@@ -19,7 +19,7 @@ The [hints spec](../specs/hints.md) defines a system where learners drop externa
 ### Folder Structure
 
 ```
-instance/
+learner/
 ├── inbox/              ← universal drop zone (learner's only touchpoint)
 ├── hints/
 │   ├── active/         ← triaged hints currently boosting curriculum
@@ -48,7 +48,7 @@ If frontmatter is missing, the triage protocol infers metadata from content and 
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| file | string | yes | Relative path from `instance/` to the hint file |
+| file | string | yes | Relative path from `learner/` to the hint file |
 | ingested | date | yes | Date triage processed this hint |
 | relevance | float | yes | 0.0–1.0 score against learner's active goal |
 | topics | list[string] | yes | 1–5 extracted learning topics |
@@ -62,20 +62,20 @@ If frontmatter is missing, the triage protocol infers metadata from content and 
 
 `protocols/hints.md` is a prose-as-code file executed by the LLM agent. Steps:
 
-1. **Scan** — List files in `instance/inbox/` not in registry (by path or content_hash)
+1. **Scan** — List files in `learner/inbox/` not in registry (by path or content_hash)
 2. **Parse** — Extract frontmatter, read content, infer missing metadata
 3. **Extract topics** — Identify 1–5 concrete learning topics
-4. **Score relevance** — Compare topics against `instance/profile.yaml` goal. Score 0.0–1.0
+4. **Score relevance** — Compare topics against `learner/profile.yaml` goal. Score 0.0–1.0
 5. **Deduplicate** — File-level (content_hash), topic-level (>80% overlap), absorption-level (mastery check)
 6. **Cluster** — Group by topic similarity, assign/create cluster name
-7. **Register** — Append entry to `instance/hints/hints.yaml`
-8. **Move** — Move file from `instance/inbox/` to `instance/hints/active/`
+7. **Register** — Append entry to `learner/hints/hints.yaml`
+8. **Move** — Move file from `learner/inbox/` to `learner/hints/active/`
 9. **Report** — Summarize: count processed, relevance breakdown, duplicates flagged
 
 ```mermaid
 sequenceDiagram
     participant L as Learner
-    participant I as instance/inbox/
+    participant I as learner/inbox/
     participant T as Triage Protocol
     participant R as hints.yaml
     participant A as hints/active/
@@ -96,7 +96,7 @@ sequenceDiagram
 - Reuses `scripts/decay.py` (same forgetting-curve model as review protocol)
 - Default half-life: 14 days (configurable via `hints.half_life_days`)
 - Freshness recomputed at session start for all active hints
-- When freshness < `expire_threshold` (default 0.2): status → `expired`, file moved to `instance/hints/archive/`
+- When freshness < `expire_threshold` (default 0.2): status → `expired`, file moved to `learner/hints/archive/`
 
 ### Curriculum Boosting
 
@@ -111,8 +111,8 @@ Boost formula: `topic_priority += hint_relevance * freshness * boost_weight`
 
 ```mermaid
 graph LR
-    inbox[instance/inbox/] -->|scan| triage[protocols/hints.md]
-    profile[instance/profile.yaml] -->|goal context| triage
+    inbox[learner/inbox/] -->|scan| triage[protocols/hints.md]
+    profile[learner/profile.yaml] -->|goal context| triage
     triage -->|register| registry[hints.yaml]
     triage -->|move file| active[hints/active/]
     decay[scripts/decay.py] -->|recompute freshness| registry
@@ -139,7 +139,7 @@ hints:
 
 ### Session Start Integration
 
-1. Check `instance/inbox/` for unprocessed files → nudge learner
+1. Check `learner/inbox/` for unprocessed files → nudge learner
 2. Recompute freshness for all active hints via `scripts/decay.py`
 3. Transition expired hints to archive
 4. Load active hint topics into curriculum boosting context
@@ -154,10 +154,10 @@ V1: all inbox items classify as hints. The triage protocol includes a classifica
 
 | Component | Role | Consumed By |
 |-----------|------|-------------|
-| `instance/inbox/` | Universal drop zone | Triage protocol |
-| `instance/hints/hints.yaml` | Hint registry + state | Triage protocol, curriculum engine, session start |
-| `instance/hints/active/` | Active hint file storage | Triage protocol (writes), curriculum (references) |
-| `instance/hints/archive/` | Terminal hint storage | Decay process (writes) |
+| `learner/inbox/` | Universal drop zone | Triage protocol |
+| `learner/hints/hints.yaml` | Hint registry + state | Triage protocol, curriculum engine, session start |
+| `learner/hints/active/` | Active hint file storage | Triage protocol (writes), curriculum (references) |
+| `learner/hints/archive/` | Terminal hint storage | Decay process (writes) |
 | `protocols/hints.md` | Triage + boosting logic | Engine dispatch table |
 | `scripts/decay.py` | Freshness computation | Session start, triage protocol |
 | `defaults.yaml` → `hints:` | Configuration tunables | All hint components |

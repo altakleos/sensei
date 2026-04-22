@@ -28,8 +28,8 @@ def test_init_creates_instance(tmp_path: Path) -> None:
     assert (sensei_dir / ".sensei-version").is_file()
 
     # Instance config and profile seeded.
-    assert (target / "instance" / "config.yaml").is_file()
-    profile_path = target / "instance" / "profile.yaml"
+    assert (target / "learner" / "config.yaml").is_file()
+    profile_path = target / "learner" / "profile.yaml"
     assert profile_path.is_file()
     profile = yaml.safe_load(profile_path.read_text())
     status, errors = validate_profile(profile)
@@ -38,10 +38,10 @@ def test_init_creates_instance(tmp_path: Path) -> None:
     assert profile["expertise_map"] == {}
 
     # Hints ingestion directories and registry.
-    assert (target / "instance" / "inbox").is_dir()
-    assert (target / "instance" / "hints" / "active").is_dir()
-    assert (target / "instance" / "hints" / "archive").is_dir()
-    hints_reg = yaml.safe_load((target / "instance" / "hints" / "hints.yaml").read_text())
+    assert (target / "learner" / "inbox").is_dir()
+    assert (target / "learner" / "hints" / "active").is_dir()
+    assert (target / "learner" / "hints" / "archive").is_dir()
+    hints_reg = yaml.safe_load((target / "learner" / "hints" / "hints.yaml").read_text())
     assert hints_reg == {"schema_version": 1, "hints": []}
 
     # Boot document and shims.
@@ -58,7 +58,7 @@ def test_init_accepts_learner_id(tmp_path: Path) -> None:
     result = runner.invoke(main, ["init", str(target), "--learner-id", "alice"])
 
     assert result.exit_code == 0, result.output
-    profile = yaml.safe_load((target / "instance" / "profile.yaml").read_text())
+    profile = yaml.safe_load((target / "learner" / "profile.yaml").read_text())
     assert profile["learner_id"] == "alice"
     status, errors = validate_profile(profile)
     assert status == "ok", errors

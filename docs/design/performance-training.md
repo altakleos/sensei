@@ -68,7 +68,7 @@ The LLM conditionally attends to the per-mode section matching the active emphas
 
 ### Profile state tracking
 
-Phase state is tracked at the goal level in `instance/goals/<slug>.yaml`:
+Phase state is tracked at the goal level in `learner/goals/<slug>.yaml`:
 
 ```yaml
 performance_training:
@@ -115,7 +115,7 @@ V1 implements stages 1–4 (learn → automate → verbalize → time pressure).
 | Component | Role | Consumed By |
 |-----------|------|------------|
 | `protocols/performance-training.md` | Phase overlay — per-mode behavioral deltas | engine.md (context composition) |
-| `instance/goals/<slug>.yaml` § `performance_training` | Phase state per goal | engine.md (phase detection), phase protocol |
+| `learner/goals/<slug>.yaml` § `performance_training` | Phase state per goal | engine.md (phase detection), phase protocol |
 | `defaults.yaml` § `performance_training` | Mastery gate + stage thresholds | engine.md, phase protocol |
 
 ## Decisions

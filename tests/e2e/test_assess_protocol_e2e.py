@@ -4,7 +4,7 @@ Scaffolds a fresh Sensei instance, pre-populates profile.yaml with one topic
 at `developing` mastery, invokes `claude -p` with a boot-chain prompt and a
 learner fixture that supplies both the assessment request and a stipulated
 correct answer (since `-p` mode is single-turn), and asserts the LLM
-updated `instance/profile.yaml` per Step 5 of the protocol.
+updated `learner/profile.yaml` per Step 5 of the protocol.
 
 Second Tier-2 test — complements the `goal` E2E in
 `test_goal_protocol_e2e.py`. One data point was an anecdote; two is a
@@ -52,9 +52,9 @@ pytestmark = [
 
 
 def _seed_profile_with_topic(instance_dir: Path, topic: str) -> dict:
-    """Overwrite instance/profile.yaml with a profile containing one pre-populated topic
+    """Overwrite learner/profile.yaml with a profile containing one pre-populated topic
     at mastery 'developing' with attempts=0, correct=0."""
-    profile_path = instance_dir / "instance" / "profile.yaml"
+    profile_path = instance_dir / "learner" / "profile.yaml"
     profile = {
         "schema_version": 0,
         "learner_id": "e2e",
@@ -81,7 +81,7 @@ def _build_prompt(fixture_text: str) -> str:
         "a multi-turn conversation, treat the fixture's stipulated answer and confidence "
         "signal as the learner's response to whatever assessment question you pose. "
         "Follow every step in order, run the mastery-check script, and update "
-        "`instance/profile.yaml` per Step 5. Do not teach, hint, or explain during any "
+        "`learner/profile.yaml` per Step 5. Do not teach, hint, or explain during any "
         "step — the assessor exception is absolute.\n\n"
         "--- learner message begins ---\n"
         f"{fixture_text}\n"
@@ -121,7 +121,7 @@ def test_assess_protocol_updates_profile_with_attempts(tmp_path: Path) -> None:
         f"stdout:\n{completed.stdout}\n\nstderr:\n{completed.stderr}"
     )
 
-    profile_path = tmp_path / "instance" / "profile.yaml"
+    profile_path = tmp_path / "learner" / "profile.yaml"
     after = yaml.safe_load(profile_path.read_text(encoding="utf-8"))
 
     # Schema still valid after the protocol's write.

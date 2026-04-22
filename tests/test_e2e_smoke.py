@@ -29,13 +29,13 @@ def test_full_pipeline(tmp_path: Path) -> None:
     assert r.returncode == 0, r.stderr
 
     # 2. Verify scaffolded structure
-    assert (instance / "instance" / "inbox").is_dir()
-    assert (instance / "instance" / "hints" / "active").is_dir()
-    assert (instance / "instance" / "hints" / "archive").is_dir()
-    assert (instance / "instance" / "hints" / "hints.yaml").is_file()
+    assert (instance / "learner" / "inbox").is_dir()
+    assert (instance / "learner" / "hints" / "active").is_dir()
+    assert (instance / "learner" / "hints" / "archive").is_dir()
+    assert (instance / "learner" / "hints" / "hints.yaml").is_file()
 
     # 3. Drop a hint file into inbox
-    hint_file = instance / "instance" / "inbox" / "rust-ownership.md"
+    hint_file = instance / "learner" / "inbox" / "rust-ownership.md"
     hint_file.write_text(
         "---\n"
         "date: 2026-04-20\n"
@@ -49,7 +49,7 @@ def test_full_pipeline(tmp_path: Path) -> None:
     assert hint_file.exists()
 
     # 4. Run hint_decay on the empty hints.yaml (should succeed with empty list)
-    hints_yaml = instance / "instance" / "hints" / "hints.yaml"
+    hints_yaml = instance / "learner" / "hints" / "hints.yaml"
     r = _run([
         PYTHON, f"{SCRIPTS}/hint_decay.py",
         "--hints-file", str(hints_yaml),
@@ -61,7 +61,7 @@ def test_full_pipeline(tmp_path: Path) -> None:
     assert json.loads(r.stdout) == []
 
     # 5. Create curriculum.yaml with 3 nodes: A (no prereqs), B→A, C→B
-    goal_dir = instance / "instance" / "goals" / "rust-basics"
+    goal_dir = instance / "learner" / "goals" / "rust-basics"
     goal_dir.mkdir(parents=True)
     curriculum = goal_dir / "curriculum.yaml"
     curriculum.write_text(yaml.safe_dump({

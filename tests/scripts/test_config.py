@@ -19,7 +19,7 @@ def test_load_config_valid(tmp_path: Path) -> None:
     engine.mkdir()
     _write_yaml(engine / "defaults.yaml", "a: 1\nb: 2\n")
     instance = tmp_path / "root"
-    _write_yaml(instance / "instance" / "config.yaml", "b: 99\nc: 3\n")
+    _write_yaml(instance / "learner" / "config.yaml", "b: 99\nc: 3\n")
 
     result = load_config(engine, instance)
     assert result == {"a": 1, "b": 99, "c": 3}

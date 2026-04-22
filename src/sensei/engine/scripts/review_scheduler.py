@@ -6,8 +6,8 @@ deduplicates topics that appear in multiple goals (picks lowest freshness),
 and outputs a ranked JSON list sorted by freshness ascending (most stale first).
 
 Invoked by the engine as:
-    python review_scheduler.py --goals-dir instance/goals \
-                               --profile instance/profile.yaml \
+    python review_scheduler.py --goals-dir learner/goals \
+                               --profile learner/profile.yaml \
                                --half-life-days <config.memory.half_life_days> \
                                --stale-threshold <config.memory.stale_threshold> \
                                [--now 2026-04-20T00:00:00Z]

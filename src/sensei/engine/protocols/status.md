@@ -8,18 +8,18 @@ When the learner asks about their progress (e.g., "How am I doing?", "Show my pr
 
 ## Paths assumed
 
-- Profile: `instance/profile.yaml`
+- Profile: `learner/profile.yaml`
 - Engine defaults: `.sensei/defaults.yaml`
-- Instance overrides: `instance/config.yaml`
-- Active goal curriculum: `instance/goals/<active-goal>/curriculum.yaml`
-- Hints: `instance/hints/hints.yaml`
+- Learner overrides: `learner/config.yaml`
+- Active goal curriculum: `learner/goals/<active-goal>/curriculum.yaml`
+- Hints: `learner/hints/hints.yaml`
 - Helpers: `.sensei/scripts/frontier.py`, `.sensei/scripts/decay.py`
 
 ---
 
 ## Step 1 — Guard: empty state
 
-Read `instance/profile.yaml`. If it does not exist or `expertise_map` is empty, say:
+Read `learner/profile.yaml`. If it does not exist or `expertise_map` is empty, say:
 
 > You're brand new here. Want to set a learning goal to get started?
 
@@ -27,12 +27,12 @@ Stop. Do not proceed.
 
 ## Step 2 — Gather data
 
-1. Read `instance/profile.yaml` → extract `expertise_map` (per-topic mastery, last_seen).
-2. Read active goal's `instance/goals/<active-goal>/curriculum.yaml` → completed vs total nodes. If no goal exists, note that.
-3. Read `instance/hints/hints.yaml` → count unprocessed hints.
+1. Read `learner/profile.yaml` → extract `expertise_map` (per-topic mastery, last_seen).
+2. Read active goal's `learner/goals/<active-goal>/curriculum.yaml` → completed vs total nodes. If no goal exists, note that.
+3. Read `learner/hints/hints.yaml` → count unprocessed hints.
 4. Run `python .sensei/scripts/frontier.py --curriculum <path>` → next 3 frontier topics.
 5. For each completed topic, run `python .sensei/scripts/decay.py --last-seen <last_seen> --half-life-days <config.memory.half_life_days> --now <utc-now> --stale-threshold <config.memory.stale_threshold>`. Collect topics where `"stale": true`.
-6. Run `python .sensei/scripts/goal_priority.py --goals-dir instance/goals/ --profile instance/profile.yaml --half-life-days <config.memory.half_life_days> --stale-threshold <config.memory.stale_threshold> --now <utc-now>` → ranked goal list.
+6. Run `python .sensei/scripts/goal_priority.py --goals-dir learner/goals/ --profile learner/profile.yaml --half-life-days <config.memory.half_life_days> --stale-threshold <config.memory.stale_threshold> --now <utc-now>` → ranked goal list.
 7. Pipe the ranked goal list into `python .sensei/scripts/session_allocator.py --goals-json <priority_output> --session-minutes <estimated_session_length> --min-minutes <config.cross_goal.min_session_minutes>` → per-goal time allocations. If `session_allocator.py` fails, skip time budgets — show priority-ranked goals without allocations.
 
 If a helper fails, skip that data point — do not abort.

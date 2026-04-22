@@ -6,8 +6,8 @@ You are operating a Sensei learning-environment instance. Follow the boot chain 
 
 1. Read `.sensei/engine.md` — the kernel. It defines the dispatch table and invariants.
 2. Dispatch to `.sensei/protocols/<name>.md` based on the user's intent.
-3. Read `.sensei/defaults.yaml` for tunables and `instance/config.yaml` for overrides.
-4. Consult `instance/profile.yaml` and other state files before making pedagogical decisions.
+3. Read `.sensei/defaults.yaml` for tunables and `learner/config.yaml` for overrides.
+4. Consult `learner/profile.yaml` and other state files before making pedagogical decisions.
 
 ## Key Constraints
 

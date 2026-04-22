@@ -4,15 +4,15 @@ Reads all YAML goal files in a directory, filters to active/paused goals,
 and scores each by priority weight, decay risk, and recency.
 
 Invoked by the engine as:
-    python goal_priority.py --goals-dir instance/goals \\
-                            --profile instance/profile.yaml \\
+    python goal_priority.py --goals-dir learner/goals \\
+                            --profile learner/profile.yaml \\
                             --half-life-days <config.memory.half_life_days> \\
                             --stale-threshold <config.memory.stale_threshold> \\
                             [--now 2026-04-20T00:00:00Z]
 
 ``--half-life-days`` and ``--stale-threshold`` are optional; they default to
 the engine's shipped defaults (7.0 and 0.5). Pass them explicitly to honor
-instance-level overrides from ``instance/config.yaml``.
+instance-level overrides from ``learner/config.yaml``.
 
 Exits 0 and prints a JSON object with a sorted ``goals`` list to stdout.
 Exits 1 on invalid input (missing directory, bad YAML).

@@ -8,7 +8,7 @@ kind: technical
 
 ## Statement
 
-Tunable values — thresholds, half-lives, intervention cooldowns, quota parameters — live in `src/sensei/engine/defaults.yaml` with instance overrides in `instance/config.yaml`; protocols and helpers reference them by dotpath.
+Tunable values — thresholds, half-lives, intervention cooldowns, quota parameters — live in `src/sensei/engine/defaults.yaml` with learner overrides in `learner/config.yaml`; protocols and helpers reference them by dotpath.
 
 ## Rationale
 

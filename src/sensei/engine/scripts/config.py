@@ -1,4 +1,4 @@
-"""Config loader: deep-merge engine defaults with instance overrides."""
+"""Config loader: deep-merge engine defaults with learner overrides."""
 
 from __future__ import annotations
 
@@ -34,11 +34,11 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 
 def load_config(engine_root: Path, instance_root: Path) -> dict[str, Any]:
-    """Load engine defaults and merge instance overrides on top.
+    """Load engine defaults and merge learner overrides on top.
 
     engine_root: path to the engine directory (contains defaults.yaml).
-    instance_root: path to the instance directory (may contain instance/config.yaml).
+    instance_root: path to the instance directory (may contain learner/config.yaml).
     """
     defaults = _load_yaml(engine_root / "defaults.yaml")
-    overrides = _load_yaml(instance_root / "instance" / "config.yaml")
+    overrides = _load_yaml(instance_root / "learner" / "config.yaml")
     return _deep_merge(defaults, overrides)

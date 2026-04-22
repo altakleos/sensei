@@ -8,8 +8,8 @@ Strengthen mastery through structured challenges that push the learner beyond co
 
 ## Paths assumed
 
-- Profile: `instance/profile.yaml` — `expertise_map` (mastery levels per topic)
-- Active curriculum: `instance/goals/<goal>/curriculum.yaml` — completed/active nodes
+- Profile: `learner/profile.yaml` — `expertise_map` (mastery levels per topic)
+- Active curriculum: `learner/goals/<goal>/curriculum.yaml` — completed/active nodes
 - Helpers: `.sensei/scripts/frontier.py`, `.sensei/scripts/classify_confidence.py`, `.sensei/scripts/mastery_check.py`, `.sensei/scripts/decay.py`
 - Config: `.sensei/defaults.yaml` → `curriculum.mastery_threshold`
 
@@ -18,7 +18,7 @@ Strengthen mastery through structured challenges that push the learner beyond co
 Choose a topic. Priority order:
 1. Topic the learner explicitly requests ("challenge me on caching")
 2. Recently completed topic (mastery fresh, ready to stress-test)
-3. Topic with high mastery approaching stale threshold — for each completed topic `<slug>` with its `last_seen` from `instance/profile.yaml`'s `expertise_map`, run `python .sensei/scripts/decay.py --last-seen <topic.last_seen> --half-life-days <config.memory.half_life_days> --now <utc> --stale-threshold <config.memory.stale_threshold>`, then pick slugs with `"stale": false` but `freshness` < 0.6
+3. Topic with high mastery approaching stale threshold — for each completed topic `<slug>` with its `last_seen` from `learner/profile.yaml`'s `expertise_map`, run `python .sensei/scripts/decay.py --last-seen <topic.last_seen> --half-life-days <config.memory.half_life_days> --now <utc> --stale-threshold <config.memory.stale_threshold>`, then pick slugs with `"stale": false` but `freshness` < 0.6
 4. Active topic the learner claims to understand (verify depth)
 
 If no topic has mastery ≥ solid: "Nothing to challenge yet. Let's learn first." → hand off to `protocols/tutor.md`.
@@ -75,7 +75,7 @@ Track challenges attempted/passed/failed for this topic in this session. After 3
 Run:
 
 ```
-python .sensei/scripts/mastery_check.py --profile instance/profile.yaml --topic <topic> --required mastered
+python .sensei/scripts/mastery_check.py --profile learner/profile.yaml --topic <topic> --required mastered
 ```
 
 Update profile:

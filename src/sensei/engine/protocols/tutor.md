@@ -8,8 +8,8 @@ Teach the active curriculum topic through an explain→probe→reshape cycle unt
 
 ## Paths assumed
 
-- Profile: `instance/profile.yaml`
-- Active curriculum: `instance/goals/<goal>/curriculum.yaml`
+- Profile: `learner/profile.yaml`
+- Active curriculum: `learner/goals/<goal>/curriculum.yaml`
 - Helpers: `.sensei/scripts/frontier.py`, `.sensei/scripts/mutate_graph.py`, `.sensei/scripts/mastery_check.py`, `.sensei/scripts/classify_confidence.py`, `.sensei/scripts/decay.py`
 - Config: `.sensei/defaults.yaml` → `curriculum.mastery_threshold`
 
@@ -24,7 +24,7 @@ python .sensei/scripts/classify_confidence.py --confidence <label> --correctness
 ```
 
 Interpret:
-- **Confident + correct** → run `python .sensei/scripts/mutate_graph.py --operation collapse --node <topic> --curriculum instance/goals/<goal>/curriculum.yaml`. Skip to Step 6 (advance).
+- **Confident + correct** → run `python .sensei/scripts/mutate_graph.py --operation collapse --node <topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Skip to Step 6 (advance).
 - **Partial** (correct but uncertain, or partially correct) → note what they know. Begin Step 2 from the gap, not from scratch.
 - **No knowledge** (incorrect + uncertain) → teach from scratch in Step 2.
 
@@ -56,7 +56,7 @@ python .sensei/scripts/classify_confidence.py --confidence <label> --correctness
 - **Correct + confident** → go to Step 5.
 - **Partially correct** → address the specific misconception. Use a different angle. Return to Step 3. Maximum 2 reshapes before triggering the two-failure rule.
 - **Incorrect** → check for prerequisite gap:
-  - If prerequisite gap detected → run `python .sensei/scripts/mutate_graph.py --operation spawn --node <prerequisite> --prerequisites <current-topic> --curriculum instance/goals/<goal>/curriculum.yaml`. Pause current topic. Restart this protocol at Step 1 for the prerequisite.
+  - If prerequisite gap detected → run `python .sensei/scripts/mutate_graph.py --operation spawn --node <prerequisite> --prerequisites <current-topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Pause current topic. Restart this protocol at Step 1 for the prerequisite.
   - If not a prerequisite gap → choose a different strategy from Step 2's table. Probe again (Step 3).
 
 ## Step 5 — Consolidation
@@ -68,11 +68,11 @@ Before advancing: (1) ask the learner to summarize what they learned (retrieval 
 Run:
 
 ```
-python .sensei/scripts/mastery_check.py --profile instance/profile.yaml --topic <topic> --required solid
+python .sensei/scripts/mastery_check.py --profile learner/profile.yaml --topic <topic> --required solid
 ```
 
 Interpret exit code:
-- **Exit 0 (pass)** → run `python .sensei/scripts/mutate_graph.py --operation complete --node <topic> --curriculum instance/goals/<goal>/curriculum.yaml`. Update profile. Run `python .sensei/scripts/frontier.py --curriculum instance/goals/<goal>/curriculum.yaml` to identify next topic. Return to Step 1 for the next topic, or end if learner signals done.
+- **Exit 0 (pass)** → run `python .sensei/scripts/mutate_graph.py --operation complete --node <topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Update profile. Run `python .sensei/scripts/frontier.py --curriculum learner/goals/<goal>/curriculum.yaml` to identify next topic. Return to Step 1 for the next topic, or end if learner signals done.
 - **Exit 3 (fail)** → note partial progress in profile. Offer: "Want to continue with this topic next session, or move on?"
 - **Exit 1 (error)** → surface error, end session.
 
@@ -93,7 +93,7 @@ Evaluate these after every learner turn:
 If the learner fails the same probe twice after reshaping:
 1. Do NOT explain a third time.
 2. Diagnose: prerequisite gap or conceptual block?
-3. **Prerequisite gap** → run `python .sensei/scripts/mutate_graph.py --operation spawn --node <prerequisite> --prerequisites <current-topic> --curriculum instance/goals/<goal>/curriculum.yaml`. Teach prerequisite first.
+3. **Prerequisite gap** → run `python .sensei/scripts/mutate_graph.py --operation spawn --node <prerequisite> --prerequisites <current-topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Teach prerequisite first.
 4. **Conceptual block** → try a completely different strategy from Step 2's table. If that also fails → mark topic as "needs more time" in profile, suggest returning next session.
 
 ## Constraints

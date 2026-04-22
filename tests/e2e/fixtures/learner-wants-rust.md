@@ -1,6 +1,6 @@
 # E2E Fixture — Learner wants to learn Rust
 
-This is the learner's input for the `goal` protocol. Treat the content below as a single first-turn message from the learner. The protocol must execute to completion in this single turn and emit a schema-valid goal file under `instance/goals/`.
+This is the learner's input for the `goal` protocol. Treat the content below as a single first-turn message from the learner. The protocol must execute to completion in this single turn and emit a schema-valid goal file under `learner/goals/`.
 
 ---
 

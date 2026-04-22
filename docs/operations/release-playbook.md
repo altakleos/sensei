@@ -26,9 +26,9 @@ SENSEI_E2E=1 pytest tests/e2e/ -v --no-cov
 
 Expected: all three Tier-2 tests pass — headless Claude Code reads `AGENTS.md`, dispatches to the named protocol, and emits the expected artifact:
 
-- `test_goal_protocol_produces_schema_valid_goal` — dispatches to `goal`, writes a schema-valid goal file to `instance/goals/`.
-- `test_assess_protocol_updates_profile_with_attempts` — dispatches to `assess`, increments `attempts` and `correct` in `instance/profile.yaml` for a pre-seeded topic.
-- `test_hints_protocol_drains_inbox_and_populates_registry` — dispatches to `hints` triage on a pre-seeded inbox, registers entries into `instance/hints/hints.yaml` and drains `instance/inbox/`.
+- `test_goal_protocol_produces_schema_valid_goal` — dispatches to `goal`, writes a schema-valid goal file to `learner/goals/`.
+- `test_assess_protocol_updates_profile_with_attempts` — dispatches to `assess`, increments `attempts` and `correct` in `learner/profile.yaml` for a pre-seeded topic.
+- `test_hints_protocol_drains_inbox_and_populates_registry` — dispatches to `hints` triage on a pre-seeded inbox, registers entries into `learner/hints/hints.yaml` and drains `learner/inbox/`.
 
 Each run takes ~60–120s on a cold Claude Code cache; three tests is ~4–6 minutes total. A red result means either a protocol prose regression or a schema drift. **Do not tag** until the gate is green.
 

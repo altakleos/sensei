@@ -19,9 +19,9 @@ When the learner signals intent to be assessed (e.g., "quiz me", "am I ready?", 
 
 ## Paths assumed
 
-- Profile: `instance/profile.yaml`
+- Profile: `learner/profile.yaml`
 - Engine defaults: `.sensei/defaults.yaml`
-- Instance overrides: `instance/config.yaml`
+- Learner overrides: `learner/config.yaml`
 - Helpers: `.sensei/scripts/check_profile.py`, `.sensei/scripts/mastery_check.py`, `.sensei/scripts/classify_confidence.py`
 
 Current UTC timestamp is generated with `date -u +%Y-%m-%dT%H:%M:%SZ` whenever the protocol needs "now".
@@ -81,7 +81,7 @@ Parse the JSON output. Record the `quadrant` (mastered / learning / gap / miscon
 
 ## Step 5 — Update the profile
 
-Update `instance/profile.yaml` for this topic:
+Update `learner/profile.yaml` for this topic:
 
 - `last_seen` ← current UTC ISO-8601 timestamp
 - `attempts` ← `attempts + 1`
@@ -90,7 +90,7 @@ Update `instance/profile.yaml` for this topic:
 Write the file. Then validate:
 
 ```
-python .sensei/scripts/check_profile.py --profile instance/profile.yaml
+python .sensei/scripts/check_profile.py --profile learner/profile.yaml
 ```
 
 If validation fails, revert the write, surface the error, and end the session.
@@ -100,7 +100,7 @@ If validation fails, revert the write, surface the error, and end the session.
 Run:
 
 ```
-python .sensei/scripts/mastery_check.py --profile instance/profile.yaml --topic <topic> --required solid
+python .sensei/scripts/mastery_check.py --profile learner/profile.yaml --topic <topic> --required solid
 ```
 
 Interpret the exit code:

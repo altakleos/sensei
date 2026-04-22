@@ -8,8 +8,8 @@ Provide structured, pedagogical feedback on learner-submitted work that develops
 
 ## Paths assumed
 
-- Profile: `instance/profile.yaml` — `expertise_map` (calibrate feedback depth)
-- Active curriculum: `instance/goals/<goal>/curriculum.yaml` — topic context
+- Profile: `learner/profile.yaml` — `expertise_map` (calibrate feedback depth)
+- Active curriculum: `learner/goals/<goal>/curriculum.yaml` — topic context
 - Helpers: `.sensei/scripts/classify_confidence.py`
 - Config: `.sensei/defaults.yaml`
 

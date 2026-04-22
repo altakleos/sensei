@@ -8,9 +8,9 @@ When the learner signals intent to process hints (e.g., "process my hints", "tri
 
 ## Paths
 
-- Profile: `instance/profile.yaml` | Registry: `instance/hints/hints.yaml`
-- Inbox: `instance/inbox/` | Active: `instance/hints/active/` | Archive: `instance/hints/archive/`
-- Defaults: `.sensei/defaults.yaml` | Overrides: `instance/config.yaml`
+- Profile: `learner/profile.yaml` | Registry: `learner/hints/hints.yaml`
+- Inbox: `learner/inbox/` | Active: `learner/hints/active/` | Archive: `learner/hints/archive/`
+- Defaults: `.sensei/defaults.yaml` | Overrides: `learner/config.yaml`
 - Decay: `.sensei/scripts/hint_decay.py`
 
 Config keys (from `hints:` after deep-merge): `hints.half_life_days` (14.0), `hints.boost_weight` (1.5), `hints.max_boost` (2.0), `hints.cluster_threshold` (3), `hints.expire_threshold` (0.2), `hints.expire_after_days` (28), `hints.relevance_floor` (0.3).
@@ -21,7 +21,7 @@ UTC now: `date -u +%Y-%m-%dT%H:%M:%SZ`.
 
 ## Session Start Nudge
 
-At session start: list `instance/inbox/`, compute SHA-256 per file, compare against registry `content_hash` values. If unregistered files exist, say:
+At session start: list `learner/inbox/`, compute SHA-256 per file, compare against registry `content_hash` values. If unregistered files exist, say:
 
 > You have N unprocessed item(s) in your inbox. Want me to triage them?
 
@@ -29,20 +29,20 @@ Do not block. Then run decay recomputation:
 
 ```
 python .sensei/scripts/hint_decay.py \
-  --hints-file instance/hints/hints.yaml \
+  --hints-file learner/hints/hints.yaml \
   --half-life-days <hints.half_life_days> \
   --expire-threshold <hints.expire_threshold> \
   --expire-after-days <hints.expire_after_days> \
   --now <utc>
 ```
 
-`hint_decay.py` recomputes `freshness` and marks any active/triaged hint as `status: expired` when freshness drops below `hints.expire_threshold` or age exceeds `hints.expire_after_days`. Read the updated list from stdout and write it back to `instance/hints/hints.yaml`. For any entry now `status: expired`, move the file from `instance/hints/active/` to `instance/hints/archive/`.
+`hint_decay.py` recomputes `freshness` and marks any active/triaged hint as `status: expired` when freshness drops below `hints.expire_threshold` or age exceeds `hints.expire_after_days`. Read the updated list from stdout and write it back to `learner/hints/hints.yaml`. For any entry now `status: expired`, move the file from `learner/hints/active/` to `learner/hints/archive/`.
 
 ---
 
 ## Step 1 — Scan
 
-List `instance/inbox/`. Compute SHA-256 of each file. Collect files with no matching `content_hash` or `file` path in registry. If none: say "Inbox is empty — nothing to triage." Stop.
+List `learner/inbox/`. Compute SHA-256 of each file. Collect files with no matching `content_hash` or `file` path in registry. If none: say "Inbox is empty — nothing to triage." Stop.
 
 ## Step 2 — Parse
 
@@ -54,7 +54,7 @@ Identify 1–5 concrete learning topics from content. Topics must be specific no
 
 ## Step 4 — Score relevance
 
-Read learner's `goal` from `instance/profile.yaml`. Score each file 0.0–1.0 (max of its topic scores): 1.0 = directly matches goal, 0.5 = tangentially related, 0.0 = no connection.
+Read learner's `goal` from `learner/profile.yaml`. Score each file 0.0–1.0 (max of its topic scores): 1.0 = directly matches goal, 0.5 = tangentially related, 0.0 = no connection.
 
 ## Step 5 — Deduplicate
 
@@ -70,7 +70,7 @@ Compare topics against existing active hints. ≥60% topic overlap → assign sa
 
 ## Step 7 — Register
 
-Append to `instance/hints/hints.yaml`:
+Append to `learner/hints/hints.yaml`:
 
 ```yaml
 - file: hints/active/<filename>
@@ -87,7 +87,7 @@ If relevance < `hints.relevance_floor`: status → `irrelevant`, file path → `
 
 ## Step 8 — Move
 
-Status `active` → move from `instance/inbox/` to `instance/hints/active/`. Status `irrelevant` → move to `instance/hints/archive/`.
+Status `active` → move from `learner/inbox/` to `learner/hints/active/`. Status `irrelevant` → move to `learner/hints/archive/`.
 
 ## Step 9 — Report
 
@@ -122,8 +122,8 @@ Both are final. Archived hints remain in registry for deduplication.
 
 | Condition | Response |
 |---|---|
-| `instance/inbox/` missing | Create it. Say: "Created your inbox folder." |
-| `instance/hints/hints.yaml` missing | Create as empty list `[]`. |
+| `learner/inbox/` missing | Create it. Say: "Created your inbox folder." |
+| `learner/hints/hints.yaml` missing | Create as empty list `[]`. |
 | File unreadable | Skip, report: "Skipped [filename]: unreadable." |
 | Profile missing/invalid | Say: "Cannot triage — profile is missing or invalid." Stop. |
 | Decay helper fails | Log warning, skip freshness recomputation, continue. |
