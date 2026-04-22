@@ -25,7 +25,7 @@ The v1 profile captures the smallest set of signals sufficient to enforce the as
 
 ## Invariants
 
-- **Single source of truth.** Any mentor decision that depends on prior state reads from the profile; no parallel caches, no per-session derived scoreboards that outlive the session.
+- **Single source of truth for mastery state.** Any mentor decision that depends on mastery, scheduling, or gating reads from the profile; no parallel caches, no per-session derived scoreboards that outlive the session. Complementary state stores (e.g., session notes for qualitative observations) may inform teaching approach and session continuity but never override profile-derived decisions.
 - **Mastery is ordered.** The mastery axis has five levels in strict order: `none < shaky < developing < solid < mastered`. "Advanced" is never a level below "mastered" or above it; there is no sixth level at v1.
 <!-- Diagram: illustrates §Invariants — mastery levels -->
 ```mermaid
