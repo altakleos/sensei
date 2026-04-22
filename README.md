@@ -76,7 +76,7 @@ Sensei is a program written in prose. The CLI scaffolds a folder containing mark
 
 Your learner profile updates after every interaction, so the mentor evolves with you. Swap the LLM and nothing is lost — all state lives in local files you own.
 
-The pedagogy is grounded in [21 principles](docs/foundations/) drawn from [58 research sources](docs/research/bibliography.md).
+The pedagogy is grounded in [21 principles](docs/foundations/) informed by [58 research sources](docs/research/bibliography.md).
 
 ## Supported Tools
 
