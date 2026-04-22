@@ -27,7 +27,12 @@ from sensei.engine.scripts._atomic import atomic_write_text
 CURRENT_PROFILE_VERSION = 0
 CURRENT_GOAL_VERSION = 0
 
-# Migration registries: version -> function that upgrades FROM that version
+# Migration registries: version -> function that upgrades FROM that version.
+#
+# Contract: each registered function must be PURE — accept a dict, return a
+# new dict without mutating the input. This keeps a partially-failed
+# migration chain from leaving the caller's dict in a half-transformed
+# state (the outer loop only rebinds its local reference on success).
 PROFILE_MIGRATIONS: dict[int, Any] = {
     # Example for future use:
     # 0: _migrate_profile_0_to_1,
@@ -40,26 +45,36 @@ GOAL_MIGRATIONS: dict[int, Any] = {
 
 
 def migrate_profile(data: dict[str, Any]) -> dict[str, Any]:
-    """Migrate a profile dict to the current schema version. Returns the migrated dict."""
+    """Migrate a profile dict to the current schema version. Returns the migrated dict.
+
+    Migration functions in PROFILE_MIGRATIONS must be pure: they accept a
+    dict and return a new dict. The caller's input is not mutated on a
+    partial-failure path.
+    """
     version = data.get("schema_version", 0)
     while version < CURRENT_PROFILE_VERSION:
         fn = PROFILE_MIGRATIONS.get(version)
         if fn is None:
             raise ValueError(f"No migration path from profile schema_version {version}")
-        fn(data)
+        data = fn(data)
         version += 1
         data["schema_version"] = version
     return data
 
 
 def migrate_goal(data: dict[str, Any]) -> dict[str, Any]:
-    """Migrate a goal dict to the current schema version. Returns the migrated dict."""
+    """Migrate a goal dict to the current schema version. Returns the migrated dict.
+
+    Migration functions in GOAL_MIGRATIONS must be pure: they accept a
+    dict and return a new dict. The caller's input is not mutated on a
+    partial-failure path.
+    """
     version = data.get("schema_version", 0)
     while version < CURRENT_GOAL_VERSION:
         fn = GOAL_MIGRATIONS.get(version)
         if fn is None:
             raise ValueError(f"No migration path from goal schema_version {version}")
-        fn(data)
+        data = fn(data)
         version += 1
         data["schema_version"] = version
     return data
@@ -75,10 +90,10 @@ def migrate_file(path: Path, file_type: str) -> bool:
     old_version = data.get("schema_version", 0)
 
     if file_type == "profile":
-        migrate_profile(data)
+        data = migrate_profile(data)
         target = CURRENT_PROFILE_VERSION
     elif file_type == "goal":
-        migrate_goal(data)
+        data = migrate_goal(data)
         target = CURRENT_GOAL_VERSION
     else:
         raise ValueError(f"Unknown file type: {file_type}")
@@ -86,7 +101,7 @@ def migrate_file(path: Path, file_type: str) -> bool:
     if old_version == target:
         return False
 
-    atomic_write_text(path, yaml.dump(data, default_flow_style=False, sort_keys=False))
+    atomic_write_text(path, yaml.safe_dump(data, default_flow_style=False, sort_keys=False))
     return True
 
 

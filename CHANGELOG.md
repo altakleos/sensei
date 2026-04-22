@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Fixed
+
+- Atomic writes now fsync the containing directory on POSIX after `os.replace`, closing a gap where the rename's dirent update could be lost on power loss (ADR-0004 durability contract). Applies to both `atomic_write_text` (learner state files) and `_atomic_replace_engine` (each rename in the `.sensei/` swap).
+- `sensei upgrade` now migrates learner data **before** swapping the engine bundle. A migration failure no longer leaves a new engine paired with old-format data — the old engine remains on disk and is still compatible with the unmigrated data.
+- `migrate.py` writeback uses `yaml.safe_dump` instead of `yaml.dump`, preventing future migrations from emitting unsafe Python-tagged YAML that `safe_load` would then refuse to re-read.
+- `review_scheduler.py` skips malformed goal YAML with a warning on stderr instead of crashing the cross-goal pipeline on a single corrupt file.
+- `frontier.py` priority is now computed from alphabetical slug order instead of YAML insertion order, removing hidden coupling between `curriculum.yaml` key layout and teaching sequence.
+
+### Changed
+
+- Migration function contract (`migrate.py`): functions registered in `PROFILE_MIGRATIONS` / `GOAL_MIGRATIONS` must be **pure** — accept a dict and return a new dict, without mutating the input. Guarantees that a partially-failed migration chain cannot leave the caller's dict half-transformed. Registries are empty today, so no external callers are affected.
+
 ## [0.1.0a11] — 2026-04-21
 
 ### Added

@@ -108,6 +108,59 @@ def test_migrate_goal_unknown_source_version_raises() -> None:
         })
 
 
+def test_migrate_profile_pure_contract_on_partial_failure(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A registered migration that raises partway must not leave the
+    caller's input dict mutated. Migrations are required to be pure:
+    accept a dict, return a new dict."""
+    from sensei.engine.scripts import migrate as m
+
+    def failing_migration(data: dict) -> dict:
+        # Simulate a pure migration that begins constructing a new dict
+        # and fails before returning. The caller's original dict is
+        # untouched because we mutate the copy, not the input.
+        new_data = dict(data)
+        new_data["partial_change"] = "applied"
+        raise RuntimeError("simulated mid-migration failure")
+
+    monkeypatch.setitem(m.PROFILE_MIGRATIONS, 0, failing_migration)
+    monkeypatch.setattr(m, "CURRENT_PROFILE_VERSION", 1)
+
+    original = {"schema_version": 0, "learner_id": "alice", "expertise_map": {}}
+    snapshot = dict(original)
+
+    with pytest.raises(RuntimeError, match="simulated mid-migration failure"):
+        m.migrate_profile(original)
+
+    # Caller's input dict is unchanged — no schema_version bump, no stray fields.
+    assert original == snapshot
+    assert "partial_change" not in original
+
+
+def test_migrate_profile_pure_chain_returns_new_dict(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A successful pure migration returns a new dict with the version bumped
+    to match CURRENT_PROFILE_VERSION. The caller's input dict is not required
+    to be mutated (pure contract)."""
+    from sensei.engine.scripts import migrate as m
+
+    def pure_migration(data: dict) -> dict:
+        new = dict(data)
+        new["added_by_migration"] = True
+        return new
+
+    monkeypatch.setitem(m.PROFILE_MIGRATIONS, 0, pure_migration)
+    monkeypatch.setattr(m, "CURRENT_PROFILE_VERSION", 1)
+
+    original = {"schema_version": 0, "learner_id": "alice", "expertise_map": {}}
+    snapshot = dict(original)
+
+    result = m.migrate_profile(original)
+
+    assert result["schema_version"] == 1
+    assert result["added_by_migration"] is True
+    # Caller's original dict is untouched.
+    assert original == snapshot
+
+
 # --- main(argv) CLI entry ---
 
 

@@ -174,3 +174,35 @@ def test_script_runs_as_subprocess(tmp_path: Path) -> None:
     )
     parsed = json.loads(result.stdout)
     assert parsed["frontier"] == ["A"]
+
+
+def test_frontier_order_independent_of_yaml_key_order(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Frontier ordering must be deterministic on slug, not on YAML key layout.
+
+    Before the fix, priority was assigned by `enumerate(nodes.items())` — so
+    reordering keys in `curriculum.yaml` silently re-sequenced the frontier.
+    Writing the file with a non-alphabetical key order exercises the
+    difference between the old and new behaviours.
+    """
+    cur = tmp_path / "curriculum.yaml"
+    # Non-alphabetical key order on disk — charlie, alpha, bravo.
+    cur.write_text(
+        "nodes:\n"
+        "  charlie:\n"
+        "    state: spawned\n"
+        "    prerequisites: []\n"
+        "  alpha:\n"
+        "    state: spawned\n"
+        "    prerequisites: []\n"
+        "  bravo:\n"
+        "    state: spawned\n"
+        "    prerequisites: []\n",
+        encoding="utf-8",
+    )
+    rc = main(["--curriculum", str(cur)])
+    assert rc == 0
+    out = json.loads(capsys.readouterr().out)
+    # Post-fix: alphabetical ordering regardless of file layout.
+    assert out["frontier"] == ["alpha", "bravo", "charlie"]

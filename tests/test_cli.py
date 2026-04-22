@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+import stat
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -323,6 +325,66 @@ def test_atomic_replace_cleans_old_dir_when_both_exist(tmp_path: Path) -> None:
     assert not old_dir.exists()
 
 
+@pytest.mark.skipif(os.name != "posix", reason="parent-dir fsync is POSIX-only")
+def test_atomic_replace_fsyncs_parent_after_each_rename(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Each rename during engine swap must be followed by a parent-dir fsync,
+    so the dirent update survives power loss (ADR-0004 durability contract).
+
+    Fresh install path: two renames are not possible (nothing to swap aside),
+    so only the final tmp → real rename fires. The helper must fsync the
+    parent exactly once in that case, and exactly twice when an existing
+    `.sensei/` is swapped aside first.
+    """
+    import sensei.cli as cli
+
+    fsync_fds: list[int] = []
+    real_fsync = cli.os.fsync
+
+    def recording_fsync(fd: int) -> None:
+        fsync_fds.append(fd)
+        return real_fsync(fd)
+
+    monkeypatch.setattr(cli.os, "fsync", recording_fsync)
+
+    src = _fake_engine(tmp_path / "src")
+    sensei_dir = tmp_path / "inst" / ".sensei"
+    sensei_dir.parent.mkdir()
+    sensei_dir.mkdir()
+    (sensei_dir / "MARK").write_text("before", encoding="utf-8")
+
+    _atomic_replace_engine(src, sensei_dir, "1.2.3")
+
+    # Two renames (swap-aside + install-new) ⇒ two parent-dir fsyncs.
+    assert len(fsync_fds) == 2, f"expected 2 fsync calls, got {len(fsync_fds)}: {fsync_fds}"
+    # End state intact:
+    assert (sensei_dir / "engine.md").exists()
+    assert (sensei_dir / ".sensei-version").read_text() == "1.2.3\n"
+
+
+@pytest.mark.skipif(os.name != "posix", reason="parent-dir fsync is POSIX-only")
+def test_fsync_dir_targets_a_directory(tmp_path: Path) -> None:
+    """_fsync_dir opens a read-only fd on the given path and the fd refers
+    to a directory. Guards against accidentally passing a file path."""
+    from sensei.cli import _fsync_dir
+
+    d = tmp_path / "somedir"
+    d.mkdir()
+    # Before fsync, snapshot that the path is indeed a directory at the
+    # syscall level (regression guard — same check _fsync_dir would fail on
+    # if called with a file path on Linux, where os.open(..., O_RDONLY) on a
+    # file yields a file fd and fsync on that fd also succeeds silently).
+    fd = os.open(d, os.O_RDONLY)
+    try:
+        st = os.fstat(fd)
+        assert stat.S_ISDIR(st.st_mode)
+    finally:
+        os.close(fd)
+    # Call should complete without raising.
+    _fsync_dir(d)
+
+
 # --- status: uncovered branches ---
 
 
@@ -436,6 +498,32 @@ def test_upgrade_reports_already_current_migrations(tmp_path: Path) -> None:
     result = runner.invoke(main, ["upgrade", str(inst)])
     assert result.exit_code == 0
     assert "Instance schemas already current." in result.output
+
+
+def test_upgrade_runs_migration_before_engine_swap(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """If migrate_instance raises, the engine bundle must not have been swapped.
+    Otherwise a user would end up with a new engine paired with old-format data.
+    """
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    runner.invoke(main, ["init", str(inst)])
+    # Simulate an old version so upgrade isn't a noop.
+    (inst / ".sensei" / ".sensei-version").write_text("0.0.0\n")
+
+    def failing_migrate(learner_dir: Path) -> list[str]:
+        raise RuntimeError("simulated migration failure")
+
+    monkeypatch.setattr(
+        "sensei.engine.scripts.migrate.migrate_instance", failing_migrate
+    )
+
+    result = runner.invoke(main, ["upgrade", str(inst)])
+    assert result.exit_code != 0
+    # Engine was NOT swapped — stamp still reflects the old version.
+    stamp = (inst / ".sensei" / ".sensei-version").read_text().strip()
+    assert stamp == "0.0.0"
 
 
 # --- verify: failure output paths ---

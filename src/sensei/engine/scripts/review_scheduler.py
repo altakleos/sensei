@@ -53,6 +53,10 @@ def schedule_reviews(
 
     Each item: ``{"topic": slug, "freshness": float, "elapsed_days": float,
     "goals": [goal_id, ...]}``.  Sorted by freshness ascending (most stale first).
+
+    Malformed goal YAML files are skipped with a warning printed to stderr —
+    a single corrupt goal must not prevent review scheduling across the
+    learner's remaining goals.
     """
     if now is None:
         now = datetime.now(tz=timezone.utc)
@@ -68,8 +72,15 @@ def schedule_reviews(
     candidates: dict[str, dict[str, Any]] = {}
 
     for gf in sorted(goals_dir.glob("*.yaml")):
-        with gf.open("r", encoding="utf-8") as fh:
-            goal = yaml.safe_load(fh)
+        try:
+            with gf.open("r", encoding="utf-8") as fh:
+                goal = yaml.safe_load(fh)
+        except yaml.YAMLError as exc:
+            print(
+                f"warning: skipping malformed goal file {gf.name}: {exc}",
+                file=sys.stderr,
+            )
+            continue
         if not isinstance(goal, dict):
             continue
 

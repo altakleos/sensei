@@ -9,6 +9,7 @@ Subcommands:
 
 from __future__ import annotations
 
+import os
 import re
 import shutil
 import sys
@@ -69,6 +70,22 @@ def _engine_source() -> Path:
     return engine_dir
 
 
+def _fsync_dir(path: Path) -> None:
+    """fsync *path* as a directory so recent rename dirents are durable.
+
+    POSIX rename(2) only guarantees atomicity — not durability. Without an
+    fsync on the containing directory, a power loss after rename() returns
+    can lose the dirent update. No-op on non-POSIX.
+    """
+    if os.name != "posix":
+        return
+    fd = os.open(path, os.O_RDONLY)
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+
+
 def _atomic_replace_engine(src: Path, sensei_dir: Path, version: str) -> None:
     """Install or replace `sensei_dir` with a fresh copy of `src`, atomically.
 
@@ -83,6 +100,9 @@ def _atomic_replace_engine(src: Path, sensei_dir: Path, version: str) -> None:
       3. Rename `.sensei.tmp/` into place as `.sensei/`.
       4. Remove `.sensei.old/`.
 
+    Each rename is followed by _fsync_dir on the parent so the dirent update
+    survives power loss.
+
     Crash recovery: if a previous run died between steps 2 and 3, the next
     call (or any subsequent `sensei` command that invokes this helper) sees
     `.sensei.old/` present and `.sensei/` missing, and restores the old.
@@ -95,6 +115,7 @@ def _atomic_replace_engine(src: Path, sensei_dir: Path, version: str) -> None:
     # Crash recovery from a prior interrupted swap.
     if old_dir.exists() and not sensei_dir.exists():
         old_dir.rename(sensei_dir)
+        _fsync_dir(parent)
     elif old_dir.exists() and sensei_dir.exists():
         # Prior run completed the new install but died before cleanup.
         shutil.rmtree(old_dir)
@@ -116,12 +137,15 @@ def _atomic_replace_engine(src: Path, sensei_dir: Path, version: str) -> None:
     try:
         if sensei_dir.exists():
             sensei_dir.rename(old_dir)
+            _fsync_dir(parent)
             swapped_aside = True
         tmp_dir.rename(sensei_dir)
+        _fsync_dir(parent)
     except Exception:
         # Best-effort rollback: put the old dir back if we moved it.
         if swapped_aside and old_dir.exists() and not sensei_dir.exists():
             old_dir.rename(sensei_dir)
+            _fsync_dir(parent)
         shutil.rmtree(tmp_dir, ignore_errors=True)
         raise
 
@@ -315,17 +339,23 @@ def upgrade(target: Path) -> None:
         click.echo(f"Already at {__version__}. Nothing to upgrade.")
         return
 
-    # Replace engine bundle atomically (learner/ is untouched).
-    _atomic_replace_engine(_engine_source(), sensei_dir, __version__)
-
-    click.echo(f"Upgraded .sensei/ from {old_version} → {__version__}")
-
-    # Migrate learner state files to current schema versions
+    # Migrate learner state files BEFORE swapping the engine. If migration
+    # fails (bad YAML, permissions, failed schema transform), the existing
+    # engine remains on disk and is still compatible with the unmigrated
+    # data. Swapping first would leave a new engine paired with old-format
+    # data if a subsequent migration failed.
     learner_dir = target / "learner"
+    migrated: list[str] = []
     if learner_dir.exists():
         from sensei.engine.scripts.migrate import migrate_instance
 
         migrated = migrate_instance(learner_dir)
+
+    # Replace engine bundle atomically (learner/ is untouched).
+    _atomic_replace_engine(_engine_source(), sensei_dir, __version__)
+
+    click.echo(f"Upgraded .sensei/ from {old_version} → {__version__}")
+    if learner_dir.exists():
         if migrated:
             for desc in migrated:
                 click.echo(f"  Migrated: {desc}")

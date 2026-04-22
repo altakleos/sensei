@@ -32,10 +32,17 @@ def compute_frontier(
     boost_weight: float = 1.5,
     max_boost: float = 2.0,
 ) -> list[str]:
-    """Return frontier slugs sorted by priority (lower index = higher priority)."""
+    """Return frontier slugs sorted by priority (lower priority = higher rank).
+
+    Base priority is the alphabetical index of the node slug. This keeps the
+    frontier deterministic regardless of `curriculum.yaml` key order —
+    editing the file layout does not silently re-sequence teaching. Hint
+    boosting still lowers priority (promotes) exactly as before.
+    """
     frontier: list[tuple[float, str]] = []
 
-    for idx, (slug, node) in enumerate(nodes.items()):
+    for idx, slug in enumerate(sorted(nodes)):
+        node = nodes[slug]
         if node.get("state") in _EXCLUDED_STATES:
             continue
         prereqs = node.get("prerequisites", [])

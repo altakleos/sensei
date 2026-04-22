@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+import stat
 from pathlib import Path
 from unittest.mock import patch
 
@@ -80,3 +82,43 @@ def test_overwrites_existing_file(tmp_path: Path) -> None:
     target.write_text("old: data\n", encoding="utf-8")
     atomic_write_text(target, "new: data\n")
     assert target.read_text(encoding="utf-8") == "new: data\n"
+
+
+@pytest.mark.skipif(os.name != "posix", reason="parent-dir fsync is POSIX-only")
+def test_fsyncs_parent_directory_after_replace(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The rename's dirent update is only durable after fsync(parent_dir_fd).
+
+    Verify both the file-fd fsync AND the parent-dir fsync happen, and that
+    the parent-dir fsync fires AFTER os.replace (not before — it would be a
+    no-op before the rename is visible to the directory entry).
+    """
+    import sensei.engine.scripts._atomic as atomic_mod
+
+    events: list[str] = []
+    real_fsync = atomic_mod.os.fsync
+    real_replace = atomic_mod.os.replace
+
+    def tracking_fsync(fd: int) -> None:
+        try:
+            st = os.fstat(fd)
+            kind = "dir" if stat.S_ISDIR(st.st_mode) else "file"
+        except OSError:
+            kind = "?"
+        events.append(f"fsync:{kind}")
+        return real_fsync(fd)
+
+    def tracking_replace(src: str, dst: str) -> None:
+        events.append("replace")
+        return real_replace(src, dst)
+
+    monkeypatch.setattr(atomic_mod.os, "fsync", tracking_fsync)
+    monkeypatch.setattr(atomic_mod.os, "replace", tracking_replace)
+
+    target = tmp_path / "profile.yaml"
+    atomic_write_text(target, "key: value\n")
+
+    # Must see: fsync(file) → replace → fsync(dir).
+    assert events == ["fsync:file", "replace", "fsync:dir"]
+    assert target.read_text(encoding="utf-8") == "key: value\n"

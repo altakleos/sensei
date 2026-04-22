@@ -353,6 +353,48 @@ class TestCrossGoalIntegration:
         alloc_slugs = [a["slug"] for a in result["allocations"]]
         assert "interview-prep" in alloc_slugs
 
+    def test_review_scheduler_skips_malformed_goal_yaml(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """One corrupt goal file must not crash cross-goal review scheduling —
+        it should be skipped with a warning on stderr, and reviews for the
+        remaining goals should still be produced (exit 0)."""
+        from sensei.engine.scripts.review_scheduler import main as rs_main
+
+        goals_dir = tmp_path / "goals"
+        goals_dir.mkdir()
+
+        # One valid goal with a stale completed topic.
+        good = _goal("good-goal", nodes={
+            "recursion": {"state": "completed", "prerequisites": []},
+        })
+        _write_yaml(goals_dir, "good.yaml", good)
+
+        # One malformed YAML that raises on safe_load.
+        (goals_dir / "bad.yaml").write_text("{{{ not yaml", encoding="utf-8")
+
+        # Profile: 'recursion' stale (30 days old with 7-day half-life).
+        prof_data = _profile({"recursion": "solid"})
+        prof_data["expertise_map"]["recursion"]["last_seen"] = "2026-03-21T00:00:00Z"
+        prof = _write_yaml(tmp_path, "profile.yaml", prof_data)
+
+        rc = rs_main([
+            "--goals-dir", str(goals_dir),
+            "--profile", str(prof),
+            "--half-life-days", "7",
+            "--stale-threshold", "0.5",
+            "--now", "2026-04-20T00:00:00Z",
+        ])
+        captured = capsys.readouterr()
+        assert rc == 0, captured.err
+        reviews = json.loads(captured.out)
+        # The good goal's stale topic is returned …
+        assert len(reviews) == 1
+        assert reviews[0]["topic"] == "recursion"
+        # … and the malformed file is surfaced via a stderr warning.
+        assert "bad.yaml" in captured.err
+        assert "warning" in captured.err.lower() or "skipping" in captured.err.lower()
+
     def test_invariant4_resume_planner_stale_topics(
         self, scenario: dict, capsys: pytest.CaptureFixture[str]
     ) -> None:

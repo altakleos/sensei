@@ -18,7 +18,10 @@ def atomic_write_text(path: Path, content: str) -> None:
     1. Write to a sibling .tmp file (same directory → same filesystem).
     2. fsync the file descriptor so bytes reach storage before rename.
     3. os.replace() for an atomic POSIX rename(2); also safe on Windows.
-    4. On any exception, remove the tmp file to avoid leaving debris.
+    4. fsync the parent directory so the rename's dirent update is durable
+       across power loss. Required on POSIX — the file fsync covers data
+       but not the containing directory entry. No-op on non-POSIX.
+    5. On any exception, remove the tmp file to avoid leaving debris.
     """
     tmp = path.with_suffix(path.suffix + ".tmp")
     try:
@@ -28,6 +31,12 @@ def atomic_write_text(path: Path, content: str) -> None:
             fh.flush()
             os.fsync(fh.fileno())
         os.replace(tmp, path)
+        if os.name == "posix":
+            dir_fd = os.open(path.parent, os.O_RDONLY)
+            try:
+                os.fsync(dir_fd)
+            finally:
+                os.close(dir_fd)
     except Exception:
         with contextlib.suppress(OSError):
             tmp.unlink(missing_ok=True)
