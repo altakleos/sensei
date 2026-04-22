@@ -17,6 +17,14 @@ sensei init ~/learning
 cd ~/learning            # open with any LLM coding agent
 ```
 
+or with [uv](https://docs.astral.sh/uv/):
+
+```bash
+uv pip install sensei-tutor
+sensei init ~/learning
+cd ~/learning
+```
+
 ---
 
 Sensei turns any LLM coding agent into a structured, adaptive mentor. Install a CLI, scaffold a folder, open it with your agent. The agent reads Sensei's protocols and becomes a tutor that tracks what you know, what you've forgotten, and what to teach next.
