@@ -192,3 +192,127 @@ def test_script_runs_as_subprocess(tmp_path: Path) -> None:
     )
     parsed = json.loads(result.stdout)
     assert parsed["new_state"] == "active"
+
+
+# --- Coverage: _do_activate node not in nodes (line 96) ---
+
+
+def test_activate_fails_nonexistent_node(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    cur = _make_curriculum(tmp_path, {
+        "A": {"state": "completed", "prerequisites": []},
+    })
+    rc, out = _run(cur, "activate", "Z", capsys)
+    assert rc == 1
+    assert "does not exist" in out["error"]
+
+
+# --- Coverage: _do_collapse node not in nodes (line 115) ---
+
+
+def test_collapse_fails_nonexistent_node(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    cur = _make_curriculum(tmp_path, {
+        "A": {"state": "completed", "prerequisites": []},
+    })
+    rc, out = _run(cur, "collapse", "Z", capsys)
+    assert rc == 1
+    assert "does not exist" in out["error"]
+
+
+# --- Coverage: _do_spawn node already exists (line 124) ---
+
+
+def test_spawn_fails_node_already_exists(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    cur = _make_curriculum(tmp_path, {
+        "A": {"state": "completed", "prerequisites": []},
+    })
+    rc, out = _run(cur, "spawn", "A", capsys, prerequisites=["A"])
+    assert rc == 1
+    assert "already exists" in out["error"]
+
+
+# --- Coverage: _do_spawn no prerequisites (line 126) ---
+
+
+def test_spawn_fails_no_prerequisites(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    cur = _make_curriculum(tmp_path, {
+        "A": {"state": "completed", "prerequisites": []},
+    })
+    rc = main(["--curriculum", str(cur), "--operation", "spawn", "--node", "B"])
+    assert rc == 1
+    out = json.loads(capsys.readouterr().out)
+    assert "prerequisites required" in out["error"]
+
+
+# --- Coverage: _do_expand node not in nodes (line 138) ---
+
+
+def test_expand_fails_nonexistent_node(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    cur = _make_curriculum(tmp_path, {
+        "A": {"state": "completed", "prerequisites": []},
+    })
+    subgraph = {"nodes": {"X": {"prerequisites": []}}}
+    rc, out = _run(cur, "expand", "Z", capsys, subgraph=subgraph)
+    assert rc == 1
+    assert "does not exist" in out["error"]
+
+
+# --- Coverage: _do_expand no subgraph (line 140) ---
+
+
+def test_expand_fails_no_subgraph(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    cur = _make_curriculum(tmp_path, {
+        "A": {"state": "completed", "prerequisites": []},
+    })
+    rc = main(["--curriculum", str(cur), "--operation", "expand", "--node", "A"])
+    assert rc == 1
+    out = json.loads(capsys.readouterr().out)
+    assert "subgraph required" in out["error"]
+
+
+# --- Coverage: mutate() unknown op (line 184) — not reachable via CLI due to argparse choices,
+#     but exercised via direct mutate() call ---
+
+from sensei.engine.scripts.mutate_graph import mutate
+
+
+def test_mutate_unknown_op_returns_error() -> None:
+    nodes = {"A": {"state": "completed", "prerequisites": []}}
+    code, state = mutate(nodes, "destroy", "A", None, None)
+    assert code == 1
+    assert state == ""
+
+
+# --- Coverage: YAML parse error (lines 203-204) ---
+
+
+def test_main_yaml_parse_error(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    bad = tmp_path / "curriculum.yaml"
+    bad.write_text(":\n  - :\n    bad: [unclosed", encoding="utf-8")
+    rc = main(["--curriculum", str(bad), "--operation", "activate", "--node", "A"])
+    assert rc == 1
+    out = json.loads(capsys.readouterr().out)
+    assert "yaml parse error" in out["error"]
+
+
+# --- Coverage: no 'nodes' key (line 207) ---
+
+
+def test_main_missing_nodes_key(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    bad = tmp_path / "curriculum.yaml"
+    bad.write_text(yaml.safe_dump({"title": "no nodes here"}), encoding="utf-8")
+    rc = main(["--curriculum", str(bad), "--operation", "activate", "--node", "A"])
+    assert rc == 1
+    out = json.loads(capsys.readouterr().out)
+    assert "nodes" in out["error"]
+
+
+# --- Coverage: invalid subgraph JSON (lines 217-218) ---
+
+
+def test_main_invalid_subgraph_json(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    cur = _make_curriculum(tmp_path, {"A": {"state": "completed", "prerequisites": []}})
+    rc = main(["--curriculum", str(cur), "--operation", "expand", "--node", "A",
+               "--subgraph", "{bad json}"])
+    assert rc == 1
+    out = json.loads(capsys.readouterr().out)
+    assert "invalid subgraph JSON" in out["error"]

@@ -282,3 +282,116 @@ def test_script_runs_as_subprocess(tmp_path: Path) -> None:
     )
     parsed = json.loads(result.stdout)
     assert parsed["migrated"] == []
+
+
+# --- Coverage: goal migration loop body (lines 81-83) ---
+
+
+def test_migrate_goal_runs_registered_migration(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Exercise the goal migration loop body: fn(data), version bump, schema_version set."""
+    from sensei.engine.scripts import migrate as m
+
+    def goal_v0_to_v1(data: dict) -> dict:
+        new = dict(data)
+        new["migrated_field"] = True
+        return new
+
+    monkeypatch.setitem(m.GOAL_MIGRATIONS, 0, goal_v0_to_v1)
+    monkeypatch.setattr(m, "CURRENT_GOAL_VERSION", 1)
+
+    result = m.migrate_goal({"schema_version": 0, "goal_id": "g", "nodes": {}})
+    assert result["schema_version"] == 1
+    assert result["migrated_field"] is True
+
+
+# --- Coverage: migrate_file goal branch (lines 100-101) ---
+
+
+def test_migrate_file_goal_type(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """migrate_file with file_type='goal' exercises the goal branch."""
+    from sensei.engine.scripts import migrate as m
+
+    def goal_v0_to_v1(data: dict) -> dict:
+        new = dict(data)
+        new["upgraded"] = True
+        return new
+
+    monkeypatch.setitem(m.GOAL_MIGRATIONS, 0, goal_v0_to_v1)
+    monkeypatch.setattr(m, "CURRENT_GOAL_VERSION", 1)
+
+    goal = tmp_path / "goal.yaml"
+    goal.write_text(yaml.safe_dump({"schema_version": 0, "goal_id": "g", "nodes": {}}))
+
+    assert m.migrate_file(goal, "goal") is True
+    reloaded = yaml.safe_load(goal.read_text())
+    assert reloaded["schema_version"] == 1
+    assert reloaded["upgraded"] is True
+
+
+# --- Coverage: instance/ → learner/ rename (lines 119-121) ---
+
+
+def test_migrate_instance_renames_old_instance_dir(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """When instance/ exists but learner/ does not, rename instance/ → learner/."""
+    old_dir = tmp_path / "instance"
+    old_dir.mkdir()
+    (old_dir / "profile.yaml").write_text(yaml.safe_dump({
+        "schema_version": CURRENT_PROFILE_VERSION,
+        "learner_id": "alice",
+        "expertise_map": {},
+    }))
+
+    learner_dir = tmp_path / "learner"
+    result = migrate_instance(learner_dir)
+
+    assert any("directory renamed" in r for r in result)
+    assert learner_dir.exists()
+    assert not old_dir.exists()
+    assert "Renamed instance/" in capsys.readouterr().out
+
+
+# --- Coverage: profile migration applied in migrate_instance (line 125) ---
+
+
+def test_migrate_instance_migrates_profile(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """migrate_instance applies profile migration when version is behind."""
+    from sensei.engine.scripts import migrate as m
+
+    def profile_v0_to_v1(data: dict) -> dict:
+        return {**data, "new_field": True}
+
+    monkeypatch.setitem(m.PROFILE_MIGRATIONS, 0, profile_v0_to_v1)
+    monkeypatch.setattr(m, "CURRENT_PROFILE_VERSION", 1)
+
+    learner = tmp_path / "learner"
+    learner.mkdir()
+    (learner / "profile.yaml").write_text(yaml.safe_dump({
+        "schema_version": 0, "learner_id": "alice", "expertise_map": {},
+    }))
+
+    result = m.migrate_instance(learner)
+    assert any("profile.yaml" in r for r in result)
+
+
+# --- Coverage: goal file migration in migrate_instance (lines 129-130) ---
+
+
+def test_migrate_instance_migrates_goal_files(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """migrate_instance migrates goal files under goals/*/goal.yaml."""
+    from sensei.engine.scripts import migrate as m
+
+    def goal_v0_to_v1(data: dict) -> dict:
+        return {**data, "upgraded": True}
+
+    monkeypatch.setitem(m.GOAL_MIGRATIONS, 0, goal_v0_to_v1)
+    monkeypatch.setattr(m, "CURRENT_GOAL_VERSION", 1)
+
+    learner = tmp_path / "learner"
+    goal_dir = learner / "goals" / "rust"
+    goal_dir.mkdir(parents=True)
+    (goal_dir / "goal.yaml").write_text(yaml.safe_dump({
+        "schema_version": 0, "goal_id": "rust", "nodes": {},
+    }))
+
+    result = m.migrate_instance(learner)
+    assert any("goal.yaml" in r for r in result)
