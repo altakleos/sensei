@@ -6,7 +6,13 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Added
+
+- `ci/check_links.py` — maintainer-side validator that walks every `*.md` under `docs/` and fails CI on any relative markdown link that does not resolve to an existing file. Skips external URLs, same-file anchors, and fenced code blocks. Wired into `verify.yml` alongside the existing `check_foundations.py` step.
+
 ### Fixed
+
+- Five broken relative links in docs repaired: `docs/foundations/principles/mentor-relationship.md` (behavioral-modes spec), `docs/design/folder-structure.md` (ADR-0004 filename drift), `docs/operations/parallel-agents.md` (ADR-0016 filename drift), `docs/specs/hints.md` (Jacundu persona filename), and `docs/research/bibliography.md` (self-referential `docs/research/` path).
 
 - Atomic writes now fsync the containing directory on POSIX after `os.replace`, closing a gap where the rename's dirent update could be lost on power loss (ADR-0004 durability contract). Applies to both `atomic_write_text` (learner state files) and `_atomic_replace_engine` (each rename in the `.sensei/` swap).
 - `sensei upgrade` now migrates learner data **before** swapping the engine bundle. A migration failure no longer leaves a new engine paired with old-format data — the old engine remains on disk and is still compatible with the unmigrated data.

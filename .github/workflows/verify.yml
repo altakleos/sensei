@@ -36,3 +36,6 @@ jobs:
 
       - name: Lint foundations layer
         run: python ci/check_foundations.py
+
+      - name: Lint markdown links
+        run: python ci/check_links.py

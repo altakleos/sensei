@@ -82,7 +82,7 @@ The following will land in future plans. Their locations are noted here for orie
 ## Decisions
 
 - [ADR-0003: Tool-Specific Agent Hooks](../decisions/0003-tool-specific-agent-hooks.md) — shim files pointing at AGENTS.md
-- [ADR-0004: Distribution Model](../decisions/0004-distribution-model.md) — engine bundle copied into `.sensei/`
+- [ADR-0004: Distribution Model](../decisions/0004-sensei-distribution-model.md) — engine bundle copied into `.sensei/`
 - [ADR-0013: Context Composition](../decisions/0013-context-composition.md) — modes are protocol-level, no per-mode agent files
 
 ## Notes

@@ -22,7 +22,7 @@ The four-modes-from-one-personality framing matters because separate-agent archi
 
 - Protocol prose enforces mode emergence through principles and silence profiles, not through explicit mode switches ("ENTERING ASSESSOR MODE"). The learner should feel the same mentor adjusting, not a different mentor arriving.
 - Mode emergence is context-driven: the learner asks a question → teaching behavior emerges; the learner submits code → review behavior emerges; the mentor suspects overconfidence → assessment behavior emerges; the learner demonstrates mastery → challenge behavior emerges.
-- The four modes have distinct silence profiles (tutor silent ~40%; assessor silent while learner works; challenger silent to let failure happen; reviewer NOT silent). See the [behavioral-modes spec](../../docs/specs/behavioral-modes.md).
+- The four modes have distinct silence profiles (tutor silent ~40%; assessor silent while learner works; challenger silent to let failure happen; reviewer NOT silent). See the [behavioral-modes spec](../../specs/behavioral-modes.md).
 - The relationship tone is consistent across modes: dignity, honesty, patience, no coddling. "Great question!" and apologetic softeners are out of character for every mode.
 - Cross-mode memory composes: what the tutor observed flows to the assessor; what the assessor gated flows to the challenger; the reviewer's corrections inform the next tutor session.
 

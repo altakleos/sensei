@@ -69,4 +69,4 @@ None yet. Design and ADRs will follow.
 - [Learner Profile spec](learner-profile.md) — profile mastery used for absorption detection
 - [Curriculum Graph spec](curriculum-graph.md) — curriculum that hints boost
 - [Review Protocol spec](review-protocol.md) — decay model reused for hint freshness
-- [Persona: Jacundu](../foundations/personas/persona-jacundu.md) — senior SDE browsing Twitter/YouTube during interview prep
+- [Persona: Jacundu](../foundations/personas/jacundu.md) — senior SDE browsing Twitter/YouTube during interview prep

@@ -6,7 +6,7 @@ How to run multiple LLM agents implementing different plans simultaneously.
 
 Two agents cannot implement different plans simultaneously in a shared working directory. One agent's branch creation changes the other's HEAD, uncommitted changes bleed across agents, and neither can reliably determine which changes are theirs to commit. Git worktrees give each agent a physically isolated checkout. Research (CAID, CMU 2026) confirms that filesystem isolation produces 63.3% task completion vs 55.5% with instruction-only isolation.
 
-See [ADR-0016](../decisions/0016-git-worktrees-for-multi-agent-filesystem-isolation.md) for the decision record.
+See [ADR-0016](../decisions/0016-worktree-agent-isolation.md) for the decision record.
 
 ## Principles
 
