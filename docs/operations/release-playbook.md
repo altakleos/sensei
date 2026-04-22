@@ -8,7 +8,7 @@ The release mechanism and its invariants are documented in the spec [`docs/specs
 
 ## Pre-release gate (manual)
 
-Before tagging any release, run the Tier-2 behavioural E2E on your workstation. CI cannot run this — the `claude` CLI and API credentials are workstation-only.
+Before tagging any release, run the Tier-2 behavioural E2E on your workstation. CI cannot run this — the LLM CLI tools and auth credentials are workstation-only. The tests auto-detect `claude` or `kiro-cli` on PATH (preferring Claude when both are available). Override with `SENSEI_E2E_TOOL=claude` or `SENSEI_E2E_TOOL=kiro`.
 
 Activate the project venv first — `pyproject.toml` sets `addopts = "--cov=..."`, which requires `pytest-cov` from the dev extras. Without the venv, the system `pytest` will reject `--cov=*` and `--no-cov` alike.
 
@@ -20,11 +20,14 @@ ANTHROPIC_API_KEY=sk-ant-... pytest tests/e2e/ -v --no-cov
 
 # Option B (OAuth Claude Code user):
 SENSEI_E2E=1 pytest tests/e2e/ -v --no-cov
+
+# Option C (Kiro CLI):
+SENSEI_E2E=1 pytest tests/e2e/ -v --no-cov
 ```
 
 `--no-cov` is required because `pytest-cov` would otherwise fail the threshold on a single-test invocation whose coverage surface is tiny.
 
-Expected: all three Tier-2 tests pass — headless Claude Code reads `AGENTS.md`, dispatches to the named protocol, and emits the expected artifact:
+Expected: all three Tier-2 tests pass — the headless LLM agent (Claude Code or Kiro) reads `AGENTS.md`, dispatches to the named protocol, and emits the expected artifact:
 
 - `test_goal_protocol_produces_schema_valid_goal` — dispatches to `goal`, writes a schema-valid goal file to `learner/goals/`.
 - `test_assess_protocol_updates_profile_with_attempts` — dispatches to `assess`, increments `attempts` and `correct` in `learner/profile.yaml` for a pre-seeded topic.

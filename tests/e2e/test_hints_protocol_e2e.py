@@ -3,9 +3,10 @@
 Scaffolds a fresh Sensei instance, pre-populates `learner/inbox/` with two
 representative hint files (a Rust ownership blog post and a Tokio async
 snippet — both scoped to the same learning goal as the goal E2E), invokes
-`claude -p` with a boot-chain prompt that dispatches to the `hints`
-protocol, and asserts the triage artifact: `learner/hints/hints.yaml` has
-at least one registered hint and the inbox has been drained.
+the detected LLM CLI tool (Claude Code or Kiro) with a boot-chain prompt
+that dispatches to the `hints` protocol, and asserts the triage artifact:
+`learner/hints/hints.yaml` has at least one registered hint and the inbox
+has been drained.
 
 Third Tier-2 E2E — completes the hints ADR graduation loop (ADR-0017 /
 -0018 / -0019) with live behavioural evidence. Tier-1 coverage already
@@ -14,15 +15,12 @@ protocol from "fixture-verified lexically" to "fixture-verified +
 artifact-verified end-to-end."
 
 Skip conditions match the other two Tier-2 E2Es:
-  - `claude` binary not on PATH, OR
-  - Neither `ANTHROPIC_API_KEY` nor `SENSEI_E2E` is set.
+  - Neither ``claude`` nor ``kiro-cli`` on PATH, OR
+  - No auth configured (see ``agent_runner.py`` for details).
 """
 
 from __future__ import annotations
 
-import os
-import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -30,18 +28,11 @@ import yaml
 from click.testing import CliRunner
 
 from sensei.cli import main as sensei_main
+from tests.e2e.agent_runner import SKIP_REASON, TOOL_AVAILABLE, run_agent
 
-CLAUDE_BIN = shutil.which("claude")
 FIXTURE_DIR = Path(__file__).parent / "fixtures" / "inbox-rust-hints"
-OPTED_IN = bool(os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("SENSEI_E2E"))
 
-pytestmark = [
-    pytest.mark.skipif(CLAUDE_BIN is None, reason="headless `claude` CLI not on PATH"),
-    pytest.mark.skipif(
-        not OPTED_IN,
-        reason="set ANTHROPIC_API_KEY or SENSEI_E2E=1 to run the Tier-2 E2E",
-    ),
-]
+pytestmark = pytest.mark.skipif(not TOOL_AVAILABLE, reason=SKIP_REASON)
 
 
 def _seed_inbox(instance_dir: Path) -> list[Path]:
@@ -88,25 +79,9 @@ def test_hints_protocol_drains_inbox_and_populates_registry(tmp_path: Path) -> N
         f"registry should start empty post-init, got: {before}"
     )
 
-    assert CLAUDE_BIN is not None
-    completed = subprocess.run(
-        [
-            CLAUDE_BIN,
-            "--print",
-            "--permission-mode",
-            "acceptEdits",
-            "--output-format",
-            "json",
-            _build_prompt(),
-        ],
-        cwd=tmp_path,
-        capture_output=True,
-        text=True,
-        timeout=300,
-        check=False,
-    )
+    completed = run_agent(_build_prompt(), cwd=tmp_path, timeout=300)
     assert completed.returncode == 0, (
-        f"claude exited {completed.returncode}.\n"
+        f"agent exited {completed.returncode}.\n"
         f"stdout head:\n{completed.stdout[:2000]}\n\nstderr:\n{completed.stderr}"
     )
 
@@ -116,7 +91,7 @@ def test_hints_protocol_drains_inbox_and_populates_registry(tmp_path: Path) -> N
     assert "hints" in after, f"hints.yaml missing 'hints' key after triage: {after!r}"
     assert len(after["hints"]) >= 1, (
         f"expected at least 1 hint registered after triage; got {len(after['hints'])}. "
-        f"claude stdout head:\n{completed.stdout[:2000]}"
+        f"agent stdout head:\n{completed.stdout[:2000]}"
     )
 
     # Secondary assertion: inbox drained. Seeded files moved to active/ or archive/.

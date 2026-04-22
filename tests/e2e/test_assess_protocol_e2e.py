@@ -1,26 +1,24 @@
-"""End-to-end verification of the assess protocol against headless Claude Code.
+"""End-to-end verification of the assess protocol against a headless LLM agent.
 
 Scaffolds a fresh Sensei instance, pre-populates profile.yaml with one topic
-at `developing` mastery, invokes `claude -p` with a boot-chain prompt and a
-learner fixture that supplies both the assessment request and a stipulated
-correct answer (since `-p` mode is single-turn), and asserts the LLM
-updated `learner/profile.yaml` per Step 5 of the protocol.
+at `developing` mastery, invokes the detected LLM CLI tool (Claude Code or
+Kiro) with a boot-chain prompt and a learner fixture that supplies both the
+assessment request and a stipulated correct answer (since headless mode is
+single-turn), and asserts the LLM updated `learner/profile.yaml` per Step 5
+of the protocol.
 
 Second Tier-2 test — complements the `goal` E2E in
 `test_goal_protocol_e2e.py`. One data point was an anecdote; two is a
 pattern.
 
 Skip conditions match the goal E2E:
-  - `claude` binary not on PATH, OR
-  - Neither `ANTHROPIC_API_KEY` nor `SENSEI_E2E` is set.
+  - Neither ``claude`` nor ``kiro-cli`` on PATH, OR
+  - No auth configured (see ``agent_runner.py`` for details).
 """
 
 from __future__ import annotations
 
 import json
-import os
-import shutil
-import subprocess
 from pathlib import Path
 
 import jsonschema
@@ -29,8 +27,8 @@ import yaml
 from click.testing import CliRunner
 
 from sensei.cli import main as sensei_main
+from tests.e2e.agent_runner import SKIP_REASON, TOOL_AVAILABLE, run_agent
 
-CLAUDE_BIN = shutil.which("claude")
 SCHEMA_PATH = (
     Path(__file__).resolve().parents[2]
     / "src"
@@ -40,15 +38,8 @@ SCHEMA_PATH = (
     / "profile.schema.json"
 )
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "learner-requests-assessment.md"
-OPTED_IN = bool(os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("SENSEI_E2E"))
 
-pytestmark = [
-    pytest.mark.skipif(CLAUDE_BIN is None, reason="headless `claude` CLI not on PATH"),
-    pytest.mark.skipif(
-        not OPTED_IN,
-        reason="set ANTHROPIC_API_KEY or SENSEI_E2E=1 to run the Tier-2 E2E",
-    ),
-]
+pytestmark = pytest.mark.skipif(not TOOL_AVAILABLE, reason=SKIP_REASON)
 
 
 def _seed_profile_with_topic(instance_dir: Path, topic: str) -> dict:
@@ -77,10 +68,10 @@ def _build_prompt(fixture_text: str) -> str:
         "You are operating a Sensei instance. Read `AGENTS.md` at the repository root and "
         "follow the boot chain. Dispatch to the `assess` protocol based on the learner's "
         "message below.\n\n"
-        "Execute the protocol END-TO-END in this single turn. Since `-p` mode cannot carry "
-        "a multi-turn conversation, treat the fixture's stipulated answer and confidence "
-        "signal as the learner's response to whatever assessment question you pose. "
-        "Follow every step in order, run the mastery-check script, and update "
+        "Execute the protocol END-TO-END in this single turn. Since headless mode cannot "
+        "carry a multi-turn conversation, treat the fixture's stipulated answer and "
+        "confidence signal as the learner's response to whatever assessment question you "
+        "pose. Follow every step in order, run the mastery-check script, and update "
         "`learner/profile.yaml` per Step 5. Do not teach, hint, or explain during any "
         "step — the assessor exception is absolute.\n\n"
         "--- learner message begins ---\n"
@@ -99,25 +90,9 @@ def test_assess_protocol_updates_profile_with_attempts(tmp_path: Path) -> None:
 
     prompt = _build_prompt(FIXTURE_PATH.read_text(encoding="utf-8"))
 
-    assert CLAUDE_BIN is not None
-    completed = subprocess.run(
-        [
-            CLAUDE_BIN,
-            "--print",
-            "--permission-mode",
-            "acceptEdits",
-            "--output-format",
-            "json",
-            prompt,
-        ],
-        cwd=tmp_path,
-        capture_output=True,
-        text=True,
-        timeout=300,
-        check=False,
-    )
+    completed = run_agent(prompt, cwd=tmp_path, timeout=300)
     assert completed.returncode == 0, (
-        f"claude exited {completed.returncode}.\n"
+        f"agent exited {completed.returncode}.\n"
         f"stdout:\n{completed.stdout}\n\nstderr:\n{completed.stderr}"
     )
 
@@ -137,12 +112,12 @@ def test_assess_protocol_updates_profile_with_attempts(tmp_path: Path) -> None:
     assert topic_entry["attempts"] > before_attempts, (
         f"attempts should increase after assessment; before={before_attempts}, "
         f"after={topic_entry['attempts']}. "
-        f"claude stdout head:\n{completed.stdout[:2000]}"
+        f"agent stdout head:\n{completed.stdout[:2000]}"
     )
     # The fixture stipulates a correct answer, so correct should be >= 1.
     assert topic_entry["correct"] >= 1, (
         f"correct should be >= 1 after a correct answer; got {topic_entry['correct']}. "
-        f"claude stdout head:\n{completed.stdout[:2000]}"
+        f"agent stdout head:\n{completed.stdout[:2000]}"
     )
     # last_seen should have advanced — simple sentinel: different from the seeded value.
     assert topic_entry["last_seen"] != before["expertise_map"][topic]["last_seen"], (
