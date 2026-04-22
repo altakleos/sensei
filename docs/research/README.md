@@ -7,7 +7,7 @@ Three-tier research structure supporting the provenance chain: raw sources → d
 ```
 docs/research/
 ├── README.md              ← this file
-├── bibliography.md        ← Tier 1: 58 annotated citations (source index)
+├── bibliography.md        ← Tier 1: 60 annotated citations (source index)
 ├── reports/               ← Tier 2: deep investigative reports
 │   ├── agentic-pedagogy.md
 │   └── llm-driven-pedagogy.md
@@ -32,7 +32,7 @@ docs/research/
 <!-- Diagram: illustrates the research provenance chain -->
 ```mermaid
 graph LR
-    B["bibliography.md\n#1–#58"] --> S1["synthesis/\nlearning-science"]
+    B["bibliography.md\n#1–#60"] --> S1["synthesis/\nlearning-science"]
     B --> S2["synthesis/\nadaptive-personalization"]
     B --> S3["synthesis/\naccelerated-performance"]
     B --> S4["synthesis/\ncompetitive-landscape"]

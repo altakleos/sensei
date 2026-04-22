@@ -23,7 +23,7 @@ For operational tasks (cutting a release, running parallel agents), see [`docs/o
 sensei/
 ├── AGENTS.md                 (this file — contributor entry point)
 ├── CLAUDE.md                 (Claude Code shim pointing at AGENTS.md)
-├── docs/research/bibliography.md  (58 curated sources)
+├── docs/research/bibliography.md  (60 curated sources)
 ├── README.md                 (project readme)
 ├── pyproject.toml            (pip package metadata)
 ├── docs/

@@ -1,6 +1,6 @@
 # Research Synthesis Layer
 
-The synthesis layer bridges the [raw bibliography](../bibliography.md) (58 curated sources) and the spec/principle layer (`docs/foundations/principles/`, `docs/specs/`).
+The synthesis layer bridges the [raw bibliography](../bibliography.md) (60 curated sources) and the spec/principle layer (`docs/foundations/principles/`, `docs/specs/`).
 
 **How it connects:**
 - Principles cite synthesis docs in their `Source` fields

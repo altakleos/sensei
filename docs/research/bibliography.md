@@ -1,6 +1,6 @@
 # Sensei — Curated Research Bibliography
 
-> **58 foundation sources curated from 61 total researched**
+> **60 foundation sources curated from 61 total researched**
 >
 > Last Updated: 2026-04-19
 
@@ -282,6 +282,28 @@ The two architecture-critical full reports are published under [`docs/research/`
 - **URL:** educationaldatamining.org/edm2024/proceedings/2024.EDM-short-papers.58
 
 **Why it matters for Sensei:** Predicts confusion 120 seconds ahead and frustration 40 seconds ahead, enabling proactive intervention. Supports our design of an engagement-aware tutor that adjusts difficulty and scaffolding before the learner disengages.
+
+---
+
+### 59. Dynamics of Affective States during Complex Learning
+
+- **Authors:** D'Mello, S. & Graesser, A.
+- **Year:** 2012
+- **Source:** *Learning and Instruction*, 22(2), 145–157
+- **DOI:** 10.1016/j.learninstruc.2011.10.001
+
+**Why it matters for Sensei:** The foundational model for affect in intelligent tutoring. Establishes the four learning-relevant emotions (confusion, frustration, boredom, flow/engagement) and the degradation chain: confusion → frustration → boredom → disengagement. Confusion is productive when resolved; persistent confusion degrades to frustration. Directly informs Sensei's emotional state tracking spec and degradation chain monitoring.
+
+---
+
+### 60. Confusion Can Be Beneficial for Learning
+
+- **Authors:** D'Mello, S., Lehman, B., Pekrun, R. & Graesser, A.
+- **Year:** 2014
+- **Source:** *Learning and Instruction*, 29, 153–170
+- **DOI:** 10.1016/j.learninstruc.2012.05.003
+
+**Why it matters for Sensei:** Empirically demonstrates that confusion enhances deep learning when properly induced and resolved within 2–3 exchanges. Supports Sensei's design decision to monitor the confusion-to-frustration boundary rather than treating all confusion as negative. The intervention point is sustained unresolved confusion, not confusion itself.
 
 ---
 

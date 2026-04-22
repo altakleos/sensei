@@ -76,7 +76,7 @@ Sensei is a program written in prose. The CLI scaffolds a folder containing mark
 
 Your learner profile updates after every interaction, so the mentor evolves with you. Swap the LLM and nothing is lost — all state lives in local files you own.
 
-The pedagogy is grounded in [21 principles](docs/foundations/) informed by [58 research sources](docs/research/bibliography.md).
+The pedagogy is grounded in [21 principles](docs/foundations/) informed by [60 research sources](docs/research/bibliography.md).
 
 ## Supported Tools
 
@@ -100,7 +100,7 @@ Sensei writes tool-specific shim files during `sensei init` so each agent finds 
 **Using Sensei**
 - [Vision & Philosophy](docs/foundations/vision.md) — what Sensei is and why it exists
 - [Pedagogical Foundations](docs/foundations/) — principles, personas, pillars
-- [Research Bibliography](docs/research/bibliography.md) — 58 curated sources
+- [Research Bibliography](docs/research/bibliography.md) — 60 curated sources
 
 **Contributing**
 - [Development Process](docs/development-process.md) — Spec-Driven Development method
