@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Added
+
+- **Emotional state tracking** — learner profile now tracks emotional state (engagement, frustration, agency) as structured fields. Assessment and review protocols are affect-aware. Degradation chain (confusion → frustration → boredom → disengagement) monitored with configurable intervention thresholds.
+- **Cross-goal concept tags** — curriculum nodes carry abstract concept tags assigned at generation time. Review scheduling deduplicates by concept overlap across goals, not just identical slugs. Mastery evidence transfers bidirectionally between goals sharing concepts (evidence, not proof).
+- **Interleaving** — review sessions alternate topics between areas for discriminative contrast. Configurable intensity (0=blocked, 1=fully interleaved). Topics below minimum mastery threshold receive blocked practice. Within-goal and cross-goal interleaving both supported.
+
+### Changed
+
+- **Provenance traceability** — bibliography references added to principle Source sections, HTML provenance comments added to all protocol files, traceability matrix created at `docs/foundations/traceability.md`. README claim updated from "drawn from" to "informed by."
+
 ## [0.1.0a15] — 2026-04-22
 
 ### Added
