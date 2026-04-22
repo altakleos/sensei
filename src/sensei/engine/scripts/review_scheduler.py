@@ -44,6 +44,7 @@ def schedule_reviews(
     half_life_days: float = _DEFAULT_HALF_LIFE_DAYS,
     stale_threshold: float = _DEFAULT_STALE_THRESHOLD,
     now: datetime | None = None,
+    concept_map: dict[str, list[str]] | None = None,
 ) -> list[dict[str, Any]]:
     """Return stale review candidates across all active/paused goals.
 
@@ -116,6 +117,27 @@ def schedule_reviews(
                 }
 
     result = sorted(candidates.values(), key=lambda x: x["freshness"])
+
+    # Concept-aware dedup: when concept_map is provided, topics sharing a
+    # concept are collapsed — keep the stalest (lowest freshness), skip the rest.
+    if concept_map:
+        # Build reverse map: topic → set of concepts.
+        topic_concepts: dict[str, set[str]] = {}
+        for concept, slugs in concept_map.items():
+            for slug in slugs:
+                topic_concepts.setdefault(slug, set()).add(concept)
+
+        seen_concepts: set[str] = set()
+        deduped: list[dict[str, Any]] = []
+        for item in result:  # already sorted stalest-first
+            topic = item["topic"]
+            concepts = topic_concepts.get(topic, set())
+            if concepts and concepts & seen_concepts:
+                continue  # skip — a stalest sibling already covers this concept
+            seen_concepts |= concepts
+            deduped.append(item)
+        result = deduped
+
     return result
 
 
@@ -136,6 +158,11 @@ def main(argv: list[str] | None = None) -> int:
         help=f"Freshness below this is stale (default: {_DEFAULT_STALE_THRESHOLD})",
     )
     parser.add_argument("--now", default=None, help="ISO-8601 timestamp (default: wall clock)")
+    parser.add_argument(
+        "--concept-map",
+        default=None,
+        help="JSON string mapping concept tag to list of topic slugs for concept-aware dedup",
+    )
     args = parser.parse_args(argv)
 
     goals_dir = Path(args.goals_dir)
@@ -150,7 +177,8 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         now = parse_iso(args.now) if args.now else datetime.now(tz=timezone.utc)
-        result = schedule_reviews(goals_dir, profile_path, args.half_life_days, args.stale_threshold, now)
+        concept_map = json.loads(args.concept_map) if args.concept_map else None
+        result = schedule_reviews(goals_dir, profile_path, args.half_life_days, args.stale_threshold, now, concept_map=concept_map)
     except yaml.YAMLError as exc:
         print(json.dumps({"error": f"yaml parse error: {exc}"}))
         return 1

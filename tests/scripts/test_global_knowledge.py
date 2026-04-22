@@ -186,3 +186,44 @@ def test_goal_topic_not_in_goal_unchanged(tmp_path: Path, capsys: pytest.Capture
     out = json.loads(capsys.readouterr().out)
     assert out["known"] is True
     assert "redemonstration_required" not in out
+
+
+# --- Concept-aware evidence tests ---
+
+
+def test_concept_evidence_from_peer() -> None:
+    """Topic not in profile but a concept peer is known → concept_evidence: true."""
+    profile = _profile(topic="hash-maps", mastery="mastered")
+    result = check(profile, "hash-table-perf", concept_peers=["hash-maps"])
+    assert result["known"] is False
+    assert result["concept_evidence"] is True
+    assert result["evidence_from"] == "hash-maps"
+
+
+def test_concept_evidence_peer_not_known() -> None:
+    """Topic not in profile, peer exists but not known → no concept_evidence."""
+    profile = _profile(topic="hash-maps", mastery="shaky")
+    result = check(profile, "hash-table-perf", concept_peers=["hash-maps"])
+    assert result["known"] is False
+    assert "concept_evidence" not in result
+
+
+def test_concept_evidence_no_peers() -> None:
+    """Without concept_peers, no concept evidence reported."""
+    result = check(_profile(topic="hash-maps", mastery="mastered"), "unknown-topic")
+    assert result["known"] is False
+    assert "concept_evidence" not in result
+
+
+def test_concept_peers_cli(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """--concept-peers CLI flag passes through to check()."""
+    prof_path = _write(tmp_path, _profile(topic="hash-maps", mastery="solid"))
+    rc = main([
+        "--profile", str(prof_path),
+        "--topic", "hash-table-perf",
+        "--concept-peers", '["hash-maps"]',
+    ])
+    assert rc == 0
+    out = json.loads(capsys.readouterr().out)
+    assert out["concept_evidence"] is True
+    assert out["evidence_from"] == "hash-maps"

@@ -166,6 +166,15 @@
           "type": "boolean",
           "default": false,
           "description": "When true, the node requires in-context mastery proof even if the topic is globally known."
+        },
+        "concept_tags": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "description": "Abstract concept tags identifying transferable knowledge independent of goal-specific framing."
         }
       }
     },

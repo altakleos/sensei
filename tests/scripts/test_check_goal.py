@@ -171,6 +171,42 @@ def test_missing_require_redemonstration_is_optional():
     assert errors == []
 
 
+# --- concept_tags field tests ---
+
+
+def test_concept_tags_valid():
+    goal = _valid_goal()
+    goal["nodes"]["load-balancing"]["concept_tags"] = ["distributed-systems", "scalability"]
+    status, errors = validate_goal(goal)
+    assert status == "ok"
+    assert errors == []
+
+
+def test_concept_tags_empty_array():
+    goal = _valid_goal()
+    goal["nodes"]["load-balancing"]["concept_tags"] = []
+    status, errors = validate_goal(goal)
+    assert status == "ok"
+    assert errors == []
+
+
+def test_missing_concept_tags_is_optional():
+    """concept_tags is not required — omitting it is valid."""
+    goal = _valid_goal()
+    assert "concept_tags" not in goal["nodes"]["load-balancing"]
+    status, errors = validate_goal(goal)
+    assert status == "ok"
+    assert errors == []
+
+
+def test_concept_tags_invalid_format():
+    """Tags must match ^[a-z][a-z0-9-]*$ — uppercase rejected."""
+    goal = _valid_goal()
+    goal["nodes"]["load-balancing"]["concept_tags"] = ["InvalidTag"]
+    status, errors = validate_goal(goal)
+    assert status != "ok"
+
+
 def test_main_valid_file(tmp_path: Path, capsys):
     goal = _valid_goal()
     path = tmp_path / "goal.yaml"
