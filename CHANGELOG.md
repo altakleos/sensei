@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a14] — 2026-04-22
+
+### Added
+
+- `.sensei/run` shell wrapper for reliable script interpreter resolution. LLM agents now invoke `.sensei/run <script>.py` instead of bare `python3 .sensei/scripts/<script>.py`. The wrapper uses the Python that has `sensei-tutor` installed; falls back to `python3` if stale. (ADR-0022)
+- Inline `ImportError` guards in all 12 engine scripts — actionable error messages instead of raw tracebacks when dependencies are missing.
+
+### Changed
+
+- All 42 script invocations across 9 engine files updated from `python .sensei/scripts/` to `.sensei/run`.
+- `sensei init` now records `sys.executable` in `.sensei/.python_path` and installs the run wrapper.
+- `sensei upgrade` refreshes `.sensei/.python_path` and the run wrapper.
+
 ## [0.1.0a13] — 2026-04-22
 
 ### Fixed
@@ -226,7 +239,8 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a13...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a14...HEAD
+[0.1.0a14]: https://github.com/altakleos/sensei/compare/v0.1.0a13...v0.1.0a14
 [0.1.0a13]: https://github.com/altakleos/sensei/compare/v0.1.0a12...v0.1.0a13
 [0.1.0a12]: https://github.com/altakleos/sensei/compare/v0.1.0a11...v0.1.0a12
 [0.1.0a11]: https://github.com/altakleos/sensei/compare/v0.1.0a10...v0.1.0a11
