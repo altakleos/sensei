@@ -18,7 +18,7 @@ Strengthen mastery through structured challenges that push the learner beyond co
 Choose a topic. Priority order:
 1. Topic the learner explicitly requests ("challenge me on caching")
 2. Recently completed topic (mastery fresh, ready to stress-test)
-3. Topic with high mastery approaching stale threshold — for each completed topic `<slug>` with its `last_seen` from `learner/profile.yaml`'s `expertise_map`, run `python .sensei/scripts/decay.py --last-seen <topic.last_seen> --half-life-days <config.memory.half_life_days> --now <utc> --stale-threshold <config.memory.stale_threshold>`, then pick slugs with `"stale": false` but `freshness` < 0.6
+3. Topic with high mastery approaching stale threshold — for each completed topic `<slug>` with its `last_seen` from `learner/profile.yaml`'s `expertise_map`, run `.sensei/run decay.py --last-seen <topic.last_seen> --half-life-days <config.memory.half_life_days> --now <utc> --stale-threshold <config.memory.stale_threshold>`, then pick slugs with `"stale": false` but `freshness` < 0.6
 4. Active topic the learner claims to understand (verify depth)
 
 If no topic has mastery ≥ solid: "Nothing to challenge yet. Let's learn first." → hand off to `protocols/tutor.md`.
@@ -50,7 +50,7 @@ Constraints: no scaffolding, no hints, no leading questions. State success crite
 Run:
 
 ```
-python .sensei/scripts/classify_confidence.py --confidence <label> --correctness <label>
+.sensei/run classify_confidence.py --confidence <label> --correctness <label>
 ```
 
 Classify and act:
@@ -75,7 +75,7 @@ Track challenges attempted/passed/failed for this topic in this session. After 3
 Run:
 
 ```
-python .sensei/scripts/mastery_check.py --profile learner/profile.yaml --topic <topic> --required mastered
+.sensei/run mastery_check.py --profile learner/profile.yaml --topic <topic> --required mastered
 ```
 
 Update profile:

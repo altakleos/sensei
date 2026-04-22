@@ -2,10 +2,15 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Any
 
-import yaml
+try:
+    import yaml
+except ImportError:  # pragma: no cover
+    print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
+    sys.exit(1)
 
 
 def _deep_merge(base: dict[str, Any], overlay: dict[str, Any]) -> dict[str, Any]:

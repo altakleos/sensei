@@ -28,7 +28,7 @@ At session start: list `learner/inbox/`, compute SHA-256 per file, compare again
 Do not block. Then run decay recomputation:
 
 ```
-python .sensei/scripts/hint_decay.py \
+.sensei/run hint_decay.py \
   --hints-file learner/hints/hints.yaml \
   --half-life-days <hints.half_life_days> \
   --expire-threshold <hints.expire_threshold> \

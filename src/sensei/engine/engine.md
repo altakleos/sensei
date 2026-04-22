@@ -87,7 +87,7 @@ When a transition fires, swap which mode file supplies full content and which su
 If the learner opens a session without specifying what to work on, select the highest-priority active goal:
 
 ```
-python .sensei/scripts/goal_priority.py \
+.sensei/run goal_priority.py \
   --goals-dir learner/goals/ \
   --profile learner/profile.yaml \
   --half-life-days <config.memory.half_life_days> \
@@ -98,7 +98,7 @@ python .sensei/scripts/goal_priority.py \
 If the result is non-empty, allocate time across the ranked goals:
 
 ```
-python .sensei/scripts/session_allocator.py \
+.sensei/run session_allocator.py \
   --goals-json <priority_output_file> \
   --session-minutes <estimated_session_length> \
   --min-minutes <config.cross_goal.min_session_minutes>
@@ -172,13 +172,13 @@ These behavioral invariants hold across every mode and every protocol:
 
 ## Running Helper Scripts
 
-All helper scripts require `pyyaml` and `jsonschema`. When invoking scripts, use the Python that has `sensei-tutor` installed:
+All helper scripts are invoked through the `.sensei/run` wrapper, which uses the Python interpreter that has `sensei-tutor` installed:
 
 ```
-python3 .sensei/scripts/<script>.py --args
+.sensei/run <script>.py --args
 ```
 
-If you get `ModuleNotFoundError: No module named 'jsonschema'` or `'yaml'`, the current Python doesn't have the dependencies. Fix: `pip install jsonschema pyyaml` in the active environment, or use the Python from the sensei-tutor installation.
+The wrapper resolves the correct interpreter automatically. If it fails (stale install, missing dependencies), it falls back to `python3` and the script prints an actionable error message.
 
 ### Script Registry
 
@@ -187,7 +187,7 @@ If you get `ModuleNotFoundError: No module named 'jsonschema'` or `'yaml'`, the 
 Reads all active/paused goal files and the learner profile, computes freshness for every completed topic, deduplicates topics appearing in multiple goals (keeps lowest freshness), and outputs a ranked JSON list sorted by freshness ascending.
 
 ```
-python .sensei/scripts/review_scheduler.py \
+.sensei/run review_scheduler.py \
   --goals-dir learner/goals/ \
   --profile learner/profile.yaml \
   --half-life-days <config.memory.half_life_days> \
@@ -202,7 +202,7 @@ Exit 0: JSON list of `{topic, freshness, elapsed_days, goals}` to stdout. Exit 1
 Takes the ranked goal list from `goal_priority.py` (via file or stdin) and a session-minutes budget, allocates minutes per goal proportional to score. Goals below the minimum allocation are dropped.
 
 ```
-python .sensei/scripts/session_allocator.py \
+.sensei/run session_allocator.py \
   --goals-json <path> \
   --session-minutes <int> \
   [--min-minutes <config.cross_goal.min_session_minutes>]
@@ -215,7 +215,7 @@ Exit 0: JSON `{allocations: [{slug, minutes, reason}], dropped: [...]}` to stdou
 Reads a single goal file and the learner profile, computes freshness for completed nodes, identifies stale topics, recomputes the curriculum frontier, and outputs a resume plan.
 
 ```
-python .sensei/scripts/resume_planner.py \
+.sensei/run resume_planner.py \
   --goal learner/goals/<slug>.yaml \
   --profile learner/profile.yaml \
   --half-life-days <config.memory.half_life_days> \

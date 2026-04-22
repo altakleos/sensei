@@ -19,7 +19,11 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import yaml
+try:
+    import yaml
+except ImportError:  # pragma: no cover
+    print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
+    sys.exit(1)
 
 from sensei.engine.scripts._atomic import atomic_write_text
 

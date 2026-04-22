@@ -42,11 +42,11 @@ _INVOKED_SCRIPTS: frozenset[str] = frozenset({
     "session_allocator",
 })
 
-# Matches `python[3] [prefix-path/]<script>.py <args-up-to-eol-or-backtick>`.
-# The path prefix is lazy so the regex works for both fenced-block and inline
-# forms (`python .sensei/scripts/X.py ...` and `  python .sensei/scripts/X.py …`).
+# Matches `.sensei/run <script>.py <args-up-to-eol-or-backtick>`.
+# Also matches the legacy `python[3] .sensei/scripts/<script>.py` form for
+# backward compatibility during transition.
 _INVOCATION_RE = re.compile(
-    r"python3?\s+[\w./]*?\.sensei/scripts/(\w+)\.py\b([^\n`]*)"
+    r"(?:python3?\s+[\w./]*?\.sensei/scripts/|\.sensei/run\s+)(\w+)\.py\b([^\n`]*)"
 )
 
 
@@ -211,7 +211,7 @@ def test_all_protocol_invocations_match_script_clis(
         if errs:
             failures.append(
                 f"{inv.protocol}:{inv.line} → "
-                f"`python .sensei/scripts/{inv.script}.py {inv.args}`: "
+                f"`.sensei/run {inv.script}.py {inv.args}`: "
                 + "; ".join(errs)
             )
     if failures:
