@@ -13,6 +13,7 @@ A pip-installable CLI that scaffolds a learning-environment folder. The user ope
 2. Read [`docs/sensei-implementation.md`](docs/sensei-implementation.md) — how this project instantiates Implementation and Verification.
 3. Read [`docs/decisions/README.md`](docs/decisions/README.md) — what has already been decided.
 4. **Before editing any source file** for a non-trivial change, produce a plan and wait for approval — see § "Required: Plan Before Build" below. The full artifact flow (spec → design → ADR → plan → implementation → verification) is in [`docs/development-process.md`](docs/development-process.md) § "How Work Flows Through the Layers".
+5. **Before writing a design doc, ADR, plan, or implementation** for a new user-visible capability, produce a spec and wait for approval — see § "Required: Spec Before Design" below.
 
 For operational tasks (cutting a release, running parallel agents), see [`docs/operations/README.md`](docs/operations/README.md).
 
@@ -78,6 +79,30 @@ A change is **trivial** (act directly, no plan needed) only if:
 **Before your first source-modifying tool call, state in one sentence:** "Plan at `<path>` has been approved." If you cannot truthfully emit that sentence, stop and plan. This sentence is the audit trail — its absence in a transcript is how violations get caught.
 
 **Retroactive plans are evidence of past violation, not a norm.** If you see commits labeled "retroactive plan for X shipped in vY.Z", a prior agent skipped this rule and the user had to ask them to paper over it. Do not add to that pile.
+
+## Required: Spec Before Design
+
+For any change that introduces a new user-visible capability, your **first output** is a spec file at `docs/specs/<slug>.md`, followed by explicit user approval. You may not write a design doc, ADR, plan, or implementation before the spec is approved.
+
+A change **needs a spec** (spec first) if any of these apply:
+
+- introduces a new CLI command, mode, or subcommand
+- adds a new output dimension users can observe or consume
+- makes a new guarantee to users that must survive implementation changes
+- multiple design approaches exist and the spec constrains which are viable
+- you are unsure whether it falls below this line
+
+A change **does NOT need a spec** (skip directly to design/plan/implementation) if it is:
+
+- an implementation refactor that preserves observable behaviour
+- a configuration-value or threshold adjustment
+- a single-file bug fix
+- adding a check, validator, or test
+- adding a new output type that follows an existing pattern already governed by a spec
+
+**Before your first design-doc, ADR, plan, or source-modifying tool call, state in one sentence:** "Spec at `<path>` has been approved." If you cannot truthfully emit that sentence, stop and write the spec.
+
+**Design-doc skip.** A design doc may be skipped when all four conditions in [`docs/development-process.md` § When to Skip a Design Doc](docs/development-process.md#when-to-skip-a-design-doc) hold (pattern instantiation, single-concern scope, spec carries the reasoning, plan exists). The skip must be declared in the plan's frontmatter as `design: "Follows ADR-NNNN"` **before** implementation begins — retroactive declarations don't count.
 
 ## Contribution Conventions
 

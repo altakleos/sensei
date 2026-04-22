@@ -186,7 +186,7 @@ When introducing a new user-visible capability:
 4. **Branch** — Create a feature branch (`feat/<slug>`).
 5. **Plan** — Write a task breakdown in `docs/plans/<feature>.md`. Ordered steps, file paths, acceptance criteria. Commit this as the first commit on the feature branch. All subsequent implementation and verification commits land here.
 6. **Implementation** — Build or modify the artifacts that produce the behavior. These may be code, prose instructions, configuration, or any combination the project's instantiation allows.
-7. **Verification** — Write or extend checks to assert the new invariants hold.
+7. **Verification** — Write or extend checks — tests, linters, validators, fixtures — **in the same commit as the implementation they verify, or in an adjacent commit on the same feature branch**. Deferring verification to a later round (e.g., a coverage-ratchet commit that backfills tests for already-shipped code) is the corrective path for a gap, not the normal path.
 8. **Pull Request** — Open a PR, review, merge to `main`.
 
 ### Behavioral Change: Implementation + (maybe) ADR
@@ -270,20 +270,31 @@ If an operational runbook contradicts a spec invariant, the spec wins and the ru
 
 ## When to Write a Spec
 
-A spec is warranted when:
+**Default: spec-first for user-visible capabilities.** Any change that introduces a new user-visible capability gets a spec file before design, ADRs, plan, or implementation.
 
-- The change introduces a new user-visible capability (a new command, a new mode, a new output dimension).
-- The product intent needs to be captured before design begins.
-- Multiple design approaches are possible and the spec constrains which are viable.
-- A guarantee is being made to users that must survive implementation changes.
+A change **needs a spec** (spec first) if any of these apply:
 
-A spec is NOT needed for: implementation refactors, config tuning, single-artifact fixes, adding checks, adding a new output type that follows existing patterns.
+- introduces a new CLI command, mode, or subcommand
+- adds a new output dimension users can observe or consume
+- makes a new guarantee to users that must survive implementation changes
+- multiple design approaches exist and the spec constrains which are viable
+- you are unsure whether it falls below this line
+
+A change **does NOT need a spec** (skip directly to design/plan/implementation) if it is:
+
+- an implementation refactor that preserves observable behaviour
+- a configuration-value or threshold adjustment
+- a single-file bug fix
+- adding a check, validator, or test
+- adding a new output type that follows an existing pattern already governed by a spec
+
+The default bias is toward writing the spec. Retroactive specs (written after the implementation ships) are a corrective patch for rule violations, not a substitute for spec-first.
 
 Specs use a lightweight format: YAML frontmatter (`status`, `date`, plus optional foundation backreferences `serves`, `realizes`, `stressed_by`, and fixture fields `fixtures`, `fixtures_deferred`), then sections for Intent, Invariants, Rationale, Out of Scope, and Decisions. See `docs/specs/README.md` for the template.
 
 ### Fixture-naming convention
 
-Any spec claiming to `realize:` a principle or `serve:` a foundation should name at least one concrete fixture that proves it — a test file, a transcript fixture, or an E2E test. If no fixture yet exists, use `fixtures_deferred:` with a reason. The project's CI validator warns when neither is present; the warning is scheduled to promote to hard-fail after two releases.
+Any spec claiming to `realize:` a principle or `serve:` a foundation must name at least one concrete fixture that proves it — a test file, a transcript fixture, or an E2E test. If no fixture yet exists, use `fixtures_deferred:` with a reason. The project's CI validator (`ci/check_foundations.py`) hard-fails when neither is present — promoted from warn to hard-fail at v0.1.0a11.
 
 ## When to Write a Plan
 
