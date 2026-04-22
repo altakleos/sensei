@@ -46,6 +46,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [performance-training-v2](performance-training-v2.md) | Performance training stages 5-6 — simulated evaluation + full mock | done |
 | [emotional-state-tracking](emotional-state-tracking.md) | Emotional state tracking — LLM-as-sensor emotional classification with affect-aware protocol adaptations | done |
 | [interleaving](interleaving.md) | Interleaving — review session topic mixing for discriminative contrast | done |
+| [metacognitive-tracking](metacognitive-tracking.md) | Metacognitive state tracking — calibration, planning tendency, help-seeking | done |
 
 The last five plans above (`behavioral-architecture` through `research-and-closure`) were a five-step decomposition of an early ideation monolith into the foundations + specs + design + ADR layers. The source document itself was deleted at the end of Plan 5; its content is fully absorbed into the surviving artifacts.
 

@@ -45,7 +45,7 @@ Constraints (from `modes/tutor.md`): ask more than tell (~40% silence), never le
 
 After explaining, pose a comprehension check. This is NOT a quiz (that's `assess.md`) — it tests whether the explanation landed. Examples: "In your own words, why does X matter here?" / "What would happen if we changed Y?" / "How does this connect to [previously learned topic]?"
 
-For non-trivial probes, prompt forethought before the learner answers: "What's your approach? What do you think the key challenge is?" Do not skip this for efficiency — forethought is the highest-leverage metacognitive intervention (g=1.613). Omit for simple recall questions.
+For non-trivial probes, prompt forethought before the learner answers: "What's your approach? What do you think the key challenge is?" Do not skip this for efficiency — forethought is the highest-leverage metacognitive intervention (g=1.613). Omit for simple recall questions. Exception: read `metacognitive_state.planning_tendency` from the profile — if `impulsive`, prompt forethought on ALL probes (not just non-trivial). If `proactive` and past the `fading_threshold` in `.sensei/defaults.yaml`, reduce forethought prompts to non-trivial probes only.
 
 Wait for the response. Classify:
 

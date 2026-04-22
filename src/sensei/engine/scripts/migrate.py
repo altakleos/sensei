@@ -28,7 +28,7 @@ except ImportError:  # pragma: no cover
 from sensei.engine.scripts._atomic import atomic_write_text
 
 # Current schema versions (must match *.schema.json const values)
-CURRENT_PROFILE_VERSION = 1
+CURRENT_PROFILE_VERSION = 2
 CURRENT_GOAL_VERSION = 0
 
 
@@ -44,6 +44,18 @@ def _migrate_profile_0_to_1(data: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+def _migrate_profile_1_to_2(data: dict[str, Any]) -> dict[str, Any]:
+    """Add metacognitive_state with all-unknown/null defaults."""
+    out = dict(data)
+    out["metacognitive_state"] = {
+        "calibration_accuracy": None,
+        "planning_tendency": "unknown",
+        "help_seeking": "unknown",
+        "updated_at": "1970-01-01T00:00:00Z",
+    }
+    return out
+
+
 # Migration registries: version -> function that upgrades FROM that version.
 #
 # Contract: each registered function must be PURE — accept a dict, return a
@@ -52,6 +64,7 @@ def _migrate_profile_0_to_1(data: dict[str, Any]) -> dict[str, Any]:
 # state (the outer loop only rebinds its local reference on success).
 PROFILE_MIGRATIONS: dict[int, Any] = {
     0: _migrate_profile_0_to_1,
+    1: _migrate_profile_1_to_2,
 }
 
 GOAL_MIGRATIONS: dict[int, Any] = {

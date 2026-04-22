@@ -7,6 +7,9 @@ mentor:
   emotional_state:
     staleness_minutes: 120
     degradation_intervention_threshold: frustrated
+  metacognitive_state:
+    staleness_days: 14
+    fading_threshold: proactive
 
 learner: {}     # profile defaults (initial mastery levels, decay rates, etc.)
 

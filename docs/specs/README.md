@@ -15,6 +15,7 @@ For the full development model, see `docs/development-process.md`.
 | [Hints](hints.md) | accepted |
 | [Interleaving](interleaving.md) | draft |
 | [Learner Profile](learner-profile.md) | accepted |
+| [Metacognitive Tracking](metacognitive-tracking.md) | accepted |
 | [Performance Training](performance-training.md) | accepted |
 | [Release Communication](release-communication.md) | accepted |
 | [Release Process](release-process.md) | accepted |

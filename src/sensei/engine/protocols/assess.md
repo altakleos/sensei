@@ -79,6 +79,8 @@ Run:
 
 Parse the JSON output. Record the `quadrant` (mastered / learning / gap / misconception).
 
+After classifying the confidence quadrant, run `.sensei/run calibration_tracker.py --profile learner/profile.yaml` to update `metacognitive_state.calibration_accuracy` in the profile. This computes the running ratio of confident-correct to total-confident responses.
+
 ## Step 5 — Update the profile
 
 Update `learner/profile.yaml` for this topic:

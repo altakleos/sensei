@@ -9,7 +9,7 @@
   "properties": {
     "schema_version": {
       "type": "integer",
-      "const": 1,
+      "const": 2,
       "description": "Profile schema version. Bump on any field-semantics change."
     },
     "learner_id": {
@@ -51,6 +51,33 @@
         }
       },
       "required": ["engagement", "frustration", "agency", "updated_at"]
+    },
+    "metacognitive_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Metacognitive signals: calibration, planning, help-seeking. Updated by scripts and LLM observation.",
+      "properties": {
+        "calibration_accuracy": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Ratio of confident-correct to total-confident responses. Null = insufficient data."
+        },
+        "planning_tendency": {
+          "type": "string",
+          "enum": ["proactive", "prompted", "impulsive", "unknown"]
+        },
+        "help_seeking": {
+          "type": "string",
+          "enum": ["strategic", "avoidant", "dependent", "unknown"]
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 UTC timestamp of last update."
+        }
+      },
+      "required": ["calibration_accuracy", "planning_tendency", "help_seeking", "updated_at"]
     }
   },
   "$defs": {
