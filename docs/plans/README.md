@@ -34,7 +34,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [e2e-kiro-support](e2e-kiro-support.md) | Tool-agnostic E2E tests — Kiro CLI + Claude Code | done |
 | [e2e-review-protocol](e2e-review-protocol.md) | Review protocol E2E test — stale topic selection + profile update | done |
 | [e2e-tutor-protocol](e2e-tutor-protocol.md) | Tutor protocol E2E test — teaching interaction + profile update | done || [curriculum-graph](curriculum-graph.md) | Curriculum graph — frontier, mutations, validation | done |
-| [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
+| [e2e-challenger-reviewer](e2e-challenger-reviewer.md) | Challenger + reviewer E2E tests | done || [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
 | [mermaid-diagrams](mermaid-diagrams.md) | Mermaid diagram enhancement pass | done |
 | [parallel-worktrees](parallel-worktrees.md) | Parallel agent worktrees | done |
 
