@@ -12,7 +12,7 @@ A pip-installable CLI that scaffolds a learning-environment folder. The user ope
 1. Read [`docs/development-process.md`](docs/development-process.md) — the SDD method.
 2. Read [`docs/sensei-implementation.md`](docs/sensei-implementation.md) — how this project instantiates Implementation and Verification.
 3. Read [`docs/decisions/README.md`](docs/decisions/README.md) — what has already been decided.
-4. Before making non-trivial changes, follow the flow in § "How Work Flows Through the Layers": spec → design → ADR → plan → implementation → verification.
+4. **Before editing any source file** for a non-trivial change, produce a plan and wait for approval — see § "Required: Plan Before Build" below. The full artifact flow (spec → design → ADR → plan → implementation → verification) is in [`docs/development-process.md`](docs/development-process.md) § "How Work Flows Through the Layers".
 
 For operational tasks (cutting a release, running parallel agents), see [`docs/operations/README.md`](docs/operations/README.md).
 
@@ -54,6 +54,30 @@ sensei/
 - **Process rules belong in `docs/development-process.md`**. README files in artifact directories (`specs/`, `design/`, `plans/`, `decisions/`, `foundations/`) carry indexes, templates, and pointers — not process definitions. When adding a new process concept, put it in the method doc and add a pointer from the relevant README.
 - ADRs are immutable once accepted. To reverse one, write a superseding ADR.
 - The product vision has been fully decomposed into docs/foundations/ (principles, personas, vision) and docs/specs/ (protocols, features). `docs/research/bibliography.md` is the curated research catalog.
+
+## Required: Plan Before Build
+
+For any non-trivial change, your **first output** is a plan file under `docs/plans/<slug>.md` (feature-scoped) or `~/.claude/plans/` (session-scoped), followed by explicit user approval. You may not call Edit, Write, or mutating Bash on source files before the user has approved the plan.
+
+A change is **non-trivial** (plan first) if any of these apply:
+
+- touches more than one function, file, or public symbol
+- adds, removes, or pins a dependency
+- changes a CLI flag, public schema, JSON/YAML shape, or protocol prose
+- warrants a CHANGELOG entry
+- multiple agents will collaborate on it
+- you are unsure which side of this line it falls on
+
+A change is **trivial** (act directly, no plan needed) only if:
+
+- typo in a comment or string literal
+- fixing a single failing assertion with an unambiguous fix
+- renaming a local variable
+- deleting code the caller can prove is unreachable
+
+**Before your first source-modifying tool call, state in one sentence:** "Plan at `<path>` has been approved." If you cannot truthfully emit that sentence, stop and plan. This sentence is the audit trail — its absence in a transcript is how violations get caught.
+
+**Retroactive plans are evidence of past violation, not a norm.** If you see commits labeled "retroactive plan for X shipped in vY.Z", a prior agent skipped this rule and the user had to ask them to paper over it. Do not add to that pile.
 
 ## Contribution Conventions
 

@@ -204,6 +204,8 @@ When the change modifies HOW an existing feature works without changing WHAT it 
 
 The simplest path. A threshold is wrong, a check has a bug, a configuration value needs adjustment. Touch only the affected layer. No spec, no design doc, no ADR unless the fix reveals a design flaw that requires a decision.
 
+A plan is still required if the fix touches multiple files or its correct scope isn't obvious from a one-line description. Single-file single-function fixes are the exception, not the default.
+
 ### Worked examples
 
 Classifying a change into the right path is the most consequential routing decision in this method. These examples illustrate the reasoning:
@@ -285,13 +287,25 @@ Any spec claiming to `realize:` a principle or `serve:` a foundation should name
 
 ## When to Write a Plan
 
-A plan is warranted when:
+**Default: plan before build.** Any change that is not demonstrably trivial gets a plan file before the first source edit.
 
-- The implementation involves multiple files or steps that must be ordered.
-- An agent (or multiple agents) will implement the work and needs a concrete task list before starting.
-- The feature branch will have more than 2-3 commits.
+A change is **trivial** (act directly, no plan needed) only if:
 
-A plan is NOT needed for: single-file bug fixes, config tuning, documentation improvements, or any change where the implementation is obvious from the design doc or ADR alone.
+- typo in a comment or string literal
+- fixing a single failing assertion with an unambiguous fix
+- renaming a local variable
+- deleting code the caller can prove is unreachable
+
+A change is **non-trivial** (plan first) if any of these apply:
+
+- touches more than one function, file, or public symbol
+- adds, removes, or pins a dependency
+- changes a CLI flag, public schema, JSON/YAML shape, or protocol prose
+- warrants a CHANGELOG entry
+- multiple agents will collaborate on it
+- you are unsure which side of this line it falls on
+
+The default bias is toward planning. The cost of a short plan that gets approved in one round is low; the cost of redirecting a half-implemented feature is high. Retroactive plans (written after the code ships) are a corrective patch for rule violations, not a substitute for planning.
 
 Plans use a lightweight format: YAML frontmatter (`feature`, `serves`, `design`, `status`, `date`), then sections for Tasks (ordered checklist with file paths and inline `(depends: T1)` annotations) and Acceptance Criteria. See `docs/plans/README.md` for the template.
 
