@@ -25,7 +25,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-import yaml
+try:
+    import yaml
+except ImportError:  # pragma: no cover
+    print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
+    sys.exit(1)
 
 from sensei.engine.scripts._iso import parse_iso
 from sensei.engine.scripts.decay import freshness_score

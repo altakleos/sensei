@@ -20,7 +20,11 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import yaml
+try:
+    import yaml
+except ImportError:  # pragma: no cover
+    print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
+    sys.exit(1)
 
 _DONE_STATES = frozenset({"collapsed", "completed"})
 _EXCLUDED_STATES = frozenset({"collapsed", "active", "completed", "expanded"})

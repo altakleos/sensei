@@ -19,7 +19,11 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import yaml
+try:
+    import yaml
+except ImportError:  # pragma: no cover
+    print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
+    sys.exit(1)
 
 # Mastery levels in rank order; "solid" and above count as globally known.
 _LEVELS: tuple[str, ...] = ("none", "shaky", "developing", "solid", "mastered")

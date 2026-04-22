@@ -23,8 +23,12 @@ from collections import deque
 from pathlib import Path
 from typing import Any
 
-import yaml
-from jsonschema import Draft202012Validator
+try:
+    import yaml
+    from jsonschema import Draft202012Validator
+except ImportError as _err:  # pragma: no cover
+    print(f"ERROR: Missing dependency ({_err.name}). Install with: pip install sensei-tutor", file=sys.stderr)
+    sys.exit(1)
 
 _SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schemas" / "goal.schema.json"
 
