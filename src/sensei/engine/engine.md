@@ -104,15 +104,40 @@ python .sensei/scripts/session_allocator.py \
   --min-minutes <config.cross_goal.min_session_minutes>
 ```
 
-Present the allocations as a suggested session plan, then load the top-ranked goal and say:
+Use the allocations internally to decide what to work on. Load the top-ranked goal and also run `resume_planner.py` for that goal to get stale-topic data. Then open the session adaptively — the shape depends on context, but the rules are fixed:
 
-> Continuing with [goal expressed_as]. [reason from priority script]
+### Opener rules (all cases)
 
-If `session_allocator.py` fails, fall back to showing priority-ranked goals without time budgets.
+- Cap at 2–3 sentences before you are teaching or asking a question.
+- Never show time allocations, mastery scores, freshness numbers, or session plans unless the learner asks.
+- Never say "Welcome back", "Great to see you", or any greeting filler. `personality.md` prohibitions apply.
+- Specify the *shape* of what you say, not exact words — the opener must never feel scripted.
 
-Then proceed to the goal protocol's Step 6 (begin teaching the active topic).
+### Case 1: Returning learner, normal cadence
 
-If no active goals exist, greet the learner in tutor mode and wait for them to express a goal or ask a question.
+The `resume_planner.py` result has `recommended_action: "continue"` or a small number of stale topics.
+
+- **Bridge** (1–2 sentences): Name the goal and the specific topic they were last working on. If `stale_topics` is non-empty, mention the count naturally in human language (e.g., "a couple of earlier topics are getting rusty") — do NOT report freshness scores.
+- **Resume** (1 sentence): Immediately pick up the thread — ask a probing question, pose a small problem, or continue the explanation. Do NOT wait for permission to proceed.
+
+Translate algorithmic reasons to human language. Not "highest decay risk score 0.73" but "it's been a few days since we worked on this." The learner should feel a mentor picking up a conversation, not a dashboard loading.
+
+### Case 2: Returning learner, long gap
+
+The `resume_planner.py` result has `recommended_action: "review_first"` (stale_threshold crossed on multiple topics).
+
+- **Lead with a retrieval question** on the most-decayed topic: bridge directly into assessment by asking the learner to recall or apply the rustiest concept. This is the assessor emerging naturally at session start — not a mode switch announcement, just a question.
+- If the learner answers well, acknowledge briefly and resume the frontier. If they struggle, the two-failure principle and normal mode transitions take over.
+
+### Case 3: No active goals
+
+Greet the learner in tutor mode. Ask one question about what they want to learn. Nothing else.
+
+### Fallback
+
+If `session_allocator.py` fails, fall back to showing priority-ranked goals without time budgets, then apply the opener rules above for the top goal.
+
+After the opener, proceed to the goal protocol's Step 6 (begin teaching the active topic).
 
 ## Dispatch Table
 
