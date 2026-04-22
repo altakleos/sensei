@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a15] — 2026-04-22
+
+### Added
+
+- Performance training V2 — stages 5 (simulated evaluation) and 6 (full mock) complete the six-stage Performance Preparation Stack. Assessor overlay fully implemented with evaluation realism, rubric framing, and mock orchestration. Reviewer debrief after full mocks.
+- Session notes — structured cross-session mentor memory. The mentor records observations (misconceptions, breakthroughs, effective strategies, emotional shifts) incrementally during sessions, with a prose summary and next-session seeds at session close. Stored in `learner/session-notes.yaml`, schema-validated, bounded at 50 entries. Engine loads the last 3 notes at session start for continuity.
+- New schema: `session-notes.schema.json` with 4 observation types.
+- `sensei init` creates `learner/session-notes.yaml`; `sensei verify` validates it.
+
 ## [0.1.0a14] — 2026-04-22
 
 ### Added
@@ -239,7 +248,8 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a14...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a15...HEAD
+[0.1.0a15]: https://github.com/altakleos/sensei/compare/v0.1.0a14...v0.1.0a15
 [0.1.0a14]: https://github.com/altakleos/sensei/compare/v0.1.0a13...v0.1.0a14
 [0.1.0a13]: https://github.com/altakleos/sensei/compare/v0.1.0a12...v0.1.0a13
 [0.1.0a12]: https://github.com/altakleos/sensei/compare/v0.1.0a11...v0.1.0a12
