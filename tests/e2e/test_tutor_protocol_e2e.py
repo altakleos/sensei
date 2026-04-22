@@ -53,7 +53,7 @@ def _seed_profile(instance_dir: Path) -> dict:
     """Overwrite learner/profile.yaml with one untaught topic."""
     now = datetime.now(timezone.utc)
     profile = {
-        "schema_version": 1,
+        "schema_version": 2,
         "learner_id": "e2e",
         "expertise_map": {
             "binary-search": {
