@@ -52,7 +52,7 @@ Current UTC timestamp is generated with `date -u +%Y-%m-%dT%H:%M:%SZ` whenever t
 Run:
 
 ```
-python .sensei/scripts/check_profile.py --profile learner/profile.yaml
+.sensei/run check_profile.py --profile learner/profile.yaml
 ```
 
 Parse the single JSON line from stdout. If `status` is not `"ok"` (or exit code is non-zero), say exactly:
@@ -71,7 +71,7 @@ Read `.sensei/defaults.yaml` and (if present) `learner/config.yaml`. Mentally de
 Run a single cross-goal review scheduling invocation:
 
 ```
-python .sensei/scripts/review_scheduler.py \
+.sensei/run review_scheduler.py \
   --goals-dir learner/goals \
   --profile learner/profile.yaml \
   --half-life-days <half_life_days> \
@@ -123,7 +123,7 @@ When the learner responds, determine two binary labels:
 Run:
 
 ```
-python .sensei/scripts/classify_confidence.py \
+.sensei/run classify_confidence.py \
   --confidence <label> \
   --correctness <label>
 ```
@@ -149,7 +149,7 @@ In memory, update the topic's state per the V1 rule:
 Write the updated `learner/profile.yaml`. Then re-validate:
 
 ```
-python .sensei/scripts/check_profile.py --profile learner/profile.yaml
+.sensei/run check_profile.py --profile learner/profile.yaml
 ```
 
 If validation fails, restore the previous file contents, say:

@@ -48,7 +48,7 @@ After delivering feedback, ask: "Before I reviewed this, how confident were you 
 Run:
 
 ```
-python .sensei/scripts/classify_confidence.py --confidence <label> --correctness <label>
+.sensei/run classify_confidence.py --confidence <label> --correctness <label>
 ```
 
 Act on calibration:

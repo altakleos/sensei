@@ -74,7 +74,7 @@ Determine two labels from the learner's response:
 Run:
 
 ```
-python .sensei/scripts/classify_confidence.py --confidence <label> --correctness <label>
+.sensei/run classify_confidence.py --confidence <label> --correctness <label>
 ```
 
 Parse the JSON output. Record the `quadrant` (mastered / learning / gap / misconception).
@@ -90,7 +90,7 @@ Update `learner/profile.yaml` for this topic:
 Write the file. Then validate:
 
 ```
-python .sensei/scripts/check_profile.py --profile learner/profile.yaml
+.sensei/run check_profile.py --profile learner/profile.yaml
 ```
 
 If validation fails, revert the write, surface the error, and end the session.
@@ -100,7 +100,7 @@ If validation fails, revert the write, surface the error, and end the session.
 Run:
 
 ```
-python .sensei/scripts/mastery_check.py --profile learner/profile.yaml --topic <topic> --required solid
+.sensei/run mastery_check.py --profile learner/profile.yaml --topic <topic> --required solid
 ```
 
 Interpret the exit code:
