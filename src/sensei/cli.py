@@ -12,6 +12,7 @@ from __future__ import annotations
 import os
 import re
 import shutil
+import stat
 import sys
 from pathlib import Path
 
@@ -160,6 +161,17 @@ def _write_shim(root: Path, rel_path: str, content: str) -> None:
     target.write_text(content, encoding="utf-8")
 
 
+def _install_run_script(sensei_dir: Path) -> None:
+    """Record the Python interpreter and make the run wrapper executable."""
+    (sensei_dir / ".python_path").write_text(sys.executable + "\n", encoding="utf-8")
+    run_script = sensei_dir / "run.sh"
+    run_dest = sensei_dir / "run"
+    if run_script.exists():
+        run_script.rename(run_dest)
+    if run_dest.exists():
+        run_dest.chmod(run_dest.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+
+
 @click.group()
 @click.version_option(__version__, prog_name="sensei")
 def main() -> None:
@@ -195,6 +207,9 @@ def init(target: Path, force: bool, learner_id: str) -> None:
 
     # Install engine bundle into .sensei/ atomically.
     _atomic_replace_engine(_engine_source(), sensei_dir, __version__)
+
+    # Record interpreter path and make run wrapper executable.
+    _install_run_script(sensei_dir)
 
     # Learner data directory + seed profile.
     (target / "learner").mkdir(exist_ok=True)
@@ -368,6 +383,9 @@ def upgrade(target: Path) -> None:
 
     # Replace engine bundle atomically (learner/ is untouched).
     _atomic_replace_engine(_engine_source(), sensei_dir, __version__)
+
+    # Refresh interpreter path and run wrapper.
+    _install_run_script(sensei_dir)
 
     click.echo(f"Upgraded .sensei/ from {old_version} → {__version__}")
     if learner_dir.exists():
