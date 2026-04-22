@@ -7,6 +7,7 @@ realizes:
   - P-learner-is-not-the-goal
 stressed_by:
   - persona-jacundu
+  - persona-tomas
 fixtures:
   - tests/transcripts/hints.md
   - tests/test_hint_decay.py

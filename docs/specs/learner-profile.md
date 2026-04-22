@@ -10,6 +10,7 @@ realizes:
   - P-cross-link-dont-duplicate
 stressed_by:
   - persona-jacundu
+  - persona-nkechi
 fixtures:
   - tests/scripts/test_check_profile.py
   - tests/test_schema_validation.py

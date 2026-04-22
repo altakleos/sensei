@@ -6,6 +6,7 @@ realizes:
   - P-learner-is-not-the-goal
 stressed_by:
   - persona-jacundu
+  - persona-tomas
 fixtures:
   - tests/scripts/test_check_goal.py
   - tests/test_schema_validation.py

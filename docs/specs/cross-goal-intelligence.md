@@ -8,6 +8,7 @@ realizes:
   - P-forgetting-curve-is-curriculum
 stressed_by:
   - persona-jacundu
+  - persona-tomas
 fixtures:
   - tests/scripts/test_global_knowledge.py
   - tests/scripts/test_goal_priority.py

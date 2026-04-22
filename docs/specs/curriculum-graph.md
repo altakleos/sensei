@@ -9,6 +9,9 @@ fixtures:
   - tests/test_mutate_graph.py
   - tests/test_curriculum_integration.py
   - tests/scripts/test_check_goal.py
+stressed_by:
+  - persona-tomas
+  - persona-nkechi
 ---
 # Curriculum Graph
 
