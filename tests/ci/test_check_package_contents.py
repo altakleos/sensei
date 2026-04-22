@@ -144,6 +144,7 @@ def test_required_directory_empty(tmp_path: Path, empty_dir_marker: str, expecte
 @pytest.mark.parametrize(
     "forbidden_path",
     [
+        "instance/state.yaml",
         "learner/profile.yaml",
         "wiki/index.md",
         "raw/source.txt",
@@ -281,3 +282,49 @@ def test_real_repo_changelog_has_entry_for_v0_1_0a1() -> None:
     """Sanity: the repo's own CHANGELOG.md carries the released version."""
     status, err = cpc._changelog_entry_status(_REPO_ROOT / "CHANGELOG.md", "0.1.0a1")
     assert status == "ok", err
+
+
+# --- FORBIDDEN_PREFIXES snapshot --------------------------------------------
+#
+# Locks in the exact set of forbidden path prefixes. Without this, silently
+# deleting a prefix (e.g. `"learner/"` or `"instance/"`) from the tuple in
+# ci/check_package_contents.py would pass every other test — the
+# parametrized test_forbidden_path covers behavior only for prefixes that
+# happen to be listed in its own parametrize arguments, not for whatever is
+# currently in the validator's tuple. Changes to the tuple must be
+# deliberate: update this snapshot in the same commit.
+
+
+_EXPECTED_FORBIDDEN_PREFIXES: tuple[str, ...] = (
+    "instance/",
+    "learner/",
+    "wiki/",
+    "raw/",
+    "notebook/",
+    "inbox/",
+    "memory/",
+    ".kiro/",
+    ".cursor/",
+    ".windsurf/",
+    ".clinerules/",
+    ".roo/",
+    ".aiassistant/",
+    ".github/",
+)
+
+_EXPECTED_FORBIDDEN_EXACT: tuple[str, ...] = (
+    "AGENTS.md",
+    "CLAUDE.md",
+)
+
+
+def test_forbidden_prefixes_snapshot() -> None:
+    """Regression guard: the shipped FORBIDDEN_PREFIXES tuple matches the
+    snapshot exactly. If you intentionally change the set, update both
+    ci/check_package_contents.py and this test in the same commit."""
+    assert cpc.FORBIDDEN_PREFIXES == _EXPECTED_FORBIDDEN_PREFIXES
+
+
+def test_forbidden_exact_snapshot() -> None:
+    """Regression guard (see test_forbidden_prefixes_snapshot)."""
+    assert cpc.FORBIDDEN_EXACT == _EXPECTED_FORBIDDEN_EXACT

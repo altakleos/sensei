@@ -24,15 +24,7 @@ import math
 import sys
 from datetime import datetime, timezone
 
-
-def _parse_iso(raw: str) -> datetime:
-    """Parse an ISO-8601 timestamp, accepting a trailing 'Z' as UTC."""
-    if raw.endswith("Z"):
-        raw = raw[:-1] + "+00:00"
-    dt = datetime.fromisoformat(raw)
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    return dt
+from sensei.engine.scripts._iso import parse_iso
 
 
 def freshness_score(elapsed_days: float, half_life_days: float) -> float:
@@ -102,8 +94,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    last_seen = _parse_iso(args.last_seen)
-    now = _parse_iso(args.now) if args.now else datetime.now(tz=timezone.utc)
+    last_seen = parse_iso(args.last_seen)
+    now = parse_iso(args.now) if args.now else datetime.now(tz=timezone.utc)
 
     result = freshness(last_seen, args.half_life_days, now, args.stale_threshold)
     print(json.dumps(result))

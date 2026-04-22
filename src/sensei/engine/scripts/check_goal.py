@@ -55,27 +55,29 @@ def _check_cross_field(goal: dict[str, Any]) -> list[str]:
                     f"node {slug!r}: prerequisite {prereq!r} does not exist"
                 )
 
-    # (c) No cycles — Kahn's algorithm (topological sort)
+    # (c) No cycles — Kahn's algorithm (topological sort). O(N + E) via a
+    # reverse-adjacency index so the BFS inner loop walks only actual
+    # dependents, not every node in the graph.
     # Note: require_redemonstration (boolean) has no cross-field constraints.
     # It is valid on any node regardless of state — the flag is consumed by
     # global_knowledge.py at query time, not validated structurally here.
     in_degree: dict[str, int] = {slug: 0 for slug in nodes}
+    dependents: dict[str, list[str]] = {slug: [] for slug in nodes}
     for slug, node in nodes.items():
         for prereq in node.get("prerequisites", []):
             if prereq in in_degree:
                 in_degree[slug] += 1
+                dependents[prereq].append(slug)
 
     queue: deque[str] = deque(slug for slug, deg in in_degree.items() if deg == 0)
     visited = 0
     while queue:
         current = queue.popleft()
         visited += 1
-        # Find nodes that depend on current (current is in their prerequisites)
-        for slug, node in nodes.items():
-            if current in node.get("prerequisites", []):
-                in_degree[slug] -= 1
-                if in_degree[slug] == 0:
-                    queue.append(slug)
+        for dep in dependents[current]:
+            in_degree[dep] -= 1
+            if in_degree[dep] == 0:
+                queue.append(dep)
 
     if visited < len(nodes):
         cycle_nodes = [slug for slug, deg in in_degree.items() if deg > 0]

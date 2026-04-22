@@ -29,23 +29,16 @@ from typing import Any
 
 import yaml
 
+from sensei.engine.scripts._iso import parse_iso
+
 _PRIORITY_WEIGHT: dict[str, int] = {"high": 3, "normal": 2, "low": 1}
 _DEFAULT_HALF_LIFE_DAYS = 7.0
 _DEFAULT_STALE_THRESHOLD = 0.5
 _DEFAULT_DEADLINE_WEIGHT = 5.0
 
 
-def _parse_iso(raw: str) -> datetime:
-    if raw.endswith("Z"):
-        raw = raw[:-1] + "+00:00"
-    dt = datetime.fromisoformat(raw)
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    return dt
-
-
 def _is_stale(last_seen: str, now: datetime, half_life_days: float, stale_threshold: float) -> bool:
-    elapsed = (now - _parse_iso(last_seen)).total_seconds() / 86_400.0
+    elapsed = (now - parse_iso(last_seen)).total_seconds() / 86_400.0
     return bool(2.0 ** (-elapsed / half_life_days) < stale_threshold)
 
 
@@ -87,7 +80,7 @@ def score_goal(
             continue
         entry = expertise.get(topic)
         if entry and entry.get("last_seen"):
-            ls = _parse_iso(entry["last_seen"])
+            ls = parse_iso(entry["last_seen"])
             if most_recent is None or ls > most_recent:
                 most_recent = ls
             if _is_stale(entry["last_seen"], now, half_life_days, stale_threshold):
@@ -103,7 +96,7 @@ def score_goal(
     deadline_urgency = 0.0
     deadline_raw = goal.get("deadline")
     if deadline_raw:
-        days_until = (_parse_iso(deadline_raw) - now).total_seconds() / 86_400.0
+        days_until = (parse_iso(deadline_raw) - now).total_seconds() / 86_400.0
         deadline_urgency = deadline_weight * (1.0 / max(1.0, days_until))
 
     score = pw * 10 + stale_count * 2 + recency_boost + deadline_urgency
@@ -161,7 +154,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"error": f"yaml parse error: {exc}"}))
         return 1
 
-    now = _parse_iso(args.now) if args.now else datetime.now(tz=timezone.utc)
+    now = parse_iso(args.now) if args.now else datetime.now(tz=timezone.utc)
     scored = [
         s
         for g in goals

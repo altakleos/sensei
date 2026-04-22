@@ -299,6 +299,7 @@ def status(target: Path) -> None:
         threshold = float(memory_cfg.get("stale_threshold", 0.5))
 
         stale: list[str] = []
+        malformed: list[str] = []
         for slug, state in expertise.items():
             if not isinstance(state, dict):
                 continue
@@ -312,7 +313,21 @@ def status(target: Path) -> None:
                 if freshness_score(elapsed, half_life) < threshold:
                     stale.append(slug)
             except (ValueError, TypeError):
+                # Treat as stale (conservative), but surface it so the learner
+                # knows their profile has corrupt timestamps rather than a
+                # silently-growing "due for review" list.
                 stale.append(slug)
+                malformed.append(slug)
+
+        if malformed:
+            click.echo(
+                f"Warning:  {len(malformed)} topic{'s' if len(malformed) != 1 else ''} "
+                f"with unparseable last_seen (treated as stale):"
+            )
+            for s in malformed[:5]:
+                click.echo(f"          - {s}")
+            if len(malformed) > 5:
+                click.echo(f"          ... and {len(malformed) - 5} more")
 
         if stale:
             click.echo(f"Stale:    {len(stale)} topic{'s' if len(stale) != 1 else ''} due for review")

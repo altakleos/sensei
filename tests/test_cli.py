@@ -456,7 +456,9 @@ def test_status_flags_stale_topics(tmp_path: Path) -> None:
 
 
 def test_status_tolerates_malformed_last_seen(tmp_path: Path) -> None:
-    """A topic with a garbage last_seen string should still appear as stale, not crash status."""
+    """A topic with a garbage last_seen string should still appear as stale,
+    not crash status — and the parse failure must surface as a warning so
+    the learner knows their profile has corrupt timestamps."""
     runner = CliRunner()
     _init_instance(runner, tmp_path)
     profile = {
@@ -483,6 +485,15 @@ def test_status_tolerates_malformed_last_seen(tmp_path: Path) -> None:
     result = runner.invoke(main, ["status", str(tmp_path)])
     assert result.exit_code == 0
     assert "Stale:    2 topics" in result.output
+    # Only the unparseable timestamp is malformed; empty is a legitimate schema
+    # state (never reviewed) and does not appear in the warning list.
+    assert "Warning:  1 topic with unparseable last_seen" in result.output
+    # Slice the output between the Warning: header and the Stale: header —
+    # absent-timestamp belongs in Stale (empty last_seen is schema-valid) but
+    # not in the Warning list.
+    warning_section = result.output.split("Warning:")[1].split("Stale:")[0]
+    assert "- garbage" in warning_section
+    assert "- absent-timestamp" not in warning_section
 
 
 # --- upgrade: migration-applied + already-current paths ---

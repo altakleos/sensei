@@ -14,8 +14,10 @@
     },
     "learner_id": {
       "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{1,64}$",
       "minLength": 1,
-      "description": "Human-readable learner identifier. Immutable once set."
+      "maxLength": 64,
+      "description": "Human-readable learner identifier. Letters, digits, underscore, hyphen only; 1–64 chars. Interpolated into learner/profile.yaml and embedded in LLM prompts, so YAML-injecting and prompt-steering characters are rejected. Must match the CLI --learner-id validator in sensei/cli.py."
     },
     "expertise_map": {
       "type": "object",

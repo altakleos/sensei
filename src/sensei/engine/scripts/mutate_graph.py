@@ -41,23 +41,27 @@ def _is_on_frontier(slug: str, nodes: dict[str, dict[str, Any]]) -> bool:
 
 
 def _has_cycle(nodes: dict[str, dict[str, Any]]) -> bool:
-    """Kahn's algorithm — returns True if a cycle exists."""
+    """Kahn's algorithm — returns True if a cycle exists. O(N + E)."""
     in_degree: dict[str, int] = {s: 0 for s in nodes}
+    # Reverse adjacency: prereq → nodes that depend on it. Built once so the
+    # BFS inner loop walks only actual dependents instead of re-scanning every
+    # node's prerequisites on each dequeue.
+    dependents: dict[str, list[str]] = {s: [] for s in nodes}
     for slug, node in nodes.items():
         for prereq in node.get("prerequisites", []):
             if prereq in in_degree:
                 in_degree[slug] += 1
+                dependents[prereq].append(slug)
 
     queue: deque[str] = deque(s for s, d in in_degree.items() if d == 0)
     visited = 0
     while queue:
         current = queue.popleft()
         visited += 1
-        for slug, node in nodes.items():
-            if current in node.get("prerequisites", []):
-                in_degree[slug] -= 1
-                if in_degree[slug] == 0:
-                    queue.append(slug)
+        for dep in dependents[current]:
+            in_degree[dep] -= 1
+            if in_degree[dep] == 0:
+                queue.append(dep)
 
     return visited < len(nodes)
 

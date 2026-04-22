@@ -70,6 +70,37 @@ def test_profile_empty_learner_id_rejected() -> None:
         jsonschema.validate(bad, _load_schema("profile.schema.json"))
 
 
+@pytest.mark.parametrize(
+    "bad_learner_id",
+    [
+        "has space",
+        "has\nnewline",
+        "has:colon",
+        "has/slash",
+        "has.dot",
+        "has{brace}",
+        "x" * 65,  # too long
+    ],
+)
+def test_profile_learner_id_pattern_rejects_unsafe(bad_learner_id: str) -> None:
+    """Schema must enforce the same pattern the CLI --learner-id validator
+    uses, so protocols writing profile.yaml directly cannot smuggle in
+    YAML- or prompt-injecting characters (cli.py:_LEARNER_ID_RE)."""
+    bad = {**VALID_PROFILE, "learner_id": bad_learner_id}
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, _load_schema("profile.schema.json"))
+
+
+@pytest.mark.parametrize(
+    "good_learner_id",
+    ["alice", "learner-01", "ab_cd", "A", "x" * 64],
+)
+def test_profile_learner_id_pattern_accepts_safe(good_learner_id: str) -> None:
+    """All CLI-accepted learner_ids must also pass schema validation."""
+    ok = {**VALID_PROFILE, "learner_id": good_learner_id}
+    jsonschema.validate(ok, _load_schema("profile.schema.json"))
+
+
 def test_profile_missing_required_field_rejected() -> None:
     bad = {k: v for k, v in VALID_PROFILE.items() if k != "expertise_map"}
     with pytest.raises(jsonschema.ValidationError):

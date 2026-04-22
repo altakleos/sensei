@@ -27,19 +27,11 @@ from typing import Any
 
 import yaml
 
+from sensei.engine.scripts._iso import parse_iso
 from sensei.engine.scripts.decay import freshness_score
 
 _DEFAULT_HALF_LIFE_DAYS = 7.0
 _DEFAULT_STALE_THRESHOLD = 0.5
-
-
-def _parse_iso(raw: str) -> datetime:
-    if raw.endswith("Z"):
-        raw = raw[:-1] + "+00:00"
-    dt = datetime.fromisoformat(raw)
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    return dt
 
 
 def schedule_reviews(
@@ -99,7 +91,7 @@ def schedule_reviews(
             if not entry or not entry.get("last_seen"):
                 continue
 
-            elapsed = (now - _parse_iso(entry["last_seen"])).total_seconds() / 86_400.0
+            elapsed = (now - parse_iso(entry["last_seen"])).total_seconds() / 86_400.0
             fresh = freshness_score(elapsed, half_life_days)
 
             if fresh >= stale_threshold:
@@ -153,7 +145,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     try:
-        now = _parse_iso(args.now) if args.now else datetime.now(tz=timezone.utc)
+        now = parse_iso(args.now) if args.now else datetime.now(tz=timezone.utc)
         result = schedule_reviews(goals_dir, profile_path, args.half_life_days, args.stale_threshold, now)
     except yaml.YAMLError as exc:
         print(json.dumps({"error": f"yaml parse error: {exc}"}))

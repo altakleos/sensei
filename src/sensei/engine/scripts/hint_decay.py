@@ -25,15 +25,7 @@ from typing import Any
 
 import yaml
 
-
-def _parse_iso(raw: str) -> datetime:
-    """Parse an ISO-8601 timestamp, accepting a trailing 'Z' as UTC."""
-    if raw.endswith("Z"):
-        raw = raw[:-1] + "+00:00"
-    dt = datetime.fromisoformat(raw)
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    return dt
+from sensei.engine.scripts._iso import parse_iso
 
 
 def update_hints(
@@ -50,7 +42,7 @@ def update_hints(
     for entry in hints:
         if entry.get("status") not in ("active", "triaged"):
             continue
-        ingested = _parse_iso(entry["ingested"])
+        ingested = parse_iso(entry["ingested"])
         elapsed_days = (now - ingested).total_seconds() / 86_400.0
         fresh = 2.0 ** (-elapsed_days / half_life_days)
         entry["freshness"] = round(fresh, 6)
@@ -88,7 +80,7 @@ def main(argv: list[str] | None = None) -> int:
         print("error: hints file must contain a top-level 'hints' key", file=sys.stderr)
         return 1
 
-    now = _parse_iso(args.now) if args.now else datetime.now(tz=timezone.utc)
+    now = parse_iso(args.now) if args.now else datetime.now(tz=timezone.utc)
 
     updated = update_hints(
         data["hints"],

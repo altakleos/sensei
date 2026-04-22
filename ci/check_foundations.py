@@ -39,32 +39,51 @@ VALID_KINDS: frozenset[str] = frozenset({"pedagogical", "technical", "product"})
 
 
 def _split_frontmatter(text: str) -> tuple[dict[str, Any], str]:
+    """Return (frontmatter_dict, body). Raises yaml.YAMLError on malformed YAML."""
     text = text.replace("\r\n", "\n")
     if not text.startswith("---\n"):
         return {}, text
     end = text.find("\n---\n", 4)
     if end < 0:
         return {}, text
-    try:
-        fm = yaml.safe_load(text[4:end]) or {}
-    except yaml.YAMLError:
-        return {}, text
+    fm = yaml.safe_load(text[4:end]) or {}
     body = text[end + len("\n---\n"):]
     return fm, body
 
 
-def _load_md(path: Path) -> dict[str, Any]:
-    fm, _ = _split_frontmatter(path.read_text(encoding="utf-8"))
+def _load_md(path: Path, errors: list[str]) -> dict[str, Any]:
+    """Read frontmatter from *path*. On YAML parse failure or non-mapping
+    frontmatter, append a descriptive message to *errors* and return an
+    empty dict so the caller can skip the file cleanly.
+
+    Previously the helper silently swallowed yaml.YAMLError, making a
+    malformed frontmatter block indistinguishable from an absent one —
+    principles with broken YAML would quietly drop from the index.
+    """
+    try:
+        fm, _ = _split_frontmatter(path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        errors.append(f"{path}: invalid YAML frontmatter: {exc}")
+        return {}
+    if not isinstance(fm, dict):
+        errors.append(f"{path}: YAML frontmatter is not a mapping")
+        return {}
     return fm
 
 
-def discover_allowed_slugs(foundations_root: Path) -> dict[str, dict[str, Any]]:
-    """Return a map of slug → {path, type, kind?, status?}."""
+def discover_allowed_slugs(
+    foundations_root: Path, errors: list[str]
+) -> dict[str, dict[str, Any]]:
+    """Return a map of slug → {path, type, kind?, status?}.
+
+    Any per-file YAML-parse failures are appended to *errors* and the
+    corresponding file is skipped.
+    """
     allowed: dict[str, dict[str, Any]] = {}
 
     vision = foundations_root / "vision.md"
     if vision.is_file():
-        fm = _load_md(vision)
+        fm = _load_md(vision, errors)
         allowed["vision"] = {
             "path": vision,
             "type": "vision",
@@ -76,7 +95,7 @@ def discover_allowed_slugs(foundations_root: Path) -> dict[str, dict[str, Any]]:
         for p in sorted(principles_dir.glob("*.md")):
             if p.name == "README.md":
                 continue
-            fm = _load_md(p)
+            fm = _load_md(p, errors)
             pid = fm.get("id")
             if not pid:
                 continue
@@ -92,7 +111,7 @@ def discover_allowed_slugs(foundations_root: Path) -> dict[str, dict[str, Any]]:
         for p in sorted(personas_dir.glob("*.md")):
             if p.name == "README.md":
                 continue
-            fm = _load_md(p)
+            fm = _load_md(p, errors)
             pid = fm.get("id")
             if not pid:
                 continue
@@ -118,7 +137,7 @@ def check(foundations_root: Path, specs_root: Path) -> tuple[list[str], list[str
     errors: list[str] = []
     warnings: list[str] = []
 
-    allowed = discover_allowed_slugs(foundations_root)
+    allowed = discover_allowed_slugs(foundations_root, errors)
 
     # Principle `kind:` validation
     for _slug, info in allowed.items():
@@ -133,7 +152,7 @@ def check(foundations_root: Path, specs_root: Path) -> tuple[list[str], list[str
     # Scan specs for references to foundations
     referenced: set[str] = set()
     for spec_path in _iter_spec_files(specs_root):
-        fm = _load_md(spec_path)
+        fm = _load_md(spec_path, errors)
         for field in ("serves", "realizes", "stressed_by"):
             refs = fm.get(field) or []
             if not isinstance(refs, list):
@@ -172,7 +191,7 @@ def check(foundations_root: Path, specs_root: Path) -> tuple[list[str], list[str
         for persona_path in sorted(personas_dir.glob("*.md")):
             if persona_path.name == "README.md":
                 continue
-            fm = _load_md(persona_path)
+            fm = _load_md(persona_path, errors)
             refs = fm.get("stresses") or []
             if not isinstance(refs, list):
                 errors.append(

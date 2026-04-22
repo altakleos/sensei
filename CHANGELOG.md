@@ -13,10 +13,20 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 - `migrate.py` writeback uses `yaml.safe_dump` instead of `yaml.dump`, preventing future migrations from emitting unsafe Python-tagged YAML that `safe_load` would then refuse to re-read.
 - `review_scheduler.py` skips malformed goal YAML with a warning on stderr instead of crashing the cross-goal pipeline on a single corrupt file.
 - `frontier.py` priority is now computed from alphabetical slug order instead of YAML insertion order, removing hidden coupling between `curriculum.yaml` key layout and teaching sequence.
+- `sensei status` surfaces a `Warning:` line for topics with unparseable `last_seen` timestamps. Previously these were silently coerced to stale, masking profile corruption.
+- `ci/check_foundations.py` now reports invalid YAML frontmatter as an error instead of silently treating it as absent frontmatter — a broken principle file could previously drop out of the foundations index unnoticed.
 
 ### Changed
 
 - Migration function contract (`migrate.py`): functions registered in `PROFILE_MIGRATIONS` / `GOAL_MIGRATIONS` must be **pure** — accept a dict and return a new dict, without mutating the input. Guarantees that a partially-failed migration chain cannot leave the caller's dict half-transformed. Registries are empty today, so no external callers are affected.
+- `_parse_iso` helper consolidated into `sensei.engine.scripts._iso.parse_iso`. Five scripts previously carried verbatim copies of the same five-line helper.
+- Cycle detection in `mutate_graph._has_cycle` and `check_goal._check_cross_field` is now O(N+E) via a precomputed reverse-adjacency index (was O(N²) per dequeue).
+- `profile.schema.json` enforces the `^[A-Za-z0-9_-]{1,64}$` pattern on `learner_id`, mirroring the CLI `--learner-id` validator so profiles written outside the CLI cannot smuggle YAML- or prompt-injecting characters.
+
+### Tests
+
+- On-disk round-trip of a registered non-identity migration (`test_migrate_file_runs_registered_migration_end_to_end`) seeds migration-scaffolding coverage ahead of the first real migration.
+- `FORBIDDEN_PREFIXES` snapshot test locks the set of wheel-forbidden paths so silent removal of any prefix fails CI.
 
 ## [0.1.0a11] — 2026-04-21
 

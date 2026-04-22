@@ -161,6 +161,54 @@ def test_migrate_profile_pure_chain_returns_new_dict(monkeypatch: pytest.MonkeyP
     assert original == snapshot
 
 
+def test_migrate_file_runs_registered_migration_end_to_end(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """End-to-end: a registered 0→1 migration runs when loaded from disk,
+    and the on-disk YAML is atomically rewritten with the new schema_version
+    and any new fields the migration inserts.
+
+    This is the migration-scaffolding test that's missing today: the existing
+    suite only exercises identity round-trips (no migration functions ever
+    registered), so the first real migration would ship unverified. Here we
+    register a realistic migration via monkeypatch and prove the full path
+    — load → migrate → safe_dump → write — works.
+    """
+    from sensei.engine.scripts import migrate as m
+
+    def rename_field_migration(data: dict) -> dict:
+        """Realistic example: rename `legacy_field` → `new_field`."""
+        new = dict(data)
+        if "legacy_field" in new:
+            new["new_field"] = new.pop("legacy_field")
+        return new
+
+    monkeypatch.setitem(m.PROFILE_MIGRATIONS, 0, rename_field_migration)
+    monkeypatch.setattr(m, "CURRENT_PROFILE_VERSION", 1)
+
+    profile = tmp_path / "profile.yaml"
+    profile.write_text(
+        yaml.safe_dump({
+            "schema_version": 0,
+            "learner_id": "alice",
+            "expertise_map": {},
+            "legacy_field": "old-value",
+        }),
+        encoding="utf-8",
+    )
+
+    migrated = m.migrate_file(profile, "profile")
+    assert migrated is True
+
+    reloaded = yaml.safe_load(profile.read_text(encoding="utf-8"))
+    assert reloaded["schema_version"] == 1
+    assert reloaded["new_field"] == "old-value"
+    assert "legacy_field" not in reloaded
+    # Safe-dumpable: re-parsing succeeds with safe_load (no Python-tagged YAML).
+    # Already proven by the yaml.safe_load above — this is the line that
+    # would fail if migrate.py regressed to yaml.dump with a non-primitive.
+
+
 # --- main(argv) CLI entry ---
 
 
