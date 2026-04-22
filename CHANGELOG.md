@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a12] — 2026-04-22
+
+### Added
+
+- Markdown link validator (`ci/check_links.py`) — CI hard-fail on broken internal doc links. Five broken links repaired on introduction.
+- Retroactive plan for assessment-protocol with design-doc skip declaration.
+
+### Changed
+
+- `development-process.md`: tightened plan-before-build from pointer to hard gate; tightened spec-before-design and verification-alongside-implementation rules.
+
+### Fixed
+
+- Hardened state-mutation paths: atomic writes, YAML error handling, and edge cases across `mutate_graph.py`, `migrate.py`, `frontier.py`, and other scripts.
+- Medium-severity code review findings: improved error messages, input validation, and defensive checks across engine scripts.
+- Low-severity hygiene: consistent `from __future__ import annotations`, minor cleanups.
+
 ### Added
 
 - `ci/check_links.py` — maintainer-side validator that walks every `*.md` under `docs/` and fails CI on any relative markdown link that does not resolve to an existing file. Skips external URLs, same-file anchors, and fenced code blocks. Wired into `verify.yml` alongside the existing `check_foundations.py` step.
@@ -203,7 +220,8 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a11...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a12...HEAD
+[0.1.0a12]: https://github.com/altakleos/sensei/compare/v0.1.0a11...v0.1.0a12
 [0.1.0a11]: https://github.com/altakleos/sensei/compare/v0.1.0a10...v0.1.0a11
 [0.1.0a10]: https://github.com/altakleos/sensei/compare/v0.1.0a9...v0.1.0a10
 [0.1.0a9]: https://github.com/altakleos/sensei/compare/v0.1.0a8...v0.1.0a9
