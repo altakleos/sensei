@@ -2,7 +2,7 @@
 feature: cross-goal-intelligence
 serves: docs/specs/cross-goal-intelligence.md
 design: "Follows ADR-0006"
-status: in-progress
+status: done
 date: 2026-04-21
 ---
 # Plan: Cross-Goal Intelligence
@@ -76,25 +76,25 @@ Implements all four invariants from the cross-goal intelligence spec. Two invari
 
 ## Phase 9 — Concept Tags: Semantic Transfer Layer
 
-- [ ] T31: Extend `goal.schema.json` — add optional `concept_tags` array of strings (default `[]`) to `NodeState.properties`. Tags are lowercase slug-format (`^[a-z][a-z0-9-]*$`). Backward compatible: existing goals without concept_tags remain valid.
-- [ ] T32: Update `goal.md` — add ~3 lines in Step 4 (curriculum generation) instructing the LLM to assign 1–3 concept tags per node. Tags name transferable knowledge, not goal-specific application.
-- [ ] T33: Update `review.md` — add ~3 lines before Step 2 for concept-aware review. Before invoking `review_scheduler.py`, build a concept→slugs mapping from all active goals' concept_tags. Pass as `--concept-map` JSON. Topics sharing concepts with recently-reviewed topics get partial freshness credit (evidence, not proof).
-- [ ] T34: Extend `review_scheduler.py` — add optional `--concept-map` argument (JSON string mapping concept→list of slugs). When provided, after slug-level dedup, also deduplicate topics sharing concepts (keep stalest, skip rest). Without `--concept-map`, existing slug-level dedup is unchanged.
-- [ ] T35: Extend `global_knowledge.py` — add optional `--concept-tags` argument (JSON list of tags for the queried topic). When provided and the topic is not directly known, check if any topic in the expertise_map shares concept tags. If so, return `concept_evidence: true` alongside `known: false`. Without `--concept-tags`, existing behavior unchanged.
-- [ ] T36: Tests for concept_tags schema validation — valid tags, empty array, missing field (optional). → `tests/scripts/test_check_goal.py`
-- [ ] T37: Tests for concept-aware review_scheduler — (a) topics sharing concept tags are deduplicated; (b) stalest topic kept; (c) without --concept-map, slug-level dedup only. → `tests/scripts/test_review_scheduler.py`
-- [ ] T38: Tests for concept-aware global_knowledge — (a) topic not in profile but shares concept tag with known topic → concept_evidence: true; (b) without --concept-tags, existing behavior. → `tests/scripts/test_global_knowledge.py`
-- [ ] T39: Integration test — two goals with different slugs but shared concept tags, verify concept-aware dedup and evidence. → `tests/test_cross_goal.py`
-- [ ] T40: Run full test suite — confirm green, coverage ≥ 89%. → verify
+- [x] T31: Extend `goal.schema.json` — add optional `concept_tags` array of strings (default `[]`) to `NodeState.properties`. Tags are lowercase slug-format (`^[a-z][a-z0-9-]*$`). Backward compatible: existing goals without concept_tags remain valid.
+- [x] T32: Update `goal.md` — add ~3 lines in Step 4 (curriculum generation) instructing the LLM to assign 1–3 concept tags per node. Tags name transferable knowledge, not goal-specific application.
+- [x] T33: Update `review.md` — add ~3 lines before Step 2 for concept-aware review. Before invoking `review_scheduler.py`, build a concept→slugs mapping from all active goals' concept_tags. Pass as `--concept-map` JSON. Topics sharing concepts with recently-reviewed topics get partial freshness credit (evidence, not proof).
+- [x] T34: Extend `review_scheduler.py` — add optional `--concept-map` argument (JSON string mapping concept→list of slugs). When provided, after slug-level dedup, also deduplicate topics sharing concepts (keep stalest, skip rest). Without `--concept-map`, existing slug-level dedup is unchanged.
+- [x] T35: Extend `global_knowledge.py` — add optional `--concept-peers` argument (JSON list of topic slugs sharing concept tags, resolved by protocol). When provided and the topic is not directly known, check if any peer is known in the expertise_map. If so, return `concept_evidence: true` alongside `known: false`. Without `--concept-peers`, existing behavior unchanged.
+- [x] T36: Tests for concept_tags schema validation — valid tags, empty array, missing field (optional). → `tests/scripts/test_check_goal.py`
+- [x] T37: Tests for concept-aware review_scheduler — (a) topics sharing concept tags are deduplicated; (b) stalest topic kept; (c) without --concept-map, slug-level dedup only. → `tests/scripts/test_review_scheduler.py`
+- [x] T38: Tests for concept-aware global_knowledge — (a) topic not in profile but shares concept tag with known topic → concept_evidence: true; (b) without --concept-peers, existing behavior. → `tests/scripts/test_global_knowledge.py`
+- [x] T39: Integration test — two goals with different slugs but shared concept tags, verify concept-aware dedup and evidence. → `tests/test_cross_goal.py`
+- [x] T40: Run full test suite — confirm green, coverage ≥ 89%. → verify
 
 ## Acceptance Criteria (Concept Tags Extension)
 
-- [ ] AC12: `goal.schema.json` accepts optional `concept_tags` array on NodeState; existing goals without it remain valid.
-- [ ] AC13: `review_scheduler.py --concept-map` deduplicates topics sharing concepts; without flag, slug-level dedup only.
-- [ ] AC14: `global_knowledge.py --concept-tags` reports concept evidence for unknown topics sharing tags with known topics.
-- [ ] AC15: `goal.md` instructs LLM to assign 1–3 concept tags per node at generation time.
-- [ ] AC16: `review.md` adds concept-matching pass before review scheduling.
-- [ ] AC17: All tests pass, coverage ≥ 89%.
+- [x] AC12: `goal.schema.json` accepts optional `concept_tags` array on NodeState; existing goals without it remain valid.
+- [x] AC13: `review_scheduler.py --concept-map` deduplicates topics sharing concepts; without flag, slug-level dedup only.
+- [x] AC14: `global_knowledge.py --concept-peers` reports concept evidence for unknown topics sharing tags with known topics.
+- [x] AC15: `goal.md` instructs LLM to assign 1–3 concept tags per node at generation time.
+- [x] AC16: `review.md` adds concept-matching pass before review scheduling.
+- [x] AC17: All tests pass, coverage ≥ 89%.
 
 ## Acceptance Criteria (Original Pipeline)
 
