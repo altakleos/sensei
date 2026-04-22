@@ -3,7 +3,10 @@
 
 schema_version: 0
 
-mentor: {}      # behavioral thresholds (silence profiles, intervention rates, etc.)
+mentor:
+  emotional_state:
+    staleness_minutes: 120
+    degradation_intervention_threshold: frustrated
 
 learner: {}     # profile defaults (initial mastery levels, decay rates, etc.)
 

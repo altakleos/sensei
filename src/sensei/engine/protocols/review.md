@@ -190,6 +190,10 @@ Then stop. No summary, no celebration, no follow-up question.
 
 ---
 
+## Affect-aware pacing
+
+At review start, read `emotional_state` from `learner/profile.yaml`. If `frustration` is `frustrated` or `overwhelmed`, reduce the review queue length and start with topics the learner is likely to recall successfully. If `engagement` is `passive` or `disengaged`, shorten the session. These are pacing decisions — the silence profile and no-reteach rules still hold.
+
 ## Silence profile (binding)
 
 - Default to the shortest response that accomplishes the step.

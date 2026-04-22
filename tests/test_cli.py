@@ -500,15 +500,15 @@ def test_status_tolerates_malformed_last_seen(tmp_path: Path) -> None:
 
 
 def test_upgrade_reports_already_current_migrations(tmp_path: Path) -> None:
-    """After a real version bump, the migration helper runs and reports 'schemas already current'
-    when nothing needs migrating (CURRENT_PROFILE_VERSION is still 0)."""
+    """After a real version bump, the migration helper runs and migrates
+    the profile from schema_version 0 to 1 (emotional_state added)."""
     runner = CliRunner()
     inst = tmp_path / "inst"
     runner.invoke(main, ["init", str(inst)])
     (inst / ".sensei" / ".sensei-version").write_text("0.0.0\n")
     result = runner.invoke(main, ["upgrade", str(inst)])
     assert result.exit_code == 0
-    assert "Instance schemas already current." in result.output
+    assert "profile.yaml: schema_version" in result.output
 
 
 def test_upgrade_runs_migration_before_engine_swap(

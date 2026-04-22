@@ -24,7 +24,7 @@ def _load_schema(name: str) -> dict:
 
 
 VALID_PROFILE = {
-    "schema_version": 0,
+    "schema_version": 1,
     "learner_id": "alice",
     "expertise_map": {
         "hash-maps": {
@@ -34,6 +34,12 @@ VALID_PROFILE = {
             "attempts": 5,
             "correct": 4,
         }
+    },
+    "emotional_state": {
+        "engagement": "unknown",
+        "frustration": "unknown",
+        "agency": "unknown",
+        "updated_at": "1970-01-01T00:00:00Z",
     },
 }
 
@@ -258,3 +264,85 @@ def test_session_notes_session_without_summary_valid() -> None:
         ],
     }
     jsonschema.validate(doc, _load_schema("session-notes.schema.json"))
+
+
+# --- Emotional state schema tests ---
+
+
+def test_profile_with_emotional_state_valid() -> None:
+    """Profile with all emotional_state fields validates."""
+    profile = {
+        **VALID_PROFILE,
+        "emotional_state": {
+            "engagement": "active",
+            "frustration": "none",
+            "agency": "autonomous",
+            "updated_at": "2026-04-22T18:30:00Z",
+        },
+    }
+    jsonschema.validate(profile, _load_schema("profile.schema.json"))
+
+
+def test_profile_without_emotional_state_valid() -> None:
+    """emotional_state is optional — profiles without it still validate."""
+    profile = {k: v for k, v in VALID_PROFILE.items() if k != "emotional_state"}
+    profile["schema_version"] = 1
+    jsonschema.validate(profile, _load_schema("profile.schema.json"))
+
+
+def test_emotional_state_invalid_engagement_rejected() -> None:
+    bad = {
+        **VALID_PROFILE,
+        "emotional_state": {
+            "engagement": "bored",
+            "frustration": "none",
+            "agency": "autonomous",
+            "updated_at": "2026-04-22T18:30:00Z",
+        },
+    }
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, _load_schema("profile.schema.json"))
+
+
+def test_emotional_state_invalid_frustration_rejected() -> None:
+    bad = {
+        **VALID_PROFILE,
+        "emotional_state": {
+            "engagement": "active",
+            "frustration": "angry",
+            "agency": "autonomous",
+            "updated_at": "2026-04-22T18:30:00Z",
+        },
+    }
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, _load_schema("profile.schema.json"))
+
+
+def test_emotional_state_missing_required_field_rejected() -> None:
+    bad = {
+        **VALID_PROFILE,
+        "emotional_state": {
+            "engagement": "active",
+            "frustration": "none",
+            # agency missing
+            "updated_at": "2026-04-22T18:30:00Z",
+        },
+    }
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, _load_schema("profile.schema.json"))
+
+
+def test_migrate_v0_profile_adds_emotional_state() -> None:
+    """Migration from v0 to v1 adds emotional_state with all-unknown defaults."""
+    v0_profile = {
+        "schema_version": 0,
+        "learner_id": "alice",
+        "expertise_map": {},
+    }
+    migrated = migrate_profile(v0_profile)
+    assert migrated["schema_version"] == 1
+    assert migrated["emotional_state"]["engagement"] == "unknown"
+    assert migrated["emotional_state"]["frustration"] == "unknown"
+    assert migrated["emotional_state"]["agency"] == "unknown"
+    assert migrated["emotional_state"]["updated_at"] == "1970-01-01T00:00:00Z"
+    jsonschema.validate(migrated, _load_schema("profile.schema.json"))

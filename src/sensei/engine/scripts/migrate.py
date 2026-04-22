@@ -28,8 +28,21 @@ except ImportError:  # pragma: no cover
 from sensei.engine.scripts._atomic import atomic_write_text
 
 # Current schema versions (must match *.schema.json const values)
-CURRENT_PROFILE_VERSION = 0
+CURRENT_PROFILE_VERSION = 1
 CURRENT_GOAL_VERSION = 0
+
+
+def _migrate_profile_0_to_1(data: dict[str, Any]) -> dict[str, Any]:
+    """Add emotional_state with all-unknown defaults."""
+    out = dict(data)
+    out["emotional_state"] = {
+        "engagement": "unknown",
+        "frustration": "unknown",
+        "agency": "unknown",
+        "updated_at": "1970-01-01T00:00:00Z",
+    }
+    return out
+
 
 # Migration registries: version -> function that upgrades FROM that version.
 #
@@ -38,8 +51,7 @@ CURRENT_GOAL_VERSION = 0
 # migration chain from leaving the caller's dict in a half-transformed
 # state (the outer loop only rebinds its local reference on success).
 PROFILE_MIGRATIONS: dict[int, Any] = {
-    # Example for future use:
-    # 0: _migrate_profile_0_to_1,
+    0: _migrate_profile_0_to_1,
 }
 
 GOAL_MIGRATIONS: dict[int, Any] = {
