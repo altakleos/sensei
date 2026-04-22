@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a11] — 2026-04-21
+
+### Added
+
+- Performance training V1 — phase overlay protocol for stages 1–4 (concept → automate → verbalize → time pressure). New protocol, design doc, ADR-0021, schema extensions, config tunables, and transcript fixture.
+- Cross-goal intelligence — all 4 spec invariants implemented: re-demonstration override, review deduplication, deadline-aware priority + session allocation, decay-aware resume. Five new scripts (`review_scheduler.py`, `session_allocator.py`, `resume_planner.py`, `goal_priority.py`, `global_knowledge.py`).
+- Adaptive session opener — mentor bridges sessions with 2–3 sentences of context (goal, last topic, stale count), then immediately resumes teaching. No greeting filler, no status dumps.
+- Fixture coverage promoted from CI warning to hard-fail. Specs declaring `realizes:`/`serves:` must now name `fixtures:` or `fixtures_deferred:`. All 12 specs already compliant.
+- Design docs for cross-goal intelligence (pipeline topology) and goal-lifecycle (creation pipeline and script orchestration).
+- ADR-0020: release self-bypass for solo maintainer (provisional).
+
+### Changed
+
+- `instance/` directory renamed to `learner/` across codebase — clearer semantics for the user-facing folder.
+- Development process prose-as-code audit: 23 fixes across 11 files. Document authority hierarchy added, process concepts consolidated into `development-process.md`, stale summaries updated, boot chain improved, worked examples and glossary added.
+- CHANGELOG v0.1.0a9 section reformatted to Keep a Changelog headers. Compare links added for a2–a10.
+
+### Fixed
+
+- 4 ruff lint errors resolved (E501 line length, I001 import sort).
+- Garbled content at end of `sensei-implementation.md` removed.
+- Script names in `sensei-implementation.md` corrected (hyphens → underscores to match actual filenames).
+- Plan-before-branch step ordering paradox fixed in `development-process.md`.
+
 ## [0.1.0a10] — 2026-04-21
 
 ### Added
@@ -148,7 +172,8 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a10...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a11...HEAD
+[0.1.0a11]: https://github.com/altakleos/sensei/compare/v0.1.0a10...v0.1.0a11
 [0.1.0a10]: https://github.com/altakleos/sensei/compare/v0.1.0a9...v0.1.0a10
 [0.1.0a9]: https://github.com/altakleos/sensei/compare/v0.1.0a8...v0.1.0a9
 [0.1.0a8]: https://github.com/altakleos/sensei/compare/v0.1.0a7...v0.1.0a8
