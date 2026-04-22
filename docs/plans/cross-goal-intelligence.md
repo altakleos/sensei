@@ -2,7 +2,7 @@
 feature: cross-goal-intelligence
 serves: docs/specs/cross-goal-intelligence.md
 design: "Follows ADR-0006"
-status: done
+status: in-progress
 date: 2026-04-21
 ---
 # Plan: Cross-Goal Intelligence
@@ -74,9 +74,41 @@ Implements all four invariants from the cross-goal intelligence spec. Two invari
 - [x] T29: Update `docs/plans/README.md` — add this plan to the index table. → `docs/plans/README.md` (depends: T28)
 - [x] T30: Full test suite green, `sensei verify` passes, CI green. → verify (depends: T29)
 
-## Acceptance Criteria
+## Phase 9 — Concept Tags: Semantic Transfer Layer
+
+- [ ] T31: Extend `goal.schema.json` — add optional `concept_tags` array of strings (default `[]`) to `NodeState.properties`. Tags are lowercase slug-format (`^[a-z][a-z0-9-]*$`). Backward compatible: existing goals without concept_tags remain valid.
+- [ ] T32: Update `goal.md` — add ~3 lines in Step 4 (curriculum generation) instructing the LLM to assign 1–3 concept tags per node. Tags name transferable knowledge, not goal-specific application.
+- [ ] T33: Update `review.md` — add ~3 lines before Step 2 for concept-aware review. Before invoking `review_scheduler.py`, build a concept→slugs mapping from all active goals' concept_tags. Pass as `--concept-map` JSON. Topics sharing concepts with recently-reviewed topics get partial freshness credit (evidence, not proof).
+- [ ] T34: Extend `review_scheduler.py` — add optional `--concept-map` argument (JSON string mapping concept→list of slugs). When provided, after slug-level dedup, also deduplicate topics sharing concepts (keep stalest, skip rest). Without `--concept-map`, existing slug-level dedup is unchanged.
+- [ ] T35: Extend `global_knowledge.py` — add optional `--concept-tags` argument (JSON list of tags for the queried topic). When provided and the topic is not directly known, check if any topic in the expertise_map shares concept tags. If so, return `concept_evidence: true` alongside `known: false`. Without `--concept-tags`, existing behavior unchanged.
+- [ ] T36: Tests for concept_tags schema validation — valid tags, empty array, missing field (optional). → `tests/scripts/test_check_goal.py`
+- [ ] T37: Tests for concept-aware review_scheduler — (a) topics sharing concept tags are deduplicated; (b) stalest topic kept; (c) without --concept-map, slug-level dedup only. → `tests/scripts/test_review_scheduler.py`
+- [ ] T38: Tests for concept-aware global_knowledge — (a) topic not in profile but shares concept tag with known topic → concept_evidence: true; (b) without --concept-tags, existing behavior. → `tests/scripts/test_global_knowledge.py`
+- [ ] T39: Integration test — two goals with different slugs but shared concept tags, verify concept-aware dedup and evidence. → `tests/test_cross_goal.py`
+- [ ] T40: Run full test suite — confirm green, coverage ≥ 89%. → verify
+
+## Acceptance Criteria (Concept Tags Extension)
+
+- [ ] AC12: `goal.schema.json` accepts optional `concept_tags` array on NodeState; existing goals without it remain valid.
+- [ ] AC13: `review_scheduler.py --concept-map` deduplicates topics sharing concepts; without flag, slug-level dedup only.
+- [ ] AC14: `global_knowledge.py --concept-tags` reports concept evidence for unknown topics sharing tags with known topics.
+- [ ] AC15: `goal.md` instructs LLM to assign 1–3 concept tags per node at generation time.
+- [ ] AC16: `review.md` adds concept-matching pass before review scheduling.
+- [ ] AC17: All tests pass, coverage ≥ 89%.
+
+## Acceptance Criteria (Original Pipeline)
 
 - [x] AC1: **Invariant 1 (global knowledge state)** — `global_knowledge.py --goal <path>` returns `known: false` for a topic that is globally mastered but whose goal node has `require_redemonstration: true`. Without `--goal`, existing behavior is unchanged.
+- [x] AC2: **Invariant 2 (coordinated spaced repetition)** — `review_scheduler.py` given two goals that both depend on "recursion" (stale in both) produces exactly one review entry for "recursion", not two. `review.md` invokes this script instead of per-goal decay loops.
+- [x] AC3: **Invariant 3 (priority and time allocation)** — `goal_priority.py` scores a goal with an imminent deadline higher than an identical goal without a deadline. `session_allocator.py` produces per-goal minute allocations proportional to score.
+- [x] AC4: **Invariant 4 (decay-aware pause/resume)** — `resume_planner.py` given a goal paused 30 days ago produces a plan with `recommended_action: "review_first"` and stale topics sorted by freshness ascending. `goal.md` §Resume invokes this script.
+- [x] AC5: All new scripts follow ADR-0006 pattern: argparse CLI, JSON stdout, importable as library, subprocess test passes.
+- [x] AC6: `goal.schema.json` accepts `deadline` on goals and `require_redemonstration` on nodes; existing goal files remain valid.
+- [x] AC7: `defaults.yaml` contains `cross_goal` section with documented tunables.
+- [x] AC8: `engine.md` dispatch table and configuration section document all new scripts and config keys.
+- [x] AC9: Integration test in `test_cross_goal.py` exercises all four invariants in a multi-goal scenario.
+- [x] AC10: Transcript fixture validates cross-goal review deduplication.
+- [x] AC11: Full test suite green, `sensei verify` passes. **Invariant 1 (global knowledge state)** — `global_knowledge.py --goal <path>` returns `known: false` for a topic that is globally mastered but whose goal node has `require_redemonstration: true`. Without `--goal`, existing behavior is unchanged.
 - [x] AC2: **Invariant 2 (coordinated spaced repetition)** — `review_scheduler.py` given two goals that both depend on "recursion" (stale in both) produces exactly one review entry for "recursion", not two. `review.md` invokes this script instead of per-goal decay loops.
 - [x] AC3: **Invariant 3 (priority and time allocation)** — `goal_priority.py` scores a goal with an imminent deadline higher than an identical goal without a deadline. `session_allocator.py` produces per-goal minute allocations proportional to score.
 - [x] AC4: **Invariant 4 (decay-aware pause/resume)** — `resume_planner.py` given a goal paused 30 days ago produces a plan with `recommended_action: "review_first"` and stale topics sorted by freshness ascending. `goal.md` §Resume invokes this script.
