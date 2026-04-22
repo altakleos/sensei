@@ -33,6 +33,8 @@ Sensei adopts a **hybrid runtime**: the pip package ships both prose-as-code pro
 3. **Per-student-per-topic speed calibration** — requires multi-session history accumulation.
 4. **Affect detection** — inherently non-deterministic; if it ships, it will be a prompt-based subroutine, not a Python helper.
 
+> **Note (v0.1.0a15):** Emotional state tracking was promoted to v1 and shipped — see [docs/specs/emotional-state-tracking.md](../specs/emotional-state-tracking.md). Cross-goal intelligence (concept tags) was promoted to v1 — see [docs/specs/cross-goal-intelligence.md](../specs/cross-goal-intelligence.md).
+
 The v1 / v2 split follows a clean line: **v1 ships only arithmetic that works from a single profile snapshot**; **v2 ships anything requiring cross-session history, graph reasoning, or ML calibration.**
 
 ### Invocation style

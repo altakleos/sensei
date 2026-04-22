@@ -19,7 +19,7 @@ Sensei manages goal lifecycle transitions — pausing, resuming, abandoning, and
 ## Invariants
 
 - **Four goal statuses.** A goal has exactly one status: active, paused, abandoned, or completed.
-- **At most one active goal.** Only one goal may be active at a time. Activating a new goal pauses the current one.
+- **At most one active goal.** Only one *focused* goal receives new instruction at a time. Activating a new goal pauses the current one. Multiple goals may be simultaneously *active* for review, time allocation, and cross-goal coordination per the [cross-goal-intelligence spec](cross-goal-intelligence.md).
 - **Pause preserves state.** Pausing a goal preserves all curriculum progress, profile data, and hint associations. Nothing is lost.
 - **Resume restores context.** Resuming a paused goal recomputes the frontier, identifies stale topics, and re-enters the teaching loop from where the learner left off.
 - **Completion is automatic.** A goal transitions to completed when all curriculum nodes are either collapsed or completed. The learner does not manually mark goals done.

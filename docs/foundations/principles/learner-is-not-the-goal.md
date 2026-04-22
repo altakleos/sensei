@@ -29,7 +29,7 @@ This separation also means the CLI and folder structure reflect the hierarchy: t
 
 ## Exceptions / Tensions
 
-- Cross-goal knowledge transfer (§4.4) requires a knowledge-state mechanism that is deferred at v1. The principle holds architecturally even before the transfer machinery exists.
+- Cross-goal knowledge transfer is implemented in v1 per the [cross-goal-intelligence spec](../../specs/cross-goal-intelligence.md). Concept tags on curriculum nodes enable shared-topic detection, coordinated review, and transfer across goals. The principle now holds both architecturally and mechanically.
 - Goal-specific re-demonstration: a goal may require the learner to demonstrate a skill in its specific context even if the global profile shows mastery. This is pedagogically valid (transfer ≠ rote recall) and does not contradict the principle — the learner's identity is intact, the goal simply has its own assessment bar.
 
 ## Source

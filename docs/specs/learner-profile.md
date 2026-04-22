@@ -66,11 +66,11 @@ The following dimensions from §6.2 are explicitly **not** in v1:
 - `learning_style` — requires pattern detection across many sessions; deferred until the mentor has a protocol that adapts modality.
 - `pace` — computed from session timing, which requires session-end state that v1 does not track.
 - `weaknesses` — pattern mining across errors; needs a taxonomy of error patterns first.
-- `engagement` — session cadence and drop-off signals; deferred pending a protocol that uses them.
+- `engagement` — emotional state (including engagement signals) is now tracked per the [emotional-state-tracking spec](emotional-state-tracking.md). Session-level emotional state informs topic ordering, deferral, and pacing.
 
 These will each earn their own spec when a protocol needs them, with their own schema bump.
 
-Also out of scope at v1: cross-profile intelligence (§4.4) and multi-goal coordination. The v1 profile is a single learner-to-engine relationship.
+Also out of scope at v1: cross-profile intelligence (§4.4). Multi-goal coordination is now implemented per the [cross-goal-intelligence spec](cross-goal-intelligence.md) — concept tags enable shared-topic detection and coordinated review across goals.
 
 ## Decisions
 

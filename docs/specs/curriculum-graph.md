@@ -29,6 +29,7 @@ This spec exists because every protocol that selects "what to teach next" depend
   - **spawned** — a gap discovered during interaction that was not in the original graph. Spawned nodes are inserted with appropriate dependency edges. They represent the hypothesis self-correcting.
   - **active** — the topic is currently being taught or assessed. At most one node is active per goal at any time.
   - **completed** — the learner has demonstrated sufficient mastery. Completed nodes contribute to unblocking dependents and feed the forgetting-curve decay model for future review.
+- **Nodes support concept tags.** Per the [cross-goal-intelligence spec](cross-goal-intelligence.md), each node may carry concept tags that identify shared concepts across goals. Tags enable cross-goal review coordination and transfer detection without merging graphs.
 <!-- Diagram: illustrates §Invariants — node states -->
 ```mermaid
 stateDiagram-v2

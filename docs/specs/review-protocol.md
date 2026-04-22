@@ -71,12 +71,12 @@ Single-topic atomicity and post-question writes are there so review is easy to r
 - **Reteaching.** Not here. A future `teach.md` or `explain.md` protocol owns this, and can be triggered by the learner asking a question mid-review (which ends the review session and transitions).
 - **Graduated hinting.** The 5-level metacognitive→targeted progression from IntelliCode is explicitly not available during review. A hint inside review is reteach under a different name.
 - **New topic introduction.** New topics arrive via a goal or learning flow, not via review.
-- **Multi-topic questions.** Pattern-discrimination exercises that interleave two related topics in one question are valuable but not v1.
+- **Multi-topic synthesis questions.** Interleaved single-topic sequencing is now implemented per the [interleaving spec](interleaving.md) — review sessions interleave topics from different categories to force discrimination. However, multi-topic synthesis questions (combining two topics into one prompt, e.g., pattern-discrimination exercises) remain out of scope.
 - **FSRS-based prioritization.** Review uses the decay helper's exponential-freshness model only. FSRS's 21-parameter calibration is deferred per ADR-0006.
 - **Numeric confidence thresholds.** Review updates the mastery enum directly. Confidence-float gates are a separate concern.
 - **Session duration limits, quotas, or coaching.** Review does not tell the learner to stop, take a break, or come back tomorrow. Those behaviours belong to a session-manager protocol if one is ever warranted.
-- **Affect-aware pacing.** Detecting frustration and adapting is valuable but deferred; review at v1 is affect-blind by design.
-- **Cross-goal intelligence.** Review operates on a single profile and does not reason about whether a stale topic in one goal is implicitly exercised by another.
+- **Affect-aware item-level adaptation.** Review is now affect-aware at the session level per the [emotional-state-tracking spec](emotional-state-tracking.md) — topic ordering, deferral, and pacing adapt to detected emotional state. However, adapting individual retrieval prompts based on affect (e.g., easier questions when frustrated) remains out of scope.
+- **Cross-goal intelligence.** Review is now cross-goal-aware per the [cross-goal-intelligence spec](cross-goal-intelligence.md). Stale topics shared across goals via concept tags are coordinated so that retrieval in one goal counts toward freshness in another.
 
 ## Decisions
 

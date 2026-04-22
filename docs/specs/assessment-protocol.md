@@ -72,7 +72,7 @@ The assessor exception's absoluteness is deliberate. Any softening ("just a smal
 ## Out of Scope
 
 - **Graduated hinting.** The 5-level metacognitive→targeted progression from the ideation is valuable but belongs to a future teaching protocol, not to assessment. Hints inside summative assessment violate the assessor exception; hints inside diagnostic assessment are teaching moves, not assessment moves.
-- **Affect-aware pacing.** Detecting frustration during assessment and adapting timing or difficulty is deferred. Assessment at v1 is affect-blind by design, consistent with the review protocol's stance.
+- **Affect-aware item-level scaffolding.** Assessment is now affect-aware at the session level per the [emotional-state-tracking spec](emotional-state-tracking.md) — topic ordering, deferral, and pacing adapt to detected emotional state. However, item-level scaffolding (adapting individual question difficulty or hints mid-question based on affect) remains out of scope.
 - **Cross-goal assessment coordination.** Reasoning about whether mastery demonstrated in one goal satisfies a gate in another goal requires the prerequisite graph (ADR-0006 v2 scope) and is not v1.
 
 ## Decisions

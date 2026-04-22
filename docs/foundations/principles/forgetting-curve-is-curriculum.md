@@ -18,7 +18,7 @@ Too-early review is wasted effort; too-late review means relearning from scratch
 
 - Review protocols select topics by freshness (decay-based) rather than by any user-facing priority metric (see `docs/specs/review-protocol.md`).
 - The learner profile stores `last_seen` and decay parameters per topic (see `docs/specs/learner-profile.md`).
-- Interleaving is a v2 concern — v1 ships per-topic single-shot review; cross-topic interleaving lands when curriculum design explicitly supports it.
+- Interleaving is implemented in v1 per the [interleaving spec](../../specs/interleaving.md) — review sessions interleave topics from different categories to force discrimination rather than pattern-matching within one.
 - The specific decay implementation is a [config-over-hardcoding](config-over-hardcoding.md) concern: `half_life_days` and `stale_threshold` live in `defaults.yaml` per ADR-0007.
 
 ## Exceptions / Tensions

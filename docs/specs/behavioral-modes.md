@@ -148,7 +148,7 @@ The four-mode design draws from the research basis in the original ideation anal
 
 - **Implementation of mode protocols.** The per-mode `.md` files (tutor, assessor, challenger, reviewer) that encode these guarantees as prose are separate protocol documents. This spec defines what they must guarantee, not how they are written.
 - **Performance training phase.** The Performance Preparation Stack (§3.9) modifies mode behavior under time pressure but is a cross-cutting phase, not a mode. Its protocol is a separate spec.
-- **Affect-aware pacing.** Detecting frustration and adapting pacing in real time is valuable but deferred. The crisis-state first-session script is a static heuristic, not a dynamic affect model.
+- **Affect-aware pacing.** Emotional state tracking is now implemented per the [emotional-state-tracking spec](emotional-state-tracking.md). The crisis-state first-session script is subsumed by the degradation chain model.
 - **FSRS-based scheduling.** Spaced repetition scheduling that feeds into mode transitions is governed by the review protocol and ADR-0006, not this spec.
 - **Power-user mode shortcuts.** The `/review`, `/quiz` commands are UI conveniences. Whether they exist and how they map to mode transitions is an implementation decision.
 
