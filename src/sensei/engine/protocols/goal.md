@@ -389,3 +389,8 @@ When the performance phase is active, evaluate stage progression after each lear
 - ADR: `docs/decisions/0015-unified-goal-pipeline.md`
 - ADR: `docs/decisions/0006-hybrid-runtime-architecture.md`
 - Principle: `docs/foundations/principles/curriculum-is-hypothesis.md`
+
+<!-- PROVENANCE
+Principles: P-curriculum-is-hypothesis, P-know-the-learner, P-mastery-before-progress
+Synthesis: adaptive-personalization.md §Content Selection, learning-science.md §Teaching Methods (Ranked by Effectiveness)
+-->

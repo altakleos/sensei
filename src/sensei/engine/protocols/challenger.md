@@ -108,3 +108,8 @@ Offer: "More challenges, different topic, or back to learning?" On exit, transit
 ## References
 
 - Mode: `protocols/modes/challenger.md` — Tutor: `protocols/tutor.md` — Assessment: `protocols/assess.md`
+
+<!-- PROVENANCE
+Principles: P-productive-failure, P-transfer-is-the-goal, P-learner-self-sufficiency
+Synthesis: learning-science.md §Teaching Methods (Ranked by Effectiveness), accelerated-performance.md §Performance Science
+-->

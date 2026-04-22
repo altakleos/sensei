@@ -176,3 +176,8 @@ The learner may exit assessment at any time by saying "stop", "never mind", "let
 | `check_profile.py` validation fails after write | Revert the write. "Profile update failed validation — reverting. This shouldn't happen; check `.sensei/scripts/` are intact." End session. |
 | Topic not in profile | Create the topic entry with mastery `none`, attempts `0`, correct `0`, then proceed normally. |
 | Learner gives an ambiguous response | Ask once: "Can you be more specific?" If still ambiguous, classify as `uncertain` + `incorrect`. |
+
+<!-- PROVENANCE
+Principles: P-mastery-before-progress, P-know-the-learner, P-metacognition-is-the-multiplier, P-two-failure-prerequisite
+Synthesis: accelerated-performance.md §Rapid Diagnostic Assessment, learning-science.md §Teaching Methods (Ranked by Effectiveness)
+-->

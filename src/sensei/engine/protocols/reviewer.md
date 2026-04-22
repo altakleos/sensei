@@ -86,3 +86,8 @@ Act on calibration:
 ## References
 
 - Mode: `protocols/modes/reviewer.md` — Tutor: `protocols/tutor.md` — Challenger: `protocols/challenger.md`
+
+<!-- PROVENANCE
+Principles: P-transfer-is-the-goal, P-metacognition-is-the-multiplier, P-know-the-learner
+Synthesis: learning-science.md §Teaching Methods (Ranked by Effectiveness)
+-->

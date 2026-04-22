@@ -28,6 +28,8 @@ Research findings from cognitive science, neuroscience, and educational psycholo
 
 - **Zone of No Development / ZPD collapse.** [Bibliography #16, #17, #18] Continuous AI assistance without designed fading collapses the ZPD into cognitive stagnation. *Design implication:* Implement progressive autonomy, scaffold fading, and mandatory unassisted checkpoints. Track support level per topic and automatically reduce it.
 
+- **LLM-assisted curriculum graph construction achieves near-expert quality (Abu-Rasheed et al.).** [Bibliography #56] Human-AI collaboration for curriculum modeling validates the hybrid approach: LLM generates the graph, the system validates structure, and learner data refines it over time. *Design implication:* Sensei's curriculum-as-hypothesis model — generate a draft DAG, then reshape based on learner performance — is grounded in this evidence.
+
 ## Teaching Methods (Ranked by Effectiveness)
 
 - **Socratic Method — MUST HAVE.** [Bibliography #20] Never give answers first, force articulation. SocraticAI research shows students shift from vague help-seeking to precise problem decomposition within 2–3 weeks. *Design implication:* Default interaction pattern is question-first. The mentor asks before telling.
@@ -39,6 +41,8 @@ Research findings from cognitive science, neuroscience, and educational psycholo
 - **Scaffolding & Fading — MUST HAVE.** [Bibliography #17, #18] Track support level per topic, automatically fade as competence grows. *Design implication:* Per-topic scaffold tracking with automatic reduction as mastery increases.
 
 - **Productive Failure — HIGH VALUE.** [Bibliography #22, #23, #42] Present problems before teaching the concept. Time-bounded, frustration-monitored. *Design implication:* Default to problem-first sequencing with frustration guardrails.
+
+- **Prerequisite inference via multi-signal voting achieves 1.0 precision (Alatrash et al.).** [Bibliography #57] Combining multiple signals (Wikipedia links, concept entropy, temporal order) via voting detects prerequisite relationships with perfect precision. Key insight: wrong prerequisites are more harmful than missing ones — prioritize precision over recall. *Design implication:* Sensei's two-failure prerequisite diagnosis and curriculum DAG validation prioritize correctness of prerequisite chains over completeness.
 
 ## Benchmark
 

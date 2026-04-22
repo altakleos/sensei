@@ -61,6 +61,8 @@ flowchart LR
 
 - **Anxiety reappraisal (Brooks, Harvard 2014).** [Bibliography #45] Reframing anxiety as excitement improves performance. *Design implication:* When detecting performance anxiety signals, the system can suggest reappraisal framing.
 
+- **AI interview simulation reduces anxiety (USC VITA / SAFE).** [Bibliography #46] Pilot data shows AI-simulated interview exposure reduces anxiety by -2.0 points on a 10-point scale. Validates graduated simulation as a performance training tool, but no existing system integrates the full performance preparation stack. *Design implication:* Sensei's performance phase (stages 5–6) fills this gap by combining simulation with the full Learn→Automate→Verbalize→Pressure→Simulate→Mock progression.
+
 ## Rapid Diagnostic Assessment
 
 - **4–20 adaptive questions achieve full diagnostic accuracy.** [Bibliography #47] Using prerequisite graphs and information-theoretic item selection. *Design implication:* Initial assessment is short and adaptive — no lengthy placement tests. The prerequisite graph guides question selection for maximum information gain.

@@ -117,3 +117,8 @@ If the learner fails the same probe twice after reshaping:
 ## References
 
 - Mode: `protocols/modes/tutor.md` — Assessment: `protocols/assess.md` — Goal: `protocols/goal.md`
+
+<!-- PROVENANCE
+Principles: P-ask-dont-tell, P-silence-is-teaching, P-two-failure-prerequisite, P-productive-failure, P-learner-self-sufficiency, P-forgetting-curve-is-curriculum
+Synthesis: learning-science.md §Teaching Methods (Ranked by Effectiveness), learning-science.md §Self-Regulated Learning & AI
+-->

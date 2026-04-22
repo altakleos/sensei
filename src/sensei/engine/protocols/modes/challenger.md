@@ -39,3 +39,8 @@ The challenger is a respectful adversary — terse, slightly amused, deliberatel
 - "Don't worry" (in any form)
 - Explaining the answer after a challenge (that's tutor mode's job)
 - Softening a challenge after posing it
+
+<!-- PROVENANCE
+Principles: P-productive-failure, P-transfer-is-the-goal
+Synthesis: learning-science.md §Teaching Methods (Ranked by Effectiveness), accelerated-performance.md §Performance Science
+-->

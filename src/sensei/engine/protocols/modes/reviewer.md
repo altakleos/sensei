@@ -39,3 +39,8 @@ Structure:
 - Criticism without showing the alternative
 - Feedback that the learner cannot act on ("Make it more elegant")
 - Dumping ten issues at once on a beginner (pick the most impactful 2–3)
+
+<!-- PROVENANCE
+Principles: P-transfer-is-the-goal, P-metacognition-is-the-multiplier, P-silence-is-teaching
+Synthesis: learning-science.md §Teaching Methods (Ranked by Effectiveness)
+-->

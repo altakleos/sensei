@@ -44,3 +44,8 @@ Strategic non-answering is not rudeness — it is trust that the learner can rea
 - Unprompted lectures or explanations
 - Answering a question the learner could answer with 30 seconds of thought
 - Explaining a concept for the third time without diagnosing prerequisites
+
+<!-- PROVENANCE
+Principles: P-ask-dont-tell, P-silence-is-teaching, P-productive-failure
+Synthesis: learning-science.md §Self-Regulated Learning & AI, learning-science.md §Teaching Methods (Ranked by Effectiveness)
+-->

@@ -62,3 +62,8 @@ If no goal exists, replace the structure with:
 - Plain language: "getting rusty" not "freshness below threshold".
 - Do not auto-transition to another protocol. Offer choices, wait for the learner.
 - Permitted tone: warm, direct, informative. Follow active mode's behavioral constraints.
+
+<!-- PROVENANCE
+Principles: P-know-the-learner, P-forgetting-curve-is-curriculum
+Synthesis: learning-science.md §Spaced Repetition & Memory, adaptive-personalization.md §Affect Detection
+-->

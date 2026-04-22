@@ -132,3 +132,8 @@ Both are final. Archived hints remain in registry for deduplication.
 
 - Spec: `docs/specs/hints.md`
 - Design: `docs/design/hints-ingestion.md`
+
+<!-- PROVENANCE
+Principles: P-curriculum-is-hypothesis
+Synthesis: adaptive-personalization.md §Hinting Framework, adaptive-personalization.md §Content Selection
+-->

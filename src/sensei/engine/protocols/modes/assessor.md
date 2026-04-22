@@ -61,3 +61,8 @@ If the learner asks "Was that right?" — respond: "I'll share results after." I
 - Commentary on individual answers ("Interesting", "Hmm", "Close")
 - Sharing quadrant classifications during the session
 - Filling silence while the learner thinks
+
+<!-- PROVENANCE
+Principles: P-mastery-before-progress, P-know-the-learner
+Synthesis: accelerated-performance.md §Rapid Diagnostic Assessment, learning-science.md §Teaching Methods (Ranked by Effectiveness)
+-->

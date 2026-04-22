@@ -296,3 +296,8 @@ Current config keys:
 - [`docs/design/behavioral-modes.md`](../../../docs/design/behavioral-modes.md) — how composition works
 - [`docs/decisions/0013-context-composition.md`](../../../docs/decisions/0013-context-composition.md) — why this composition model
 - [`docs/decisions/0020-phase-overlay-composition.md`](../../../docs/decisions/0020-phase-overlay-composition.md) — phase overlay composition
+
+<!-- PROVENANCE
+Principles: P-principles-not-modes, P-scripts-compute-protocols-judge, P-prose-is-code
+Synthesis: accelerated-performance.md §The Performance Preparation Stack, learning-science.md §Self-Regulated Learning & AI
+-->

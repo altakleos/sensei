@@ -217,3 +217,8 @@ Treat any of the following learner utterances as a request to exit: `stop`, `tha
 - Spec: `docs/specs/review-protocol.md`
 - Design: `docs/design/review-protocol.md`
 - ADR: `docs/decisions/0006-hybrid-runtime-architecture.md`
+
+<!-- PROVENANCE
+Principles: P-forgetting-curve-is-curriculum, P-mastery-before-progress, P-silence-is-teaching
+Synthesis: learning-science.md §Spaced Repetition & Memory, accelerated-performance.md §Fractional Implicit Repetition (FIRe)
+-->

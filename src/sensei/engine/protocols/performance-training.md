@@ -124,3 +124,8 @@ Validate with `check_goal.py` after every update. Inform the learner of the tran
 - Design: `docs/design/performance-training.md`
 - ADR: `docs/decisions/0020-phase-overlay-composition.md`
 - Config: `defaults.yaml` § `performance_training`
+
+<!-- PROVENANCE
+Principles: P-productive-failure, P-emotion-cognition-are-one, P-mastery-before-progress
+Synthesis: accelerated-performance.md §The Performance Preparation Stack, accelerated-performance.md §Performance Science
+-->

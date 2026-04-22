@@ -37,3 +37,5 @@ Research findings on AI-driven personalization, affect detection, and content se
 ## Task Selection
 
 - **LLM > deterministic expert systems for arbitrary domains.** [Bibliography #52, #53, #54, #55, #58] Frontier LLMs can make better task selection decisions for arbitrary domains because they reason about the specific learner's context in ways no rule set can anticipate. *Design implication:* Sensei uses LLM-driven task selection rather than rule-based systems. This enables domain-agnostic operation without hand-crafted expert systems per subject.
+
+- **Multi-agent skill gap analysis via goal-backward planning (ALIGNAgent).** [Bibliography #50] Maps existing skills to target skills and identifies the minimal gap set through goal-backward planning. *Design implication:* Validates Sensei's three-unknowns triage (prior state → target state → constraints) and curriculum-as-hypothesis approach — the system generates a gap-driven curriculum rather than a fixed syllabus.
