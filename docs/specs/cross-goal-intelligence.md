@@ -1,5 +1,5 @@
 ---
-status: draft
+status: accepted
 date: 2026-04-20
 realizes:
   - P-transfer-is-the-goal
