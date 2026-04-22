@@ -30,6 +30,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [research-and-closure](research-and-closure.md) | Absorbed §8/§9/§10 + cross-reference migration + deletion of the ideation monolith | done |
 | [cross-goal-intelligence](cross-goal-intelligence.md) | All 4 cross-goal invariants: re-demonstration override, review dedup, deadline priority + session allocation, decay-aware resume | done |
 | [goal-lifecycle-transitions](goal-lifecycle-transitions.md) | Goal lifecycle transitions — pause, resume, abandon, complete (retroactive) | done |
+| [assessment-protocol](assessment-protocol.md) | Assessment protocol — mastery gating, two-failure diagnosis (retroactive) | done |
 | [curriculum-graph](curriculum-graph.md) | Curriculum graph — frontier, mutations, validation | done |
 | [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
 | [mermaid-diagrams](mermaid-diagrams.md) | Mermaid diagram enhancement pass | done |
