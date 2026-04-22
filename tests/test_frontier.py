@@ -166,6 +166,7 @@ def test_script_runs_as_subprocess(tmp_path: Path) -> None:
     """Smoke test: protocols invoke this helper via subprocess (per ADR-0006). Verify that path works."""
     cur = _write_curriculum(tmp_path, {"A": {"state": "spawned", "prerequisites": []}})
     script = Path(__file__).resolve().parent.parent / "src" / "sensei" / "engine" / "scripts" / "frontier.py"
+    assert script.is_file(), f"script path wrong: {script}"
     result = subprocess.run(
         [sys.executable, str(script), "--curriculum", str(cur)],
         capture_output=True,

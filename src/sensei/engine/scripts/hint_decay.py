@@ -21,6 +21,7 @@ import argparse
 import json
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 import yaml
@@ -61,8 +62,6 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--expire-after-days", type=int, required=True, help="Hard cap age in days")
     parser.add_argument("--now", default=None, help="ISO-8601 current time (default: wall clock)")
     args = parser.parse_args(argv)
-
-    from pathlib import Path
 
     path = Path(args.hints_file)
     if not path.is_file():

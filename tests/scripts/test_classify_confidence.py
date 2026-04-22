@@ -50,6 +50,7 @@ def test_main_emits_json(capsys: pytest.CaptureFixture[str]) -> None:
 def test_script_runs_as_subprocess() -> None:
     """Protocols invoke helpers via shell subprocess (per ADR-0006). Verify that path works."""
     script = Path(__file__).resolve().parents[2] / "src" / "sensei" / "engine" / "scripts" / "classify_confidence.py"
+    assert script.is_file(), f"script path wrong: {script}"
     result = subprocess.run(
         [sys.executable, str(script), "--confidence", "confident", "--correctness", "correct"],
         capture_output=True,

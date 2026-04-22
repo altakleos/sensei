@@ -87,72 +87,96 @@ def _success(op: str, slug: str, state: str, nodes: dict[str, dict[str, Any]]) -
     return 0
 
 
+def _do_activate(nodes: dict[str, dict[str, Any]], slug: str) -> tuple[int, str]:
+    if slug not in nodes:
+        return 1, ""
+    active = [s for s, n in nodes.items() if n.get("state") == "active"]
+    if active:
+        return 1, ""
+    if not _is_on_frontier(slug, nodes):
+        return 1, ""
+    nodes[slug]["state"] = "active"
+    return 0, "active"
+
+
+def _do_complete(nodes: dict[str, dict[str, Any]], slug: str) -> tuple[int, str]:
+    if slug not in nodes or nodes[slug].get("state") != "active":
+        return 1, ""
+    nodes[slug]["state"] = "completed"
+    return 0, "completed"
+
+
+def _do_collapse(nodes: dict[str, dict[str, Any]], slug: str) -> tuple[int, str]:
+    if slug not in nodes:
+        return 1, ""
+    nodes[slug]["state"] = "collapsed"
+    return 0, "collapsed"
+
+
+def _do_spawn(
+    nodes: dict[str, dict[str, Any]], slug: str, prerequisites: list[str] | None
+) -> tuple[int, str]:
+    if slug in nodes:
+        return 1, ""
+    if not prerequisites:
+        return 1, ""
+    for p in prerequisites:
+        if p not in nodes:
+            return 1, ""
+    nodes[slug] = {"state": "spawned", "prerequisites": prerequisites}
+    return 0, "spawned"
+
+
+def _do_expand(
+    nodes: dict[str, dict[str, Any]], slug: str, subgraph: dict[str, Any] | None
+) -> tuple[int, str]:
+    if slug not in nodes:
+        return 1, ""
+    if not subgraph or "nodes" not in subgraph:
+        return 1, ""
+    # Find dependents of original node (nodes that list slug as prerequisite)
+    dependents = [s for s, n in nodes.items() if slug in n.get("prerequisites", [])]
+    # Find leaf nodes in subgraph (not a prerequisite of any other subgraph node)
+    sub_nodes = subgraph["nodes"]
+    all_prereqs_in_sub: set[str] = set()
+    for sn in sub_nodes.values():
+        all_prereqs_in_sub.update(sn.get("prerequisites", []))
+    leaves = [s for s in sub_nodes if s not in all_prereqs_in_sub]
+
+    # Mark original as expanded
+    nodes[slug]["state"] = "expanded"
+    # Add subgraph nodes
+    for sub_slug, sub_data in sub_nodes.items():
+        nodes[sub_slug] = {"state": "spawned", "prerequisites": sub_data.get("prerequisites", [])}
+    # Dependents now depend on leaves instead of original
+    for dep in dependents:
+        prereqs = nodes[dep].get("prerequisites", [])
+        prereqs = [p for p in prereqs if p != slug] + leaves
+        nodes[dep]["prerequisites"] = prereqs
+
+    return 0, "expanded"
+
+
 def mutate(
     nodes: dict[str, dict[str, Any]], op: str, slug: str,
     prerequisites: list[str] | None, subgraph: dict[str, Any] | None,
 ) -> tuple[int, str]:
-    """Apply mutation. Returns (exit_code, new_state_or_empty)."""
+    """Apply mutation. Returns (exit_code, new_state_or_empty).
+
+    Thin dispatcher over per-op helpers. Each helper owns its own preconditions
+    and state change; shared invariants (cycle detection, atomic writeback)
+    happen in `main` after dispatch.
+    """
     if op == "activate":
-        if slug not in nodes:
-            return 1, ""
-        active = [s for s, n in nodes.items() if n.get("state") == "active"]
-        if active:
-            return 1, ""
-        if not _is_on_frontier(slug, nodes):
-            return 1, ""
-        nodes[slug]["state"] = "active"
-        return 0, "active"
-
-    elif op == "complete":
-        if slug not in nodes or nodes[slug].get("state") != "active":
-            return 1, ""
-        nodes[slug]["state"] = "completed"
-        return 0, "completed"
-
-    elif op == "collapse":
-        if slug not in nodes:
-            return 1, ""
-        nodes[slug]["state"] = "collapsed"
-        return 0, "collapsed"
-
-    elif op == "spawn":
-        if slug in nodes:
-            return 1, ""
-        if not prerequisites:
-            return 1, ""
-        for p in prerequisites:
-            if p not in nodes:
-                return 1, ""
-        nodes[slug] = {"state": "spawned", "prerequisites": prerequisites}
-        return 0, "spawned"
-
-    elif op == "expand":
-        if slug not in nodes:
-            return 1, ""
-        if not subgraph or "nodes" not in subgraph:
-            return 1, ""
-        # Find dependents of original node (nodes that list slug as prerequisite)
-        dependents = [s for s, n in nodes.items() if slug in n.get("prerequisites", [])]
-        # Find leaf nodes in subgraph (not a prerequisite of any other subgraph node)
-        sub_nodes = subgraph["nodes"]
-        all_prereqs_in_sub = set()
-        for sn in sub_nodes.values():
-            all_prereqs_in_sub.update(sn.get("prerequisites", []))
-        leaves = [s for s in sub_nodes if s not in all_prereqs_in_sub]
-
-        # Mark original as expanded
-        nodes[slug]["state"] = "expanded"
-        # Add subgraph nodes
-        for sub_slug, sub_data in sub_nodes.items():
-            nodes[sub_slug] = {"state": "spawned", "prerequisites": sub_data.get("prerequisites", [])}
-        # Dependents now depend on leaves instead of original
-        for dep in dependents:
-            prereqs = nodes[dep].get("prerequisites", [])
-            prereqs = [p for p in prereqs if p != slug] + leaves
-            nodes[dep]["prerequisites"] = prereqs
-
-        return 0, "expanded"
-
+        return _do_activate(nodes, slug)
+    if op == "complete":
+        return _do_complete(nodes, slug)
+    if op == "collapse":
+        return _do_collapse(nodes, slug)
+    if op == "spawn":
+        return _do_spawn(nodes, slug, prerequisites)
+    if op == "expand":
+        return _do_expand(nodes, slug, subgraph)
     return 1, ""
 
 

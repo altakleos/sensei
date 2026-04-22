@@ -10,6 +10,7 @@ import pytest
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _VALIDATOR_PATH = _REPO_ROOT / "ci" / "check_foundations.py"
+assert _VALIDATOR_PATH.is_file(), f"validator not found: {_VALIDATOR_PATH}"
 
 
 def _load_validator():

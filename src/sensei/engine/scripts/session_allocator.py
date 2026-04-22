@@ -31,6 +31,12 @@ def allocate_session(
 ) -> dict[str, Any]:
     """Allocate *session_minutes* across *goals* proportional to score.
 
+    Uses the largest-remainder method (Hamilton's apportionment) so the sum
+    of per-goal integer allocations equals *session_minutes* exactly, up to
+    the amount lost to goals dropped below *min_minutes*. Without this,
+    flooring each share individually can lose up to ``len(candidates) − 1``
+    minutes per session.
+
     Returns ``{"allocations": [...], "dropped": [...]}``.
     """
     # Filter to scoreable goals (skip paused, zero-score, etc.).
@@ -40,12 +46,28 @@ def allocate_session(
     if not candidates or total_score == 0:
         return {"allocations": [], "dropped": []}
 
-    allocations: list[dict[str, Any]] = []
-    dropped: list[dict[str, Any]] = []
-
+    # Step 1 — floor each share and record the fractional residue.
+    raw_shares: list[tuple[dict[str, Any], int, float]] = []
+    total_floor = 0
     for g in candidates:
         raw = session_minutes * (g["score"] / total_score)
-        minutes = int(math.floor(raw))
+        floor_min = int(math.floor(raw))
+        residue = raw - floor_min
+        raw_shares.append((g, floor_min, residue))
+        total_floor += floor_min
+
+    # Step 2 — distribute remaining minutes to the largest-residue candidates.
+    # Python's sort is stable, so ties break by input order.
+    residue_minutes = session_minutes - total_floor
+    order = sorted(range(len(raw_shares)), key=lambda i: raw_shares[i][2], reverse=True)
+    minutes_per: list[int] = [floor_min for (_, floor_min, _) in raw_shares]
+    for i in order[:residue_minutes]:
+        minutes_per[i] += 1
+
+    # Step 3 — partition into allocations vs dropped (below min).
+    allocations: list[dict[str, Any]] = []
+    dropped: list[dict[str, Any]] = []
+    for (g, _, _), minutes in zip(raw_shares, minutes_per, strict=True):
         if minutes < min_minutes:
             dropped.append({"slug": g["slug"], "reason": "below minimum"})
         else:

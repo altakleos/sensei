@@ -70,6 +70,43 @@ def test_paused_goals_with_zero_score_skipped() -> None:
     assert result["allocations"][0]["minutes"] == 60
 
 
+def test_residue_distributed_largest_remainder_first() -> None:
+    """Three equal-score goals with a 10-minute budget used to lose 1 minute
+    to the floor operation (each got 3, total 9). With largest-remainder
+    apportionment the sum matches session_minutes exactly: one goal gets the
+    extra minute, ties broken by input order."""
+    goals = [
+        {"slug": "g1", "score": 3.0},
+        {"slug": "g2", "score": 3.0},
+        {"slug": "g3", "score": 3.0},
+    ]
+    result = allocate_session(goals, session_minutes=10, min_minutes=1)
+    assert len(result["allocations"]) == 3
+    total = sum(a["minutes"] for a in result["allocations"])
+    assert total == 10
+    # Residue goes to the earliest-declared candidate on residue-tie.
+    by_slug = {a["slug"]: a["minutes"] for a in result["allocations"]}
+    assert by_slug == {"g1": 4, "g2": 3, "g3": 3}
+
+
+def test_residue_respects_dropped_minimum() -> None:
+    """A candidate whose (floor + possible residue bonus) share is still below
+    min_minutes remains dropped. Residue does not subvert the minimum floor."""
+    # Scores [7, 1, 1, 1], session=10, total_score=10 → raws [7.0, 1.0, 1.0, 1.0]
+    # Floors 7, 1, 1, 1, residue 0 — no redistribution needed.
+    # With min_minutes=2, all three 1-minute candidates are dropped.
+    goals = [
+        {"slug": "big", "score": 7.0},
+        {"slug": "small1", "score": 1.0},
+        {"slug": "small2", "score": 1.0},
+        {"slug": "small3", "score": 1.0},
+    ]
+    result = allocate_session(goals, session_minutes=10, min_minutes=2)
+    assert [a["slug"] for a in result["allocations"]] == ["big"]
+    assert result["allocations"][0]["minutes"] == 7
+    assert {d["slug"] for d in result["dropped"]} == {"small1", "small2", "small3"}
+
+
 # --- main() CLI ---
 
 
@@ -108,6 +145,7 @@ def test_script_runs_as_subprocess(tmp_path: Path) -> None:
         / "scripts"
         / "session_allocator.py"
     )
+    assert script.is_file(), f"script path wrong: {script}"
     result = subprocess.run(
         [sys.executable, str(script), "--goals-json", str(gf), "--session-minutes", "60"],
         capture_output=True,

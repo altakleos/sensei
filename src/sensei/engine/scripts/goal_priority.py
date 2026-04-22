@@ -30,6 +30,7 @@ from typing import Any
 import yaml
 
 from sensei.engine.scripts._iso import parse_iso
+from sensei.engine.scripts.decay import freshness_score
 
 _PRIORITY_WEIGHT: dict[str, int] = {"high": 3, "normal": 2, "low": 1}
 _DEFAULT_HALF_LIFE_DAYS = 7.0
@@ -39,7 +40,7 @@ _DEFAULT_DEADLINE_WEIGHT = 5.0
 
 def _is_stale(last_seen: str, now: datetime, half_life_days: float, stale_threshold: float) -> bool:
     elapsed = (now - parse_iso(last_seen)).total_seconds() / 86_400.0
-    return bool(2.0 ** (-elapsed / half_life_days) < stale_threshold)
+    return freshness_score(elapsed, half_life_days) < stale_threshold
 
 
 def score_goal(

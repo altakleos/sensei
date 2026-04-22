@@ -22,6 +22,7 @@ import pytest
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _PROTOCOLS_DIR = _REPO_ROOT / "src" / "sensei" / "engine" / "protocols"
+assert _PROTOCOLS_DIR.is_dir(), f"protocols directory not found: {_PROTOCOLS_DIR}"
 
 # Subprocess-invokable scripts. Internal-only modules (__init__, _atomic,
 # config, migrate) are excluded — they are never called from protocol prose.

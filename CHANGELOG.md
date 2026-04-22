@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 - `frontier.py` priority is now computed from alphabetical slug order instead of YAML insertion order, removing hidden coupling between `curriculum.yaml` key layout and teaching sequence.
 - `sensei status` surfaces a `Warning:` line for topics with unparseable `last_seen` timestamps. Previously these were silently coerced to stale, masking profile corruption.
 - `ci/check_foundations.py` now reports invalid YAML frontmatter as an error instead of silently treating it as absent frontmatter — a broken principle file could previously drop out of the foundations index unnoticed.
+- `session_allocator.allocate_session` now distributes per-goal residue via largest-remainder apportionment, so session budgets are no longer under-allocated by up to N-1 minutes across N goals.
 
 ### Changed
 
@@ -22,6 +23,8 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 - `_parse_iso` helper consolidated into `sensei.engine.scripts._iso.parse_iso`. Five scripts previously carried verbatim copies of the same five-line helper.
 - Cycle detection in `mutate_graph._has_cycle` and `check_goal._check_cross_field` is now O(N+E) via a precomputed reverse-adjacency index (was O(N²) per dequeue).
 - `profile.schema.json` enforces the `^[A-Za-z0-9_-]{1,64}$` pattern on `learner_id`, mirroring the CLI `--learner-id` validator so profiles written outside the CLI cannot smuggle YAML- or prompt-injecting characters.
+- `mutate_graph.mutate` refactored into per-op helpers (`_do_activate`, `_do_complete`, `_do_collapse`, `_do_spawn`, `_do_expand`) for readability. Public behaviour (exit codes, JSON output, error messages) is byte-identical.
+- `goal_priority._is_stale` now calls `decay.freshness_score` instead of reimplementing the exponential arithmetic inline.
 
 ### Tests
 

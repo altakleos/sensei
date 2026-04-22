@@ -16,6 +16,7 @@ import pytest
 from sensei.engine.scripts.migrate import migrate_profile
 
 SCHEMA_DIR = Path(__file__).resolve().parent.parent / "src" / "sensei" / "engine" / "schemas"
+assert SCHEMA_DIR.is_dir(), f"schema directory not found: {SCHEMA_DIR}"
 
 
 def _load_schema(name: str) -> dict:

@@ -183,6 +183,7 @@ def test_script_runs_as_subprocess(tmp_path: Path) -> None:
         "B": {"state": "spawned", "prerequisites": ["A"]},
     })
     script = Path(__file__).resolve().parent.parent / "src" / "sensei" / "engine" / "scripts" / "mutate_graph.py"
+    assert script.is_file(), f"script path wrong: {script}"
     result = subprocess.run(
         [sys.executable, str(script), "--curriculum", str(cur), "--operation", "activate", "--node", "B"],
         capture_output=True,

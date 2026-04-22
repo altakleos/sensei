@@ -106,6 +106,7 @@ def test_missing_file_returns_1(tmp_path: Path, capsys: pytest.CaptureFixture[st
 def test_script_runs_as_subprocess(tmp_path: Path) -> None:
     path = _write(tmp_path, _profile(mastery="mastered"))
     script = Path(__file__).resolve().parents[2] / "src" / "sensei" / "engine" / "scripts" / "mastery_check.py"
+    assert script.is_file(), f"script path wrong: {script}"
     result = subprocess.run(
         [sys.executable, str(script), "--profile", str(path), "--topic", "recursion", "--required", "solid"],
         capture_output=True,

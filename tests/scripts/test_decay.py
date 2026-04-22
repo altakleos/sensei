@@ -112,6 +112,7 @@ def test_freshness_score_rejects_non_positive_half_life() -> None:
 def test_script_runs_as_subprocess() -> None:
     """Protocols invoke helpers via shell subprocess (per ADR-0006). Verify that path works."""
     script = Path(__file__).resolve().parents[2] / "src" / "sensei" / "engine" / "scripts" / "decay.py"
+    assert script.is_file(), f"script path wrong: {script}"
     result = subprocess.run(
         [
             sys.executable,

@@ -135,6 +135,7 @@ def test_main_missing_file(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -
 def test_script_runs_as_subprocess(tmp_path: Path) -> None:
     path = _write(tmp_path, _valid_profile())
     script = Path(__file__).resolve().parents[2] / "src" / "sensei" / "engine" / "scripts" / "check_profile.py"
+    assert script.is_file(), f"script path wrong: {script}"
     result = subprocess.run(
         [sys.executable, str(script), "--profile", str(path)],
         capture_output=True,

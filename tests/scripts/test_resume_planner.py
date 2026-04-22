@@ -186,6 +186,7 @@ def test_script_runs_as_subprocess(tmp_path: Path) -> None:
         / "scripts"
         / "resume_planner.py"
     )
+    assert script.is_file(), f"script path wrong: {script}"
     result = subprocess.run(
         [
             sys.executable,

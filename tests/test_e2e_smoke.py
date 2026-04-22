@@ -15,6 +15,15 @@ PYTHON = sys.executable
 SENSEI = shutil.which("sensei") or str(Path(__file__).resolve().parents[1] / ".venv" / "bin" / "sensei")
 SCRIPTS = str(Path(__file__).resolve().parents[1] / "src" / "sensei" / "engine" / "scripts")
 
+# Fail at import time with a clear message if the binary / scripts dir is missing.
+# Without these, subprocess runs a nonexistent path and the test failure surfaces
+# as an obscure returncode-mismatch assertion far from the real cause.
+assert Path(SENSEI).is_file(), (
+    f"sensei binary not found at {SENSEI}. "
+    f"PATH lookup and .venv/bin fallback both failed; install the package into the active venv."
+)
+assert Path(SCRIPTS).is_dir(), f"engine scripts directory not found: {SCRIPTS}"
+
 
 def _run(args: list[str], **kwargs) -> subprocess.CompletedProcess:
     return subprocess.run(args, capture_output=True, text=True, **kwargs)
