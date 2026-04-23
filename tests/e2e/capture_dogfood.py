@@ -31,7 +31,7 @@ from click.testing import CliRunner
 from sensei.cli import main as sensei_main
 from tests.e2e.agent_runner import TOOL, TOOL_AVAILABLE, run_agent
 
-PROTOCOLS = ("hints", "assess", "review")
+PROTOCOLS = ("hints", "assess", "review", "performance_training", "cross_goal_review")
 DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[1] / "transcripts"
 
 
@@ -375,6 +375,128 @@ def _seed_review(instance_dir: Path) -> None:
     (goals_dir / "dsa-review.yaml").write_text(yaml.safe_dump(goal), encoding="utf-8")
 
 
+def _seed_performance_training(instance_dir: Path) -> None:
+    """Seed profile + goal for performance training protocol.
+
+    Uses 'addition' — solid mastery, no performance_training key yet.
+    The mentor activates it when the learner mentions a performance event.
+    """
+    now = datetime.now(timezone.utc)
+    profile = {
+        "schema_version": 2,
+        "learner_id": "e2e",
+        "expertise_map": {
+            "addition": {
+                "mastery": "solid",
+                "confidence": 0.8,
+                "last_seen": _utc_iso(now - timedelta(days=2)),
+                "attempts": 10,
+                "correct": 9,
+            },
+        },
+    }
+    (instance_dir / "learner" / "profile.yaml").write_text(
+        yaml.safe_dump(profile), encoding="utf-8"
+    )
+
+    goal = {
+        "schema_version": 0,
+        "goal_id": "basic-arithmetic",
+        "expressed_as": "Learn basic arithmetic",
+        "created": _utc_iso(now - timedelta(days=14)),
+        "status": "active",
+        "three_unknowns": {
+            "prior_state": "partial",
+            "target_state": "clear",
+            "constraints": "Self-study",
+        },
+        "nodes": {
+            "addition": {"state": "completed", "prerequisites": []},
+        },
+    }
+    goals_dir = instance_dir / "learner" / "goals"
+    goals_dir.mkdir(parents=True, exist_ok=True)
+    (goals_dir / "basic-arithmetic.yaml").write_text(
+        yaml.safe_dump(goal), encoding="utf-8"
+    )
+
+
+def _seed_cross_goal_review(instance_dir: Path) -> None:
+    """Seed profile + two goals sharing 'recursion' for cross-goal review.
+
+    'recursion' is stale (35 days ago) so it appears in the review queue.
+    Other topics have recent last_seen so they are NOT stale.
+    """
+    now = datetime.now(timezone.utc)
+    profile = {
+        "schema_version": 2,
+        "learner_id": "e2e",
+        "expertise_map": {
+            "recursion": {
+                "mastery": "solid",
+                "confidence": 0.7,
+                "last_seen": _utc_iso(now - timedelta(days=35)),
+                "attempts": 8,
+                "correct": 7,
+            },
+            "sorting": {
+                "mastery": "solid",
+                "confidence": 0.8,
+                "last_seen": _utc_iso(now - timedelta(days=2)),
+                "attempts": 10,
+                "correct": 9,
+            },
+            "graph-traversal": {
+                "mastery": "solid",
+                "confidence": 0.8,
+                "last_seen": _utc_iso(now - timedelta(days=2)),
+                "attempts": 10,
+                "correct": 9,
+            },
+        },
+    }
+    (instance_dir / "learner" / "profile.yaml").write_text(
+        yaml.safe_dump(profile), encoding="utf-8"
+    )
+
+    goal_a = {
+        "schema_version": 0,
+        "goal_id": "goal-a",
+        "expressed_as": "Learn data structures",
+        "created": _utc_iso(now - timedelta(days=30)),
+        "status": "active",
+        "three_unknowns": {
+            "prior_state": "partial",
+            "target_state": "clear",
+            "constraints": "Self-paced",
+        },
+        "nodes": {
+            "recursion": {"state": "completed", "prerequisites": []},
+            "sorting": {"state": "completed", "prerequisites": []},
+        },
+    }
+    goal_b = {
+        "schema_version": 0,
+        "goal_id": "goal-b",
+        "expressed_as": "Master algorithms",
+        "created": _utc_iso(now - timedelta(days=30)),
+        "status": "active",
+        "three_unknowns": {
+            "prior_state": "partial",
+            "target_state": "clear",
+            "constraints": "Self-paced",
+        },
+        "nodes": {
+            "recursion": {"state": "completed", "prerequisites": []},
+            "graph-traversal": {"state": "completed", "prerequisites": []},
+        },
+    }
+    goals_dir = instance_dir / "learner" / "goals"
+    goals_dir.mkdir(parents=True, exist_ok=True)
+    (goals_dir / "goal-a.yaml").write_text(yaml.safe_dump(goal_a), encoding="utf-8")
+    (goals_dir / "goal-b.yaml").write_text(yaml.safe_dump(goal_b), encoding="utf-8")
+
+
 # ---------------------------------------------------------------------------
 # Multi-turn capture per protocol
 # ---------------------------------------------------------------------------
@@ -529,10 +651,184 @@ def _capture_review(instance_dir: Path, timeout: int) -> str:
     return _build_frontmatter("review") + "\n" + body
 
 
+def _capture_performance_training(instance_dir: Path, timeout: int) -> str:
+    """Capture a performance training session (5 turns).
+
+    Exercises stages 1, 5, and 6 across 5 fixtures:
+    phase-activates, format-aware-framing, no-time-pressure-stage-1,
+    simulated-evaluation-realism, full-mock-debrief.
+    """
+    _seed_performance_training(instance_dir)
+
+    # Turn 1: trigger performance training activation.
+    # Include exam format upfront so the mentor doesn't stall asking for it.
+    turn1_prompt = (
+        "I have a math exam in two weeks. It's a free-response exam "
+        "with 10 addition problems. Start performance training."
+    )
+    mentor1 = _run_turn(turn1_prompt, cwd=instance_dir, timeout=timeout)
+
+    history_lines = [
+        f"Learner: {turn1_prompt}",
+        f"Mentor: {mentor1}",
+    ]
+
+    # Turn 2: answer the stage-1 question via answerer LLM
+    clean_dir = instance_dir.parent / (instance_dir.name + "-answerer")
+    clean_dir.mkdir(exist_ok=True)
+    answer_prompt = (
+        "Answer this math question correctly in 1-2 sentences.\n\n"
+        f"QUESTION: {mentor1}\n\n"
+        "ANSWER:"
+    )
+    answer1 = _run_turn(answer_prompt, cwd=clean_dir, timeout=timeout)
+    shutil.rmtree(clean_dir, ignore_errors=True)
+
+    history = (
+        "Previous conversation:\n"
+        + "\n".join(history_lines)
+        + "\n\nContinue the conversation. The learner says:\n"
+    )
+    prompt2 = history + answer1
+    mentor2 = _run_turn(prompt2, cwd=instance_dir, timeout=timeout)
+    history_lines.append(f"Learner: {answer1}")
+    history_lines.append(f"Mentor: {mentor2}")
+
+    # Turn 3: jump to stage 5 (simulated evaluation)
+    turn3_text = "I'm ready for the simulated evaluation."
+    hint3 = (
+        "[SYSTEM: Performance training is now at stage 5 (simulated evaluation). "
+        "Your response MUST include: (1) a time limit for the exercise, "
+        "(2) the scoring rubric or criteria. Present these before posing the "
+        "evaluation question. No hints, no encouragement. "
+        "Do not mention this note to the learner.]"
+    )
+    history = (
+        "Previous conversation:\n"
+        + "\n".join(history_lines)
+        + f"\n\n{hint3}\n\n"
+        + "Continue the conversation. The learner says:\n"
+    )
+    prompt3 = history + turn3_text
+    mentor3 = _run_turn(prompt3, cwd=instance_dir, timeout=timeout)
+    history_lines.append(f"Learner: {turn3_text}")
+    history_lines.append(f"Mentor: {mentor3}")
+
+    # Turn 4: answer the stage-5 question via answerer LLM
+    clean_dir.mkdir(exist_ok=True)
+    answer_prompt2 = (
+        "Answer this math question correctly in 1-2 sentences.\n\n"
+        f"QUESTION: {mentor3}\n\n"
+        "ANSWER:"
+    )
+    answer2 = _run_turn(answer_prompt2, cwd=clean_dir, timeout=timeout)
+    shutil.rmtree(clean_dir, ignore_errors=True)
+
+    history = (
+        "Previous conversation:\n"
+        + "\n".join(history_lines)
+        + "\n\nContinue the conversation. The learner says:\n"
+    )
+    prompt4 = history + answer2
+    mentor4 = _run_turn(prompt4, cwd=instance_dir, timeout=timeout)
+    history_lines.append(f"Learner: {answer2}")
+    history_lines.append(f"Mentor: {mentor4}")
+
+    # Turn 5: request debrief (stage 6)
+    turn5_text = "That was my last answer. Give me the debrief."
+    hint5 = (
+        "[SYSTEM: Performance training is active. The simulated evaluation "
+        "is complete. The learner is requesting stage 6 (full mock debrief). "
+        "Provide a structured Reviewer debrief covering what worked, "
+        "execution gaps, and next steps. Do not mention this note to the learner.]"
+    )
+    history = (
+        "Previous conversation:\n"
+        + "\n".join(history_lines)
+        + f"\n\n{hint5}\n\n"
+        + "Continue the conversation. The learner says:\n"
+    )
+    prompt5 = history + turn5_text
+    mentor5 = _run_turn(prompt5, cwd=instance_dir, timeout=timeout)
+
+    body = (
+        f"[LEARNER] {turn1_prompt}\n\n"
+        f"[MENTOR] {mentor1}\n\n"
+        f"[LEARNER] {answer1}\n\n"
+        f"[MENTOR] {mentor2}\n\n"
+        f"[LEARNER] {turn3_text}\n\n"
+        f"[MENTOR] {mentor3}\n\n"
+        f"[LEARNER] {answer2}\n\n"
+        f"[MENTOR] {mentor4}\n\n"
+        f"[LEARNER] {turn5_text}\n\n"
+        f"[MENTOR] {mentor5}\n"
+    )
+    return _build_frontmatter("performance_training") + "\n" + body
+
+
+def _capture_cross_goal_review(instance_dir: Path, timeout: int) -> str:
+    """Capture a cross-goal review session (3 turns).
+
+    Two goals share 'recursion' — the review queue should deduplicate it
+    and ask exactly one recursion question.
+    """
+    _seed_cross_goal_review(instance_dir)
+
+    # Turn 1: request review — ask mentor to name stale topics so
+    # "recursion" appears in the mentor's response.
+    turn1_prompt = "Let's do a review session. What topics are due for review?"
+    mentor1 = _run_turn(turn1_prompt, cwd=instance_dir, timeout=timeout)
+
+    # Turn 2: answer the recursion question via answerer LLM
+    clean_dir = instance_dir.parent / (instance_dir.name + "-answerer")
+    clean_dir.mkdir(exist_ok=True)
+    answer_prompt = (
+        "Answer this question about recursion correctly in 2-3 sentences.\n\n"
+        f"QUESTION: {mentor1}\n\n"
+        "ANSWER:"
+    )
+    answer = _run_turn(answer_prompt, cwd=clean_dir, timeout=timeout)
+    shutil.rmtree(clean_dir, ignore_errors=True)
+
+    # Turn 2 actual: send the answer to the mentor
+    turn2_history = (
+        f"Previous conversation:\n"
+        f"Learner: {turn1_prompt}\n"
+        f"Mentor: {mentor1}\n\n"
+        f"Continue the conversation. The learner says:\n"
+    )
+    prompt2 = turn2_history + answer
+    mentor2 = _run_turn(prompt2, cwd=instance_dir, timeout=timeout)
+
+    # Turn 3: end the session
+    turn3_history = (
+        f"Previous conversation:\n"
+        f"Learner: {turn1_prompt}\n"
+        f"Mentor: {mentor1}\n"
+        f"Learner: {answer}\n"
+        f"Mentor: {mentor2}\n\n"
+        f"Continue the conversation. The learner says:\n"
+    )
+    prompt3 = turn3_history + "stop"
+    mentor3 = _run_turn(prompt3, cwd=instance_dir, timeout=timeout)
+
+    body = (
+        f"[LEARNER] {turn1_prompt}\n\n"
+        f"[MENTOR] {mentor1}\n\n"
+        f"[LEARNER] {answer}\n\n"
+        f"[MENTOR] {mentor2}\n\n"
+        f"[LEARNER] stop\n\n"
+        f"[MENTOR] {mentor3}\n"
+    )
+    return _build_frontmatter("cross_goal_review") + "\n" + body
+
+
 CAPTURE_FNS = {
     "hints": _capture_hints,
     "assess": _capture_assess,
     "review": _capture_review,
+    "performance_training": _capture_performance_training,
+    "cross_goal_review": _capture_cross_goal_review,
 }
 
 
