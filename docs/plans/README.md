@@ -36,7 +36,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [e2e-tutor-protocol](e2e-tutor-protocol.md) | Tutor protocol E2E test — teaching interaction + profile update | done |
 | [curriculum-graph](curriculum-graph.md) | Curriculum graph — frontier, mutations, validation | done |
 | [e2e-challenger-reviewer](e2e-challenger-reviewer.md) | Challenger + reviewer E2E tests | done |
-| [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
+| [fix-profile-writes](fix-profile-writes.md) | Constrain profile writes in challenger + reviewer protocols | done || [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
 | [mermaid-diagrams](mermaid-diagrams.md) | Mermaid diagram enhancement pass | done |
 | [parallel-worktrees](parallel-worktrees.md) | Parallel agent worktrees | done |
 | [session-notes](session-notes.md) | Session notes — structured cross-session mentor memory | done |
