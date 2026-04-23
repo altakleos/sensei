@@ -78,9 +78,15 @@ Run:
 .sensei/run mastery_check.py --profile learner/profile.yaml --topic <topic> --required mastered
 ```
 
-Update profile:
-- 3+ challenges passed at mastered level → boost confidence
-- 2+ challenges failed → note specific weakness pattern (edge cases? transfer? composition?)
+Update `learner/profile.yaml` for this topic — write ONLY these fields:
+
+- `attempts` ← increment by 1 for each challenge posed
+- `correct` ← increment by 1 for each challenge passed
+- `confidence` ← adjust based on observed performance (0.0–1.0); boost if 3+ passed at mastered level
+- `mastery` ← update if evidence warrants (none → shaky → developing → solid → mastered)
+- `last_seen` ← current UTC timestamp (ISO-8601)
+
+**Do NOT add any fields beyond those listed above.** The profile schema enforces `additionalProperties: false`. Any extra fields (e.g., challenge_log, weakness_patterns, metadata) will fail validation. Record weakness observations (edge cases? transfer? composition?) in your spoken report to the learner, not in the profile.
 
 Report concisely: "3/4 passed. Solid on [X] but [specific weakness] needs work."
 
@@ -93,7 +99,7 @@ Offer: "More challenges, different topic, or back to learning?" On exit, transit
 - NEVER challenge topics below solid mastery — redirect to tutor.
 - NEVER pose more than 5 challenges on one topic without offering an exit.
 - Learner can exit at any point — respect immediately, no guilt.
-- Profile updates after EVERY challenge (attempted, passed/failed, weakness patterns).
+- Profile updates after EVERY challenge — write ONLY: `attempts`, `correct`, `confidence`, `mastery`, `last_seen`. No other fields.
 
 ## Error handling
 

@@ -61,7 +61,15 @@ Act on calibration:
 - Learner revises and resubmits → return to Step 3, note improvements
 - Learner asks for the fix → provide it, then ask them to explain WHY it works
 - Learner is satisfied → summarize: "Your [type] is [status]. Key growth area: [pattern]."
-- Update profile: record review patterns (common error types, calibration trend)
+- Update profile: summarize improvements and remaining issues.
+- Update `learner/profile.yaml` for the relevant topic — write ONLY these fields:
+  - `attempts` ← increment by 1 for each review pass
+  - `correct` ← increment by 1 if the submission was correct or successfully revised
+  - `confidence` ← adjust based on self-assessment calibration (0.0–1.0)
+  - `mastery` ← update if evidence warrants (none → shaky → developing → solid → mastered)
+  - `last_seen` ← current UTC timestamp (ISO-8601)
+
+**Do NOT add any fields beyond those listed above.** The profile schema enforces `additionalProperties: false`. Any extra fields (e.g., review_patterns, error_types, calibration_trend) will fail validation. Communicate observed patterns (common error types, calibration trends) verbally to the learner, not in the profile.
 
 ## Constraints
 
@@ -70,7 +78,7 @@ Act on calibration:
 - NEVER use generic praise ("good job!") — be specific about what works.
 - Limit to 3–5 issues per review pass (cognitive load) — prioritize critical first.
 - The learner can exit at any point — respect immediately.
-- Profile updates: track common error patterns and self-assessment calibration over time.
+- Profile updates: write ONLY `attempts`, `correct`, `confidence`, `mastery`, `last_seen` per topic. No other fields.
 
 ## Error handling
 
