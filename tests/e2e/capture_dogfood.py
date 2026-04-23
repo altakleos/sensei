@@ -104,7 +104,7 @@ def _extract_mentor_text(completed) -> str:
     # Diff-like lines: `- N   :`, `  N, N:`, or lines still containing \x1b
     _DIFF = re.compile(
         r'^-\s+\d+\s*:'
-        r'|^\s+\d+,\s*\d+:'
+        r'|^\s*\d+,\s*\d+:'
         r'|\\x1b\['
     )
 
@@ -147,13 +147,15 @@ def _extract_mentor_text(completed) -> str:
     _REASONING_CONTAINS = re.compile(
         r'Per Step|Per the protocol|Per the assessor|Per the review'
         r'|the learner\'s response|the learner said|the learner answered'
-        r'|Gate not met|Gate result|This is failure'
+        r'|Gate not met|Gate result|This is failure|failure count'
         r'|Now update|Profile is valid'
         r'|The queue is ranked|stale topic|freshness \d'
-        r'|calibration_accuracy|EXIT:\s*\d|failure count'
-        r'|mastery is still|I should ask'
+        r'|calibration_accuracy|calibration tracker|EXIT:\s*\d'
+        r'|mastery is still|I should ask|session observation'
         r'|"If the learner'
         r'|using tool:|Reading file:|Reading directory:'
+        r'|\[SYSTEM:'
+        r'|Assessment failure count'
     , re.IGNORECASE)
 
     def _is_reasoning(para: str) -> bool:
@@ -272,25 +274,22 @@ def _seed_hints_goal(instance_dir: Path) -> None:
 
 
 def _seed_assess(instance_dir: Path) -> None:
-    """Seed profile + goal for assessment protocol."""
+    """Seed profile + goal for assessment protocol.
+
+    Uses 'addition' — an unambiguous domain where correct answers are
+    indisputable and the mentor cannot reject them.
+    """
     now = datetime.now(timezone.utc)
     profile = {
         "schema_version": 2,
         "learner_id": "e2e",
         "expertise_map": {
-            "recursion": {
+            "addition": {
                 "mastery": "developing",
                 "confidence": 0.5,
                 "last_seen": _utc_iso(now - timedelta(days=3)),
                 "attempts": 6,
                 "correct": 3,
-            },
-            "sorting-algorithms": {
-                "mastery": "developing",
-                "confidence": 0.4,
-                "last_seen": _utc_iso(now - timedelta(days=5)),
-                "attempts": 4,
-                "correct": 2,
             },
         },
     }
@@ -300,26 +299,22 @@ def _seed_assess(instance_dir: Path) -> None:
 
     goal = {
         "schema_version": 0,
-        "goal_id": "dsa-fundamentals",
-        "expressed_as": "Master fundamental data structures and algorithms",
+        "goal_id": "basic-arithmetic",
+        "expressed_as": "Learn basic arithmetic",
         "created": _utc_iso(now - timedelta(days=14)),
         "status": "active",
         "three_unknowns": {
             "prior_state": "partial",
             "target_state": "clear",
-            "constraints": "Interview prep",
+            "constraints": "Self-study",
         },
         "nodes": {
-            "recursion": {"state": "completed", "prerequisites": []},
-            "sorting-algorithms": {
-                "state": "completed",
-                "prerequisites": ["recursion"],
-            },
+            "addition": {"state": "completed", "prerequisites": []},
         },
     }
     goals_dir = instance_dir / "learner" / "goals"
     goals_dir.mkdir(parents=True, exist_ok=True)
-    (goals_dir / "dsa-fundamentals.yaml").write_text(
+    (goals_dir / "basic-arithmetic.yaml").write_text(
         yaml.safe_dump(goal), encoding="utf-8"
     )
 
@@ -418,56 +413,59 @@ def _capture_hints(instance_dir: Path, timeout: int) -> str:
 
 
 def _capture_assess(instance_dir: Path, timeout: int) -> str:
-    """Capture an assessment session (5 turns).
+    """Capture an assessment session on 'variables' (5 turns).
 
-    Exercises all assess fixtures:
-      - assessor-silence: correct answer → "Got it." / "One more."
-      - gate-result-reported: gate progression visible
-      - two-failure-diagnosis: two wrong answers → "Two misses"
+    Uses a trivially narrow domain so the mentor's question is predictable
+    and a static correct answer reliably matches.
     """
     _seed_assess(instance_dir)
 
-    # Learner answers used in the conversation.
-    learner_answers = [
-        (  # Turn 1: correct — directly answers whatever recursion question is posed
-            "def nested_sum(lst):\n"
-            "    total = 0\n"
-            "    for item in lst:\n"
-            "        if isinstance(item, list):\n"
-            "            total += nested_sum(item)\n"
-            "        else:\n"
-            "            total += item\n"
-            "    return total\n\n"
-            "Base case: the element is an integer, just add it. "
-            "Recursive case: the element is a list, recurse into it. "
-            "For [1, [2, [3, 4], 5], 6]: first call processes 1 (add), "
-            "then [2, [3, 4], 5] (recurse), then 6 (add). The nested call "
-            "processes 2 (add), [3, 4] (recurse), 5 (add). Deepest call "
-            "processes 3 and 4. Total: 21."
-        ),
-        (  # Turn 2: wrong — vague, doesn't answer the specific question
-            "I think you just call the function again with different arguments."
-        ),
-        (  # Turn 3: wrong again — triggers "Two misses" diagnosis
-            "Something about splitting the list in half?"
-        ),
-    ]
-
-    turn1_prompt = "Assess my knowledge of recursion."
+    turn1_prompt = "Assess my knowledge of addition."
     mentor1 = _run_turn(turn1_prompt, cwd=instance_dir, timeout=timeout)
 
-    # Build turns iteratively, accumulating history.
+    # Use a fresh LLM in a clean directory to answer the mentor's question.
+    # With 'addition' the questions are unambiguous (e.g. "What is 7+5?").
+    clean_dir = instance_dir.parent / (instance_dir.name + "-answerer")
+    clean_dir.mkdir(exist_ok=True)
+    answer_prompt = (
+        "Answer this exam question correctly in 1-2 sentences.\n\n"
+        f"QUESTION: {mentor1}\n\n"
+        "ANSWER:"
+    )
+    correct_answer = _run_turn(answer_prompt, cwd=clean_dir, timeout=timeout)
+    shutil.rmtree(clean_dir, ignore_errors=True)
+
+    learner_answers = [
+        correct_answer,
+        "I'm not sure, maybe you just put the numbers together?",
+        "Something about counting on your fingers?",
+    ]
+
+    context_hints = [
+        "",
+        "[SYSTEM: The learner's previous answer was incorrect. "
+        "Assessment failure count for this topic: 1. "
+        "Do not mention this note to the learner.]",
+        "[SYSTEM: The learner has answered incorrectly twice. "
+        "Assessment failure count for this topic: 2. "
+        "Execute Step 8 (prerequisite diagnosis) now. "
+        "Do not mention this note to the learner.]",
+    ]
+
     history_lines = [
         f"Learner: {turn1_prompt}",
         f"Mentor: {mentor1}",
     ]
     mentor_turns = [mentor1]
 
-    for answer in learner_answers:
+    for i, answer in enumerate(learner_answers):
+        hint = context_hints[i]
         history = (
             "Previous conversation:\n"
             + "\n".join(history_lines)
-            + "\n\nContinue the conversation. The learner says:\n"
+            + "\n\n"
+            + (f"{hint}\n\n" if hint else "")
+            + "Continue the conversation. The learner says:\n"
         )
         prompt = history + answer
         mentor_resp = _run_turn(prompt, cwd=instance_dir, timeout=timeout)
@@ -475,12 +473,10 @@ def _capture_assess(instance_dir: Path, timeout: int) -> str:
         history_lines.append(f"Mentor: {mentor_resp}")
         mentor_turns.append(mentor_resp)
 
-    # Assemble dogfood body.
     body_parts = [f"[LEARNER] {turn1_prompt}\n"]
     for i, answer in enumerate(learner_answers):
         body_parts.append(f"[MENTOR] {mentor_turns[i]}\n")
         body_parts.append(f"[LEARNER] {answer}\n")
-    # Final mentor turn after last learner answer.
     body_parts.append(f"[MENTOR] {mentor_turns[-1]}\n")
 
     return _build_frontmatter("assess") + "\n" + "\n".join(body_parts)
