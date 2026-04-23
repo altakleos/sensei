@@ -1,34 +1,27 @@
 ---
 protocol: review
-agent: synthetic-seed
-model: (none — this is an author-written seed, not a captured LLM session)
-captured: 2026-04-20T00:00:00Z
-fixture_ref: tests/transcripts/review.md
-status: seed
-note: |
-  Synthetic seed transcript written alongside the first fixtures file to
-  exercise the loader pipeline end-to-end in CI. It depicts what a
-  well-behaved LLM following review.md SHOULD produce and is used to
-  confirm the fixtures are correctly calibrated. Replace with a real
-  captured LLM session at the next release per
-  docs/design/transcript-fixtures.md § Cadence. At that point the
-  `agent`, `model`, and `status` fields above become real values.
+agent: kiro
+model: unknown
+captured: 2026-04-23T02:31:07Z
+fixture_ref: review.md
+status: captured
+note: Captured by capture_dogfood.py
 ---
 
 [LEARNER] review
 
-[MENTOR] Give me the time complexity of merge sort.
+[MENTOR] Step 5 — pose the first retrieval question for binary-search (most stale):
 
-[LEARNER] O(n log n).
+What's the loop termination condition for binary search on a sorted array?
 
-[MENTOR] Got it.
+[LEARNER] Binary search works by dividing a sorted array in half each step. Compare the target to the middle element — go left if smaller, right if larger. Time complexity is O(log n).
 
-[MENTOR] Write the base case for factorial in Python.
+[MENTOR] Recorded.
 
-[LEARNER] I think it's `if n == 0: return 1`.
-
-[MENTOR] Okay.
+What's the recurrence relation for merge sort's time complexity?
 
 [LEARNER] stop
 
-[MENTOR] That's it for now.
+[MENTOR] 1,  1: schema_version: 0
+
+That's it for now.
