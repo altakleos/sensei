@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a17] — 2026-04-23
+
+### Added
+
+- **Dogfood capture harness** — `tests/e2e/capture_dogfood.py` scaffolds a Sensei instance, runs multi-turn LLM conversations, and writes `.dogfood.md` transcripts. Supports all 5 protocols (`--protocol hints|assess|review|performance_training|cross_goal_review|all`). Uses an answerer LLM in a clean directory for reliable correct answers.
+- **Real LLM transcript captures** — all 5 dogfood transcripts (hints, assess, review, performance_training, cross_goal_review) replaced with real Kiro CLI captures. 19 transcript fixtures now have dogfood companions (was 12).
+- **Tier-2 E2E tests** — challenger protocol, reviewer protocol, goal lifecycle (pause/resume with stale detection), multi-turn mode transition (3-turn stipulated session).
+- **Tier-3 nightly E2E CI workflow** — runs full E2E suite on a schedule.
+
+### Changed
+
+- **Assessment protocol** — strengthened silence profile enforcement with inline violation examples, code-block templates for exact phrasing ("Got it. One more.", "Two misses on [topic]."), explicit forbidden-word list at classification step.
+- **Challenger and reviewer protocols** — constrained profile writes to prevent unvalidated mutations.
+
+### Fixed
+
+- **Assess fixture patterns** — relaxed overly strict `^Got it\.$` anchored regexes to `Got it\.` substring matches. The protocol says "Got it. One more." as one phrase; the fixture shouldn't penalise the LLM for following the protocol correctly.
+
 ## [0.1.0a16] — 2026-04-22
 
 ### Added
