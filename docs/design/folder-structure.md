@@ -2,7 +2,7 @@
 status: accepted
 date: 2026-04-20
 implements:
-  - learner-is-not-the-goal
+  - learner-is-not-the-goal  # foundation principle, not a spec — this is a rationale doc
 ---
 # Folder Structure — Design
 
@@ -77,7 +77,7 @@ The following will land in future plans. Their locations are noted here for orie
 
 - **Goal workspaces** — top-level sibling directories (e.g., `interview-prep/`) containing `curriculum.yaml`, `progress.yaml`, `exercises/`, `notes/`. Created by the mentor during conversation, never by CLI.
 - **Cross-goal knowledge state** — likely `learner/knowledge-state.yaml`, tracking foundational concepts that span goals. Deferred until a protocol needs it.
-- **Session logs** — location TBD. Likely `learner/sessions/` or within goal workspaces.
+- **Session logs** — location TBD. Likely `learner/sessions/` or within goal workspaces. <!-- TODO(open): resolve session-log location before v1 -->
 
 ## Decisions
 

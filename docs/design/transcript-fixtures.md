@@ -1,7 +1,7 @@
 ---
 status: accepted
 date: 2026-04-20
-implements: []
+implements: []  # cross-cutting verification mechanism — governed by ADR-0011, no single owning spec
 ---
 # Transcript Fixtures — Behavioural Verification for Prose-as-Code Protocols
 

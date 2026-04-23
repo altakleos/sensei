@@ -63,7 +63,9 @@ Boosting over rewriting respects the curriculum's pedagogical structure. The cur
 
 ## Decisions
 
-None yet. Design and ADRs will follow.
+- [Design — Hints Ingestion](../design/hints-ingestion.md)
+- [ADR-0017 — File-Drop Ingestion](../decisions/0017-file-drop-ingestion.md)
+- [ADR-0019 — Universal Inbox over Typed Drop Zones](../decisions/0019-universal-inbox.md)
 
 ## References
 
