@@ -37,6 +37,14 @@ Each run takes ~60–120s on a cold Claude Code cache; three tests is ~4–6 min
 
 Skip only with an explicit CHANGELOG note recording why (e.g. upstream Claude Code outage).
 
+## Tier-3 Nightly E2E
+
+The `e2e-nightly` GitHub Actions workflow runs all E2E tests on a daily schedule (06:00 UTC). Results appear in the Actions tab. The workflow can also be triggered manually via `workflow_dispatch` with an optional `tool` input (`auto`/`claude`/`kiro`).
+
+**Required secret:** `ANTHROPIC_API_KEY` in the repository's Actions secrets. Without it, the Claude Code install step is skipped and `agent_runner` auto-detection finds no tool — tests skip gracefully.
+
+**Cost cap:** 30-minute job timeout + 300s per-test timeout via `pytest --timeout`. At ~2 minutes per test, a full run takes ~6–18 minutes of API time depending on test count.
+
 ## Normal Release
 
 1. Ensure `main` is green (CI verified across Python 3.10–3.13).

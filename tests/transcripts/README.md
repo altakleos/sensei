@@ -36,7 +36,7 @@ Prose-as-code correctness is checked at four tiers. ADR-0011 introduced Tier 1; 
 | 0 | default pytest | script CLI ↔ protocol prose consistency (`tests/ci/test_protocol_script_consistency.py`), schema round-trip of emitted YAML (`tests/test_schema_validation.py`), unit tests of helper functions | every PR, CI-gated |
 | 1 | default pytest | lexical assertions on captured `.dogfood.md` transcripts (forbidden phrases, required regexes) via `conftest.py` parametrization | every PR, CI-gated; missing dogfood → `SKIPPED` (not failure) |
 | 2 | **manual pre-release** | scripted E2Es in `tests/e2e/` that invoke headless Claude Code against a fresh Sensei instance: `goal` protocol emits a schema-valid goal file; `assess` protocol increments `attempts`/`correct` on a pre-seeded profile topic; `hints` protocol drains a seeded inbox and populates `hints.yaml` | before each release tag, maintainer workstation |
-| 3 | **deferred post-v0.1.0a9** | LLM-in-CI matrix across multiple protocols + agents, cost-capped, nightly only | not yet |
+| 3 | **`e2e-nightly.yml`, daily cron** | LLM-in-CI via Claude Code, cost-capped (30 min job timeout), nightly schedule + manual `workflow_dispatch` | nightly 06:00 UTC; requires `ANTHROPIC_API_KEY` secret |
 
 Tier 2 skips in default CI because runners lack the `claude` binary and API credentials. Opt in with `ANTHROPIC_API_KEY=...` or `SENSEI_E2E=1` plus `pytest tests/e2e/ --no-cov`. See `docs/operations/release-playbook.md` § Pre-release gate.
 
