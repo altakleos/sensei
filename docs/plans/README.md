@@ -33,20 +33,22 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [assessment-protocol](assessment-protocol.md) | Assessment protocol — mastery gating, two-failure diagnosis (retroactive) | done |
 | [e2e-kiro-support](e2e-kiro-support.md) | Tool-agnostic E2E tests — Kiro CLI + Claude Code | done |
 | [e2e-review-protocol](e2e-review-protocol.md) | Review protocol E2E test — stale topic selection + profile update | done |
-| [e2e-tutor-protocol](e2e-tutor-protocol.md) | Tutor protocol E2E test — teaching interaction + profile update | done || [curriculum-graph](curriculum-graph.md) | Curriculum graph — frontier, mutations, validation | done |
-| [e2e-challenger-reviewer](e2e-challenger-reviewer.md) | Challenger + reviewer E2E tests | done || [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
+| [e2e-tutor-protocol](e2e-tutor-protocol.md) | Tutor protocol E2E test — teaching interaction + profile update | done |
+| [curriculum-graph](curriculum-graph.md) | Curriculum graph — frontier, mutations, validation | done |
+| [e2e-challenger-reviewer](e2e-challenger-reviewer.md) | Challenger + reviewer E2E tests | done |
+| [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
 | [mermaid-diagrams](mermaid-diagrams.md) | Mermaid diagram enhancement pass | done |
 | [parallel-worktrees](parallel-worktrees.md) | Parallel agent worktrees | done |
-
-### In Progress
-| Plan | Feature | Status |
-|------|---------|--------|
 | [session-notes](session-notes.md) | Session notes — structured cross-session mentor memory | done |
 | [performance-training-v1](performance-training-v1.md) | Performance training phase overlay (stages 1–4) — config, schema, phase protocol, engine wiring, goal protocol integration | done |
 | [performance-training-v2](performance-training-v2.md) | Performance training stages 5-6 — simulated evaluation + full mock | done |
 | [emotional-state-tracking](emotional-state-tracking.md) | Emotional state tracking — LLM-as-sensor emotional classification with affect-aware protocol adaptations | done |
 | [interleaving](interleaving.md) | Interleaving — review session topic mixing for discriminative contrast | done |
 | [metacognitive-tracking](metacognitive-tracking.md) | Metacognitive state tracking — calibration, planning tendency, help-seeking | done |
+
+### In Progress
+| Plan | Feature | Status |
+|------|---------|--------|
 
 The last five plans above (`behavioral-architecture` through `research-and-closure`) were a five-step decomposition of an early ideation monolith into the foundations + specs + design + ADR layers. The source document itself was deleted at the end of Plan 5; its content is fully absorbed into the surviving artifacts.
 
