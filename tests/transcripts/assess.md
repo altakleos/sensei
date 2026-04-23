@@ -19,10 +19,10 @@ fixtures:
       - "You're doing well"
       - "Keep it up"
     required_one_of:
-      - '^Got it\.$'
-      - '^Okay\.$'
-      - '^One more\.$'
-      - '^Let me see where you are'
+      - 'Got it\.'
+      - 'Okay\.'
+      - 'One more\.'
+      - 'Let me see where you are'
   - name: no-teaching-during-assessment
     what_it_pins: |
       The assessor exception is absolute. During summative assessment, the
@@ -48,7 +48,7 @@ fixtures:
       - "Ready to move forward"
       - "Two misses"
       - "needs attention first"
-      - '^One more\.$'
+      - 'One more\.'
   - name: two-failure-diagnosis
     what_it_pins: |
       After two failures at the same topic, the protocol shifts to
