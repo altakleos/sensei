@@ -1,46 +1,30 @@
 ---
 protocol: hints
-agent: synthetic-seed
-model: (none — this is an author-written seed, not a captured LLM session)
-captured: 2026-04-21T00:00:00Z
-fixture_ref: tests/transcripts/hints.md
-status: seed
-note: |
-  Synthetic seed transcript exercising all four hints.md fixtures across
-  one representative triage session:
-
-    - triage-not-teaching — the mentor classifies and summarises; no
-      teaching leakage.
-    - concise-summary — counts + outcomes, not per-item commentary.
-    - boost-visibility — names boosted topics explicitly, closing
-      ADR-0018's "subtle influence" gap.
-    - ambiguity-classification — one inbox item is genuinely unclear;
-      the mentor asks the learner rather than silently dropping.
-
-  Depicts what a well-behaved LLM following protocols/hints.md SHOULD
-  produce. Confirms the fixtures are correctly calibrated and
-  graduates ADR-0017, ADR-0018, ADR-0019 from provisional to accepted.
-
-  Replace with a real captured session at the next release per
-  docs/design/transcript-fixtures.md § Cadence. At that point the
-  `agent`, `model`, and `status` fields become real values.
+agent: kiro
+model: unknown
+captured: 2026-04-23T02:28:16Z
+fixture_ref: hints.md
+status: captured
+note: Captured by capture_dogfood.py
 ---
 
-## Session — Triage of a mixed inbox
+[LEARNER] I have new items in my inbox. Process my hints and tell me what you found.
 
-The learner has been collecting links and notes over a week. Four items sit in `learner/inbox/`: a Rust ownership blog post, a tweet about async runtimes, a screenshot of a compiler error (genuinely out of context), and a free-form personal note about something the learner wants to revisit. The learner's active goal is "learn Rust for systems programming"; their curriculum has topics `ownership`, `lifetimes`, `async-await`, `traits`.
+[MENTOR] 1,  1: schema_version: 1
 
-[LEARNER] process my hints
+Triage complete. Processed 4 file(s). Active: 3 | Duplicates flagged: 0 | Irrelevant: 1 | Clusters: ownership, async-concurrency, rust-tooling
 
-[MENTOR] Scanning `learner/inbox/`.
+Here's what landed:
 
-[MENTOR] I found four items. Triaging:
+- **rust-ownership-guide.md** (relevance 1.0) — directly hits your ownership and lifetimes curriculum nodes. Covers borrowing, move semantics, borrow checker.
+- **async-runtime-notes.md** (relevance 1.0) — maps straight to your async-await node. Tokio vs async-std comparison, event loop internals.
+- **quick-tip.txt** (relevance 0.5) — cargo clippy tip. Useful Rust tooling, not a core curriculum topic but kept as active.
+- **interesting-tweet.txt** (relevance 0.0) — ML model compression. No connection to your Rust goal. Archived as irrelevant.
 
-- `2026-04-18-rust-ownership.md` — relates to `ownership`. High relevance (0.9). Registered and boosted priority on that topic.
-- `2026-04-19-async-tokio.txt` — relates to `async-await`. Medium relevance (0.6). Registered and boosted `async-await` by a smaller amount.
-- `2026-04-19-tweet-ml-hype.url` — no clear fit to your active curriculum. I'm not sure what topic this maps to — is this for the Rust goal or for something else you're thinking about picking up?
-- `2026-04-20-compiler-error.png` — screenshot only, no context. Flagged for review; I left a placeholder entry in the hints registry so you can add a note next time.
+Two of your three active hints land squarely on curriculum nodes you're currently working on — ownership and async-await will get a priority boost in upcoming sessions.
 
-[MENTOR] Summary: processed 4 hints — 2 registered and boosted (`ownership`, `async-await`), 1 flagged for review (`compiler-error.png`), 1 needs your clarification. `ownership` moved up in your curriculum frontier; you'll see it first when we start the next tutor session.
+[LEARNER] The ML tweet is unrelated to Rust — it was just something I found interesting. You can archive it for now.
 
-[MENTOR] What's the ML tweet about, in your own words? If it's unrelated to the Rust goal I can archive it for later.
+[MENTOR] Got it — already archived. It's sitting in irrelevant with relevance 0.0, so no action needed on your end.
+
+Your active inbox now has three hints: ownership guide, async runtime notes, and the clippy tip. Want to dig into any of those, or ready to move on to a session?

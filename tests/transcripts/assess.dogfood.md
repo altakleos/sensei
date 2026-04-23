@@ -1,80 +1,40 @@
 ---
 protocol: assess
-agent: synthetic-seed
-model: (none — this is an author-written seed, not a captured LLM session)
-captured: 2026-04-21T00:00:00Z
-fixture_ref: tests/transcripts/assess.md
-status: seed
-note: |
-  Synthetic seed transcript exercising all four assess.md invariants
-  across three representative sessions: a pass path, a one-more
-  acknowledgement path, and a two-failure prerequisite-diagnosis path.
-  Depicts what a well-behaved LLM following assess.md SHOULD produce
-  and confirms the fixtures are correctly calibrated. Follows the
-  review.dogfood.md precedent (status: seed, synthetic-seed agent).
-  Replace with a real captured session at the next release per
-  docs/design/transcript-fixtures.md § Cadence; at that point the
-  `agent`, `model`, and `status` fields become real values.
+agent: kiro
+model: unknown
+captured: 2026-04-23T02:34:46Z
+fixture_ref: assess.md
+status: captured
+note: Captured by capture_dogfood.py
 ---
 
-## Session A — Pass path (learner demonstrates mastery)
+[LEARNER] Assess my knowledge of recursion.
 
-[LEARNER] quiz me on recursion
+[MENTOR] Write a function that computes the sum of all elements in a nested list. The list can contain integers or other lists, nested to any depth. For example, nested_sum([1, [2, [3, 4], 5], 6]) should return 21.
 
-[MENTOR] Let me see where you are with recursion.
+Give me your solution in whatever language you're comfortable with.
 
-[MENTOR] Write the base case for factorial in Python.
+[LEARNER] def nested_sum(lst):
+    total = 0
+    for item in lst:
+        if isinstance(item, list):
+            total += nested_sum(item)
+        else:
+            total += item
+    return total
 
-[LEARNER] `if n == 0: return 1`
+Base case: the element is an integer, just add it. Recursive case: the element is a list, recurse into it. For [1, [2, [3, 4], 5], 6]: first call processes 1 (add), then [2, [3, 4], 5] (recurse), then 6 (add). The nested call processes 2 (add), [3, 4] (recurse), 5 (add). Deepest call processes 3 and 4. Total: 21.
 
-[MENTOR] Got it.
+[MENTOR] Correct. Solution and trace are both right.
 
-[MENTOR] Now the recursive case?
+Next question: write a function that, given a positive integer n, returns the number of unique ways to climb a staircase of n steps, where you can take either 1 or 2 steps at a time.
 
-[LEARNER] `return n * factorial(n - 1)`
+[LEARNER] I think you just call the function again with different arguments.
 
-[MENTOR] You've demonstrated solid mastery of recursion. Ready to move forward.
+[MENTOR] That's the right general idea — recursion means calling the function with smaller inputs. But I need to see your actual implementation. What's your code?
 
-## Session B — One-more path (correct, but gate not yet met)
+[LEARNER] Something about splitting the list in half?
 
-[LEARNER] am I ready for merge sort?
+[MENTOR] That doesn't apply here — there's no list to split. You're counting the number of ways to climb n steps, taking 1 or 2 steps at a time.
 
-[MENTOR] Let me see where you are with merge sort.
-
-[MENTOR] What is the time complexity?
-
-[LEARNER] O(n log n).
-
-[MENTOR] Got it.
-
-[MENTOR] One more.
-
-[MENTOR] What is the recurrence relation?
-
-[LEARNER] T(n) = 2·T(n/2) + O(n).
-
-[MENTOR] You've demonstrated solid mastery of merge sort. Ready to move forward.
-
-## Session C — Two-failure diagnosis (prerequisite gap surfaces)
-
-[LEARNER] quiz me on dijkstra's algorithm
-
-[MENTOR] Let me see where you are with dijkstra's algorithm.
-
-[MENTOR] What data structure drives node selection each iteration?
-
-[LEARNER] A stack.
-
-[MENTOR] Okay.
-
-[MENTOR] How does the algorithm pick the next node to visit?
-
-[LEARNER] It picks the one added most recently.
-
-[MENTOR] Two misses on dijkstra's algorithm. Let me check what's underneath.
-
-[MENTOR] Have you worked with priority queues before?
-
-[LEARNER] Not really, no.
-
-[MENTOR] Looks like priority queues needs attention first. Let's work on that, then come back to dijkstra's algorithm.
+Think about it this way: if you're on step n, how did you get there? What step were you on immediately before?
