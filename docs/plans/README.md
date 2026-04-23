@@ -39,7 +39,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [fix-profile-writes](fix-profile-writes.md) | Constrain profile writes in challenger + reviewer protocols | done || [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
 | [e2e-mode-transition](e2e-mode-transition.md) | Multi-turn mode transition E2E test | done || [mermaid-diagrams](mermaid-diagrams.md) | Mermaid diagram enhancement pass | done |
 | [e2e-goal-lifecycle](e2e-goal-lifecycle.md) | Goal lifecycle E2E — pause + resume with stale detection | done || [parallel-worktrees](parallel-worktrees.md) | Parallel agent worktrees | done |
-| [session-notes](session-notes.md) | Session notes — structured cross-session mentor memory | done |
+| [tier3-nightly-ci](tier3-nightly-ci.md) | Tier-3 nightly E2E CI workflow | done || [session-notes](session-notes.md) | Session notes — structured cross-session mentor memory | done |
 | [performance-training-v1](performance-training-v1.md) | Performance training phase overlay (stages 1–4) — config, schema, phase protocol, engine wiring, goal protocol integration | done |
 | [performance-training-v2](performance-training-v2.md) | Performance training stages 5-6 — simulated evaluation + full mock | done |
 | [emotional-state-tracking](emotional-state-tracking.md) | Emotional state tracking — LLM-as-sensor emotional classification with affect-aware protocol adaptations | done |
