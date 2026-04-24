@@ -64,7 +64,11 @@ Accepting this spec requires updating the following accepted specs:
 
 ## Decisions
 
-None yet.
+- Design: LLM-as-sensor — the LLM observes and classifies emotional signals; no separate classification script. Consistent with ADR-0006.
+- Design: Three dimensions (engagement, frustration, agency) collapse D'Mello & Graesser's four emotions into two primary dimensions plus one behavioral observation.
+- Design: Mid-session writes — emotional state updates happen during the session, not only at session close.
+- Design: `unknown` over inference — when signals are ambiguous, record `unknown` rather than guessing.
+- Design: No notes field — session notes serve as the audit trail for emotional observations.
 
 ## References
 

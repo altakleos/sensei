@@ -1,5 +1,5 @@
 ---
-status: draft
+status: accepted
 date: 2026-04-22
 implements:
   - metacognitive-tracking
@@ -29,6 +29,8 @@ Three dimensions:
 | `help_seeking` | `strategic`, `avoidant`, `dependent`, `unknown` | LLM observes: does the learner ask at the right moments? |
 
 `calibration_accuracy` is deterministic — computed by a script from profile data. `planning_tendency` and `help_seeking` are behavioral — classified by the LLM from conversational signals. This split follows the hybrid runtime architecture (ADR-0006): scripts handle deterministic computation, the LLM handles judgment.
+
+Monitoring (self-assessment of understanding during learning) is not tracked as a separate dimension. It is observed through calibration_accuracy — a learner who accurately predicts their own performance IS monitoring effectively. Separating monitoring from calibration would create redundant signals: both measure the same underlying skill (knowing what you know). If future evidence shows they diverge, monitoring can be added as a fourth dimension.
 
 ### Data flow
 
@@ -108,6 +110,8 @@ metacognitive_state:
 
 Existing profiles at `schema_version: 1` gain `metacognitive_state` with all-unknown/null values and `updated_at` set to epoch. The version bump to `2` signals the change.
 
+The profile migration chain is: v0 (baseline) → v1 (emotional_state) → v2 (metacognitive_state). Both migrations are implemented in `src/sensei/engine/scripts/migrate.py` and the current `CURRENT_PROFILE_VERSION` is `2`.
+
 ## Protocol Changes
 
 All additions are minimal — tokens matter in the LLM context window.
@@ -139,6 +143,8 @@ python calibration_tracker.py --profile learner/profile.yaml
 ```
 
 Output: `{"calibration_accuracy": 0.85}` or `{"calibration_accuracy": null}` if insufficient data.
+
+Implementation: `calibration_tracker.py` is already implemented in `src/sensei/engine/scripts/calibration_tracker.py` and tested in `tests/scripts/test_calibration_tracker.py`.
 
 ## Configuration
 

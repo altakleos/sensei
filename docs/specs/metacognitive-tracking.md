@@ -46,7 +46,9 @@ None. This spec extends the profile schema (triggering a version bump per the le
 
 ## Decisions
 
-None yet.
+- Design: Script for calibration (deterministic via calibration_tracker.py), LLM for behavioral dimensions (planning_tendency, help_seeking). Consistent with ADR-0006.
+- Design: Fading over static prompting — metacognitive scaffolding fades as the learner demonstrates self-regulation, grounded in MetaCLASS research.
+- Design: 14-day staleness window — metacognitive skills are stable traits, not session-volatile states like emotions.
 
 ## References
 

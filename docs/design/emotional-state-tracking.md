@@ -1,5 +1,5 @@
 ---
-status: draft
+status: accepted
 date: 2026-04-22
 implements:
   - emotional-state-tracking
@@ -28,7 +28,11 @@ Three dimensions, each a coarse enum plus `unknown`:
 | `frustration` | `none`, `confused`, `frustrated`, `overwhelmed`, `unknown` | Spec's degradation chain: confusion → frustration → boredom → disengagement |
 | `agency` | `autonomous`, `guided`, `dependent`, `unknown` | SDT-adjacent: does the learner have moves to try? |
 
+Boredom maps to `disengaged` on the engagement dimension — D'Mello & Graesser's four emotions (confusion, frustration, boredom, engagement) are captured by two dimensions: frustration directly, and the engagement spectrum covers both engagement and boredom as opposite poles.
+
 `engagement` and `frustration` are the two primary dimensions. `agency` is secondary — it captures whether the learner feels they can act, which the spec identifies as the boundary between productive struggle and cruelty.
+
+Agency is a behavioral observation (how the learner interacts with the mentor), not a motivational assessment (why they're learning). It is distinct from the SDT motivation tracking deferred in the spec's Out of Scope.
 
 The `unknown` value on every dimension is the safety valve. Per the spec: ~1/3 of learners show no emotion-performance correlation. When signals are absent or ambiguous across multiple turns, the system records `unknown` rather than fabricating a classification.
 
