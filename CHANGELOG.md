@@ -6,8 +6,16 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a18] — 2026-04-24
+
 ### Added
 - Decompose trigger: protocol prose in tutor.md and assess.md that tells the mentor when to decompose a coarse curriculum node into finer-grained subtopics (spec: `docs/specs/expand-trigger.md`)
+- E2E tests for all three mutation triggers (skip, insert, decompose) — previously none had E2E coverage
+
+### Changed
+- Renamed curriculum mutation operations for clarity: `collapse` → `skip`, `spawn` → `insert`, `expand` → `decompose`. The initial node state `spawned` is now split into `pending` (original curriculum node) and `inserted` (dynamically created gap-fill). Field `spawned_from` → `inserted_from`.
+- Goal schema bumped from v0 to v1. `sensei upgrade` migrates existing goal files automatically.
+- Config knob `max_expand_children` → `max_decompose_children`
 
 ## [0.1.0a17] — 2026-04-23
 
