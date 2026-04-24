@@ -71,6 +71,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--profile", required=True, help="Path to profile.yaml")
     parser.add_argument("--topic", required=True, help="Topic slug to check")
     parser.add_argument("--required", required=True, choices=list(_LEVELS), help="Required mastery level")
+    parser.add_argument("--min-attempts", type=int, default=0, help="Minimum attempts required (0 = no minimum)")
+    parser.add_argument("--min-ratio", type=float, default=0.0, help="Minimum correct/attempts ratio (0.0 = no minimum)")
     args = parser.parse_args(argv)
 
     path = Path(args.profile)
@@ -105,6 +107,18 @@ def main(argv: list[str] | None = None) -> int:
         reason = None
 
     passed = meets(current, args.required)
+
+    # Evidence threshold: require minimum attempts and correct/attempts ratio.
+    if passed and topic_state is not None:
+        attempts = topic_state.get("attempts", 0)
+        correct = topic_state.get("correct", 0)
+        if args.min_attempts > 0 and attempts < args.min_attempts:
+            passed = False
+            reason = f"insufficient evidence: {attempts} attempts < {args.min_attempts} required"
+        elif args.min_ratio > 0 and attempts > 0 and (correct / attempts) < args.min_ratio:
+            passed = False
+            reason = f"accuracy too low: {correct}/{attempts} = {correct/attempts:.2f} < {args.min_ratio}"
+
     _emit(
         topic=args.topic,
         current_mastery=current,

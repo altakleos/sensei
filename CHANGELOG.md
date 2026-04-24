@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 ### Added
 - Target depth: goals now capture how deep the learner needs to go (`exposure`, `functional`, or `deep`). Inferred from the goal statement, shapes curriculum granularity. (spec: `docs/specs/target-depth.md`)
 
+### Changed
+- Mastery calibration: the tutor now requires depth-aware multi-probe evidence before skipping a topic (1 probe for exposure, 2 for functional, 3 for deep). Mastery promotion is capped at one level per interaction — a single correct answer cannot jump from `none` to `solid`. `mastery_check.py` now supports `--min-attempts` and `--min-ratio` flags; the tutor gate requires 3+ attempts at 90%+ accuracy.
+
 ## [0.1.0a18] — 2026-04-24
 
 ### Added

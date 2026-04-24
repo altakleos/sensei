@@ -20,7 +20,8 @@ curriculum:
   initial_size_max: 12    # maximum nodes for initial DAG generation
   prior_knowledge_percentile: 70  # assumed learner percentile when generating initial curriculum (0-100)
   frontier_max: 5         # max frontier nodes to present as choices
-  mastery_threshold: 0.9  # score required to complete a node
+  mastery_threshold: 0.9  # minimum correct/attempts ratio to pass mastery gate
+  min_attempts: 3         # minimum probes before mastery gate can pass
   max_decompose_children: 4  # max subtopics when decomposing a coarse node
   depth_profiles:
     exposure:

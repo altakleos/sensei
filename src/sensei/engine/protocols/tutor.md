@@ -24,7 +24,10 @@ Run:
 ```
 
 Interpret:
-- **Confident + correct** → run `.sensei/run mutate_graph.py --operation skip --node <topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Skip to Step 6 (advance).
+- **Confident + correct** → the learner may already know this topic. Before skipping, verify depth based on the goal's `target_depth`:
+  - `exposure`: one confident+correct probe is sufficient. Run `.sensei/run mutate_graph.py --operation skip --node <topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Skip to Step 6.
+  - `functional`: pose a second probe at the **application** level (e.g., "solve this problem using [concept]" or "design a system that uses [concept]"). If also confident+correct, skip. If not, begin Step 2 from the gap.
+  - `deep`: pose a second probe at **application** and a third at **transfer** level (e.g., "compare trade-offs between [approach A] and [approach B]" or "what breaks if [assumption] changes?"). Skip only if all three are confident+correct. Otherwise, begin Step 2 from the gap.
 - **Partial** (correct but uncertain, or partially correct) → note what they know. Begin Step 2 from the gap, not from scratch.
 - **No knowledge** (incorrect + uncertain) → teach from scratch in Step 2.
 
@@ -65,12 +68,25 @@ Wait for the response. Classify:
 
 Before advancing: (1) ask the learner to summarize what they learned (retrieval practice), (2) connect to their goal: "This matters for your [goal] because…", (3) if downstream dependents exist, preview: "Next we'll look at [topic], which builds on this." (4) Prompt reflection on process: "What was confusing at first? What made it click?" — surface the learner's learning process, not just the content.
 
+## Step 5b — Update mastery level
+
+Update `learner/profile.yaml` expertise_map for this topic. The mastery level MUST reflect the evidence accumulated during this session — not a single probe, but the full interaction history. Follow these promotion rules:
+
+- **none → shaky**: the learner demonstrated partial recognition (recalled fragments, recognized the concept when prompted).
+- **shaky → developing**: the learner can explain the concept in their own words (recall-level evidence).
+- **developing → solid**: the learner demonstrated BOTH recall AND application — they can explain the concept AND use it to solve a problem or make a design decision. A single correct explanation is NOT sufficient for `solid`; the learner must also demonstrate application.
+- **solid → mastered**: reserved for the challenger protocol. The tutor MUST NOT promote to `mastered`.
+
+Promote at most ONE level per teaching interaction. A learner at `none` who gives one good answer reaches `shaky`, not `solid`. Rapid advancement requires multiple interactions across sessions, not one impressive answer.
+
+Also update `attempts` (increment by the number of probes posed) and `correct` (increment by the number of correct responses). Update `last_seen` to now.
+
 ## Step 6 — Advance
 
 Run:
 
 ```
-.sensei/run mastery_check.py --profile learner/profile.yaml --topic <topic> --required solid
+.sensei/run mastery_check.py --profile learner/profile.yaml --topic <topic> --required solid --min-attempts 3 --min-ratio 0.9
 ```
 
 Interpret exit code:
