@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Added
+- Target depth: goals now capture how deep the learner needs to go (`exposure`, `functional`, or `deep`). Inferred from the goal statement, shapes curriculum granularity. (spec: `docs/specs/target-depth.md`)
+
 ## [0.1.0a18] — 2026-04-24
 
 ### Added

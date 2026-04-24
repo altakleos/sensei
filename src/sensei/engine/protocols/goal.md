@@ -57,7 +57,25 @@ Current UTC timestamp is generated with `date -u +%Y-%m-%dT%H:%M:%SZ` whenever t
 Extract from the learner's message:
 
 - **domain** — the subject area (e.g., "Rust", "distributed systems", "machine learning")
-- **depth signal** — any indication of desired depth (e.g., "basics", "deeply", "advanced", "for production use")
+- **target_depth** — the depth of knowledge the learner needs, inferred from the *purpose and context* of their goal:
+
+  | Level | The learner will be able to… | Curriculum shape |
+  |---|---|---|
+  | `exposure` | Recognize concepts, read others' work, have informed conversations. They need the vocabulary and mental models, not the ability to produce. | Broad, shallow. Fewer prerequisites. Conceptual nodes over applied ones. |
+  | `functional` | Build, apply, and solve real problems independently. They need working proficiency — able to produce, not just recognize. | Balanced depth and breadth. Applied nodes with prerequisite chains. |
+  | `deep` | Reason about edge cases, make architectural decisions, teach others, push boundaries of the domain. They need expert-level understanding of *why*, not just *how*. | Narrow and deep. Long prerequisite chains. Nodes on internals, trade-offs, and failure modes. |
+
+  Infer `target_depth` from the learner's *intent*, not from specific words. Consider:
+  - What will they need to **do** with this knowledge?
+  - What **stakes** are implied?
+  - What **role** are they preparing for?
+  - When no depth can be inferred, default to `functional`.
+
+  Examples illustrating judgment (not rules to match):
+  - *"I want to learn enough Python to automate my spreadsheets"* → `exposure` — narrow mechanical application.
+  - *"Help me contribute to the Linux kernel"* → `deep` — requires understanding internals and architectural reasoning.
+  - *"I want to understand ML well enough to lead a team"* → `functional` — informed decision-making, not research depth.
+  - *"Prepare me for a staff engineer promotion"* → `deep` — staff-level requires system design mastery and trade-off reasoning.
 - **constraints** — any time pressure ("in 2 weeks"), context ("for my job"), or application ("to build a web server")
 
 Generate a slug from the domain: lowercase, hyphens for spaces, no special characters (e.g., `distributed-systems`, `rust-for-systems`).
@@ -90,6 +108,8 @@ Assess from the learner's statement:
 
 - **constraints** — Any time pressure, context, or application mentioned? Record as free text or `none`.
 
+- **target_depth** — Record the depth inferred in Step 1: `exposure`, `functional`, or `deep`. If the learner's statement doesn't clarify depth, record `functional`.
+
 If `target_state` is `vague`, ask ONE clarifying question. Examples:
 
 - "What would you want to be able to do with [topic] that you can't do now?"
@@ -104,6 +124,10 @@ Generate a draft curriculum as a list of 5–12 topics with prerequisite relatio
 Rules for generation:
 
 - Bias toward the `config.curriculum.prior_knowledge_percentile`th-percentile learner in this domain. Not a complete beginner, not an expert.
+- Use `target_depth` to calibrate node granularity within the `initial_size_min`–`initial_size_max` range:
+  - `exposure`: prefer the lower end of the range. Broader, coarser nodes. Flatter prerequisite graph.
+  - `functional`: use the full range. Balance breadth and depth.
+  - `deep`: prefer the upper end of the range. Finer-grained nodes with deeper prerequisite chains. Include nodes for internals, trade-offs, and edge cases that `functional` would omit.
 - The graph MUST be a DAG — no cycles. A topic cannot be its own transitive prerequisite.
 - Set the first frontier topic (a topic with no unmet prerequisites) to state `active`.
 - All other topics start as `pending` (meaning: not yet started, waiting for prerequisites or activation).
@@ -125,6 +149,7 @@ three_unknowns:
   prior_state: <unknown|none|partial|strong>
   target_state: <vague|emerging|clear>
   constraints: "<free text or none>"
+  target_depth: <exposure|functional|deep>
 nodes:
   <topic-slug>:
     state: active

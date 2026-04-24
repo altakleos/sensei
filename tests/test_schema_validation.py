@@ -50,7 +50,7 @@ VALID_PROFILE = {
 }
 
 VALID_GOAL = {
-    "schema_version": 1,
+    "schema_version": 2,
     "goal_id": "learn-rust",
     "expressed_as": "Learn Rust",
     "created": "2026-04-20T00:00:00Z",
@@ -59,6 +59,7 @@ VALID_GOAL = {
         "prior_state": "none",
         "target_state": "vague",
         "constraints": "",
+        "target_depth": "functional",
     },
     "nodes": {
         "ownership": {"state": "active", "prerequisites": []},
@@ -460,3 +461,9 @@ def test_migrate_v1_profile_adds_metacognitive_state() -> None:
     # Emotional state preserved
     assert migrated["emotional_state"]["engagement"] == "active"
     jsonschema.validate(migrated, _load_schema("profile.schema.json"))
+
+
+def test_goal_missing_target_depth_rejected():
+    bad = {**VALID_GOAL, "three_unknowns": {"prior_state": "none", "target_state": "clear", "constraints": "none"}}
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, _load_schema("goal.schema.json"))

@@ -34,13 +34,13 @@ def _goal(
     nodes: dict | None = None,
 ) -> dict:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "goal_id": goal_id,
         "expressed_as": "Learn Rust",
         "created": "2026-04-01T00:00:00Z",
         "status": status,
         "priority": priority,
-        "three_unknowns": {"prior_state": "none", "target_state": "vague", "constraints": ""},
+        "three_unknowns": {"prior_state": "none", "target_state": "vague", "constraints": "", "target_depth": "functional"},
         "nodes": nodes or {},
     }
 

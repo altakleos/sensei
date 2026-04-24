@@ -88,7 +88,7 @@ def _seed_goal(instance_dir: Path) -> None:
     """Create a minimal goal file with the three topics as completed nodes."""
     now = datetime.now(timezone.utc)
     goal = {
-        "schema_version": 1,
+        "schema_version": 2,
         "goal_id": "dsa-review",
         "expressed_as": "Review core data structures and algorithms",
         "created": _utc_iso(now - timedelta(days=14)),
@@ -97,6 +97,7 @@ def _seed_goal(instance_dir: Path) -> None:
             "prior_state": "partial",
             "target_state": "clear",
             "constraints": "Ongoing review",
+            "target_depth": "functional",
         },
         "nodes": {
             "binary-search": {

@@ -29,7 +29,7 @@ from sensei.engine.scripts._atomic import atomic_write_text
 
 # Current schema versions (must match *.schema.json const values)
 CURRENT_PROFILE_VERSION = 2
-CURRENT_GOAL_VERSION = 1
+CURRENT_GOAL_VERSION = 2
 
 
 def _migrate_profile_0_to_1(data: dict[str, Any]) -> dict[str, Any]:
@@ -94,8 +94,19 @@ def _migrate_goal_0_to_1(data: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+def _migrate_goal_1_to_2(data: dict[str, Any]) -> dict[str, Any]:
+    """Add target_depth to three_unknowns, defaulting to functional."""
+    out = dict(data)
+    three = dict(out.get("three_unknowns", {}))
+    if "target_depth" not in three:
+        three["target_depth"] = "functional"
+    out["three_unknowns"] = three
+    return out
+
+
 GOAL_MIGRATIONS: dict[int, Any] = {
     0: _migrate_goal_0_to_1,
+    1: _migrate_goal_1_to_2,
 }
 
 

@@ -423,3 +423,25 @@ def test_goal_migration_0_to_1() -> None:
     assert result["nodes"]["d"]["inserted_from"] == "c"
     assert "spawned_from" not in result["nodes"]["d"]
     assert result["nodes"]["e"]["state"] == "weird-unknown"
+    # v1→v2 migration adds target_depth
+    assert result["three_unknowns"]["target_depth"] == "functional"
+
+
+def test_goal_migration_1_to_2():
+    """Verify migration adds target_depth to three_unknowns."""
+    old = {
+        "schema_version": 1,
+        "goal_id": "test",
+        "expressed_as": "learn rust",
+        "created": "2026-01-01T00:00:00Z",
+        "status": "active",
+        "three_unknowns": {
+            "prior_state": "none",
+            "target_state": "clear",
+            "constraints": "none",
+        },
+        "nodes": {"basics": {"state": "pending", "prerequisites": []}},
+    }
+    result = migrate_goal(old)
+    assert result["schema_version"] == 2
+    assert result["three_unknowns"]["target_depth"] == "functional"

@@ -77,7 +77,7 @@ def _seed_goal(instance_dir: Path) -> None:
     """Create a minimal goal file with linked-lists as active node and arrays completed."""
     now = datetime.now(timezone.utc)
     goal = {
-        "schema_version": 1,
+        "schema_version": 2,
         "goal_id": "dsa-fundamentals",
         "expressed_as": "Learn fundamental data structures",
         "created": _utc_iso(now - timedelta(days=7)),
@@ -86,6 +86,7 @@ def _seed_goal(instance_dir: Path) -> None:
             "prior_state": "partial",
             "target_state": "clear",
             "constraints": "No time constraints",
+            "target_depth": "functional",
         },
         "nodes": {
             "arrays": {

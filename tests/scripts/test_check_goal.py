@@ -11,7 +11,7 @@ from sensei.engine.scripts.check_goal import main, validate_goal
 
 def _valid_goal() -> dict:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "goal_id": "system-design",
         "expressed_as": "I want to learn system design",
         "created": "2026-04-20T10:00:00Z",
@@ -20,6 +20,7 @@ def _valid_goal() -> dict:
             "prior_state": "partial",
             "target_state": "clear",
             "constraints": "3 weeks",
+            "target_depth": "functional",
         },
         "nodes": {
             "load-balancing": {"state": "active", "prerequisites": []},

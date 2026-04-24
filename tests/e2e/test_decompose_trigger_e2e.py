@@ -71,7 +71,7 @@ def _seed_profile(instance_dir: Path) -> None:
 def _seed_goal(instance_dir: Path) -> None:
     now = datetime.now(timezone.utc)
     goal = {
-        "schema_version": 1,
+        "schema_version": 2,
         "goal_id": "system-design",
         "expressed_as": "Learn system design for senior engineer interviews",
         "created": _utc_iso(now - timedelta(days=7)),
@@ -80,6 +80,7 @@ def _seed_goal(instance_dir: Path) -> None:
             "prior_state": "partial",
             "target_state": "clear",
             "constraints": "8 weeks",
+            "target_depth": "functional",
         },
         "nodes": {
             "caching": {

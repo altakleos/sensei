@@ -17,7 +17,7 @@
   "properties": {
     "schema_version": {
       "type": "integer",
-      "const": 1,
+      "const": 2,
       "description": "Goal schema version. Bump on any field-semantics change."
     },
     "goal_id": {
@@ -102,7 +102,8 @@
       "required": [
         "prior_state",
         "target_state",
-        "constraints"
+        "constraints",
+        "target_depth"
       ],
       "properties": {
         "prior_state": {
@@ -125,6 +126,12 @@
         "constraints": {
           "type": "string",
           "description": "Free-text description of time/resource constraints."
+        },
+        "target_depth": {
+          "type": "string",
+          "enum": ["exposure", "functional", "deep"],
+          "default": "functional",
+          "description": "Inferred depth of knowledge needed. Shapes curriculum breadth vs. depth. Consumed by protocol prose, not scripts."
         }
       }
     },

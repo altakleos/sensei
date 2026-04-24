@@ -32,7 +32,7 @@ def _goal(
         "expressed_as": f"Learn {goal_id}",
         "created": "2026-04-01T00:00:00Z",
         "status": status,
-        "three_unknowns": {"prior_state": "none", "target_state": "clear", "constraints": "none"},
+        "three_unknowns": {"prior_state": "none", "target_state": "clear", "constraints": "none", "target_depth": "functional"},
         "nodes": nodes or {},
     }
 

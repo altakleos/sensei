@@ -22,6 +22,7 @@ For the full development model, see `docs/development-process.md`.
 | [Release Process](release-process.md) | accepted |
 | [Review Protocol](review-protocol.md) | accepted |
 | [Session Notes](session-notes.md) | accepted |
+| [Target Depth](target-depth.md) | accepted |
 
 ## Template
 
