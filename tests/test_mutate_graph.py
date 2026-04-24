@@ -45,7 +45,7 @@ def _run(
 def test_activate_success(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     cur = _make_curriculum(tmp_path, {
         "A": {"state": "completed", "prerequisites": []},
-        "B": {"state": "spawned", "prerequisites": ["A"]},
+        "B": {"state": "pending", "prerequisites": ["A"]},
     })
     rc, out = _run(cur, "activate", "B", capsys)
     assert rc == 0
@@ -57,7 +57,7 @@ def test_activate_fails_already_active(tmp_path: Path, capsys: pytest.CaptureFix
     cur = _make_curriculum(tmp_path, {
         "A": {"state": "completed", "prerequisites": []},
         "B": {"state": "active", "prerequisites": ["A"]},
-        "C": {"state": "spawned", "prerequisites": ["A"]},
+        "C": {"state": "pending", "prerequisites": ["A"]},
     })
     rc, out = _run(cur, "activate", "C", capsys)
     assert rc == 1
@@ -66,8 +66,8 @@ def test_activate_fails_already_active(tmp_path: Path, capsys: pytest.CaptureFix
 
 def test_activate_fails_not_on_frontier(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     cur = _make_curriculum(tmp_path, {
-        "A": {"state": "spawned", "prerequisites": []},
-        "B": {"state": "spawned", "prerequisites": ["A"]},
+        "A": {"state": "pending", "prerequisites": []},
+        "B": {"state": "pending", "prerequisites": ["A"]},
     })
     rc, out = _run(cur, "activate", "B", capsys)
     assert rc == 1
@@ -85,77 +85,77 @@ def test_complete_success(tmp_path: Path, capsys: pytest.CaptureFixture[str]) ->
 
 def test_complete_fails_not_active(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     cur = _make_curriculum(tmp_path, {
-        "A": {"state": "spawned", "prerequisites": []},
+        "A": {"state": "pending", "prerequisites": []},
     })
     rc, out = _run(cur, "complete", "A", capsys)
     assert rc == 1
     assert out["valid"] is False
 
 
-def test_collapse_success(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_skip_success(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     cur = _make_curriculum(tmp_path, {
         "A": {"state": "completed", "prerequisites": []},
-        "B": {"state": "spawned", "prerequisites": ["A"]},
+        "B": {"state": "pending", "prerequisites": ["A"]},
     })
-    rc, out = _run(cur, "collapse", "B", capsys)
+    rc, out = _run(cur, "skip", "B", capsys)
     assert rc == 0
-    assert out["new_state"] == "collapsed"
-    # On-disk state reflects the collapse (dependents would now see B as done).
+    assert out["new_state"] == "skipped"
+    # On-disk state reflects the skip (dependents would now see B as done).
     data = yaml.safe_load(cur.read_text())
-    assert data["nodes"]["B"]["state"] == "collapsed"
+    assert data["nodes"]["B"]["state"] == "skipped"
 
 
-def test_spawn_success(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_insert_success(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     cur = _make_curriculum(tmp_path, {
         "A": {"state": "completed", "prerequisites": []},
     })
-    rc, out = _run(cur, "spawn", "B", capsys, prerequisites=["A"])
+    rc, out = _run(cur, "insert", "B", capsys, prerequisites=["A"])
     assert rc == 0
-    assert out["new_state"] == "spawned"
+    assert out["new_state"] == "inserted"
     data = yaml.safe_load(cur.read_text())
     assert "B" in data["nodes"]
     assert data["nodes"]["B"]["prerequisites"] == ["A"]
 
 
-def test_spawn_fails_cycle(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    """Constructing a cycle via spawn requires priming the graph with a forward
-    reference first: A→B→C (where C doesn't exist yet), then spawn C→A closes
+def test_insert_fails_cycle(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """Constructing a cycle via insert requires priming the graph with a forward
+    reference first: A→B→C (where C doesn't exist yet), then insert C→A closes
     the loop A→B→C→A. `_has_cycle` rejects the mutation with exit 2."""
     cur = _make_curriculum(tmp_path, {
-        "A": {"state": "spawned", "prerequisites": ["B"]},
-        "B": {"state": "spawned", "prerequisites": []},
+        "A": {"state": "pending", "prerequisites": ["B"]},
+        "B": {"state": "pending", "prerequisites": []},
     })
     data = yaml.safe_load(cur.read_text())
     data["nodes"]["B"]["prerequisites"] = ["C"]
     cur.write_text(yaml.safe_dump(data), encoding="utf-8")
-    rc, out = _run(cur, "spawn", "C", capsys, prerequisites=["A"])
+    rc, out = _run(cur, "insert", "C", capsys, prerequisites=["A"])
     assert rc == 2
     assert out["valid"] is False
     assert "cycle" in out["error"]
 
 
-def test_spawn_fails_missing_prerequisite(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_insert_fails_missing_prerequisite(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     cur = _make_curriculum(tmp_path, {
         "A": {"state": "completed", "prerequisites": []},
     })
-    rc, out = _run(cur, "spawn", "B", capsys, prerequisites=["X"])
+    rc, out = _run(cur, "insert", "B", capsys, prerequisites=["X"])
     assert rc == 1
     assert out["valid"] is False
 
 
-def test_expand_success(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_decompose_success(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     cur = _make_curriculum(tmp_path, {
         "A": {"state": "completed", "prerequisites": []},
-        "B": {"state": "spawned", "prerequisites": ["A"]},
-        "C": {"state": "spawned", "prerequisites": ["B"]},
+        "B": {"state": "pending", "prerequisites": ["A"]},
+        "C": {"state": "pending", "prerequisites": ["B"]},
     })
     subgraph = {"nodes": {
         "B1": {"prerequisites": ["A"]},
         "B2": {"prerequisites": ["B1"]},
     }}
-    rc, out = _run(cur, "expand", "B", capsys, subgraph=subgraph)
+    rc, out = _run(cur, "decompose", "B", capsys, subgraph=subgraph)
     assert rc == 0
-    assert out["new_state"] == "expanded"
+    assert out["new_state"] == "decomposed"
     data = yaml.safe_load(cur.read_text())
     assert "B1" in data["nodes"]
     assert "B2" in data["nodes"]
@@ -170,7 +170,7 @@ def test_missing_curriculum_file_returns_1(tmp_path: Path, capsys: pytest.Captur
 
 
 def test_unknown_operation_rejected(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    cur = _make_curriculum(tmp_path, {"A": {"state": "spawned", "prerequisites": []}})
+    cur = _make_curriculum(tmp_path, {"A": {"state": "pending", "prerequisites": []}})
     with pytest.raises(SystemExit):
         # argparse choices rejection exits the process before main returns.
         main(["--curriculum", str(cur), "--operation", "destroy", "--node", "A"])
@@ -180,7 +180,7 @@ def test_script_runs_as_subprocess(tmp_path: Path) -> None:
     """Smoke test: protocols invoke this helper via subprocess (per ADR-0006). Verify that path works."""
     cur = _make_curriculum(tmp_path, {
         "A": {"state": "completed", "prerequisites": []},
-        "B": {"state": "spawned", "prerequisites": ["A"]},
+        "B": {"state": "pending", "prerequisites": ["A"]},
     })
     script = Path(__file__).resolve().parent.parent / "src" / "sensei" / "engine" / "scripts" / "mutate_graph.py"
     assert script.is_file(), f"script path wrong: {script}"
@@ -206,64 +206,64 @@ def test_activate_fails_nonexistent_node(tmp_path: Path, capsys: pytest.CaptureF
     assert "does not exist" in out["error"]
 
 
-# --- Coverage: _do_collapse node not in nodes (line 115) ---
+# --- Coverage: _do_skip node not in nodes (line 115) ---
 
 
-def test_collapse_fails_nonexistent_node(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_skip_fails_nonexistent_node(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     cur = _make_curriculum(tmp_path, {
         "A": {"state": "completed", "prerequisites": []},
     })
-    rc, out = _run(cur, "collapse", "Z", capsys)
+    rc, out = _run(cur, "skip", "Z", capsys)
     assert rc == 1
     assert "does not exist" in out["error"]
 
 
-# --- Coverage: _do_spawn node already exists (line 124) ---
+# --- Coverage: _do_insert node already exists (line 124) ---
 
 
-def test_spawn_fails_node_already_exists(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_insert_fails_node_already_exists(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     cur = _make_curriculum(tmp_path, {
         "A": {"state": "completed", "prerequisites": []},
     })
-    rc, out = _run(cur, "spawn", "A", capsys, prerequisites=["A"])
+    rc, out = _run(cur, "insert", "A", capsys, prerequisites=["A"])
     assert rc == 1
     assert "already exists" in out["error"]
 
 
-# --- Coverage: _do_spawn no prerequisites (line 126) ---
+# --- Coverage: _do_insert no prerequisites (line 126) ---
 
 
-def test_spawn_fails_no_prerequisites(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_insert_fails_no_prerequisites(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     cur = _make_curriculum(tmp_path, {
         "A": {"state": "completed", "prerequisites": []},
     })
-    rc = main(["--curriculum", str(cur), "--operation", "spawn", "--node", "B"])
+    rc = main(["--curriculum", str(cur), "--operation", "insert", "--node", "B"])
     assert rc == 1
     out = json.loads(capsys.readouterr().out)
     assert "prerequisites required" in out["error"]
 
 
-# --- Coverage: _do_expand node not in nodes (line 138) ---
+# --- Coverage: _do_decompose node not in nodes (line 138) ---
 
 
-def test_expand_fails_nonexistent_node(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_decompose_fails_nonexistent_node(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     cur = _make_curriculum(tmp_path, {
         "A": {"state": "completed", "prerequisites": []},
     })
     subgraph = {"nodes": {"X": {"prerequisites": []}}}
-    rc, out = _run(cur, "expand", "Z", capsys, subgraph=subgraph)
+    rc, out = _run(cur, "decompose", "Z", capsys, subgraph=subgraph)
     assert rc == 1
     assert "does not exist" in out["error"]
 
 
-# --- Coverage: _do_expand no subgraph (line 140) ---
+# --- Coverage: _do_decompose no subgraph (line 140) ---
 
 
-def test_expand_fails_no_subgraph(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+def test_decompose_fails_no_subgraph(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     cur = _make_curriculum(tmp_path, {
         "A": {"state": "completed", "prerequisites": []},
     })
-    rc = main(["--curriculum", str(cur), "--operation", "expand", "--node", "A"])
+    rc = main(["--curriculum", str(cur), "--operation", "decompose", "--node", "A"])
     assert rc == 1
     out = json.loads(capsys.readouterr().out)
     assert "subgraph required" in out["error"]
@@ -311,7 +311,7 @@ def test_main_missing_nodes_key(tmp_path: Path, capsys: pytest.CaptureFixture[st
 
 def test_main_invalid_subgraph_json(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     cur = _make_curriculum(tmp_path, {"A": {"state": "completed", "prerequisites": []}})
-    rc = main(["--curriculum", str(cur), "--operation", "expand", "--node", "A",
+    rc = main(["--curriculum", str(cur), "--operation", "decompose", "--node", "A",
                "--subgraph", "{bad json}"])
     assert rc == 1
     out = json.loads(capsys.readouterr().out)

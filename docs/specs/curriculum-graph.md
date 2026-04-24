@@ -27,9 +27,10 @@ This spec exists because every protocol that selects "what to teach next" depend
 
 - **The graph is a DAG.** No cycles. A topic cannot be its own transitive prerequisite. Any mutation that would introduce a cycle is rejected.
 - **Five node states.** Every node is in exactly one state at any time:
-  - **collapsed** — the learner already knows this topic; skip it. Entered when early calibration or explicit demonstration shows mastery. A collapsed node's dependents are unblocked.
-  - **expanded** — the topic needs more granularity than initially generated. The node is replaced by a subgraph of finer-grained topics that collectively cover the original scope. The original node becomes a grouping label, not a teachable unit. Triggered when the mentor detects 3+ distinct sub-concepts with uneven learner mastery within a single node (see [Expand Trigger](expand-trigger.md)).
-  - **spawned** — a gap discovered during interaction that was not in the original graph. Spawned nodes are inserted with appropriate dependency edges. They represent the hypothesis self-correcting.
+  - **skipped** — the learner already knows this topic; skip it. Entered when early calibration or explicit demonstration shows mastery. A skipped node's dependents are unblocked.
+  - **decomposed** — the topic needs more granularity than initially generated. The node is replaced by a subgraph of finer-grained topics that collectively cover the original scope. The original node becomes a grouping label, not a teachable unit. Triggered when the mentor detects 3+ distinct sub-concepts with uneven learner mastery within a single node (see [Decompose Trigger](expand-trigger.md)).
+  - **pending** — a topic not yet started, waiting for prerequisites or activation. Initial curriculum nodes start in this state.
+  - **inserted** — a gap discovered during interaction that was not in the original graph. Inserted nodes are added with appropriate dependency edges. They represent the hypothesis self-correcting.
   - **active** — the topic is currently being taught or assessed. At most one node is active per goal at any time.
   - **completed** — the learner has demonstrated sufficient mastery. Completed nodes contribute to unblocking dependents and feed the forgetting-curve decay model for future review.
 - **Nodes support concept tags.** Per the [cross-goal-intelligence spec](cross-goal-intelligence.md), each node may carry concept tags that identify shared concepts across goals. Tags enable cross-goal review coordination and transfer detection without merging graphs.
@@ -38,16 +39,16 @@ This spec exists because every protocol that selects "what to teach next" depend
 stateDiagram-v2
     [*] --> active : topic created
     active --> completed : mastery confirmed
-    active --> expanded : needs more granularity
-    active --> collapsed : skip (already known)
-    expanded --> active : sub-topic focused
-    collapsed --> active : re-activated (decay)
-    [*] --> spawned : gap discovered
-    spawned --> active : prerequisite addressed
+    active --> decomposed : needs more granularity
+    active --> skipped : skip (already known)
+    decomposed --> active : sub-topic focused
+    skipped --> active : re-activated (decay)
+    [*] --> inserted : gap discovered
+    inserted --> active : prerequisite addressed
 ```
 *Figure 1. Curriculum graph node states and valid transitions.*
 
-- **Frontier is computed, not stored.** The frontier — the set of topics eligible for activation — is derived dynamically from node states and dependency edges. A node is on the frontier when all its prerequisites are either collapsed or completed, and the node itself is neither collapsed, active, nor completed. The frontier is never persisted; it is recomputed on demand.
+- **Frontier is computed, not stored.** The frontier — the set of topics eligible for activation — is derived dynamically from node states and dependency edges. A node is on the frontier when all its prerequisites are either skipped or completed, and the node itself is neither skipped, active, nor completed. The frontier is never persisted; it is recomputed on demand.
 <!-- Diagram: illustrates §Invariants — frontier computation -->
 ```mermaid
 flowchart TD
@@ -55,12 +56,12 @@ flowchart TD
     B -->|Yes| C{Node state?}
     B -->|No| D[Not eligible]
     C -->|active| E[In frontier]
-    C -->|collapsed/completed| D
-    C -->|spawned| F[Pending prerequisite]
+    C -->|skipped/completed| D
+    C -->|pending| F[Pending prerequisite]
 ```
 *Figure 2. Frontier computation: a node enters the frontier when all its prerequisites are completed and it is in active state.*
 
-- **Evolve, don't regenerate.** Graph mutations are incremental: collapse a node, expand a node into a subgraph, spawn a new node with edges, mark a node completed, activate a node. The graph is never thrown away and rebuilt from scratch. Wholesale regeneration is disorienting to the learner (even though they don't see the graph, they experience its effects as topic sequencing) and discards calibration evidence embedded in node states.
+- **Evolve, don't regenerate.** Graph mutations are incremental: skip a node, decompose a node into a subgraph, insert a new node with edges, mark a node completed, activate a node. The graph is never thrown away and rebuilt from scratch. Wholesale regeneration is disorienting to the learner (even though they don't see the graph, they experience its effects as topic sequencing) and discards calibration evidence embedded in node states.
 - **Validation effort scales with uncertainty.** For well-defined domains (e.g., "data structures"), the LLM-generated graph tolerates ~80% accuracy because the structure is correctable — errors surface as misplaced prerequisites and self-correct through interaction. For vague targets (e.g., "understand distributed systems deeply"), both the graph and the target are uncertain, so errors compound. Sensei invests more probing effort before stabilizing the graph when uncertainty is high.
 
 ## Rationale
@@ -71,7 +72,7 @@ flowchart TD
 
 **DAG over tree.** A tree would force a single linear path through any topic's prerequisites. Real knowledge structures have shared prerequisites (e.g., "variables" is a prerequisite for both "loops" and "functions"). A DAG captures this naturally. The acyclicity constraint prevents pathological dependency loops while allowing the rich prerequisite sharing that real domains exhibit.
 
-**Five states, not two.** A simpler model (done/not-done) cannot represent the curriculum-as-hypothesis lifecycle. Collapsed captures "the learner already knew this" — distinct from completed ("the learner learned this here"). Expanded captures "the hypothesis was too coarse." Spawned captures "the hypothesis missed something." These distinctions are load-bearing for the adaptation loop: they tell Sensei not just where the learner is, but how the hypothesis has changed.
+**Five states, not two.** A simpler model (done/not-done) cannot represent the curriculum-as-hypothesis lifecycle. Skipped captures "the learner already knew this" — distinct from completed ("the learner learned this here"). Decomposed captures "the hypothesis was too coarse." Inserted captures "the hypothesis missed something." Pending captures "not yet started." These distinctions are load-bearing for the adaptation loop: they tell Sensei not just where the learner is, but how the hypothesis has changed.
 
 ## Out of Scope
 
@@ -89,7 +90,7 @@ flowchart TD
 ## References
 
 - P-curriculum-is-hypothesis — Generate → Probe → Reshape model (originally §5.2)
-- Original ideation §5.5 — the curriculum as living graph: collapsed, expanded, spawned nodes
+- Original ideation §5.5 — the curriculum as living graph: skipped, decomposed, pending, inserted nodes
 - Original ideation §5.7 — accuracy risk: validation effort scales with uncertainty
 - Original ideation §9 (resolved) — curriculum DAG is hidden; LLM-generated graphs accept ~80% accuracy
 - `docs/foundations/principles/curriculum-is-hypothesis.md` — the principle this spec realizes

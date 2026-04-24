@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 ## [Unreleased]
 
 ### Added
-- Expand trigger: protocol prose in tutor.md and assess.md that tells the mentor when to decompose a coarse curriculum node into finer-grained subtopics (spec: `docs/specs/expand-trigger.md`)
+- Decompose trigger: protocol prose in tutor.md and assess.md that tells the mentor when to decompose a coarse curriculum node into finer-grained subtopics (spec: `docs/specs/expand-trigger.md`)
 
 ## [0.1.0a17] — 2026-04-23
 
@@ -108,7 +108,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 - `_parse_iso` helper consolidated into `sensei.engine.scripts._iso.parse_iso`. Five scripts previously carried verbatim copies of the same five-line helper.
 - Cycle detection in `mutate_graph._has_cycle` and `check_goal._check_cross_field` is now O(N+E) via a precomputed reverse-adjacency index (was O(N²) per dequeue).
 - `profile.schema.json` enforces the `^[A-Za-z0-9_-]{1,64}$` pattern on `learner_id`, mirroring the CLI `--learner-id` validator so profiles written outside the CLI cannot smuggle YAML- or prompt-injecting characters.
-- `mutate_graph.mutate` refactored into per-op helpers (`_do_activate`, `_do_complete`, `_do_collapse`, `_do_spawn`, `_do_expand`) for readability. Public behaviour (exit codes, JSON output, error messages) is byte-identical.
+- `mutate_graph.mutate` refactored into per-op helpers (`_do_activate`, `_do_complete`, `_do_skip`, `_do_insert`, `_do_decompose`) for readability. Public behaviour (exit codes, JSON output, error messages) is byte-identical.
 - `goal_priority._is_stale` now calls `decay.freshness_score` instead of reimplementing the exponential arithmetic inline.
 
 ### Tests
@@ -187,7 +187,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 ### Fixed
 
 - Goal protocol Step 4: corrected YAML format to match actual schema (nodes as map, not list; correct field names).
-- Goal protocol: "spawned" is the correct state for not-yet-started topics (not "pending").
+- Goal protocol: "pending" is the correct state for not-yet-started topics.
 - Added dependency guidance to engine.md for pipx/system-Python environments.
 
 ## [0.1.0a6] — 2026-04-20
@@ -219,7 +219,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ### Added
 
-- Curriculum graph implementation: `scripts/frontier.py` (frontier computation with hints-based priority boosting) and `scripts/mutate_graph.py` (5 validated graph operations — activate, complete, collapse, spawn, expand — with cycle detection). Curriculum tunables in `defaults.yaml`.
+- Curriculum graph implementation: `scripts/frontier.py` (frontier computation with hints-based priority boosting) and `scripts/mutate_graph.py` (5 validated graph operations — activate, complete, skip, insert, decompose — with cycle detection). Curriculum tunables in `defaults.yaml`.
 - Status protocol (`protocols/status.md`): conversational progress reporting synthesizing profile mastery, curriculum state, hint freshness, and review staleness into a 5–8 sentence narrative.
 - Parallel agent execution: spec, design, ADR-0016, and shell scripts (`scripts/worktree-setup.sh`, `scripts/worktree-teardown.sh`) for git worktree-based isolation enabling multiple LLM agents to implement plans simultaneously.
 - Branching and PR convention added to `docs/development-process.md`. All changes now land on main through a branch and pull request.

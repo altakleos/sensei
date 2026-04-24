@@ -17,7 +17,7 @@ Adds pause, resume, abandon, and complete transitions to the goal lifecycle. Goa
 - [x] T2: Add `paused_at`, `resumed_at` timestamp fields to goal schema → `src/sensei/engine/schemas/goal.schema.json` (depends: T1)
 - [x] T3: Add § Lifecycle Transitions to `protocols/goal.md` with transition rules → `src/sensei/engine/protocols/goal.md` (depends: T2)
 - [x] T4: Enforce at-most-one-active-goal in goal protocol prose → `src/sensei/engine/protocols/goal.md` (depends: T3)
-- [x] T5: Add automatic completion detection (all nodes collapsed or completed) → `src/sensei/engine/protocols/goal.md` (depends: T3)
+- [x] T5: Add automatic completion detection (all nodes skipped or completed) → `src/sensei/engine/protocols/goal.md` (depends: T3)
 - [x] T6: Add schema validation tests for new status values → `tests/scripts/test_check_goal.py` (depends: T1)
 - [x] T7: Add schema round-trip tests → `tests/test_schema_validation.py` (depends: T2)
 

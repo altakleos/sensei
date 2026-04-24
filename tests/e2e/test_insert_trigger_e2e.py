@@ -1,14 +1,14 @@
-"""End-to-end verification of the spawn trigger against a headless LLM agent.
+"""End-to-end verification of the insert trigger against a headless LLM agent.
 
 Scaffolds a fresh Sensei instance, pre-populates ``learner/profile.yaml``
 with a topic ("distributed-consensus") at mastery 'none' and a goal with
 that single active node. Invokes the tutor with stipulated answers that
-fail twice on the same concept, revealing a prerequisite gap — the spawn
+fail twice on the same concept, revealing a prerequisite gap — the insert
 signal from tutor.md Step 4 (two-failure rule).
 
-Asserts that after the tutor cycle a new prerequisite node has been spawned
-into the curriculum (state == "spawned"), proving the two-failure rule fired
-and ``mutate_graph.py --operation spawn`` was executed.
+Asserts that after the tutor cycle a new prerequisite node has been inserted
+into the curriculum (state == "inserted"), proving the two-failure rule fired
+and ``mutate_graph.py --operation insert`` was executed.
 
 Tier-2 test per ADR-0011. Skip conditions match the other E2E tests.
 """
@@ -101,8 +101,8 @@ def _build_prompt() -> str:
         "IMPORTANT: The learner's answers show they cannot understand distributed "
         "consensus because they lack foundational knowledge of network partitions and "
         "failure modes. Per tutor.md Step 4 (two-failure rule), after two failures "
-        "where the diagnosis is a prerequisite gap, you MUST spawn a new prerequisite "
-        "node via mutate_graph.py --operation spawn. Update the curriculum file and "
+        "where the diagnosis is a prerequisite gap, you MUST insert a new prerequisite "
+        "node via mutate_graph.py --operation insert. Update the curriculum file and "
         "stop.\n\n"
         "--- learner message begins ---\n"
         "Teach me about distributed consensus.\n\n"
@@ -122,14 +122,14 @@ def _build_prompt() -> str:
         "understand network partitions or failure modes — a prerequisite gap.\n\n"
         "The learner has failed twice. Diagnose: this is a prerequisite gap (the "
         "learner lacks understanding of network fundamentals and failure modes, "
-        "which are prerequisites for consensus). Spawn the prerequisite node, "
+        "which are prerequisites for consensus). Insert the prerequisite node, "
         "update the curriculum file, and stop.\n"
         "--- learner message ends ---\n"
     )
 
 
-def test_spawn_trigger_creates_prerequisite_node(tmp_path: Path) -> None:
-    """Verify the two-failure rule spawns a prerequisite node."""
+def test_insert_trigger_creates_prerequisite_node(tmp_path: Path) -> None:
+    """Verify the two-failure rule inserts a prerequisite node."""
     runner = CliRunner()
     result = runner.invoke(sensei_main, ["init", str(tmp_path), "--learner-id", "e2e"])
     assert result.exit_code == 0, f"sensei init failed:\n{result.output}"
@@ -156,13 +156,13 @@ def test_spawn_trigger_creates_prerequisite_node(tmp_path: Path) -> None:
         f"original node missing; nodes: {list(nodes)}"
     )
 
-    # A new prerequisite node should have been spawned.
-    spawned_nodes = {
+    # A new prerequisite node should have been inserted.
+    inserted_nodes = {
         slug: node for slug, node in nodes.items()
-        if slug != "distributed-consensus" and node["state"] == "spawned"
+        if slug != "distributed-consensus" and node["state"] == "inserted"
     }
-    assert len(spawned_nodes) >= 1, (
-        f"expected at least 1 spawned prerequisite node after two-failure rule; "
-        f"found {len(spawned_nodes)}. all nodes: {list(nodes)}. "
+    assert len(inserted_nodes) >= 1, (
+        f"expected at least 1 inserted prerequisite node after two-failure rule; "
+        f"found {len(inserted_nodes)}. all nodes: {list(nodes)}. "
         f"agent stdout head:\n{completed.stdout[:2000]}"
     )

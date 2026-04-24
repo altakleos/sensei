@@ -93,7 +93,7 @@ def _seed_profile(instance_dir: Path) -> dict:
 
 
 def _seed_goal(instance_dir: Path) -> None:
-    """Create a goal file with sorting-algorithms completed, binary-search active, hash-tables spawned."""
+    """Create a goal file with sorting-algorithms completed, binary-search active, hash-tables pending."""
     now = datetime.now(timezone.utc)
     goal = {
         "schema_version": 0,
@@ -116,7 +116,7 @@ def _seed_goal(instance_dir: Path) -> None:
                 "prerequisites": ["sorting-algorithms"],
             },
             "hash-tables": {
-                "state": "spawned",
+                "state": "pending",
                 "prerequisites": ["sorting-algorithms"],
             },
         },

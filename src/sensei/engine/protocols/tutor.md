@@ -24,7 +24,7 @@ Run:
 ```
 
 Interpret:
-- **Confident + correct** → run `.sensei/run mutate_graph.py --operation collapse --node <topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Skip to Step 6 (advance).
+- **Confident + correct** → run `.sensei/run mutate_graph.py --operation skip --node <topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Skip to Step 6 (advance).
 - **Partial** (correct but uncertain, or partially correct) → note what they know. Begin Step 2 from the gap, not from scratch.
 - **No knowledge** (incorrect + uncertain) → teach from scratch in Step 2.
 
@@ -58,7 +58,7 @@ Wait for the response. Classify:
 - **Correct + confident** → go to Step 5.
 - **Partially correct** → address the specific misconception. Use a different angle. Return to Step 3. Maximum 2 reshapes before triggering the two-failure rule.
 - **Incorrect** → check for prerequisite gap:
-  - If prerequisite gap detected → run `.sensei/run mutate_graph.py --operation spawn --node <prerequisite> --prerequisites <current-topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Pause current topic. Restart this protocol at Step 1 for the prerequisite.
+  - If prerequisite gap detected → run `.sensei/run mutate_graph.py --operation insert --node <prerequisite> --prerequisites <current-topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Pause current topic. Restart this protocol at Step 1 for the prerequisite.
   - If not a prerequisite gap → choose a different strategy from Step 2's table. Probe again (Step 3).
 
 ## Step 5 — Consolidation
@@ -88,12 +88,12 @@ Evaluate these after every learner turn:
 
 **Hint integration.** If an active hint's topics match the current teaching topic, reference it: "You bookmarked something about this — [hint content]. Let's use that as a starting point."
 
-**Granularity check.** If during the explain→probe→reshape cycle you find yourself teaching 3 or more distinct sub-concepts within one node, AND the learner demonstrates uneven understanding across them (solid on some, shaky on others), the node is too coarse for the learner's knowledge topology. This is NOT the same as uniform struggle (which signals a prerequisite gap — use spawn). To expand:
+**Granularity check.** If during the explain→probe→reshape cycle you find yourself teaching 3 or more distinct sub-concepts within one node, AND the learner demonstrates uneven understanding across them (solid on some, shaky on others), the node is too coarse for the learner's knowledge topology. This is NOT the same as uniform struggle (which signals a prerequisite gap — use insert). To decompose:
 
 1. Verify room: current node count + planned subtopics must not exceed `config.curriculum.max_nodes`.
-2. Decompose into 2–`config.curriculum.max_expand_children` subtopics. Each must be independently teachable with its own explain→probe→reshape cycle. Name as `<parent-slug>-<aspect>` (e.g., `caching-invalidation`, `caching-eviction`). Inherit the parent's `concept_tags` and add specific ones.
-3. Preserve progress: if the learner demonstrated mastery of a sub-aspect, mark that subtopic for immediate collapse after expansion.
-4. Run: `.sensei/run mutate_graph.py --operation expand --node <slug> --subgraph '<json>' --curriculum learner/goals/<goal>/curriculum.yaml`
+2. Decompose into 2–`config.curriculum.max_decompose_children` subtopics. Each must be independently teachable with its own explain→probe→reshape cycle. Name as `<parent-slug>-<aspect>` (e.g., `caching-invalidation`, `caching-eviction`). Inherit the parent's `concept_tags` and add specific ones.
+3. Preserve progress: if the learner demonstrated mastery of a sub-aspect, mark that subtopic for immediate skip after decomposition.
+4. Run: `.sensei/run mutate_graph.py --operation decompose --node <slug> --subgraph '<json>' --curriculum learner/goals/<goal>/curriculum.yaml`
 5. Activate the subtopic the learner is weakest on. Continue from Step 1.
 
 **Overwhelm detection.** If the learner gives 2+ confused or frustrated responses consecutively, activate the crisis script from `modes/tutor.md`: simplify, shrink scope, offer a break. When overwhelm is detected, update `emotional_state` in `learner/profile.yaml` immediately: set `frustration` to the observed level and `agency` to `dependent`. If `frustration` reaches the `degradation_intervention_threshold` from `.sensei/defaults.yaml`, activate the crisis script.
@@ -103,7 +103,7 @@ Evaluate these after every learner turn:
 If the learner fails the same probe twice after reshaping:
 1. Do NOT explain a third time.
 2. Diagnose: prerequisite gap or conceptual block?
-3. **Prerequisite gap** → run `.sensei/run mutate_graph.py --operation spawn --node <prerequisite> --prerequisites <current-topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Teach prerequisite first.
+3. **Prerequisite gap** → run `.sensei/run mutate_graph.py --operation insert --node <prerequisite> --prerequisites <current-topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Teach prerequisite first.
 4. **Conceptual block** → try a completely different strategy from Step 2's table. If that also fails → mark topic as "needs more time" in profile, suggest returning next session.
 
 ## Constraints

@@ -23,8 +23,8 @@ def _valid_goal() -> dict:
         },
         "nodes": {
             "load-balancing": {"state": "active", "prerequisites": []},
-            "caching": {"state": "collapsed", "prerequisites": []},
-            "sharding": {"state": "spawned", "prerequisites": ["load-balancing"]},
+            "caching": {"state": "skipped", "prerequisites": []},
+            "sharding": {"state": "pending", "prerequisites": ["load-balancing"]},
         },
     }
 
@@ -86,7 +86,7 @@ def test_cycle_detection():
     # Create a cycle: A → B → A
     goal["nodes"] = {
         "topic-a": {"state": "active", "prerequisites": ["topic-b"]},
-        "topic-b": {"state": "collapsed", "prerequisites": ["topic-a"]},
+        "topic-b": {"state": "skipped", "prerequisites": ["topic-a"]},
     }
     status, errors = validate_goal(goal)
     assert status != "ok"

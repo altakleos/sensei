@@ -159,15 +159,15 @@ def test_non_completed_nodes_excluded(tmp_path: Path) -> None:
                 "g",
                 nodes={
                     "active-topic": {"state": "active", "prerequisites": []},
-                    "spawned-topic": {"state": "spawned", "prerequisites": []},
-                    "collapsed-topic": {"state": "collapsed", "prerequisites": []},
+                    "pending-topic": {"state": "pending", "prerequisites": []},
+                    "skipped-topic": {"state": "skipped", "prerequisites": []},
                 },
             ),
         ],
         _profile({
             "active-topic": "2026-03-21T00:00:00Z",
-            "spawned-topic": "2026-03-21T00:00:00Z",
-            "collapsed-topic": "2026-03-21T00:00:00Z",
+            "pending-topic": "2026-03-21T00:00:00Z",
+            "skipped-topic": "2026-03-21T00:00:00Z",
         }),
     )
     from datetime import datetime, timezone

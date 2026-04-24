@@ -13,7 +13,7 @@ Add mermaid diagrams across the documentation where they significantly improve c
 
 Specs define product guarantees. Diagrams here help contributors and LLM agents understand what the system must do.
 
-- [x] T1: `docs/specs/curriculum-graph.md` — `stateDiagram-v2` showing 5 node states (collapsed, expanded, spawned, active, completed) and valid transitions between them. → after Invariants: Five node states
+- [x] T1: `docs/specs/curriculum-graph.md` — `stateDiagram-v2` showing node states (skipped, decomposed, pending, inserted, active, completed) and valid transitions between them. → after Invariants: Five node states
 - [x] T2: `docs/specs/curriculum-graph.md` — `flowchart TD` showing frontier computation: prerequisites completed → node eligible → activation. → after Invariants: Frontier
 - [x] T3: `docs/specs/goal-lifecycle.md` — `flowchart TD` showing the Generate→Probe→Reshape cycle: goal expressed → draft generated → first lesson IS assessment → probe → reshape. → after Invariants
 - [x] T4: `docs/specs/assessment-protocol.md` — `flowchart LR` showing diagnostic vs summative as two parallel tracks: different triggers, modes, scoring methods, outputs. → after Intent

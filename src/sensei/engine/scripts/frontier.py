@@ -1,7 +1,7 @@
 """Compute the activation frontier of a curriculum DAG.
 
-A node is on the frontier when all its prerequisites have state 'collapsed'
-or 'completed', and the node itself is not 'collapsed', 'active', or
+A node is on the frontier when all its prerequisites have state 'skipped'
+or 'completed', and the node itself is not 'skipped', 'active', or
 'completed'.
 
 Invoked by protocols as:
@@ -26,8 +26,8 @@ except ImportError:  # pragma: no cover
     print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
     sys.exit(1)
 
-_DONE_STATES = frozenset({"collapsed", "completed"})
-_EXCLUDED_STATES = frozenset({"collapsed", "active", "completed", "expanded"})
+_DONE_STATES = frozenset({"skipped", "completed"})
+_EXCLUDED_STATES = frozenset({"skipped", "active", "completed", "decomposed"})
 
 
 def compute_frontier(

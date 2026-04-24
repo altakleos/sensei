@@ -139,9 +139,10 @@
         "state": {
           "type": "string",
           "enum": [
-            "collapsed",
-            "expanded",
-            "spawned",
+            "skipped",
+            "decomposed",
+            "pending",
+            "inserted",
             "active",
             "completed"
           ]
@@ -154,13 +155,13 @@
           },
           "description": "List of prerequisite topic slugs (must reference existing nodes)."
         },
-        "spawned_from": {
+        "inserted_from": {
           "type": [
             "string",
             "null"
           ],
           "default": null,
-          "description": "Parent topic slug if this node was a gap-fill spawn, else null."
+          "description": "Parent topic slug if this node was a gap-fill insert, else null."
         },
         "require_redemonstration": {
           "type": "boolean",

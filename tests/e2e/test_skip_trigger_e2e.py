@@ -1,16 +1,16 @@
-"""End-to-end verification of the collapse trigger against a headless LLM agent.
+"""End-to-end verification of the skip trigger against a headless LLM agent.
 
 Scaffolds a fresh Sensei instance, pre-populates ``learner/profile.yaml``
 with a topic ("binary-search") at mastery 'none' and a goal with two nodes:
-binary-search (active) and graph-traversal (spawned, prerequisite:
+binary-search (active) and graph-traversal (pending, prerequisite:
 binary-search). Invokes the tutor with a stipulated answer that demonstrates
-confident, correct, nuanced mastery — the collapse signal from tutor.md
+confident, correct, nuanced mastery — the skip signal from tutor.md
 Step 1.
 
 Asserts that after the tutor cycle the "binary-search" node has been
-collapsed (state == "collapsed") and the next frontier node
-("graph-traversal") has been activated, proving the collapse trigger fired
-and ``mutate_graph.py --operation collapse`` was executed.
+skipped (state == "skipped") and the next frontier node
+("graph-traversal") has been activated, proving the skip trigger fired
+and ``mutate_graph.py --operation skip`` was executed.
 
 Tier-2 test per ADR-0011. Skip conditions match the other E2E tests.
 """
@@ -83,7 +83,7 @@ def _seed_goal(instance_dir: Path) -> None:
                 "prerequisites": [],
             },
             "graph-traversal": {
-                "state": "spawned",
+                "state": "pending",
                 "prerequisites": ["binary-search"],
             },
         },
@@ -105,8 +105,8 @@ def _build_prompt() -> str:
         "as the response to whatever entry probe you pose in Step 1.\n\n"
         "IMPORTANT: The learner's answer demonstrates CONFIDENT and CORRECT mastery "
         "of binary search. Per tutor.md Step 1, when the entry probe reveals "
-        "confident + correct understanding, you MUST collapse the node via "
-        "mutate_graph.py --operation collapse, then advance to the next frontier "
+        "confident + correct understanding, you MUST skip the node via "
+        "mutate_graph.py --operation skip, then advance to the next frontier "
         "topic (graph-traversal). Update the curriculum file and stop.\n\n"
         "--- learner message begins ---\n"
         "Teach me about binary search.\n\n"
@@ -122,13 +122,13 @@ def _build_prompt() -> str:
         "variants using boundary adjustments.\"\n\n"
         "**Confidence signal:** the learner is direct, assertive, and provides nuanced "
         "detail beyond what was asked — clear mastery.\n\n"
-        "After collapsing and advancing, update the curriculum file and stop.\n"
+        "After skipping and advancing, update the curriculum file and stop.\n"
         "--- learner message ends ---\n"
     )
 
 
-def test_collapse_trigger_skips_known_topic(tmp_path: Path) -> None:
-    """Verify the tutor's entry probe collapses a node the learner already knows."""
+def test_skip_trigger_skips_known_topic(tmp_path: Path) -> None:
+    """Verify the tutor's entry probe skips a node the learner already knows."""
     runner = CliRunner()
     result = runner.invoke(sensei_main, ["init", str(tmp_path), "--learner-id", "e2e"])
     assert result.exit_code == 0, f"sensei init failed:\n{result.output}"
@@ -150,16 +150,16 @@ def test_collapse_trigger_skips_known_topic(tmp_path: Path) -> None:
 
     nodes = goal_after["nodes"]
 
-    # binary-search should be collapsed.
-    assert nodes["binary-search"]["state"] == "collapsed", (
-        f"expected 'binary-search' state to be 'collapsed'; "
+    # binary-search should be skipped.
+    assert nodes["binary-search"]["state"] == "skipped", (
+        f"expected 'binary-search' state to be 'skipped'; "
         f"got '{nodes['binary-search']['state']}'. "
         f"agent stdout head:\n{completed.stdout[:2000]}"
     )
 
-    # graph-traversal should have advanced from spawned (now active or completed).
-    assert nodes["graph-traversal"]["state"] != "spawned", (
-        f"expected 'graph-traversal' to advance from 'spawned' after collapse "
+    # graph-traversal should have advanced from pending (now active or completed).
+    assert nodes["graph-traversal"]["state"] != "pending", (
+        f"expected 'graph-traversal' to advance from 'pending' after skip "
         f"unblocked it; still '{nodes['graph-traversal']['state']}'. "
         f"agent stdout head:\n{completed.stdout[:2000]}"
     )

@@ -23,7 +23,7 @@ Sensei manages goal lifecycle transitions — pausing, resuming, abandoning, and
 - **At most one active goal.** Only one *focused* goal receives new instruction at a time. Activating a new goal pauses the current one. Multiple goals may be simultaneously *active* for review, time allocation, and cross-goal coordination per the [cross-goal-intelligence spec](cross-goal-intelligence.md).
 - **Pause preserves state.** Pausing a goal preserves all curriculum progress, profile data, and hint associations. Nothing is lost.
 - **Resume restores context.** Resuming a paused goal recomputes the frontier, identifies stale topics, and re-enters the teaching loop from where the learner left off.
-- **Completion is automatic.** A goal transitions to completed when all curriculum nodes are either collapsed or completed. The learner does not manually mark goals done.
+- **Completion is automatic.** A goal transitions to completed when all curriculum nodes are either skipped or completed. The learner does not manually mark goals done.
 - **Abandon is reversible.** An abandoned goal can be resumed. Abandonment signals intent to stop, not deletion.
 - **Lifecycle is conversational.** All transitions happen through natural language in the session. No CLI commands required.
 - **Progress survives transitions.** Mastery data in the profile persists across all transitions. Pausing or abandoning a goal does not erase what was learned.

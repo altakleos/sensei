@@ -12,4 +12,4 @@ Constraints: 5 hours/week, 3-month horizon. I learn best by building small proje
 
 Priority: normal.
 
-I don't need you to ask clarifying questions — the three-unknowns above are enough to produce a first-draft curriculum DAG. You can collapse or expand nodes in later sessions as my profile updates.
+I don't need you to ask clarifying questions — the three-unknowns above are enough to produce a first-draft curriculum DAG. You can skip or decompose nodes in later sessions as my profile updates.

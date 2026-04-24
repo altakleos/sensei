@@ -32,7 +32,7 @@ Several subsections are the same concern and merge into one artifact:
 
 The data-structure contract. No dependency on goal-lifecycle (the graph exists independently of how goals are managed).
 
-- [x] T4: `docs/specs/curriculum-graph.md` — spec defining the curriculum as a DAG of topics with typed node states and a dynamic frontier. Key invariants: (a) the graph is a DAG (no cycles); (b) node states: collapsed, expanded, spawned, active, completed; (c) the frontier is computed dynamically from node states + dependencies; (d) graph mutations are incremental, never full regeneration ("evolve don't regenerate"); (e) validation effort scales with uncertainty — well-defined domains tolerate ~80% accuracy, vague targets require more probing (§5.7). Frontmatter: `realizes: [P-curriculum-is-hypothesis, P-forgetting-curve-is-curriculum]`. → `docs/specs/curriculum-graph.md`
+- [x] T4: `docs/specs/curriculum-graph.md` — spec defining the curriculum as a DAG of topics with typed node states and a dynamic frontier. Key invariants: (a) the graph is a DAG (no cycles); (b) node states: skipped, decomposed, pending, inserted, active, completed; (c) the frontier is computed dynamically from node states + dependencies; (d) graph mutations are incremental, never full regeneration ("evolve don't regenerate"); (e) validation effort scales with uncertainty — well-defined domains tolerate ~80% accuracy, vague targets require more probing (§5.7). Frontmatter: `realizes: [P-curriculum-is-hypothesis, P-forgetting-curve-is-curriculum]`. → `docs/specs/curriculum-graph.md`
 
 ## Phase 3 — Goal lifecycle spec (single commit)
 

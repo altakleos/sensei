@@ -1,6 +1,6 @@
 """Validated state transitions on the curriculum DAG.
 
-Performs activate, complete, collapse, spawn, and expand operations with
+Performs activate, complete, skip, insert, and decompose operations with
 cycle detection (Kahn's algorithm) after every mutation.
 
 Invoked by protocols as:
@@ -31,8 +31,8 @@ except ImportError:  # pragma: no cover
 
 from sensei.engine.scripts._atomic import atomic_write_text
 
-_DONE_STATES = frozenset({"collapsed", "completed"})
-_EXCLUDED_STATES = frozenset({"collapsed", "active", "completed", "expanded"})
+_DONE_STATES = frozenset({"skipped", "completed"})
+_EXCLUDED_STATES = frozenset({"skipped", "active", "completed", "decomposed"})
 
 
 def _is_on_frontier(slug: str, nodes: dict[str, dict[str, Any]]) -> bool:
@@ -110,14 +110,14 @@ def _do_complete(nodes: dict[str, dict[str, Any]], slug: str) -> tuple[int, str]
     return 0, "completed"
 
 
-def _do_collapse(nodes: dict[str, dict[str, Any]], slug: str) -> tuple[int, str]:
+def _do_skip(nodes: dict[str, dict[str, Any]], slug: str) -> tuple[int, str]:
     if slug not in nodes:
         return 1, ""
-    nodes[slug]["state"] = "collapsed"
-    return 0, "collapsed"
+    nodes[slug]["state"] = "skipped"
+    return 0, "skipped"
 
 
-def _do_spawn(
+def _do_insert(
     nodes: dict[str, dict[str, Any]], slug: str, prerequisites: list[str] | None
 ) -> tuple[int, str]:
     if slug in nodes:
@@ -127,11 +127,11 @@ def _do_spawn(
     for p in prerequisites:
         if p not in nodes:
             return 1, ""
-    nodes[slug] = {"state": "spawned", "prerequisites": prerequisites}
-    return 0, "spawned"
+    nodes[slug] = {"state": "inserted", "prerequisites": prerequisites}
+    return 0, "inserted"
 
 
-def _do_expand(
+def _do_decompose(
     nodes: dict[str, dict[str, Any]], slug: str, subgraph: dict[str, Any] | None
 ) -> tuple[int, str]:
     if slug not in nodes:
@@ -147,18 +147,18 @@ def _do_expand(
         all_prereqs_in_sub.update(sn.get("prerequisites", []))
     leaves = [s for s in sub_nodes if s not in all_prereqs_in_sub]
 
-    # Mark original as expanded
-    nodes[slug]["state"] = "expanded"
+    # Mark original as decomposed
+    nodes[slug]["state"] = "decomposed"
     # Add subgraph nodes
     for sub_slug, sub_data in sub_nodes.items():
-        nodes[sub_slug] = {"state": "spawned", "prerequisites": sub_data.get("prerequisites", [])}
+        nodes[sub_slug] = {"state": "pending", "prerequisites": sub_data.get("prerequisites", [])}
     # Dependents now depend on leaves instead of original
     for dep in dependents:
         prereqs = nodes[dep].get("prerequisites", [])
         prereqs = [p for p in prereqs if p != slug] + leaves
         nodes[dep]["prerequisites"] = prereqs
 
-    return 0, "expanded"
+    return 0, "decomposed"
 
 
 def mutate(
@@ -175,22 +175,22 @@ def mutate(
         return _do_activate(nodes, slug)
     if op == "complete":
         return _do_complete(nodes, slug)
-    if op == "collapse":
-        return _do_collapse(nodes, slug)
-    if op == "spawn":
-        return _do_spawn(nodes, slug, prerequisites)
-    if op == "expand":
-        return _do_expand(nodes, slug, subgraph)
+    if op == "skip":
+        return _do_skip(nodes, slug)
+    if op == "insert":
+        return _do_insert(nodes, slug, prerequisites)
+    if op == "decompose":
+        return _do_decompose(nodes, slug, subgraph)
     return 1, ""
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0] if __doc__ else None)
     parser.add_argument("--curriculum", required=True, help="Path to curriculum.yaml")
-    parser.add_argument("--operation", required=True, choices=["activate", "complete", "collapse", "spawn", "expand"])
+    parser.add_argument("--operation", required=True, choices=["activate", "complete", "skip", "insert", "decompose"])
     parser.add_argument("--node", required=True, help="Target node slug")
-    parser.add_argument("--prerequisites", default=None, help="Comma-separated prerequisite slugs (for spawn)")
-    parser.add_argument("--subgraph", default=None, help="JSON subgraph string (for expand)")
+    parser.add_argument("--prerequisites", default=None, help="Comma-separated prerequisite slugs (for insert)")
+    parser.add_argument("--subgraph", default=None, help="JSON subgraph string (for decompose)")
     args = parser.parse_args(argv)
 
     path = Path(args.curriculum)
@@ -230,18 +230,18 @@ def main(argv: list[str] | None = None) -> int:
                 msg = f"node '{args.node}' is not on the frontier"
         elif args.operation == "complete":
             msg = f"node '{args.node}' is not active"
-        elif args.operation == "collapse":
+        elif args.operation == "skip":
             msg = f"node '{args.node}' does not exist"
-        elif args.operation == "spawn":
+        elif args.operation == "insert":
             if args.node in original:
                 msg = f"node '{args.node}' already exists"
             elif not prerequisites:
-                msg = "prerequisites required for spawn"
+                msg = "prerequisites required for insert"
             else:
                 missing = [p for p in prerequisites if p not in original]
                 msg = f"prerequisite(s) not found: {missing}"
-        elif args.operation == "expand":
-            msg = f"node '{args.node}' does not exist" if args.node not in original else "subgraph required for expand"
+        elif args.operation == "decompose":
+            msg = f"node '{args.node}' does not exist" if args.node not in original else "subgraph required for decompose"
         else:
             msg = "unknown error"
         return _fail(args.operation, args.node, msg)

@@ -175,7 +175,7 @@ Based on responses, classify:
 
 - **Rusty** (partial recognition, responds to brief cues, fast relearning): Route to review protocol for the prerequisite topic.
 - **Never learned** (no recognition, no partial recall): Route to tutor mode for the prerequisite topic — teach from scratch.
-- **Uneven sub-mastery** (learner succeeds on some sub-aspects but fails on others within the same topic): The node is too coarse for assessment — it bundles separable skills. Do NOT spawn a prerequisite. Route to tutor mode and flag the node for expansion using the granularity check in tutor.md.
+- **Uneven sub-mastery** (learner succeeds on some sub-aspects but fails on others within the same topic): The node is too coarse for assessment — it bundles separable skills. Do NOT insert a prerequisite. Route to tutor mode and flag the node for expansion using the granularity check in tutor.md.
 
 Say:
 

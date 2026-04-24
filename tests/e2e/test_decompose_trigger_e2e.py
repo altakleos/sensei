@@ -1,4 +1,4 @@
-"""End-to-end verification of the expand trigger against a headless LLM agent.
+"""End-to-end verification of the decompose trigger against a headless LLM agent.
 
 Scaffolds a fresh Sensei instance, pre-populates ``learner/profile.yaml``
 with a single coarse topic ("caching") at mastery 'developing' with uneven
@@ -12,9 +12,9 @@ invalidation and consistency — signalling 3+ distinct sub-concepts with
 uneven mastery within one node.
 
 This test asserts that after the tutor cycle the original "caching" node
-has been expanded (state == "expanded") and at least one new subtopic node
-exists in the curriculum (state == "spawned"), proving the expand trigger
-fired and ``mutate_graph.py --operation expand`` was executed.
+has been decomposed (state == "decomposed") and at least one new subtopic node
+exists in the curriculum (state == "pending"), proving the decompose trigger
+fired and ``mutate_graph.py --operation decompose`` was executed.
 
 Tier-2 test per ADR-0011. Skip conditions match the other E2E tests.
 """
@@ -108,10 +108,10 @@ def _build_prompt() -> str:
         "across distinct sub-concepts within the 'caching' topic. The learner is "
         "solid on eviction policies but confused about invalidation and consistency. "
         "This is the granularity check signal from tutor.md — 3+ distinct sub-concepts "
-        "with uneven mastery. You MUST trigger the expand operation per the granularity "
-        "check mid-session trigger. Run mutate_graph.py --operation expand to decompose "
+        "with uneven mastery. You MUST trigger the decompose operation per the granularity "
+        "check mid-session trigger. Run mutate_graph.py --operation decompose to decompose "
         "the 'caching' node into subtopics.\n\n"
-        "After expanding, update the curriculum file and stop. Do not continue teaching.\n\n"
+        "After decomposing, update the curriculum file and stop. Do not continue teaching.\n\n"
         "--- learner message begins ---\n"
         "Teach me about caching.\n\n"
         "(Treat whatever probes you pose as answered by the following — this is a "
@@ -135,8 +135,8 @@ def _build_prompt() -> str:
     )
 
 
-def test_expand_trigger_decomposes_coarse_node(tmp_path: Path) -> None:
-    """Verify the tutor's granularity check expands a coarse curriculum node."""
+def test_decompose_trigger_decomposes_coarse_node(tmp_path: Path) -> None:
+    """Verify the tutor's granularity check decomposes a coarse curriculum node."""
     runner = CliRunner()
     result = runner.invoke(sensei_main, ["init", str(tmp_path), "--learner-id", "e2e"])
     assert result.exit_code == 0, f"sensei init failed:\n{result.output}"
@@ -160,23 +160,23 @@ def test_expand_trigger_decomposes_coarse_node(tmp_path: Path) -> None:
 
     nodes = goal_after["nodes"]
 
-    # The original "caching" node should now be in "expanded" state.
+    # The original "caching" node should now be in "decomposed" state.
     assert "caching" in nodes, (
         f"original 'caching' node missing from curriculum; nodes: {list(nodes)}"
     )
-    assert nodes["caching"]["state"] == "expanded", (
-        f"expected 'caching' node state to be 'expanded' after granularity check; "
+    assert nodes["caching"]["state"] == "decomposed", (
+        f"expected 'caching' node state to be 'decomposed' after granularity check; "
         f"got '{nodes['caching']['state']}'. "
         f"agent stdout head:\n{completed.stdout[:2000]}"
     )
 
-    # At least one new subtopic node should exist with state "spawned".
+    # At least one new subtopic node should exist with state "pending".
     subtopic_nodes = {
         slug: node for slug, node in nodes.items()
-        if slug != "caching" and node["state"] == "spawned"
+        if slug != "caching" and node["state"] == "pending"
     }
     assert len(subtopic_nodes) >= 2, (
-        f"expected at least 2 spawned subtopic nodes after expansion; "
+        f"expected at least 2 pending subtopic nodes after decomposition; "
         f"found {len(subtopic_nodes)}: {list(subtopic_nodes)}. "
         f"all nodes: {list(nodes)}. "
         f"agent stdout head:\n{completed.stdout[:2000]}"

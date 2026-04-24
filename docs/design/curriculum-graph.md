@@ -30,12 +30,12 @@ nodes:
     state: active
     prerequisites: [load-balancing]
   cap-theorem:
-    state: spawned
+    state: pending
     prerequisites: [caching]
-    spawned_from: caching
+    inserted_from: caching
 ```
 
-5 node states: `collapsed`, `expanded`, `spawned`, `active`, `completed`.
+5 node states: `skipped`, `decomposed`, `pending`, `inserted`, `active`, `completed`.
 At most one active node per goal (enforced by `check_goal.py` and mutation helpers).
 
 ### Frontier Computation (`scripts/frontier.py`)
@@ -43,7 +43,7 @@ At most one active node per goal (enforced by `check_goal.py` and mutation helpe
 Computes which nodes are eligible for activation:
 
 - **Input:** curriculum.yaml path
-- **Algorithm:** A node is on the frontier if ALL prerequisites have state `completed` or `collapsed`, AND the node itself is NOT `collapsed`, `active`, or `completed`
+- **Algorithm:** A node is on the frontier if ALL prerequisites have state `completed` or `skipped`, AND the node itself is NOT `skipped`, `active`, or `completed`
 - **Output:** JSON array of frontier node slugs, ordered by priority
 - **Priority:** base position (insertion order) + hint boost (from hints.yaml if available)
 - **CLI:** `python frontier.py --curriculum <path> [--hints <hints.yaml-path>] [--boost-weight 1.5] [--max-boost 2.0]`
@@ -57,9 +57,9 @@ Performs validated state transitions:
 - **Operations:**
   - `activate <slug>` — set to active. Fails if another node is active or node not on frontier.
   - `complete <slug>` — set to completed. Fails if node is not active.
-  - `collapse <slug>` — set to collapsed. Dependents become unblocked.
-  - `spawn <slug> --prerequisites <slugs>` — insert node with state `spawned`. Fails if cycle introduced.
-  - `expand <slug> --subgraph <json>` — replace node with subgraph. Original becomes grouping label (state: expanded). Subgraph nodes inherit original's dependents.
+  - `skip <slug>` — set to skipped. Dependents become unblocked.
+  - `insert <slug> --prerequisites <slugs>` — insert node with state `inserted`. Fails if cycle introduced.
+  - `decompose <slug> --subgraph <json>` — replace node with subgraph. Original becomes grouping label (state: decomposed). Subgraph nodes inherit original's dependents.
 - **Validation:** After every mutation, run cycle detection (Kahn's algorithm from `check_goal.py`). Reject and exit non-zero if invalid.
 - **Output:** Updated YAML written to file. JSON summary to stdout: `{operation, node, new_state, frontier_after}`.
 
@@ -84,11 +84,11 @@ curriculum:
 
 **Hints protocol (`protocols/hints.md`):**
 - Curriculum boosting → `frontier.py --hints <path>` incorporates boost into priority
-- Gap spawn → `mutate_graph.py spawn <slug> --prerequisites <slugs>`
+- Gap insert → `mutate_graph.py insert <slug> --prerequisites <slugs>`
 
 **Assessment protocol (`protocols/assess.md`):**
 - Mastery confirmed → `mutate_graph.py complete <slug>`
-- Already known → `mutate_graph.py collapse <slug>`
+- Already known → `mutate_graph.py skip <slug>`
 
 **Review protocol (`protocols/review.md`):**
 - Operates on completed nodes via `decay.py` (no change needed)
@@ -101,8 +101,8 @@ graph LR
     defaults -->|config| mutate
     frontier -->|frontier list| goal[protocols/goal.md]
     goal -->|activate/complete| mutate[scripts/mutate_graph.py]
-    assess[protocols/assess.md] -->|complete/collapse| mutate
-    hints_proto[protocols/hints.md] -->|spawn| mutate
+    assess[protocols/assess.md] -->|complete/skip| mutate
+    hints_proto[protocols/hints.md] -->|insert| mutate
     mutate -->|validate| check[scripts/check_goal.py]
     check -->|schema| schema[goal.schema.json]
     mutate -->|write| curriculum

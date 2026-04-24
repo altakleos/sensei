@@ -10,7 +10,7 @@ For the full development model, see `docs/development-process.md`.
 | [Behavioral Modes](behavioral-modes.md) | accepted |
 | [Cross-Goal Intelligence](cross-goal-intelligence.md) | draft |
 | [Curriculum Graph](curriculum-graph.md) | accepted |
-| [Expand Trigger](expand-trigger.md) | accepted |
+| [Decompose Trigger](expand-trigger.md) | accepted |
 | [Goal Lifecycle](goal-lifecycle.md) | accepted |
 | [Goal Lifecycle Transitions](goal-lifecycle-transitions.md) | accepted |
 | [Hints](hints.md) | accepted |

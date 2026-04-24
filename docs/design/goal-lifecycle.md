@@ -59,8 +59,8 @@ The triage is not a classification step — it determines which unknown is harde
 The protocol generates a 5–12 node DAG where each node is a topic with prerequisite edges. Generation rules:
 
 - **70th-percentile bias** — not a complete beginner, not an expert. The draft is a Bayesian prior updated by every interaction.
-- **One active node** — exactly one node starts as `active`; all others are `spawned`. The schema enforces this as a cross-field constraint.
-- **Five valid states** — `spawned` → `active` → `completed` (normal path), `collapsed` (already known, skipped), `expanded` (needs sub-topics). Transitions are performed exclusively by `mutate_graph.py`.
+- **One active node** — exactly one node starts as `active`; all others are `pending`. The schema enforces this as a cross-field constraint.
+- **Five valid states** — `pending` → `active` → `completed` (normal path), `skipped` (already known, skipped), `decomposed` (needs sub-topics). Transitions are performed exclusively by `mutate_graph.py`.
 
 After writing the YAML file, `check_goal.py` validates against the goal schema: DAG acyclicity, slug format, node state legality, prerequisite referential integrity. On failure, the protocol retries with a simpler structure (fewer nodes, flatter graph) before surfacing the error.
 
@@ -71,11 +71,11 @@ The goal protocol delegates all deterministic operations to four scripts followi
 | Script | Operations | When invoked |
 |--------|-----------|--------------|
 | `check_goal.py` | Schema + DAG validation | After every goal file write or mutation |
-| `mutate_graph.py` | `activate`, `complete`, `collapse`, `spawn`, `expand` | On node state transitions during teaching |
-| `frontier.py` | Compute next-topic ordering | After any node completion/collapse to select the next topic |
+| `mutate_graph.py` | `activate`, `complete`, `skip`, `insert`, `decompose` | On node state transitions during teaching |
+| `frontier.py` | Compute next-topic ordering | After any node completion/skip to select the next topic |
 | `global_knowledge.py` | Cross-goal mastery lookup | Before teaching each topic — skip if already mastered elsewhere |
 
-The orchestration follows a consistent pattern: mutate → validate → recompute frontier → check global knowledge → teach. Every mutation triggers validation; every frontier recomputation checks for globally known topics that can be collapsed.
+The orchestration follows a consistent pattern: mutate → validate → recompute frontier → check global knowledge → teach. Every mutation triggers validation; every frontier recomputation checks for globally known topics that can be skipped.
 
 ### State model
 
@@ -86,7 +86,7 @@ The goal YAML file (`instance/goals/<slug>.yaml`) is the single source of truth.
 - **Three-unknowns record** — persisted at creation, used by cross-goal scripts for priority scoring.
 - **Performance training overlay** — optional `performance_training` block with stage progression (1–6), event type, and event date.
 
-Goal completion is automatic: after every `complete` or `collapse` mutation, the protocol checks whether all nodes are terminal. If so, `status` flips to `completed`.
+Goal completion is automatic: after every `complete` or `skip` mutation, the protocol checks whether all nodes are terminal. If so, `status` flips to `completed`.
 
 ## Interfaces
 

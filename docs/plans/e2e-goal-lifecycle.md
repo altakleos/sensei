@@ -15,7 +15,7 @@ resume_planner.py. Validates Tomás persona stress-test.
 
 - [x] T1: Create `tests/e2e/test_goal_lifecycle_e2e.py` → `tests/e2e/test_goal_lifecycle_e2e.py`
   - Scaffold instance, seed profile with 3 topics at varying mastery/freshness
-  - Seed goal with all 3 topics (1 completed, 1 active, 1 spawned)
+  - Seed goal with all 3 topics (1 completed, 1 active, 1 pending)
   - Stipulated prompt: pause the goal, then resume it
   - Between pause and resume, mutate timestamps to simulate time passing
   - Assert: goal file shows pause then active status

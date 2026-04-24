@@ -47,8 +47,8 @@ def test_simple_frontier(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> 
         tmp_path,
         {
             "A": {"state": "completed", "prerequisites": []},
-            "B": {"state": "spawned", "prerequisites": ["A"]},
-            "C": {"state": "spawned", "prerequisites": ["A"]},
+            "B": {"state": "pending", "prerequisites": ["A"]},
+            "C": {"state": "pending", "prerequisites": ["A"]},
         },
         capsys,
     )
@@ -58,12 +58,12 @@ def test_simple_frontier(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> 
 
 
 def test_no_frontier(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    """All nodes completed or collapsed → empty frontier."""
+    """All nodes completed or skipped → empty frontier."""
     _, out = _run(
         tmp_path,
         {
             "A": {"state": "completed", "prerequisites": []},
-            "B": {"state": "collapsed", "prerequisites": ["A"]},
+            "B": {"state": "skipped", "prerequisites": ["A"]},
         },
         capsys,
     )
@@ -77,7 +77,7 @@ def test_active_blocks_frontier(tmp_path: Path, capsys: pytest.CaptureFixture[st
         {
             "A": {"state": "completed", "prerequisites": []},
             "B": {"state": "active", "prerequisites": ["A"]},
-            "C": {"state": "spawned", "prerequisites": ["A"]},
+            "C": {"state": "pending", "prerequisites": ["A"]},
         },
         capsys,
     )
@@ -90,8 +90,8 @@ def test_prerequisite_not_met(tmp_path: Path, capsys: pytest.CaptureFixture[str]
     _, out = _run(
         tmp_path,
         {
-            "A": {"state": "spawned", "prerequisites": []},
-            "B": {"state": "spawned", "prerequisites": ["A"]},
+            "A": {"state": "pending", "prerequisites": []},
+            "B": {"state": "pending", "prerequisites": ["A"]},
         },
         capsys,
     )
@@ -104,8 +104,8 @@ def test_hints_boost_ordering(tmp_path: Path, capsys: pytest.CaptureFixture[str]
         tmp_path,
         {
             "A": {"state": "completed", "prerequisites": []},
-            "B": {"state": "spawned", "prerequisites": ["A"]},
-            "C": {"state": "spawned", "prerequisites": ["A"]},
+            "B": {"state": "pending", "prerequisites": ["A"]},
+            "C": {"state": "pending", "prerequisites": ["A"]},
         },
         capsys,
         hints=[{"status": "active", "relevance": 1.0, "freshness": 1.0, "topics": ["C"]}],
@@ -120,14 +120,14 @@ def test_empty_curriculum(tmp_path: Path, capsys: pytest.CaptureFixture[str]) ->
     assert out["total_nodes"] == 0
 
 
-def test_spawned_node_on_frontier(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    """Spawned node with all prereqs met (mix of completed and collapsed) appears on frontier."""
+def test_pending_node_on_frontier(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """Pending node with all prereqs met (mix of completed and skipped) appears on frontier."""
     _, out = _run(
         tmp_path,
         {
             "A": {"state": "completed", "prerequisites": []},
-            "B": {"state": "collapsed", "prerequisites": []},
-            "C": {"state": "spawned", "prerequisites": ["A", "B"]},
+            "B": {"state": "skipped", "prerequisites": []},
+            "C": {"state": "pending", "prerequisites": ["A", "B"]},
         },
         capsys,
     )
@@ -157,14 +157,14 @@ def test_non_mapping_curriculum_returns_1(tmp_path: Path, capsys: pytest.Capture
 
 
 def test_missing_hints_file_returns_1(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    cur = _write_curriculum(tmp_path, {"A": {"state": "spawned", "prerequisites": []}})
+    cur = _write_curriculum(tmp_path, {"A": {"state": "pending", "prerequisites": []}})
     rc = main(["--curriculum", str(cur), "--hints", str(tmp_path / "missing-hints.yaml")])
     assert rc == 1
 
 
 def test_script_runs_as_subprocess(tmp_path: Path) -> None:
     """Smoke test: protocols invoke this helper via subprocess (per ADR-0006). Verify that path works."""
-    cur = _write_curriculum(tmp_path, {"A": {"state": "spawned", "prerequisites": []}})
+    cur = _write_curriculum(tmp_path, {"A": {"state": "pending", "prerequisites": []}})
     script = Path(__file__).resolve().parent.parent / "src" / "sensei" / "engine" / "scripts" / "frontier.py"
     assert script.is_file(), f"script path wrong: {script}"
     result = subprocess.run(
@@ -192,13 +192,13 @@ def test_frontier_order_independent_of_yaml_key_order(
     cur.write_text(
         "nodes:\n"
         "  charlie:\n"
-        "    state: spawned\n"
+        "    state: pending\n"
         "    prerequisites: []\n"
         "  alpha:\n"
-        "    state: spawned\n"
+        "    state: pending\n"
         "    prerequisites: []\n"
         "  bravo:\n"
-        "    state: spawned\n"
+        "    state: pending\n"
         "    prerequisites: []\n",
         encoding="utf-8",
     )

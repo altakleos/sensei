@@ -2,7 +2,7 @@
 
 Reads the learner profile's expertise_map and reports whether the given
 topic slug has mastery >= solid (i.e. "solid" or "mastered").  Protocols
-use this to collapse (skip) topics the learner already knows.
+use this to skip topics the learner already knows.
 
 Invoked by protocols as:
     python global_knowledge.py --profile learner/profile.yaml --topic hash-maps

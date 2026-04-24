@@ -169,10 +169,10 @@ def test_goal_uppercase_goal_id_rejected() -> None:
 
 def test_goal_invalid_node_state_rejected() -> None:
     """a7 regression guard: node state must be one of the documented values.
-    ('pending' was a real bug — the LLM emitted it instead of 'spawned')."""
+    ('unknown' was a real bug — the LLM emitted it instead of a valid state)."""
     bad = {
         **VALID_GOAL,
-        "nodes": {"ownership": {"state": "pending", "prerequisites": []}},
+        "nodes": {"ownership": {"state": "spawned", "prerequisites": []}},
     }
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.validate(bad, _load_schema("goal.schema.json"))

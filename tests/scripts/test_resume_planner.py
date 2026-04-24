@@ -72,7 +72,7 @@ def test_paused_30_days_review_first(tmp_path: Path) -> None:
         _goal(nodes={
             "ownership": {"state": "completed", "prerequisites": []},
             "borrowing": {"state": "completed", "prerequisites": ["ownership"]},
-            "lifetimes": {"state": "spawned", "prerequisites": ["borrowing"]},
+            "lifetimes": {"state": "pending", "prerequisites": ["borrowing"]},
         }),
         _profile({
             "ownership": "2026-03-21T00:00:00Z",
@@ -96,7 +96,7 @@ def test_paused_1_day_continue(tmp_path: Path) -> None:
         tmp_path,
         _goal(nodes={
             "ownership": {"state": "completed", "prerequisites": []},
-            "borrowing": {"state": "spawned", "prerequisites": ["ownership"]},
+            "borrowing": {"state": "pending", "prerequisites": ["ownership"]},
         }),
         _profile({"ownership": "2026-04-19T00:00:00Z"}),
     )
@@ -139,18 +139,18 @@ def test_stale_topics_sorted_by_freshness(tmp_path: Path) -> None:
 
 
 def test_only_completed_nodes_checked(tmp_path: Path) -> None:
-    """Active, spawned, and collapsed nodes are not checked for decay."""
+    """Active, pending, and skipped nodes are not checked for decay."""
     goal_path, prof_path = _setup(
         tmp_path,
         _goal(nodes={
             "active-topic": {"state": "active", "prerequisites": []},
-            "spawned-topic": {"state": "spawned", "prerequisites": []},
-            "collapsed-topic": {"state": "collapsed", "prerequisites": []},
+            "pending-topic": {"state": "pending", "prerequisites": []},
+            "skipped-topic": {"state": "skipped", "prerequisites": []},
         }),
         _profile({
             "active-topic": "2026-03-01T00:00:00Z",
-            "spawned-topic": "2026-03-01T00:00:00Z",
-            "collapsed-topic": "2026-03-01T00:00:00Z",
+            "pending-topic": "2026-03-01T00:00:00Z",
+            "skipped-topic": "2026-03-01T00:00:00Z",
         }),
     )
     result = plan_resume(goal_path, prof_path, now=NOW)
@@ -212,18 +212,18 @@ def test_script_runs_as_subprocess(tmp_path: Path) -> None:
 
 
 def test_frontier_recomputed(tmp_path: Path) -> None:
-    """The frontier field should contain spawned nodes whose prereqs are done."""
+    """The frontier field should contain pending nodes whose prereqs are done."""
     goal_path, prof_path = _setup(
         tmp_path,
         _goal(nodes={
             "basics": {"state": "completed", "prerequisites": []},
-            "intermediate": {"state": "spawned", "prerequisites": ["basics"]},
-            "advanced": {"state": "spawned", "prerequisites": ["intermediate"]},
+            "intermediate": {"state": "pending", "prerequisites": ["basics"]},
+            "advanced": {"state": "pending", "prerequisites": ["intermediate"]},
         }),
         _profile({"basics": "2026-03-21T00:00:00Z"}),
     )
     result = plan_resume(goal_path, prof_path, now=NOW)
     # "intermediate" has all prereqs completed → on the frontier
     assert "intermediate" in result["frontier"]
-    # "advanced" depends on "intermediate" (spawned) → NOT on the frontier
+    # "advanced" depends on "intermediate" (pending) → NOT on the frontier
     assert "advanced" not in result["frontier"]

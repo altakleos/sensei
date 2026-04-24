@@ -19,7 +19,7 @@ flowchart TD
     F -->|fail| G[Fix and retry]
     F -->|ok| H[Begin teaching active topic]
     H --> I{Probe: mastery?}
-    I -->|Yes| J[Collapse node, next frontier]
+    I -->|Yes| J[Skip node, next frontier]
     I -->|Partial| K[Teach from where they are]
     I -->|No| L[Teach from beginning]
     J --> H
@@ -106,10 +106,10 @@ Rules for generation:
 - Bias toward the 70th-percentile learner in this domain. Not a complete beginner, not an expert.
 - The graph MUST be a DAG — no cycles. A topic cannot be its own transitive prerequisite.
 - Set the first frontier topic (a topic with no unmet prerequisites) to state `active`.
-- All other topics start as `spawned` (meaning: not yet started, waiting for prerequisites or activation).
-- The draft is intentionally imprecise but usefully wrong. Err toward inclusion; nodes can be collapsed later.
+- All other topics start as `pending` (meaning: not yet started, waiting for prerequisites or activation).
+- The draft is intentionally imprecise but usefully wrong. Err toward inclusion; nodes can be skipped later.
 
-**Valid node states:** `active` (currently being taught — at most ONE), `spawned` (not yet started), `collapsed` (skip — already known), `completed` (mastered), `expanded` (needs sub-topics). For initial generation, use only `active` (one node) and `spawned` (all others).
+**Valid node states:** `active` (currently being taught — at most ONE), `pending` (not yet started), `inserted` (gap-fill prerequisite), `skipped` (skip — already known), `completed` (mastered), `decomposed` (needs sub-topics). For initial generation, use only `active` (one node) and `pending` (all others).
 
 **Concept tags:** For each node, assign 1–3 `concept_tags` — lowercase slug-format abstract concepts (e.g., `"hash-maps"`, `"recursion"`, `"network-partitioning"`). Tags name the transferable knowledge, not the goal-specific application. Two goals teaching the same underlying concept under different names should share tags.
 
@@ -131,11 +131,11 @@ nodes:
     prerequisites: []
     concept_tags: [<abstract-concept>]
   <topic-slug>:
-    state: spawned
+    state: pending
     prerequisites: [<prerequisite-slug>]
     concept_tags: [<concept-a>, <concept-b>]
   <topic-slug>:
-    state: spawned
+    state: pending
     prerequisites: [<slug-a>, <slug-b>]
     concept_tags: [<concept>]
   # ... 5-12 topics total
@@ -172,10 +172,10 @@ Find the node with state `active` in the curriculum. Transition to tutor mode.
 .sensei/run global_knowledge.py --profile learner/profile.yaml --topic <active-topic>
 ```
 
-If `known == true`: the learner already mastered this elsewhere. Collapse the node:
+If `known == true`: the learner already mastered this elsewhere. Skip the node:
 
 ```
-.sensei/run mutate_graph.py --operation collapse --node <topic> --curriculum learner/goals/<slug>.yaml
+.sensei/run mutate_graph.py --operation skip --node <topic> --curriculum learner/goals/<slug>.yaml
 ```
 
 Say: "You already know [topic] from previous work. Skipping ahead."
@@ -206,7 +206,7 @@ Example probe shapes (for calibration, not templates):
 
 Wait for the learner's response. Then classify:
 
-- **Demonstrates mastery** (correct, confident, nuanced): Collapse this node. Find the next frontier topic (all prerequisites collapsed or completed, node is pending). Set it to `active`. Update the goal file. Say something brief like "You've got that. Let's move to [next topic]." Return to the top of Step 6 with the new active topic.
+- **Demonstrates mastery** (correct, confident, nuanced): Skip this node. Find the next frontier topic (all prerequisites skipped or completed, node is pending). Set it to `active`. Update the goal file. Say something brief like "You've got that. Let's move to [next topic]." Return to the top of Step 6 with the new active topic.
 
   Mark the node completed, then advance the frontier:
 
@@ -216,23 +216,23 @@ Wait for the learner's response. Then classify:
   .sensei/run mutate_graph.py --operation activate --node <next-frontier-slug> --curriculum learner/goals/<slug>.yaml
   ```
 
-  If the learner already knows a topic before teaching begins (revealed by the probe), collapse it instead:
+  If the learner already knows a topic before teaching begins (revealed by the probe), skip it instead:
 
   ```
-  .sensei/run mutate_graph.py --operation collapse --node <topic-slug> --curriculum learner/goals/<slug>.yaml
+  .sensei/run mutate_graph.py --operation skip --node <topic-slug> --curriculum learner/goals/<slug>.yaml
   ```
 
 - **Shows partial knowledge** (partially correct, or correct but uncertain): Continue teaching from where they are. Fill the gaps without re-explaining what they already know. Proceed in tutor mode.
 
 - **Shows no knowledge** (incorrect, or "I don't know"): Teach from the beginning. Use the generate→probe→reshape loop: explain a concept, probe understanding, reshape based on response.
 
-If teaching reveals a prerequisite gap (the learner lacks knowledge assumed by the current node), spawn a new node to cover it:
+If teaching reveals a prerequisite gap (the learner lacks knowledge assumed by the current node), insert a new node to cover it:
 
 ```
-.sensei/run mutate_graph.py --operation spawn --node <new-slug> --prerequisites <comma-separated-prerequisite-slugs> --curriculum learner/goals/<slug>.yaml
+.sensei/run mutate_graph.py --operation insert --node <new-slug> --prerequisites <comma-separated-prerequisite-slugs> --curriculum learner/goals/<slug>.yaml
 ```
 
-Then activate the spawned node and teach it before returning to the original topic.
+Then activate the inserted node and teach it before returning to the original topic.
 
 This is the ongoing teaching loop. Continue until the learner signals they want to stop, switch topics, or be assessed.
 
@@ -290,9 +290,9 @@ These transitions are triggered by learner intent expressed in natural language.
 
 ### Complete (automatic)
 
-After every `mutate_graph.py complete` or `collapse` operation:
+After every `mutate_graph.py complete` or `skip` operation:
 
-1. Check if ALL nodes in the curriculum have state `collapsed` or `completed`.
+1. Check if ALL nodes in the curriculum have state `skipped` or `completed`.
 2. If yes: set `status: completed` in the goal file.
 3. Report: "Congratulations — you've completed [goal]! [Summary of what was learned]."
 4. Offer: review topics periodically, set a new goal, or explore related areas?
@@ -384,7 +384,7 @@ When the performance phase is active, evaluate stage progression after each lear
 | Goal file write fails (permissions, disk) | Surface error; do not proceed to teaching. |
 | Validation fails after 2 retries | Surface error with details; stop. |
 | Slug collision with inactive goal | Append timestamp suffix to slug. |
-| Learner's goal is too broad to generate 5-12 topics | Generate at the highest useful abstraction level; nodes can be expanded later. |
+| Learner's goal is too broad to generate 5-12 topics | Generate at the highest useful abstraction level; nodes can be decomposed later. |
 | Learner's goal is too narrow for 5 topics | Generate 3-5 topics; the minimum is flexible for narrow goals. |
 
 ## References

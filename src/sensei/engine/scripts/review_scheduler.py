@@ -202,7 +202,7 @@ def schedule_reviews(
     result = sorted(candidates.values(), key=lambda x: x["freshness"])
 
     # Concept-aware dedup: when concept_map is provided, topics sharing a
-    # concept are collapsed — keep the stalest (lowest freshness), skip the rest.
+    # concept are deduplicated — keep the stalest (lowest freshness), skip the rest.
     if concept_map:
         # Build reverse map: topic → set of concepts.
         topic_concepts: dict[str, set[str]] = {}

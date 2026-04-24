@@ -27,14 +27,14 @@ def _mutate(cur, op, node, **kwargs):
 
 
 def test_linear_chain_lifecycle(tmp_path):
-    """Walk a linear chain A→B→C→D→E with activate, complete, collapse, spawn."""
+    """Walk a linear chain A→B→C→D→E with activate, complete, skip, insert."""
     cur = tmp_path / "curriculum.yaml"
     cur.write_text(yaml.safe_dump({"nodes": {
-        "A": {"state": "spawned", "prerequisites": []},
-        "B": {"state": "spawned", "prerequisites": ["A"]},
-        "C": {"state": "spawned", "prerequisites": ["B"]},
-        "D": {"state": "spawned", "prerequisites": ["C"]},
-        "E": {"state": "spawned", "prerequisites": ["D"]},
+        "A": {"state": "pending", "prerequisites": []},
+        "B": {"state": "pending", "prerequisites": ["A"]},
+        "C": {"state": "pending", "prerequisites": ["B"]},
+        "D": {"state": "pending", "prerequisites": ["C"]},
+        "E": {"state": "pending", "prerequisites": ["D"]},
     }}))
 
     # Step 1: frontier = [A]
@@ -53,16 +53,16 @@ def test_linear_chain_lifecycle(tmp_path):
     _, out = _frontier(cur)
     assert out["frontier"] == ["B"]
 
-    # Step 5: collapse B
-    r, out = _mutate(cur, "collapse", "B")
+    # Step 5: skip B
+    r, out = _mutate(cur, "skip", "B")
     assert r.returncode == 0 and out["valid"]
 
     # Step 6: frontier = [C]
     _, out = _frontier(cur)
     assert out["frontier"] == ["C"]
 
-    # Step 7: spawn F with prereq C
-    r, out = _mutate(cur, "spawn", "F", prerequisites=["C"])
+    # Step 7: insert F with prereq C
+    r, out = _mutate(cur, "insert", "F", prerequisites=["C"])
     assert r.returncode == 0 and out["valid"]
 
     # Step 8: activate C

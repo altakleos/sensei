@@ -15,7 +15,7 @@ learner profile with mastery/attempts data for the taught topic.
 
 - [x] T1: Create `tests/e2e/test_tutor_protocol_e2e.py` → `tests/e2e/test_tutor_protocol_e2e.py`
   - Scaffold a fresh instance via `sensei init`
-  - Seed a goal with one active topic (e.g., 'binary-search') at `spawned` state
+  - Seed a goal with one active topic (e.g., 'binary-search') at `pending` state
   - Seed profile with the topic at mastery `none`, attempts 0
   - Build prompt: ask the agent to teach the topic, provide a stipulated correct answer
   - Run via `run_agent()` from `agent_runner.py`
