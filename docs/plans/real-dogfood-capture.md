@@ -2,7 +2,7 @@
 feature: real-dogfood-capture
 serves: docs/design/transcript-fixtures.md
 design: "Follows ADR-0011"
-status: in-progress
+status: done
 date: 2026-04-22
 ---
 # Plan: Real Dogfood Capture
