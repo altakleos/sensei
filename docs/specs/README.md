@@ -8,6 +8,7 @@ For the full development model, see `docs/development-process.md`.
 |------|--------|
 | [Assessment Protocol](assessment-protocol.md) | accepted |
 | [Behavioral Modes](behavioral-modes.md) | accepted |
+| [Calibration Anchors](calibration-anchors.md) | draft |
 | [Cross-Goal Intelligence](cross-goal-intelligence.md) | draft |
 | [Curriculum Graph](curriculum-graph.md) | accepted |
 | [Decompose Trigger](expand-trigger.md) | accepted |

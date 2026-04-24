@@ -71,6 +71,12 @@
           "type": "string",
           "minLength": 1,
           "description": "Hash of hint content for deduplication."
+        },
+        "anchor_type": {
+          "type": "string",
+          "enum": ["hint", "anchor"],
+          "default": "hint",
+          "description": "Classification: 'hint' for interest signals (priority boost), 'anchor' for calibration references (standard definition). See docs/specs/calibration-anchors.md."
         }
       }
     }
