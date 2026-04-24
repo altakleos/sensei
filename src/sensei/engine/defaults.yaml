@@ -20,6 +20,7 @@ curriculum:
   initial_size_max: 12    # maximum nodes for initial DAG generation
   frontier_max: 5         # max frontier nodes to present as choices
   mastery_threshold: 0.9  # score required to complete a node
+  max_expand_children: 4  # max subtopics when expanding a coarse node
 
 memory:
   # Review protocol tunables (consumed by protocols/review.md via decay.py).

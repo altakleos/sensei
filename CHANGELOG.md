@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Added
+- Expand trigger: protocol prose in tutor.md and assess.md that tells the mentor when to decompose a coarse curriculum node into finer-grained subtopics (spec: `docs/specs/expand-trigger.md`)
+
 ## [0.1.0a17] — 2026-04-23
 
 ### Added

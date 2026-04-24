@@ -28,7 +28,7 @@ This spec exists because every protocol that selects "what to teach next" depend
 - **The graph is a DAG.** No cycles. A topic cannot be its own transitive prerequisite. Any mutation that would introduce a cycle is rejected.
 - **Five node states.** Every node is in exactly one state at any time:
   - **collapsed** — the learner already knows this topic; skip it. Entered when early calibration or explicit demonstration shows mastery. A collapsed node's dependents are unblocked.
-  - **expanded** — the topic needs more granularity than initially generated. The node is replaced by a subgraph of finer-grained topics that collectively cover the original scope. The original node becomes a grouping label, not a teachable unit.
+  - **expanded** — the topic needs more granularity than initially generated. The node is replaced by a subgraph of finer-grained topics that collectively cover the original scope. The original node becomes a grouping label, not a teachable unit. Triggered when the mentor detects 3+ distinct sub-concepts with uneven learner mastery within a single node (see [Expand Trigger](expand-trigger.md)).
   - **spawned** — a gap discovered during interaction that was not in the original graph. Spawned nodes are inserted with appropriate dependency edges. They represent the hypothesis self-correcting.
   - **active** — the topic is currently being taught or assessed. At most one node is active per goal at any time.
   - **completed** — the learner has demonstrated sufficient mastery. Completed nodes contribute to unblocking dependents and feed the forgetting-curve decay model for future review.
