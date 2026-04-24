@@ -123,11 +123,11 @@ Generate a draft curriculum as a list of 5–12 topics with prerequisite relatio
 
 Rules for generation:
 
-- Bias toward the `config.curriculum.prior_knowledge_percentile`th-percentile learner in this domain. Not a complete beginner, not an expert.
-- Use `target_depth` to calibrate node granularity within the `initial_size_min`–`initial_size_max` range:
-  - `exposure`: prefer the lower end of the range. Broader, coarser nodes. Flatter prerequisite graph.
-  - `functional`: use the full range. Balance breadth and depth.
-  - `deep`: prefer the upper end of the range. Finer-grained nodes with deeper prerequisite chains. Include nodes for internals, trade-offs, and edge cases that `functional` would omit.
+- Read `config.curriculum.depth_profiles.<target_depth>` for this goal's depth-specific `initial_size_min`, `initial_size_max`, and `prior_knowledge_percentile`. Bias toward that percentile learner.
+- Use `target_depth` to calibrate node granularity within the depth-specific size range:
+  - `exposure`: broader, coarser nodes. Flatter prerequisite graph. Conceptual nodes over applied ones.
+  - `functional`: balanced breadth and depth. Applied nodes with prerequisite chains.
+  - `deep`: finer-grained nodes with deeper prerequisite chains. Include nodes for internals, trade-offs, and edge cases that `functional` would omit.
 - The graph MUST be a DAG — no cycles. A topic cannot be its own transitive prerequisite.
 - Set the first frontier topic (a topic with no unmet prerequisites) to state `active`.
 - All other topics start as `pending` (meaning: not yet started, waiting for prerequisites or activation).
@@ -194,7 +194,7 @@ Find the node with state `active` in the curriculum. Transition to tutor mode.
 **Global knowledge check:** Before teaching, check if this topic is already mastered globally:
 
 ```
-.sensei/run global_knowledge.py --profile learner/profile.yaml --topic <active-topic>
+.sensei/run global_knowledge.py --profile learner/profile.yaml --topic <active-topic> --goal learner/goals/<slug>.yaml --goal-depth <three_unknowns.target_depth>
 ```
 
 If `known == true`: the learner already mastered this elsewhere. Skip the node:

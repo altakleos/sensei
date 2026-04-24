@@ -37,18 +37,24 @@ _SCORES: dict[str, float] = {
 _KNOWN_THRESHOLD = _LEVELS.index("solid")  # rank 3
 
 
-def check(profile: dict[str, Any], topic: str, *, goal: dict[str, Any] | None = None, concept_peers: list[str] | None = None) -> dict[str, Any]:
+def check(profile: dict[str, Any], topic: str, *, goal: dict[str, Any] | None = None, concept_peers: list[str] | None = None, goal_depth: str | None = None) -> dict[str, Any]:
     """Return knowledge status for *topic* given a parsed profile dict.
 
     When *goal* is provided and the topic's node has
     ``require_redemonstration: true``, the result overrides ``known`` to
     ``False`` and includes ``redemonstration_required: true``.
 
+    When *goal_depth* is ``"deep"``, the known threshold is raised to
+    ``mastered`` — a topic at ``solid`` is not auto-skipped because the
+    goal demands deeper understanding. The probe-first behavior in the
+    tutor protocol handles the UX: the learner is probed, not re-taught.
+
     When *concept_peers* is provided (list of topic slugs sharing concept
     tags, resolved by the protocol) and the topic is not directly known,
     checks if any peer is known. If so, returns ``concept_evidence: true``
     — evidence, not proof.
     """
+    threshold = _LEVELS.index("mastered") if goal_depth == "deep" else _KNOWN_THRESHOLD
     expertise = profile.get("expertise_map") or {}
     entry = expertise.get(topic)
     if entry is None:
@@ -58,13 +64,13 @@ def check(profile: dict[str, Any], topic: str, *, goal: dict[str, Any] | None = 
         if concept_peers:
             for peer in concept_peers:
                 peer_entry = expertise.get(peer)
-                if peer_entry and _LEVELS.index(peer_entry.get("mastery", "none")) >= _KNOWN_THRESHOLD:
+                if peer_entry and _LEVELS.index(peer_entry.get("mastery", "none")) >= threshold:
                     result["concept_evidence"] = True
                     result["evidence_from"] = peer
                     break
         return result
     mastery = entry.get("mastery", "none")
-    known = _LEVELS.index(mastery) >= _KNOWN_THRESHOLD
+    known = _LEVELS.index(mastery) >= threshold
     result: dict[str, Any] = {"topic": topic, "known": known, "mastery": _SCORES.get(mastery, 0.0)}
 
     # Per-goal re-demonstration override (cross-goal intelligence invariant 1).
@@ -87,6 +93,12 @@ def main(argv: list[str] | None = None) -> int:
         "--concept-peers",
         default=None,
         help="JSON list of topic slugs sharing concept tags (resolved by protocol)",
+    )
+    parser.add_argument(
+        "--goal-depth",
+        default=None,
+        choices=["exposure", "functional", "deep"],
+        help="Goal's target_depth. When 'deep', raises the known threshold to 'mastered'.",
     )
     args = parser.parse_args(argv)
 
@@ -119,7 +131,7 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps({"error": f"yaml parse error: {exc}"}))
             return 1
 
-    print(json.dumps(check(profile, args.topic, goal=goal, concept_peers=json.loads(args.concept_peers) if args.concept_peers else None)))
+    print(json.dumps(check(profile, args.topic, goal=goal, concept_peers=json.loads(args.concept_peers) if args.concept_peers else None, goal_depth=args.goal_depth)))
     return 0
 
 

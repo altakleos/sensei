@@ -227,3 +227,31 @@ def test_concept_peers_cli(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -
     out = json.loads(capsys.readouterr().out)
     assert out["concept_evidence"] is True
     assert out["evidence_from"] == "hash-maps"
+
+
+def test_deep_goal_raises_known_threshold() -> None:
+    """A topic at 'solid' is NOT known when goal_depth is 'deep'."""
+    profile = {"expertise_map": {"hash-maps": {"mastery": "solid"}}}
+    result = check(profile, "hash-maps", goal_depth="deep")
+    assert result["known"] is False
+
+
+def test_deep_goal_mastered_is_known() -> None:
+    """A topic at 'mastered' IS known even when goal_depth is 'deep'."""
+    profile = {"expertise_map": {"hash-maps": {"mastery": "mastered"}}}
+    result = check(profile, "hash-maps", goal_depth="deep")
+    assert result["known"] is True
+
+
+def test_functional_goal_solid_is_known() -> None:
+    """A topic at 'solid' IS known when goal_depth is 'functional' (default behavior)."""
+    profile = {"expertise_map": {"hash-maps": {"mastery": "solid"}}}
+    result = check(profile, "hash-maps", goal_depth="functional")
+    assert result["known"] is True
+
+
+def test_no_goal_depth_solid_is_known() -> None:
+    """A topic at 'solid' IS known when goal_depth is None (backward compat)."""
+    profile = {"expertise_map": {"hash-maps": {"mastery": "solid"}}}
+    result = check(profile, "hash-maps", goal_depth=None)
+    assert result["known"] is True
