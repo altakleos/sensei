@@ -18,6 +18,7 @@ curriculum:
   max_nodes: 30           # hard cap on total nodes per goal
   initial_size_min: 5     # minimum nodes for initial DAG generation
   initial_size_max: 12    # maximum nodes for initial DAG generation
+  prior_knowledge_percentile: 70  # assumed learner percentile when generating initial curriculum (0-100)
   frontier_max: 5         # max frontier nodes to present as choices
   mastery_threshold: 0.9  # score required to complete a node
   max_decompose_children: 4  # max subtopics when decomposing a coarse node

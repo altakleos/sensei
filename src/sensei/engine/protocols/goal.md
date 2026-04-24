@@ -6,7 +6,7 @@
 
 When the learner expresses a learning goal (e.g., "I want to learn X", "Help me with X", "Teach me X"), parse their intent, generate a curriculum hypothesis, and begin teaching immediately. The first lesson IS the assessment — there is no separate onboarding phase.
 
-**This is not intake.** You do not interview the learner. You do not ask them to describe their background. You generate a draft curriculum biased toward the 70th-percentile learner and start teaching. The learner's performance reveals everything a questionnaire cannot.
+**This is not intake.** You do not interview the learner. You do not ask them to describe their background. You generate a draft curriculum biased toward the `config.curriculum.prior_knowledge_percentile`th-percentile learner and start teaching. The learner's performance reveals everything a questionnaire cannot.
 
 <!-- Diagram: illustrates §Purpose -->
 ```mermaid
@@ -32,7 +32,7 @@ flowchart TD
 
 - Goals are created through conversation, never CLI.
 - The first interaction IS the assessment. No intake, no questionnaire.
-- Draft curriculum generated immediately, biased toward the 70th-percentile learner.
+- Draft curriculum generated immediately, biased toward the `config.curriculum.prior_knowledge_percentile`th-percentile learner.
 - All goals decompose into three unknowns: prior state, target state, constraints.
 - One pipeline with type-sensitive parameters. No per-type branching.
 - The learner must be LEARNING within 2 turns of stating their goal.
@@ -103,7 +103,7 @@ Generate a draft curriculum as a list of 5–12 topics with prerequisite relatio
 
 Rules for generation:
 
-- Bias toward the 70th-percentile learner in this domain. Not a complete beginner, not an expert.
+- Bias toward the `config.curriculum.prior_knowledge_percentile`th-percentile learner in this domain. Not a complete beginner, not an expert.
 - The graph MUST be a DAG — no cycles. A topic cannot be its own transitive prerequisite.
 - Set the first frontier topic (a topic with no unmet prerequisites) to state `active`.
 - All other topics start as `pending` (meaning: not yet started, waiting for prerequisites or activation).
@@ -195,7 +195,7 @@ If no node is currently `active`, activate the first frontier topic:
 The first lesson IS the assessment. Start with a probe that reveals whether the learner already knows this topic. The probe should be:
 
 - A question that requires producing knowledge, not recognizing it.
-- Calibrated to the 70th-percentile — neither trivially easy nor impossibly hard.
+- Calibrated to the `config.curriculum.prior_knowledge_percentile`th-percentile — neither trivially easy nor impossibly hard.
 - Natural and conversational, not quiz-like.
 
 Example probe shapes (for calibration, not templates):
