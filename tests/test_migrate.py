@@ -291,16 +291,16 @@ def test_migrate_goal_runs_registered_migration(monkeypatch: pytest.MonkeyPatch)
     """Exercise the goal migration loop body: fn(data), version bump, schema_version set."""
     from sensei.engine.scripts import migrate as m
 
-    def goal_v0_to_v1(data: dict) -> dict:
+    def goal_v1_to_v2(data: dict) -> dict:
         new = dict(data)
         new["migrated_field"] = True
         return new
 
-    monkeypatch.setitem(m.GOAL_MIGRATIONS, 0, goal_v0_to_v1)
-    monkeypatch.setattr(m, "CURRENT_GOAL_VERSION", 1)
+    monkeypatch.setitem(m.GOAL_MIGRATIONS, 1, goal_v1_to_v2)
+    monkeypatch.setattr(m, "CURRENT_GOAL_VERSION", 2)
 
-    result = m.migrate_goal({"schema_version": 0, "goal_id": "g", "nodes": {}})
-    assert result["schema_version"] == 1
+    result = m.migrate_goal({"schema_version": 1, "goal_id": "g", "nodes": {}})
+    assert result["schema_version"] == 2
     assert result["migrated_field"] is True
 
 
@@ -311,20 +311,20 @@ def test_migrate_file_goal_type(tmp_path: Path, monkeypatch: pytest.MonkeyPatch)
     """migrate_file with file_type='goal' exercises the goal branch."""
     from sensei.engine.scripts import migrate as m
 
-    def goal_v0_to_v1(data: dict) -> dict:
+    def goal_v1_to_v2(data: dict) -> dict:
         new = dict(data)
         new["upgraded"] = True
         return new
 
-    monkeypatch.setitem(m.GOAL_MIGRATIONS, 0, goal_v0_to_v1)
-    monkeypatch.setattr(m, "CURRENT_GOAL_VERSION", 1)
+    monkeypatch.setitem(m.GOAL_MIGRATIONS, 1, goal_v1_to_v2)
+    monkeypatch.setattr(m, "CURRENT_GOAL_VERSION", 2)
 
     goal = tmp_path / "goal.yaml"
-    goal.write_text(yaml.safe_dump({"schema_version": 0, "goal_id": "g", "nodes": {}}))
+    goal.write_text(yaml.safe_dump({"schema_version": 1, "goal_id": "g", "nodes": {}}))
 
     assert m.migrate_file(goal, "goal") is True
     reloaded = yaml.safe_load(goal.read_text())
-    assert reloaded["schema_version"] == 1
+    assert reloaded["schema_version"] == 2
     assert reloaded["upgraded"] is True
 
 
@@ -380,18 +380,46 @@ def test_migrate_instance_migrates_goal_files(tmp_path: Path, monkeypatch: pytes
     """migrate_instance migrates goal files under goals/*/goal.yaml."""
     from sensei.engine.scripts import migrate as m
 
-    def goal_v0_to_v1(data: dict) -> dict:
+    def goal_v1_to_v2(data: dict) -> dict:
         return {**data, "upgraded": True}
 
-    monkeypatch.setitem(m.GOAL_MIGRATIONS, 0, goal_v0_to_v1)
-    monkeypatch.setattr(m, "CURRENT_GOAL_VERSION", 1)
+    monkeypatch.setitem(m.GOAL_MIGRATIONS, 1, goal_v1_to_v2)
+    monkeypatch.setattr(m, "CURRENT_GOAL_VERSION", 2)
 
     learner = tmp_path / "learner"
-    goal_dir = learner / "goals" / "rust"
+    goal_dir = learner / "goals"
     goal_dir.mkdir(parents=True)
-    (goal_dir / "goal.yaml").write_text(yaml.safe_dump({
-        "schema_version": 0, "goal_id": "rust", "nodes": {},
+    (goal_dir / "rust.yaml").write_text(yaml.safe_dump({
+        "schema_version": 1, "goal_id": "rust", "nodes": {},
     }))
 
     result = m.migrate_instance(learner)
-    assert any("goal.yaml" in r for r in result)
+    assert any("rust.yaml" in r for r in result)
+
+
+def test_goal_migration_0_to_1() -> None:
+    """Verify the real 0→1 migration renames node states and fields."""
+    v0_goal = {
+        "schema_version": 0,
+        "goal_id": "test",
+        "expressed_as": "test",
+        "created": "2026-04-20T00:00:00Z",
+        "status": "active",
+        "three_unknowns": {"prior_state": "none", "target_state": "vague", "constraints": ""},
+        "nodes": {
+            "a": {"state": "collapsed", "prerequisites": []},
+            "b": {"state": "spawned", "prerequisites": ["a"]},
+            "c": {"state": "expanded", "prerequisites": []},
+            "d": {"state": "active", "prerequisites": [], "spawned_from": "c"},
+            "e": {"state": "weird-unknown", "prerequisites": []},
+        },
+    }
+    result = migrate_goal(v0_goal)
+    assert result["schema_version"] == CURRENT_GOAL_VERSION
+    assert result["nodes"]["a"]["state"] == "skipped"
+    assert result["nodes"]["b"]["state"] == "pending"
+    assert result["nodes"]["c"]["state"] == "decomposed"
+    assert result["nodes"]["d"]["state"] == "active"
+    assert result["nodes"]["d"]["inserted_from"] == "c"
+    assert "spawned_from" not in result["nodes"]["d"]
+    assert result["nodes"]["e"]["state"] == "weird-unknown"

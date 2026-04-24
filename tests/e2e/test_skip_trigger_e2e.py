@@ -67,7 +67,7 @@ def _seed_profile(instance_dir: Path) -> None:
 def _seed_goal(instance_dir: Path) -> None:
     now = datetime.now(timezone.utc)
     goal = {
-        "schema_version": 0,
+        "schema_version": 1,
         "goal_id": "dsa-basics",
         "expressed_as": "Learn fundamental data structures and algorithms",
         "created": _utc_iso(now - timedelta(days=1)),

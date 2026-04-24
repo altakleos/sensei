@@ -50,7 +50,7 @@ VALID_PROFILE = {
 }
 
 VALID_GOAL = {
-    "schema_version": 0,
+    "schema_version": 1,
     "goal_id": "learn-rust",
     "expressed_as": "Learn Rust",
     "created": "2026-04-20T00:00:00Z",

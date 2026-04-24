@@ -75,7 +75,7 @@ def _seed_goal(instance_dir: Path) -> None:
     """Create a minimal goal file with binary-search as an active node."""
     now = datetime.now(timezone.utc)
     goal = {
-        "schema_version": 0,
+        "schema_version": 1,
         "goal_id": "dsa-basics",
         "expressed_as": "Learn fundamental data structures and algorithms",
         "created": _utc_iso(now - timedelta(days=3)),

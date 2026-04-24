@@ -29,7 +29,7 @@ from sensei.engine.scripts._atomic import atomic_write_text
 
 # Current schema versions (must match *.schema.json const values)
 CURRENT_PROFILE_VERSION = 2
-CURRENT_GOAL_VERSION = 0
+CURRENT_GOAL_VERSION = 1
 
 
 def _migrate_profile_0_to_1(data: dict[str, Any]) -> dict[str, Any]:
@@ -67,9 +67,35 @@ PROFILE_MIGRATIONS: dict[int, Any] = {
     1: _migrate_profile_1_to_2,
 }
 
+_STATE_RENAME = {
+    "collapsed": "skipped",
+    "spawned": "pending",
+    "expanded": "decomposed",
+}
+
+
+def _migrate_goal_0_to_1(data: dict[str, Any]) -> dict[str, Any]:
+    """Rename node states and fields for the terminology cleanup.
+
+    collapsed → skipped, spawned → pending, expanded → decomposed,
+    spawned_from → inserted_from.
+    """
+    out = dict(data)
+    nodes = out.get("nodes", {})
+    new_nodes: dict[str, Any] = {}
+    for slug, node in nodes.items():
+        n = dict(node)
+        old_state = n.get("state", "")
+        n["state"] = _STATE_RENAME.get(old_state, old_state)
+        if "spawned_from" in n:
+            n["inserted_from"] = n.pop("spawned_from")
+        new_nodes[slug] = n
+    out["nodes"] = new_nodes
+    return out
+
+
 GOAL_MIGRATIONS: dict[int, Any] = {
-    # Example for future use:
-    # 0: _migrate_goal_0_to_1,
+    0: _migrate_goal_0_to_1,
 }
 
 
@@ -150,7 +176,7 @@ def migrate_instance(learner_dir: Path) -> list[str]:
         migrated.append(f"profile.yaml: schema_version → {CURRENT_PROFILE_VERSION}")
 
     # Migrate goal files (future: when goal workspaces exist)
-    for goal_file in learner_dir.glob("goals/*/goal.yaml"):
+    for goal_file in learner_dir.glob("goals/*.yaml"):
         if migrate_file(goal_file, "goal"):
             migrated.append(f"{goal_file.relative_to(learner_dir)}: schema_version → {CURRENT_GOAL_VERSION}")
 

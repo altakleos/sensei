@@ -11,7 +11,7 @@ from sensei.engine.scripts.check_goal import main, validate_goal
 
 def _valid_goal() -> dict:
     return {
-        "schema_version": 0,
+        "schema_version": 1,
         "goal_id": "system-design",
         "expressed_as": "I want to learn system design",
         "created": "2026-04-20T10:00:00Z",

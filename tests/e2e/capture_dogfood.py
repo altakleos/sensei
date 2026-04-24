@@ -251,7 +251,7 @@ def _seed_hints(instance_dir: Path) -> None:
 def _seed_hints_goal(instance_dir: Path) -> None:
     now = datetime.now(timezone.utc)
     goal = {
-        "schema_version": 0,
+        "schema_version": 1,
         "goal_id": "learn-rust",
         "expressed_as": "Learn Rust for systems programming",
         "created": _utc_iso(now - timedelta(days=14)),
@@ -298,7 +298,7 @@ def _seed_assess(instance_dir: Path) -> None:
     )
 
     goal = {
-        "schema_version": 0,
+        "schema_version": 1,
         "goal_id": "basic-arithmetic",
         "expressed_as": "Learn basic arithmetic",
         "created": _utc_iso(now - timedelta(days=14)),
@@ -354,7 +354,7 @@ def _seed_review(instance_dir: Path) -> None:
     )
 
     goal = {
-        "schema_version": 0,
+        "schema_version": 1,
         "goal_id": "dsa-review",
         "expressed_as": "Review core data structures and algorithms",
         "created": _utc_iso(now - timedelta(days=30)),
@@ -400,7 +400,7 @@ def _seed_performance_training(instance_dir: Path) -> None:
     )
 
     goal = {
-        "schema_version": 0,
+        "schema_version": 1,
         "goal_id": "basic-arithmetic",
         "expressed_as": "Learn basic arithmetic",
         "created": _utc_iso(now - timedelta(days=14)),
@@ -460,7 +460,7 @@ def _seed_cross_goal_review(instance_dir: Path) -> None:
     )
 
     goal_a = {
-        "schema_version": 0,
+        "schema_version": 1,
         "goal_id": "goal-a",
         "expressed_as": "Learn data structures",
         "created": _utc_iso(now - timedelta(days=30)),
@@ -476,7 +476,7 @@ def _seed_cross_goal_review(instance_dir: Path) -> None:
         },
     }
     goal_b = {
-        "schema_version": 0,
+        "schema_version": 1,
         "goal_id": "goal-b",
         "expressed_as": "Master algorithms",
         "created": _utc_iso(now - timedelta(days=30)),

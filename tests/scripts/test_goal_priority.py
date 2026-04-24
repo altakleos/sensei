@@ -34,7 +34,7 @@ def _goal(
     nodes: dict | None = None,
 ) -> dict:
     return {
-        "schema_version": 0,
+        "schema_version": 1,
         "goal_id": goal_id,
         "expressed_as": "Learn Rust",
         "created": "2026-04-01T00:00:00Z",
