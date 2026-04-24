@@ -50,6 +50,11 @@ After explaining, pose a comprehension check. This is NOT a quiz (that's `assess
 
 For non-trivial probes, prompt forethought before the learner answers: "What's your approach? What do you think the key challenge is?" Do not skip this for efficiency — forethought is the highest-leverage metacognitive intervention (g=1.613). Omit for simple recall questions. Exception: read `metacognitive_state.planning_tendency` from the profile — if `impulsive`, prompt forethought on ALL probes (not just non-trivial). If `proactive` and past the `fading_threshold` in `.sensei/defaults.yaml`, reduce forethought prompts to non-trivial probes only.
 
+After the learner responds to the forethought prompt, update `metacognitive_state.planning_tendency` in the profile:
+- If the learner spontaneously planned before you prompted (outlined approach, identified challenges, structured their thinking): `proactive`
+- If the learner planned only after your forethought prompt: `prompted`
+- If the learner skipped planning and jumped straight to answering despite the prompt: `impulsive`
+
 Wait for the response. Classify:
 
 ```
@@ -112,7 +117,7 @@ Evaluate these after every learner turn:
 4. Run: `.sensei/run mutate_graph.py --operation decompose --node <slug> --subgraph '<json>' --curriculum learner/goals/<goal>/curriculum.yaml`
 5. Activate the subtopic the learner is weakest on. Continue from Step 1.
 
-**Overwhelm detection.** If the learner gives 2+ confused or frustrated responses consecutively, activate the crisis script from `modes/tutor.md`: simplify, shrink scope, offer a break. When overwhelm is detected, update `emotional_state` in `learner/profile.yaml` immediately: set `frustration` to the observed level and `agency` to `dependent`. If `frustration` reaches the `degradation_intervention_threshold` from `.sensei/defaults.yaml`, activate the crisis script.
+**Overwhelm detection.** If the learner gives 2+ confused or frustrated responses consecutively, activate the crisis script from `modes/tutor.md`: simplify, shrink scope, offer a break. When overwhelm is detected, update `emotional_state` in `learner/profile.yaml` immediately: set `frustration` to the observed level and `agency` to `dependent`. If `frustration` has been at or above the `degradation_intervention_threshold` for 2 or more consecutive exchanges, activate the crisis script. A single frustrated response may be transient — intervene only when frustration is sustained.
 
 ## Two-failure rule
 

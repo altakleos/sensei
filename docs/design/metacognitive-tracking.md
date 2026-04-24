@@ -1,5 +1,5 @@
 ---
-status: draft
+status: accepted
 date: 2026-04-22
 implements:
   - metacognitive-tracking
@@ -24,7 +24,7 @@ Three dimensions:
 
 | Dimension | Values | Source |
 |-----------|--------|--------|
-| `calibration_accuracy` | float 0–1, null = unknown | Computed from confidence quadrant history (confident-correct / total-confident) |
+| `calibration_accuracy` | float 0–1, null = unknown | Overall assessment accuracy (correct / attempts) as a proxy for calibration |
 | `planning_tendency` | `proactive`, `prompted`, `impulsive`, `unknown` | LLM observes: does the learner plan before acting? |
 | `help_seeking` | `strategic`, `avoidant`, `dependent`, `unknown` | LLM observes: does the learner ask at the right moments? |
 
@@ -72,7 +72,7 @@ Add as a top-level optional property. Bump `schema_version` from `1` to `2`.
       "type": ["number", "null"],
       "minimum": 0,
       "maximum": 1,
-      "description": "Ratio of confident-correct to total-confident responses. Null = insufficient data."
+      "description": "Overall assessment accuracy (correct / attempts) as a proxy for calibration. True calibration (confident-correct / total-confident) requires per-response confidence tracking, which is deferred. Null = insufficient data."
     },
     "planning_tendency": {
       "type": "string",
@@ -118,7 +118,7 @@ All additions are minimal — tokens matter in the LLM context window.
 
 ### assess.md — ~3 lines after confidence classification (Step 4)
 
-> After classifying the confidence quadrant, run `calibration_tracker.py` to update `metacognitive_state.calibration_accuracy` in the profile. This computes the running ratio of confident-correct to total-confident responses across the learner's expertise_map.
+> After classifying the confidence quadrant, run `calibration_tracker.py` to update `metacognitive_state.calibration_accuracy` in the profile. This computes overall assessment accuracy (correct / attempts) across the learner's expertise_map as a proxy for calibration.
 
 ### tutor.md — ~2 lines extending forethought prompt (Step 3)
 

@@ -1,8 +1,10 @@
 """Calibration accuracy tracker.
 
-Computes the ratio of confident-correct to total-confident responses
-from the learner's expertise_map. A learner who is confident and correct
-9 out of 10 times has calibration_accuracy 0.9.
+Computes overall assessment accuracy (correct / attempts) from the
+learner's expertise_map as a proxy for calibration. A learner who answers
+correctly 9 out of 10 times has calibration_accuracy 0.9. True calibration
+(confident-correct / total-confident) requires per-response confidence
+tracking, which is deferred.
 
 Invoked by protocols as:
     python calibration_tracker.py --profile learner/profile.yaml

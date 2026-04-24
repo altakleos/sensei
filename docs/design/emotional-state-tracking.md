@@ -1,5 +1,5 @@
 ---
-status: draft
+status: accepted
 date: 2026-04-22
 implements:
   - emotional-state-tracking

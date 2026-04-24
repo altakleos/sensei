@@ -445,3 +445,16 @@ def test_goal_migration_1_to_2():
     result = migrate_goal(old)
     assert result["schema_version"] == 2
     assert result["three_unknowns"]["target_depth"] == "functional"
+
+
+def test_profile_migration_v0_to_v2_end_to_end():
+    """Real migration chain: v0 -> v1 (emotional_state) -> v2 (metacognitive_state)."""
+    v0 = {"schema_version": 0, "learner_id": "alice", "expertise_map": {}}
+    result = migrate_profile(v0)
+    assert result["schema_version"] == 2
+    assert result["emotional_state"]["engagement"] == "unknown"
+    assert result["emotional_state"]["frustration"] == "unknown"
+    assert result["emotional_state"]["agency"] == "unknown"
+    assert result["metacognitive_state"]["calibration_accuracy"] is None
+    assert result["metacognitive_state"]["planning_tendency"] == "unknown"
+    assert result["metacognitive_state"]["help_seeking"] == "unknown"
