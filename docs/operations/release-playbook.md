@@ -165,6 +165,7 @@ Before tagging:
 
 - [ ] CI green on `main`
 - [ ] `CHANGELOG.md` `## [Unreleased]` section promoted to `vX.Y.Z` with today's date (per [docs/specs/release-communication.md](../specs/release-communication.md) — `ci/check_package_contents.py` rejects the build if this is missing)
+- [ ] `CHANGELOG.md` reference-link tail updated for the new tag — add `[X.Y.Z]: …compare/v<prev>...vX.Y.Z` and bump `[Unreleased]:` to compare from `vX.Y.Z...HEAD` (`ci/check_changelog_links.py` enforces)
 - [ ] Version bumped in `src/sensei/__init__.py`
 - [ ] `docs/plans/` has no `status: in-progress` plans that should block
 - [ ] Local pre-merge gates pass — run **from the project venv** (`.venv/bin/pytest && .venv/bin/ruff check . && .venv/bin/mypy && python ci/check_foundations.py && python ci/check_links.py && python ci/check_plan_completion.py`). System-wide `ruff`/`mypy`/`pytest` may disagree with CI; the venv version is the source of truth.
