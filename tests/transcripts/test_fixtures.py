@@ -13,6 +13,8 @@ from typing import Any
 
 import pytest
 
+from sensei.engine.scripts.silence_ratio import compute_word_share
+
 from .conftest import extract_mentor_turns
 
 
@@ -26,7 +28,8 @@ def test_transcript_fixture(transcript_case: tuple[str, Path, Path, dict[str, An
             f"See docs/design/transcript-fixtures.md § Cadence."
         )
 
-    mentor_turns = extract_mentor_turns(dogfood_path.read_text(encoding="utf-8"))
+    dogfood_text = dogfood_path.read_text(encoding="utf-8")
+    mentor_turns = extract_mentor_turns(dogfood_text)
     assert mentor_turns, f"no [MENTOR] turns found in {dogfood_path}"
 
     forbidden = fixture.get("forbidden_phrases") or []
@@ -58,3 +61,23 @@ def test_transcript_fixture(transcript_case: tuple[str, Path, Path, dict[str, An
             f"required_all_of pattern {pattern!r} did not match any mentor turn in "
             f"{dogfood_path.name}. Mentor turns: {mentor_turns!r}"
         )
+
+    # Per-fixture silence-ratio band: the mentor's word-share against the
+    # learner. Optional — fixtures without `silence_ratio:` are unchanged.
+    silence = fixture.get("silence_ratio") or {}
+    if silence:
+        share = compute_word_share(dogfood_text)
+        lo = silence.get("min")
+        hi = silence.get("max")
+        if lo is not None:
+            assert share >= lo, (
+                f"silence_ratio: mentor word-share {share:.3f} below min {lo} in "
+                f"{dogfood_path.name}. The mentor is too quiet for this protocol; "
+                f"either re-capture or relax the band."
+            )
+        if hi is not None:
+            assert share <= hi, (
+                f"silence_ratio: mentor word-share {share:.3f} above max {hi} in "
+                f"{dogfood_path.name}. The mentor is talking too much for this protocol; "
+                f"either re-capture or widen the band (and explain why)."
+            )

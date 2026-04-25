@@ -62,7 +62,7 @@ Verification in Sensei is the set of artifacts that confirm Implementation met i
 | Executable assertions | `src/sensei/engine/scripts/check_*.py` | CPython | Structural checks (frontmatter, schemas, yaml shape) |
 | Rule catalog (planned) | `memory/rules.yaml` (in instance) | CPython via `verify.py` | Registry of invariants with their check commands — not yet implemented |
 | Top-level runner | `sensei verify` (CLI) | CPython | Entry point for CI and inline invocation |
-| Transcript fixtures | `tests/transcripts/<protocol>.md` + `<protocol>.dogfood.md` | pytest (tier-1, lexical) / LLM-as-judge (tier-2, operator-local) | Assert the LLM interpreting a protocol respects the invariants its spec declares. See [ADR-0011](decisions/0011-transcript-fixtures.md) and [design/transcript-fixtures.md](design/transcript-fixtures.md). |
+| Transcript fixtures | `tests/transcripts/<protocol>.md` + `<protocol>.dogfood.md` | pytest (tier-1, lexical) / LLM-as-judge (tier-2, operator-local) | Assert the LLM interpreting a protocol respects the invariants its spec declares. See [ADR-0011](decisions/0011-transcript-fixtures.md) and [design/transcript-fixtures.md](design/transcript-fixtures.md). Fixtures may declare an optional `silence_ratio: {min, max}` band; the mentor's word-share against the learner is computed by `scripts/silence_ratio.py` and asserted at fixture time, turning the silence-is-teaching principle from prose-only into a measured invariant. |
 
 ## Load-Bearing Principles
 

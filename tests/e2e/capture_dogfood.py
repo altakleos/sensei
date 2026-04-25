@@ -33,7 +33,18 @@ from click.testing import CliRunner  # noqa: E402
 from sensei.cli import main as sensei_main  # noqa: E402
 from tests.e2e.agent_runner import TOOL, TOOL_AVAILABLE, run_agent  # noqa: E402
 
-PROTOCOLS = ("hints", "assess", "review", "performance_training", "cross_goal_review")
+PROTOCOLS = (
+    "hints",
+    "assess",
+    "review",
+    "performance_training",
+    "cross_goal_review",
+    "tutor",
+    "goal",
+    "challenger",
+    "reviewer",
+    "status",
+)
 DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[1] / "transcripts"
 
 
@@ -829,12 +840,392 @@ def _capture_cross_goal_review(instance_dir: Path, timeout: int) -> str:
     return _build_frontmatter("cross_goal_review") + "\n" + body
 
 
+def _seed_tutor(instance_dir: Path) -> None:
+    """Seed a goal with one active topic the learner has not yet mastered."""
+    now = datetime.now(timezone.utc)
+    profile = {
+        "schema_version": 2,
+        "learner_id": "e2e",
+        "expertise_map": {
+            "ownership": {
+                "mastery": "none",
+                "confidence": 0.0,
+                "last_seen": _utc_iso(now - timedelta(days=365)),
+                "attempts": 0,
+                "correct": 0,
+            },
+        },
+    }
+    (instance_dir / "learner" / "profile.yaml").write_text(
+        yaml.safe_dump(profile), encoding="utf-8"
+    )
+
+    goal = {
+        "schema_version": 2,
+        "goal_id": "learn-rust",
+        "expressed_as": "Learn Rust for systems programming",
+        "created": _utc_iso(now - timedelta(days=1)),
+        "status": "active",
+        "three_unknowns": {
+            "prior_state": "partial",
+            "target_state": "clear",
+            "constraints": "Self-paced",
+            "target_depth": "functional",
+        },
+        "nodes": {
+            "ownership": {"state": "active", "prerequisites": []},
+            "borrowing": {"state": "pending", "prerequisites": ["ownership"]},
+        },
+    }
+    goals_dir = instance_dir / "learner" / "goals"
+    goals_dir.mkdir(parents=True, exist_ok=True)
+    (goals_dir / "learn-rust.yaml").write_text(yaml.safe_dump(goal), encoding="utf-8")
+
+
+def _capture_tutor(instance_dir: Path, timeout: int) -> str:
+    """Capture a tutor session — learner asks for explanation, answers a probe."""
+    _seed_tutor(instance_dir)
+
+    # Turn 1: learner asks for teaching on the active topic
+    turn1_prompt = "Teach me about ownership in Rust."
+    mentor1 = _run_turn(turn1_prompt, cwd=instance_dir, timeout=timeout)
+
+    # Turn 2: answerer LLM produces a learner answer to whatever probe the
+    # mentor posed
+    clean_dir = instance_dir.parent / (instance_dir.name + "-answerer")
+    clean_dir.mkdir(exist_ok=True)
+    answer_prompt = (
+        "Answer this question about Rust ownership in 2-3 sentences as a "
+        "learner who is paying attention but not yet expert.\n\n"
+        f"QUESTION: {mentor1}\n\nANSWER:"
+    )
+    answer = _run_turn(answer_prompt, cwd=clean_dir, timeout=timeout)
+    shutil.rmtree(clean_dir, ignore_errors=True)
+
+    # Turn 2: send the answer back to the mentor
+    history = (
+        f"Previous conversation:\n"
+        f"Learner: {turn1_prompt}\n"
+        f"Mentor: {mentor1}\n\n"
+        f"Continue the conversation. The learner says:\n"
+    )
+    mentor2 = _run_turn(history + answer, cwd=instance_dir, timeout=timeout)
+
+    body = (
+        f"[LEARNER] {turn1_prompt}\n\n"
+        f"[MENTOR] {mentor1}\n\n"
+        f"[LEARNER] {answer}\n\n"
+        f"[MENTOR] {mentor2}\n"
+    )
+    return _build_frontmatter("tutor") + "\n" + body
+
+
+def _seed_goal(instance_dir: Path) -> None:
+    """Empty profile + no goals — the learner is about to set a new one."""
+    now = datetime.now(timezone.utc)
+    profile = {
+        "schema_version": 2,
+        "learner_id": "e2e",
+        "expertise_map": {},
+    }
+    (instance_dir / "learner" / "profile.yaml").write_text(
+        yaml.safe_dump(profile), encoding="utf-8"
+    )
+    # No goal files — the goal protocol's job is to create one.
+    goals_dir = instance_dir / "learner" / "goals"
+    goals_dir.mkdir(parents=True, exist_ok=True)
+    _ = now  # unused but keeps the signature consistent with siblings
+
+
+def _capture_goal(instance_dir: Path, timeout: int) -> str:
+    """Capture a goal-setting session — three-unknowns + target-depth elicitation."""
+    _seed_goal(instance_dir)
+
+    # Turn 1: learner declares a goal
+    turn1_prompt = "I want to prepare for system design interviews. Targeting L6 at a big tech company. I have 8 weeks."
+    mentor1 = _run_turn(turn1_prompt, cwd=instance_dir, timeout=timeout)
+
+    # Turn 2: answerer provides plausible answers to whatever the mentor asks
+    # (the protocol typically probes for prior_state, target_state, or constraints)
+    clean_dir = instance_dir.parent / (instance_dir.name + "-answerer")
+    clean_dir.mkdir(exist_ok=True)
+    answer_prompt = (
+        "Answer this question briefly (2-3 sentences) as a learner setting up a "
+        "system-design-interview prep goal.\n\n"
+        f"QUESTION: {mentor1}\n\nANSWER:"
+    )
+    answer = _run_turn(answer_prompt, cwd=clean_dir, timeout=timeout)
+    shutil.rmtree(clean_dir, ignore_errors=True)
+
+    history = (
+        f"Previous conversation:\n"
+        f"Learner: {turn1_prompt}\n"
+        f"Mentor: {mentor1}\n\n"
+        f"Continue the conversation. The learner says:\n"
+    )
+    mentor2 = _run_turn(history + answer, cwd=instance_dir, timeout=timeout)
+
+    body = (
+        f"[LEARNER] {turn1_prompt}\n\n"
+        f"[MENTOR] {mentor1}\n\n"
+        f"[LEARNER] {answer}\n\n"
+        f"[MENTOR] {mentor2}\n"
+    )
+    return _build_frontmatter("goal") + "\n" + body
+
+
+def _seed_challenger(instance_dir: Path) -> None:
+    """Seed a learner with mastered topics — challenger mode is the natural next step."""
+    now = datetime.now(timezone.utc)
+    profile = {
+        "schema_version": 2,
+        "learner_id": "e2e",
+        "expertise_map": {
+            "binary-search": {
+                "mastery": "mastered",
+                "confidence": 0.9,
+                "last_seen": _utc_iso(now - timedelta(days=2)),
+                "attempts": 12,
+                "correct": 12,
+            },
+            "two-pointer": {
+                "mastery": "mastered",
+                "confidence": 0.85,
+                "last_seen": _utc_iso(now - timedelta(days=4)),
+                "attempts": 10,
+                "correct": 9,
+            },
+        },
+    }
+    (instance_dir / "learner" / "profile.yaml").write_text(
+        yaml.safe_dump(profile), encoding="utf-8"
+    )
+
+    goal = {
+        "schema_version": 2,
+        "goal_id": "algorithms",
+        "expressed_as": "Algorithms practice",
+        "created": _utc_iso(now - timedelta(days=30)),
+        "status": "active",
+        "three_unknowns": {
+            "prior_state": "partial",
+            "target_state": "clear",
+            "constraints": "Interview prep",
+            "target_depth": "deep",
+        },
+        "nodes": {
+            "binary-search": {"state": "completed", "prerequisites": []},
+            "two-pointer": {"state": "completed", "prerequisites": []},
+        },
+    }
+    goals_dir = instance_dir / "learner" / "goals"
+    goals_dir.mkdir(parents=True, exist_ok=True)
+    (goals_dir / "algorithms.yaml").write_text(yaml.safe_dump(goal), encoding="utf-8")
+
+
+def _capture_challenger(instance_dir: Path, timeout: int) -> str:
+    """Capture a challenger session — learner asks for harder problems."""
+    _seed_challenger(instance_dir)
+
+    turn1_prompt = "Challenge me. Make it harder."
+    mentor1 = _run_turn(turn1_prompt, cwd=instance_dir, timeout=timeout)
+
+    # Turn 2: answerer attempts the challenge problem
+    clean_dir = instance_dir.parent / (instance_dir.name + "-answerer")
+    clean_dir.mkdir(exist_ok=True)
+    answer_prompt = (
+        "Attempt this algorithms challenge problem. Show your reasoning in "
+        "3-5 sentences as a learner who knows binary search and two-pointer.\n\n"
+        f"PROBLEM: {mentor1}\n\nATTEMPT:"
+    )
+    answer = _run_turn(answer_prompt, cwd=clean_dir, timeout=timeout)
+    shutil.rmtree(clean_dir, ignore_errors=True)
+
+    history = (
+        f"Previous conversation:\n"
+        f"Learner: {turn1_prompt}\n"
+        f"Mentor: {mentor1}\n\n"
+        f"Continue the conversation. The learner says:\n"
+    )
+    mentor2 = _run_turn(history + answer, cwd=instance_dir, timeout=timeout)
+
+    body = (
+        f"[LEARNER] {turn1_prompt}\n\n"
+        f"[MENTOR] {mentor1}\n\n"
+        f"[LEARNER] {answer}\n\n"
+        f"[MENTOR] {mentor2}\n"
+    )
+    return _build_frontmatter("challenger") + "\n" + body
+
+
+def _seed_reviewer(instance_dir: Path) -> None:
+    """Seed a goal with an active coding topic — reviewer mode triggers when the
+    learner submits code."""
+    now = datetime.now(timezone.utc)
+    profile = {
+        "schema_version": 2,
+        "learner_id": "e2e",
+        "expertise_map": {
+            "linked-list": {
+                "mastery": "developing",
+                "confidence": 0.6,
+                "last_seen": _utc_iso(now - timedelta(days=3)),
+                "attempts": 4,
+                "correct": 3,
+            },
+        },
+    }
+    (instance_dir / "learner" / "profile.yaml").write_text(
+        yaml.safe_dump(profile), encoding="utf-8"
+    )
+
+    goal = {
+        "schema_version": 2,
+        "goal_id": "data-structures",
+        "expressed_as": "Master core data structures",
+        "created": _utc_iso(now - timedelta(days=7)),
+        "status": "active",
+        "three_unknowns": {
+            "prior_state": "partial",
+            "target_state": "clear",
+            "constraints": "Self-paced",
+            "target_depth": "functional",
+        },
+        "nodes": {
+            "linked-list": {"state": "active", "prerequisites": []},
+        },
+    }
+    goals_dir = instance_dir / "learner" / "goals"
+    goals_dir.mkdir(parents=True, exist_ok=True)
+    (goals_dir / "data-structures.yaml").write_text(
+        yaml.safe_dump(goal), encoding="utf-8"
+    )
+
+
+def _capture_reviewer(instance_dir: Path, timeout: int) -> str:
+    """Capture a reviewer session — learner pastes code, mentor reviews."""
+    _seed_reviewer(instance_dir)
+
+    turn1_prompt = (
+        "Review my linked-list reverse function:\n\n"
+        "```python\n"
+        "def reverse(head):\n"
+        "    prev = None\n"
+        "    while head:\n"
+        "        head.next = prev\n"
+        "        prev = head\n"
+        "        head = head.next\n"
+        "    return prev\n"
+        "```"
+    )
+    mentor1 = _run_turn(turn1_prompt, cwd=instance_dir, timeout=timeout)
+
+    # Turn 2: answerer asks a clarifying follow-up
+    clean_dir = instance_dir.parent / (instance_dir.name + "-answerer")
+    clean_dir.mkdir(exist_ok=True)
+    answer_prompt = (
+        "You are a learner who just got a code review. The mentor said:\n\n"
+        f"{mentor1}\n\n"
+        "Write a 2-sentence learner reply acknowledging the feedback and asking "
+        "one concrete clarifying question."
+    )
+    answer = _run_turn(answer_prompt, cwd=clean_dir, timeout=timeout)
+    shutil.rmtree(clean_dir, ignore_errors=True)
+
+    history = (
+        f"Previous conversation:\n"
+        f"Learner: (submitted code for review)\n"
+        f"Mentor: {mentor1}\n\n"
+        f"Continue the conversation. The learner says:\n"
+    )
+    mentor2 = _run_turn(history + answer, cwd=instance_dir, timeout=timeout)
+
+    body = (
+        f"[LEARNER] {turn1_prompt}\n\n"
+        f"[MENTOR] {mentor1}\n\n"
+        f"[LEARNER] {answer}\n\n"
+        f"[MENTOR] {mentor2}\n"
+    )
+    return _build_frontmatter("reviewer") + "\n" + body
+
+
+def _seed_status(instance_dir: Path) -> None:
+    """Seed a profile with mixed mastery levels so status has something to report."""
+    now = datetime.now(timezone.utc)
+    profile = {
+        "schema_version": 2,
+        "learner_id": "e2e",
+        "expertise_map": {
+            "topic-a": {
+                "mastery": "mastered",
+                "confidence": 0.9,
+                "last_seen": _utc_iso(now - timedelta(days=1)),
+                "attempts": 8,
+                "correct": 8,
+            },
+            "topic-b": {
+                "mastery": "solid",
+                "confidence": 0.75,
+                "last_seen": _utc_iso(now - timedelta(days=2)),
+                "attempts": 5,
+                "correct": 4,
+            },
+            "topic-c": {
+                "mastery": "developing",
+                "confidence": 0.5,
+                "last_seen": _utc_iso(now - timedelta(days=14)),
+                "attempts": 3,
+                "correct": 1,
+            },
+        },
+    }
+    (instance_dir / "learner" / "profile.yaml").write_text(
+        yaml.safe_dump(profile), encoding="utf-8"
+    )
+
+    goal = {
+        "schema_version": 2,
+        "goal_id": "general",
+        "expressed_as": "General progress goal",
+        "created": _utc_iso(now - timedelta(days=21)),
+        "status": "active",
+        "three_unknowns": {
+            "prior_state": "partial",
+            "target_state": "clear",
+            "constraints": "Self-paced",
+            "target_depth": "functional",
+        },
+        "nodes": {
+            "topic-a": {"state": "completed", "prerequisites": []},
+            "topic-b": {"state": "completed", "prerequisites": []},
+            "topic-c": {"state": "active", "prerequisites": []},
+        },
+    }
+    goals_dir = instance_dir / "learner" / "goals"
+    goals_dir.mkdir(parents=True, exist_ok=True)
+    (goals_dir / "general.yaml").write_text(yaml.safe_dump(goal), encoding="utf-8")
+
+
+def _capture_status(instance_dir: Path, timeout: int) -> str:
+    """Capture a status session — single-turn report request."""
+    _seed_status(instance_dir)
+    turn1_prompt = "How am I doing? Show my progress."
+    mentor1 = _run_turn(turn1_prompt, cwd=instance_dir, timeout=timeout)
+    body = f"[LEARNER] {turn1_prompt}\n\n[MENTOR] {mentor1}\n"
+    return _build_frontmatter("status") + "\n" + body
+
+
 CAPTURE_FNS = {
     "hints": _capture_hints,
     "assess": _capture_assess,
     "review": _capture_review,
     "performance_training": _capture_performance_training,
     "cross_goal_review": _capture_cross_goal_review,
+    "tutor": _capture_tutor,
+    "goal": _capture_goal,
+    "challenger": _capture_challenger,
+    "reviewer": _capture_reviewer,
+    "status": _capture_status,
 }
 
 

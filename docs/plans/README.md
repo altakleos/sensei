@@ -54,6 +54,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [check-plan-discipline](check-plan-discipline.md) | Tick boxes on two violating plans + add `ci/check_plan_completion.py` lint | done |
 | [tier3-hygiene](tier3-hygiene.md) | Drop stale test count in AGENTS.md + repair collapsed plan-index rows | done |
 | [defaults-schema](defaults-schema.md) | JSON Schema for `defaults.yaml`; verify catches typos, wrong types, out-of-range tunables | done |
+| [silence-ratio-and-missing-dogfood](silence-ratio-and-missing-dogfood.md) | `silence_ratio` helper + per-fixture bands; dogfood capture for tutor/goal/challenger/reviewer/status | done |
 
 ### In Progress
 | Plan | Feature | Status |
