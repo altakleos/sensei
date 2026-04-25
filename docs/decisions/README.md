@@ -28,6 +28,7 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0020 | [Release Self-Bypass for Solo Maintainer](0020-release-self-bypass.md) | accepted |
 | 0022 | [Shell Wrapper for Script Interpreter Resolution](0022-script-runner-wrapper.md) | accepted (lite) |
 | 0021 | [Phase Overlay Composition — Single Phase Protocol](0021-phase-overlay-composition.md) | accepted |
+| 0023 | [`defaults.schema.json` Marks Inner Tunables `required`](0023-defaults-schema-required-keys.md) | accepted (lite) |
 
 ## Status values
 
