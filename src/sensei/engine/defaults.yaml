@@ -1,5 +1,5 @@
 # Sensei engine defaults. Learner config (learner/config.yaml) deep-merges on top of this.
-# Status: scaffolding. No real tunables yet — sections are placeholders for future work.
+# Authoritative shape: schemas/defaults.schema.json (validated by `sensei verify`).
 
 schema_version: 0
 
