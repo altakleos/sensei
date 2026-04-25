@@ -6,7 +6,7 @@ date: 2026-04-20
 
 ## Identity
 
-**Sensei** is a pip-installable CLI tool (`sensei-tutor` on PyPI) that scaffolds a learning-environment folder. The user then opens that folder with an LLM coding agent that reads a root boot document. Sensei has been dogfooded on Claude Code and Kiro; shims for Cursor, Copilot, Windsurf, Cline, Roo, and AI Assistant are provided (see `src/sensei/cli.py` `_SHIMS`) but await further validation. The agent becomes an adaptive, multi-agent tutor guided by prose-as-code context files and a living learner profile.
+**Sensei** is a pip-installable CLI tool (`sensei-tutor` on PyPI) that scaffolds a learning-environment folder. The user then opens that folder with an LLM coding agent that reads a root boot document. Sensei has been dogfooded on Claude Code and Kiro; shims for Cursor, Copilot, Windsurf, Cline, Roo, and AI Assistant are provided (see `src/sensei/cli.py` `_SHIMS`) and pass CI format validation, but their end-to-end behavior against the target tools is unverified — the per-tool runbook for closing that gap lives in [`docs/operations/shim-validation.md`](../operations/shim-validation.md). The agent becomes an adaptive, multi-agent tutor guided by prose-as-code context files and a living learner profile.
 
 Sensei is three things at once:
 

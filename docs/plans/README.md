@@ -55,6 +55,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [tier3-hygiene](tier3-hygiene.md) | Drop stale test count in AGENTS.md + repair collapsed plan-index rows | done |
 | [defaults-schema](defaults-schema.md) | JSON Schema for `defaults.yaml`; verify catches typos, wrong types, out-of-range tunables | done |
 | [silence-ratio-and-missing-dogfood](silence-ratio-and-missing-dogfood.md) | `silence_ratio` helper + per-fixture bands; dogfood capture for tutor/goal/challenger/reviewer/status | done |
+| [shim-validation](shim-validation.md) | Static format validation for all 8 tool shims; per-tool manual runbook; README truth-in-advertising | done |
 
 ### In Progress
 | Plan | Feature | Status |
