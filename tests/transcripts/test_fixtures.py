@@ -22,9 +22,9 @@ def test_transcript_fixture(transcript_case: tuple[str, Path, Path, dict[str, An
     case_id, fixture_path, dogfood_path, fixture = transcript_case
 
     if not dogfood_path.is_file():
-        pytest.skip(
+        pytest.fail(
             f"No dogfood transcript at {dogfood_path.name}. "
-            f"Fixture {case_id!r} cannot be evaluated until a session is captured. "
+            f"Fixture {case_id!r} must be captured before this fixture lands. "
             f"See docs/design/transcript-fixtures.md § Cadence."
         )
 
