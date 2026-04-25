@@ -2,7 +2,7 @@
 feature: silence-ratio-and-missing-dogfood
 serves: docs/specs/behavioral-modes.md
 design: "Pattern instantiation of existing transcript-fixture mechanism (ADR-0011) + new deterministic helper following the scripts-compute-protocols-judge boundary (ADR-0006)."
-status: planned
+status: done
 date: 2026-04-25
 ---
 # Plan: Silence-Ratio Helper + Dogfood Capture for the Five Missing Protocols
@@ -48,37 +48,37 @@ Bundled because each new dogfood capture in #2 should land already covered by th
 
 ### Commit 1 — silence_ratio helper + existing-fixture coverage
 
-- [ ] T1: `src/sensei/engine/scripts/silence_ratio.py` — pure-Python helper. CLI entry: `silence_ratio.py --transcript <path>`. Library entry: `compute_word_share(text: str) -> float`, `compute_turn_stats(text: str) -> dict`. Reuses the `[MENTOR]`/`[LEARNER]` line-marker convention already established by `tests/transcripts/conftest.py:extract_mentor_turns`. Exit 0 + JSON to stdout on success; exit 1 + error JSON on missing/empty file.
-- [ ] T2: Register `scripts/silence_ratio.py` in `src/sensei/engine/manifest.yaml` under `required:`.
-- [ ] T3: `tests/scripts/test_silence_ratio.py` — happy path (synthetic transcript), edge cases (no mentor turns, no learner turns, empty file, frontmatter present), CLI smoke via `main(argv)`. Verify the existing 5 dogfood transcripts produce values that fall inside the bands chosen below — if any blow the band, widen the band, don't tighten the protocol.
-- [ ] T4: `tests/transcripts/test_fixtures.py` — extend the per-case assertion to honour a `silence_ratio: {min: ..., max: ...}` fixture field. Skip the silence assertion if the field is absent (backward-compatible; existing fixtures without bands keep working unchanged). Compute via `silence_ratio.compute_word_share(dogfood_text)`.
-- [ ] T5: `tests/transcripts/assess.md` — add `silence_ratio: {max: 0.30}` to the per-fixture entries where the silence-is-teaching invariant is load-bearing (assessor exception fixtures). Set as **a wide starting calibration** — the goal is to catch regressions, not to hold any specific number sacred. Run T3's verification step against the actual `assess.dogfood.md`; if the real ratio is outside `[0, 0.30]`, widen to a value 0.05 above the observed.
-- [ ] T6: `tests/transcripts/review.md` — add `silence_ratio: {max: 0.45}` per the review protocol's "ask, don't lecture" stance. Same calibration rule as T5.
-- [ ] T7: `tests/transcripts/performance_training.md`, `hints.md`, `cross_goal_review.md` — add silence_ratio bands (`max: 0.55`, `max: 0.55`, `max: 0.45` respectively) following the same calibration rule.
-- [ ] T8: `docs/development-process.md` — add a one-line pointer in the "Verification" subsection noting that fixture-level silence-ratio assertions exist (single sentence, no rule-text duplication).
-- [ ] T9: Run full pipeline (`pytest && ruff check . && mypy && python ci/check_*.py`). Commit as: `feat: silence_ratio helper + per-fixture silence bands`.
+- [x] T1: `src/sensei/engine/scripts/silence_ratio.py` — pure-Python helper. CLI entry: `silence_ratio.py --transcript <path>`. Library entry: `compute_word_share(text: str) -> float`, `compute_turn_stats(text: str) -> dict`. Reuses the `[MENTOR]`/`[LEARNER]` line-marker convention already established by `tests/transcripts/conftest.py:extract_mentor_turns`. Exit 0 + JSON to stdout on success; exit 1 + error JSON on missing/empty file.
+- [x] T2: Register `scripts/silence_ratio.py` in `src/sensei/engine/manifest.yaml` under `required:`.
+- [x] T3: `tests/scripts/test_silence_ratio.py` — happy path (synthetic transcript), edge cases (no mentor turns, no learner turns, empty file, frontmatter present), CLI smoke via `main(argv)`. Verify the existing 5 dogfood transcripts produce values that fall inside the bands chosen below — if any blow the band, widen the band, don't tighten the protocol.
+- [x] T4: `tests/transcripts/test_fixtures.py` — extend the per-case assertion to honour a `silence_ratio: {min: ..., max: ...}` fixture field. Skip the silence assertion if the field is absent (backward-compatible; existing fixtures without bands keep working unchanged). Compute via `silence_ratio.compute_word_share(dogfood_text)`.
+- [x] T5: `tests/transcripts/assess.md` — add `silence_ratio: {max: 0.30}` to the per-fixture entries where the silence-is-teaching invariant is load-bearing (assessor exception fixtures). Set as **a wide starting calibration** — the goal is to catch regressions, not to hold any specific number sacred. Run T3's verification step against the actual `assess.dogfood.md`; if the real ratio is outside `[0, 0.30]`, widen to a value 0.05 above the observed.
+- [x] T6: `tests/transcripts/review.md` — add `silence_ratio: {max: 0.45}` per the review protocol's "ask, don't lecture" stance. Same calibration rule as T5.
+- [x] T7: `tests/transcripts/performance_training.md`, `hints.md`, `cross_goal_review.md` — add silence_ratio bands (`max: 0.55`, `max: 0.55`, `max: 0.45` respectively) following the same calibration rule.
+- [x] T8: `docs/development-process.md` — add a one-line pointer in the "Verification" subsection noting that fixture-level silence-ratio assertions exist (single sentence, no rule-text duplication).
+- [x] T9: Run full pipeline (`pytest && ruff check . && mypy && python ci/check_*.py`). Commit as: `feat: silence_ratio helper + per-fixture silence bands`.
 
 ### Commit 2 — dogfood capture for tutor/goal/challenger/reviewer/status
 
-- [ ] T10: `tests/e2e/capture_dogfood.py` — add `tutor`, `goal`, `challenger`, `reviewer`, `status` to `PROTOCOLS`. Add `_seed_tutor`, `_seed_goal`, `_seed_challenger`, `_seed_reviewer`, `_seed_status` helpers following the established pattern. Add prompt templates for each — multi-turn for protocols that need multiple exchanges (tutor is multi-turn; status is single-turn).
-- [ ] T11: Run `python tests/e2e/capture_dogfood.py --protocol tutor goal challenger reviewer status` from this environment. Inspect the generated `.dogfood.md` files for sanity (no ANSI noise, plausible mentor speech, both turn types present). If any capture is malformed, fix `_extract_mentor_text` regexes and re-run that protocol.
-- [ ] T12: Author `tests/transcripts/{tutor,goal,challenger,reviewer,status}.md` with:
+- [x] T10: `tests/e2e/capture_dogfood.py` — add `tutor`, `goal`, `challenger`, `reviewer`, `status` to `PROTOCOLS`. Add `_seed_tutor`, `_seed_goal`, `_seed_challenger`, `_seed_reviewer`, `_seed_status` helpers following the established pattern. Add prompt templates for each — multi-turn for protocols that need multiple exchanges (tutor is multi-turn; status is single-turn).
+- [x] T11: Run `python tests/e2e/capture_dogfood.py --protocol tutor goal challenger reviewer status` from this environment. Inspect the generated `.dogfood.md` files for sanity (no ANSI noise, plausible mentor speech, both turn types present). If any capture is malformed, fix `_extract_mentor_text` regexes and re-run that protocol.
+- [x] T12: Author `tests/transcripts/{tutor,goal,challenger,reviewer,status}.md` with:
   - Frontmatter naming the protocol and one or more `fixtures:` entries.
   - `forbidden_phrases:` from `personality.md` baseline (Great question, Nice work, Excellent, apologetic softeners, emoji codepoints).
   - `required_one_of:` patterns specific to each protocol (e.g. goal asks the three-unknowns; status reports counts).
   - `silence_ratio:` bands per the per-protocol values listed in the Approach section above. **Calibrate after capture**: if the captured transcript blows the band, widen rather than tighten.
-- [ ] T13: `CHANGELOG.md` — append under `## [Unreleased]` → `### Added`:
+- [x] T13: `CHANGELOG.md` — append under `## [Unreleased]` → `### Added`:
   > Silence-is-teaching is now a measured invariant. New `scripts/silence_ratio.py` computes mentor word-share from any dogfood transcript; transcript fixtures support an optional `silence_ratio: {min, max}` band that fails CI if the mentor talks too much (or too little, for non-silent modes). Dogfood transcripts captured for `tutor`, `goal`, `challenger`, `reviewer`, `status` — all five had been skipped at CI time pending real-LLM coverage. Tier-1 lexical fixtures (forbidden phrases + required-one-of regex) authored against the captures.
-- [ ] T14: Run full pipeline. Commit as: `feat: dogfood capture for tutor/goal/challenger/reviewer/status protocols`.
+- [x] T14: Run full pipeline. Commit as: `feat: dogfood capture for tutor/goal/challenger/reviewer/status protocols`.
 
 ## Acceptance Criteria
 
-- [ ] AC1: `python -m sensei.engine.scripts.silence_ratio --transcript tests/transcripts/assess.dogfood.md` exits 0 and prints a JSON object with the four expected keys.
-- [ ] AC2: `pytest tests/scripts/test_silence_ratio.py` — all cases pass (≥6 per T3).
-- [ ] AC3: `pytest tests/transcripts/` — every fixture case runs (none skipped). All five new protocol fixtures (T12) load and assert against their dogfood transcripts.
-- [ ] AC4: `python ci/check_plan_completion.py && python ci/check_links.py && ruff check . && mypy && pytest` — all green.
-- [ ] AC5: Negative-case demonstration (verified locally; not committed): manually edit one dogfood `[MENTOR]` turn to be 5× longer; the silence-ratio fixture for that protocol fails with the offending observed ratio in the error message.
-- [ ] AC6: Five new `<protocol>.dogfood.md` files exist under `tests/transcripts/` and contain at least one `[MENTOR]` and one `[LEARNER]` turn each.
+- [x] AC1: `python -m sensei.engine.scripts.silence_ratio --transcript tests/transcripts/assess.dogfood.md` exits 0 and prints a JSON object with the four expected keys.
+- [x] AC2: `pytest tests/scripts/test_silence_ratio.py` — all cases pass (≥6 per T3).
+- [x] AC3: `pytest tests/transcripts/` — every fixture case runs (none skipped). All five new protocol fixtures (T12) load and assert against their dogfood transcripts.
+- [x] AC4: `python ci/check_plan_completion.py && python ci/check_links.py && ruff check . && mypy && pytest` — all green.
+- [x] AC5: Negative-case demonstration (verified locally; not committed): manually edit one dogfood `[MENTOR]` turn to be 5× longer; the silence-ratio fixture for that protocol fails with the offending observed ratio in the error message.
+- [x] AC6: Five new `<protocol>.dogfood.md` files exist under `tests/transcripts/` and contain at least one `[MENTOR]` and one `[LEARNER]` turn each.
 
 ## Out of Scope
 
