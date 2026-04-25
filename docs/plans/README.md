@@ -70,6 +70,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [changelog-link-gate](changelog-link-gate.md) | `ci/check_changelog_links.py` — CI gate for CHANGELOG compare-link integrity | done |
 | [dogfood-fail-on-missing](dogfood-fail-on-missing.md) | `tests/transcripts/test_fixtures.py` fails (not skips) when a fixture lacks a `.dogfood.md` companion | done |
 | [release-tier2-audit-trail](release-tier2-audit-trail.md) | Per-release `docs/operations/releases/<tag>.md` audit-trail template — closes 2026-04-25 audit Risk #2 | done |
+| [release-publish-gate-reality](release-publish-gate-reality.md) | ADR-0026 supersedes ADR-0020 — publish gate is a manual approval; reconcile playbook prose to observed v0.1.0a20 behaviour | done |
 
 ### In Progress
 | Plan | Feature | Status |
