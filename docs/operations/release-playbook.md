@@ -10,7 +10,7 @@ The release mechanism and its invariants are documented in the spec [`docs/specs
 
 Before tagging any release, run the Tier-2 behavioural E2E on your workstation. CI cannot run this — the LLM CLI tools and auth credentials are workstation-only. The tests auto-detect `claude` or `kiro-cli` on PATH (preferring Claude when both are available). Override with `SENSEI_E2E_TOOL=claude` or `SENSEI_E2E_TOOL=kiro`.
 
-**Agent-driven releases.** If an LLM agent (the same one driving this playbook) is operating inside a Claude Code session — `which claude` returns a path *and* `CLAUDECODE=1` is set in the environment — the agent IS on the maintainer's workstation for purposes of this gate. The agent should run the gate end-to-end (Option B, OAuth flow) without escalating a cost-permission ask: the maintainer's authority to cut a release implies authority to spend the OAuth quota the gate consumes (~$1–3 per release). Mention the spend in the post-run summary, not as a pre-run gate. Genuinely irreversible actions — PyPI publish, force-push to `main`, deleting a published tag — still require explicit confirmation; Tier-2 spend is a budgeted cost, not an irreversible action.
+**Agent-driven releases.** If an LLM agent (the same one driving this playbook) is operating inside a Claude Code session — `which claude` returns a path *and* `CLAUDECODE=1` is set in the environment — the agent IS on the maintainer's workstation for purposes of this gate. The agent should run the gate end-to-end (Option B, OAuth flow) without escalating a cost-permission ask: the maintainer's authority to cut a release implies authority to spend the OAuth quota the gate consumes (~$2–4 per release per [ADR-0027](../decisions/0027-tier2-gate-expansion.md)). Mention the spend in the post-run summary, not as a pre-run gate. Genuinely irreversible actions — PyPI publish, force-push to `main`, deleting a published tag — still require explicit confirmation; Tier-2 spend is a budgeted cost, not an irreversible action.
 
 Activate the project venv first — `pyproject.toml` sets `addopts = "--cov=..."`, which requires `pytest-cov` from the dev extras. Without the venv, the system `pytest` will reject `--cov=*` and `--no-cov` alike.
 
@@ -19,25 +19,41 @@ The same discipline applies to **all** local pre-merge gates, not just pytest. C
 ```bash
 source .venv/bin/activate   # or ./.venv/bin/pytest ... if you prefer not to activate
 
+# The seven-test gate (per ADR-0027). Listing tests explicitly so the
+# six nightly-only e2e tests don't fire on the maintainer's workstation.
+GATE_TESTS=(
+  tests/e2e/test_goal_protocol_e2e.py
+  tests/e2e/test_assess_protocol_e2e.py
+  tests/e2e/test_hints_protocol_e2e.py
+  tests/e2e/test_tutor_protocol_e2e.py
+  tests/e2e/test_review_protocol_e2e.py
+  tests/e2e/test_reviewer_protocol_e2e.py
+  tests/e2e/test_challenger_protocol_e2e.py
+)
+
 # Option A (API key):
-ANTHROPIC_API_KEY=sk-ant-... pytest tests/e2e/ -v --no-cov
+ANTHROPIC_API_KEY=sk-ant-... pytest "${GATE_TESTS[@]}" -v --no-cov
 
 # Option B (OAuth Claude Code user):
-SENSEI_E2E=1 pytest tests/e2e/ -v --no-cov
+SENSEI_E2E=1 pytest "${GATE_TESTS[@]}" -v --no-cov
 
 # Option C (Kiro CLI):
-SENSEI_E2E=1 pytest tests/e2e/ -v --no-cov
+SENSEI_E2E=1 pytest "${GATE_TESTS[@]}" -v --no-cov
 ```
 
 `--no-cov` is required because `pytest-cov` would otherwise fail the threshold on a single-test invocation whose coverage surface is tiny.
 
-Expected: all three Tier-2 tests pass — the headless LLM agent (Claude Code or Kiro) reads `AGENTS.md`, dispatches to the named protocol, and emits the expected artifact:
+Expected: all seven Tier-2 tests pass — the headless LLM agent (Claude Code or Kiro) reads `AGENTS.md`, dispatches to the named protocol, and emits the expected artifact:
 
 - `test_goal_protocol_produces_schema_valid_goal` — dispatches to `goal`, writes a schema-valid goal file to `learner/goals/`.
 - `test_assess_protocol_updates_profile_with_attempts` — dispatches to `assess`, increments `attempts` and `correct` in `learner/profile.yaml` for a pre-seeded topic.
 - `test_hints_protocol_drains_inbox_and_populates_registry` — dispatches to `hints` triage on a pre-seeded inbox, registers entries into `learner/hints/hints.yaml` and drains `learner/inbox/`.
+- `test_tutor_protocol_updates_profile_after_teaching` — dispatches to `tutor`, runs one explain → probe → classify → update cycle on a pre-seeded untaught topic; profile's `attempts` field bumps and the file still validates.
+- `test_review_protocol_updates_stale_topic_timestamp` — dispatches to `review`, picks up a stale topic per the spaced-repetition queue and refreshes its `last_seen` timestamp.
+- `test_reviewer_protocol_reviews_solution_and_updates_profile` — dispatches to `reviewer` against a submitted solution; profile is updated with the review's verdict.
+- `test_challenger_protocol_pushes_limits_and_updates_profile` — dispatches to `challenger`; learner's profile reflects the productive-failure interaction.
 
-Each run takes ~60–120s on a cold Claude Code cache; three tests is ~4–6 minutes total. A red result means either a protocol prose regression or a schema drift. **Do not tag** until the gate is green.
+Each run takes ~60–120s on a cold Claude Code cache; seven tests is ~12–14 minutes total (per [ADR-0027](../decisions/0027-tier2-gate-expansion.md), expanded from the previous 3-test / ~5-minute gate to close the breadth gap surfaced in the 2026-04-25 follow-up audit). A red result means either a protocol prose regression or a schema drift. **Do not tag** until the gate is green.
 
 Skip only with an explicit CHANGELOG note recording why (e.g. upstream Claude Code outage).
 

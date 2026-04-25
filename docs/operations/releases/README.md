@@ -27,23 +27,36 @@ transcript_hash: <sha256 of pytest stdout, or "n/a" if discarded>
 ## Invocation
 
 ```bash
-# Exact command run, including env vars
-.venv/bin/pytest tests/e2e/ -v --no-cov
+# Exact command run, including env vars. The seven-test gate per ADR-0027.
+GATE_TESTS=(
+  tests/e2e/test_goal_protocol_e2e.py
+  tests/e2e/test_assess_protocol_e2e.py
+  tests/e2e/test_hints_protocol_e2e.py
+  tests/e2e/test_tutor_protocol_e2e.py
+  tests/e2e/test_review_protocol_e2e.py
+  tests/e2e/test_reviewer_protocol_e2e.py
+  tests/e2e/test_challenger_protocol_e2e.py
+)
+SENSEI_E2E=1 .venv/bin/pytest "${GATE_TESTS[@]}" -v --no-cov
 ```
 
 ## Result
 
 `N passed, M skipped` (or describe failure mode + recovery).
 
-Tests covered (per release-playbook § Pre-release gate):
+Tests covered (per release-playbook § Pre-release gate, ADR-0027):
 
 - `test_goal_protocol_produces_schema_valid_goal` — pass | fail
 - `test_assess_protocol_updates_profile_with_attempts` — pass | fail
 - `test_hints_protocol_drains_inbox_and_populates_registry` — pass | fail
+- `test_tutor_protocol_updates_profile_after_teaching` — pass | fail
+- `test_review_protocol_updates_stale_topic_timestamp` — pass | fail
+- `test_reviewer_protocol_reviews_solution_and_updates_profile` — pass | fail
+- `test_challenger_protocol_pushes_limits_and_updates_profile` — pass | fail
 
 ## Notes
 
-(Optional. Anything anomalous: flaky run, retry, manual intervention, transcript-fixture drift caught at this gate, time taken if substantially more than the documented ~4–6 minutes, etc.)
+(Optional. Anything anomalous: flaky run, retry, manual intervention, transcript-fixture drift caught at this gate, time taken if substantially more than the documented ~12–14 minutes, etc.)
 ```
 
 ## Required Fields
@@ -62,4 +75,4 @@ Tests covered (per release-playbook § Pre-release gate):
 
 (empty — first entry lands with the next release)
 
-CI-enforced from the next tag onward by [`ci/check_release_audit.py`](../../../ci/check_release_audit.py), wired into `release.yml`'s `build-and-check` job per [ADR-0024](../../decisions/0024-release-audit-log-required.md). A release tag without a conformant log file at `docs/operations/releases/<tag>.md` fails the build before publish.
+CI-enforced from the next tag onward by [`ci/check_release_audit.py`](../../../ci/check_release_audit.py), wired into `release.yml`'s `build-and-check` job per [ADR-0024](../../decisions/0024-release-audit-log-required.md). A release tag without a conformant log file at `docs/operations/releases/<tag>.md` fails the build before publish. The gate's seven-test breadth is set by [ADR-0027](../../decisions/0027-tier2-gate-expansion.md); the audit log enumerates which seven ran for this tag.
