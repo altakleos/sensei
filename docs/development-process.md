@@ -111,6 +111,8 @@ Plans use GFM `- [ ]` / `- [x]` checkboxes. A task's checkbox reflects whether t
 
 The rule exists because plans are permanent records. A future reader must determine "shipped vs. skipped vs. forgotten" from checkbox state alone.
 
+Enforced by `ci/check_plan_completion.py` (run by `verify.yml`): a `status: done` plan with any top-level `- [ ]` is a CI failure.
+
 ### Implementation
 
 Implementation is the layer that performs operations. The artifacts at this layer can be:
