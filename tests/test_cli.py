@@ -594,3 +594,72 @@ def test_verify_reports_profile_validation_errors(tmp_path: Path) -> None:
     assert result.exit_code == 1
     assert "FAIL" in result.output
     assert "profile:" in result.output
+
+
+# --- verify: manifest-driven bundle check ---
+#
+# These cover files that the previous hardcoded `expected` list omitted —
+# regression guards against re-introducing a partial verify checklist.
+
+
+@pytest.mark.parametrize(
+    "rel",
+    [
+        # Top-level protocols missing from the previous hardcoded list:
+        "protocols/hints.md",
+        "protocols/tutor.md",
+        "protocols/challenger.md",
+        "protocols/reviewer.md",
+        "protocols/status.md",
+        "protocols/performance-training.md",
+        # Schemas missing from the previous hardcoded list:
+        "schemas/goal.schema.json",
+        "schemas/hints.yaml.schema.json",
+        # Helper scripts missing from the previous hardcoded list:
+        "scripts/review_scheduler.py",
+        "scripts/goal_priority.py",
+        "scripts/frontier.py",
+        "scripts/mutate_graph.py",
+    ],
+)
+def test_verify_catches_missing_bundle_file(tmp_path: Path, rel: str) -> None:
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / ".sensei" / rel).unlink()
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert f"missing: .sensei/{rel}" in result.output
+
+
+def test_verify_catches_missing_manifest(tmp_path: Path) -> None:
+    """Without manifest.yaml, verify cannot determine bundle integrity and must fail."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / ".sensei" / "manifest.yaml").unlink()
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "missing: .sensei/manifest.yaml" in result.output
+
+
+def test_verify_catches_invalid_manifest_yaml(tmp_path: Path) -> None:
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / ".sensei" / "manifest.yaml").write_text("{{{not yaml\n")
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "manifest.yaml: invalid YAML" in result.output
+
+
+def test_verify_catches_manifest_with_non_list_required(tmp_path: Path) -> None:
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / ".sensei" / "manifest.yaml").write_text(
+        "schema_version: 1\nrequired: not-a-list\n"
+    )
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "'required' must be a list" in result.output
