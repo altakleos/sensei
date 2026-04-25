@@ -18,6 +18,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 try:
     import yaml
@@ -26,7 +27,7 @@ except ImportError:  # pragma: no cover
     sys.exit(1)
 
 
-def compute_calibration(profile: dict) -> float | None:
+def compute_calibration(profile: dict[str, Any]) -> float | None:
     """Compute calibration_accuracy from expertise_map.
 
     Returns the ratio of correct to attempts for topics where the learner

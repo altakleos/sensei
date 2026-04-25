@@ -65,12 +65,14 @@ def validate_profile(profile: dict[str, Any]) -> tuple[str, list[str]]:
 
     `errors` lists human-readable error messages.
     """
+    import contextlib
+
     from sensei.engine.scripts.migrate import migrate_profile
 
-    try:
+    # Migration may fail (bad data); fall through to schema validation which
+    # will report the real error.
+    with contextlib.suppress(ValueError, KeyError):
         profile = migrate_profile(dict(profile))
-    except (ValueError, KeyError):
-        pass  # migration failed; fall through to schema validation which will report the real error
 
     schema = _load_schema()
     validator = Draft202012Validator(schema)

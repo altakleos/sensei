@@ -117,7 +117,7 @@ def test_single_answer_does_not_complete_topic(tmp_path: Path) -> None:
     result = runner.invoke(sensei_main, ["init", str(tmp_path), "--learner-id", "e2e"])
     assert result.exit_code == 0
 
-    before_profile = _seed_test1(tmp_path)
+    _seed_test1(tmp_path)
 
     prompt = (
         "You are operating a Sensei instance. Read `AGENTS.md` at the repository root "

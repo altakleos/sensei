@@ -25,11 +25,13 @@ _PROJECT_ROOT = str(Path(__file__).resolve().parents[2])
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
-import yaml
-from click.testing import CliRunner
+# E402: imports below the sys.path bootstrap above are intentional —
+# the bootstrap must run first when this module is executed standalone.
+import yaml  # noqa: E402
+from click.testing import CliRunner  # noqa: E402
 
-from sensei.cli import main as sensei_main
-from tests.e2e.agent_runner import TOOL, TOOL_AVAILABLE, run_agent
+from sensei.cli import main as sensei_main  # noqa: E402
+from tests.e2e.agent_runner import TOOL, TOOL_AVAILABLE, run_agent  # noqa: E402
 
 PROTOCOLS = ("hints", "assess", "review", "performance_training", "cross_goal_review")
 DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[1] / "transcripts"
@@ -162,9 +164,7 @@ def _extract_mentor_text(completed) -> str:
         first_line = para.split('\n')[0].strip()
         if _REASONING_START.match(first_line):
             return True
-        if _REASONING_CONTAINS.search(para):
-            return True
-        return False
+        return bool(_REASONING_CONTAINS.search(para))
 
     # Walk from the end backwards; stop at the first reasoning paragraph
     mentor_start = len(paragraphs)
