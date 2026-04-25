@@ -17,6 +17,11 @@ fixtures:
     required_all_of:
       - "[Pp]erformance training is active"
       - "[Ss]tage 1"
+    silence_ratio:
+      # Calibrated against performance_training.dogfood.md (observed 0.88).
+      # Performance training is teaching-heavy in stage 1; ceiling 0.95
+      # catches degradation where the mentor stops checking in entirely.
+      max: 0.95
   - name: format-aware-framing
     what_it_pins: |
       In stage 1, the Tutor overlay frames material in the shape the

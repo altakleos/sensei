@@ -23,6 +23,11 @@ fixtures:
       - 'Okay\.'
       - 'One more\.'
       - 'Let me see where you are'
+    silence_ratio:
+      # Calibrated against assess.dogfood.md (observed 0.66). Ceiling of
+      # 0.80 catches a regression where the assessor starts teaching
+      # (typical teaching-mode word-share is 0.85+).
+      max: 0.80
   - name: no-teaching-during-assessment
     what_it_pins: |
       The assessor exception is absolute. During summative assessment, the

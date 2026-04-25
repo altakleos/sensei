@@ -24,6 +24,11 @@ fixtures:
       - '^Okay\.$'
       - '^Recorded\.$'
       - '^Next\.$'
+    silence_ratio:
+      # Calibrated against review.dogfood.md (observed 0.58). Ceiling 0.75
+      # catches a regression where review starts re-teaching (which would
+      # also trip the no-reteach forbidden_phrases below).
+      max: 0.75
   - name: no-reteach
     what_it_pins: |
       Review never explains the correct answer inside the session. A

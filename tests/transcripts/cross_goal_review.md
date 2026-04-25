@@ -17,6 +17,12 @@ fixtures:
       - "already reviewed recursion"
     required_one_of:
       - 'recursion'
+    silence_ratio:
+      # Calibrated against cross_goal_review.dogfood.md (observed 0.36).
+      # Cross-goal review is Q&A — mentor asks, learner recalls. Ceiling
+      # 0.55 catches the regression where the protocol starts narrating
+      # the goal map instead of probing.
+      max: 0.55
   - name: cross-goal-no-duplicate-queue
     what_it_pins: |
       The review queue presented to the learner must not list the same topic
