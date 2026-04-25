@@ -1,0 +1,65 @@
+# Sensei engine bundle manifest. Enumerates every file that must be present
+# for `sensei verify` to report OK. Read by src/sensei/cli.py:verify.
+#
+# When adding a new protocol/script/schema to the engine bundle, also add it
+# here. The inverse check (tests/ci/test_engine_manifest.py) asserts every
+# shipped engine file is registered, so omissions are caught at CI time.
+#
+# Excluded (deliberately not registered):
+#   - __pycache__/, __init__.py    Python packaging artefacts
+#   - */README.md                  Developer docs, not engine code
+#   - manifest.yaml                Self-reference avoided
+#   - run.sh                       Renamed to `run` at install time; checked
+#                                  separately via `.sensei/run` presence
+
+schema_version: 1
+
+required:
+  # Top-level
+  - engine.md
+  - defaults.yaml
+  - templates/AGENTS.md
+
+  # Protocols (top-level)
+  - protocols/assess.md
+  - protocols/challenger.md
+  - protocols/goal.md
+  - protocols/hints.md
+  - protocols/performance-training.md
+  - protocols/personality.md
+  - protocols/review.md
+  - protocols/reviewer.md
+  - protocols/status.md
+  - protocols/tutor.md
+
+  # Behavioral mode files
+  - protocols/modes/assessor.md
+  - protocols/modes/challenger.md
+  - protocols/modes/reviewer.md
+  - protocols/modes/tutor.md
+
+  # Schemas
+  - schemas/goal.schema.json
+  - schemas/hints.yaml.schema.json
+  - schemas/profile.schema.json
+  - schemas/session-notes.schema.json
+
+  # Helper scripts
+  - scripts/_atomic.py
+  - scripts/_iso.py
+  - scripts/calibration_tracker.py
+  - scripts/check_goal.py
+  - scripts/check_profile.py
+  - scripts/classify_confidence.py
+  - scripts/config.py
+  - scripts/decay.py
+  - scripts/frontier.py
+  - scripts/global_knowledge.py
+  - scripts/goal_priority.py
+  - scripts/hint_decay.py
+  - scripts/mastery_check.py
+  - scripts/migrate.py
+  - scripts/mutate_graph.py
+  - scripts/resume_planner.py
+  - scripts/review_scheduler.py
+  - scripts/session_allocator.py

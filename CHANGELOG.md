@@ -13,6 +13,9 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 ### Changed
 - Mastery calibration: the tutor now requires depth-aware multi-probe evidence before skipping a topic (1 probe for exposure, 2 for functional, 3 for deep). Mastery promotion is capped at one level per interaction — a single correct answer cannot jump from `none` to `solid`. `mastery_check.py` now supports `--min-attempts` and `--min-ratio` flags; the tutor gate requires 3+ attempts at 90%+ accuracy.
 
+### Fixed
+- `sensei verify` now checks the full engine bundle via a shipped `manifest.yaml`. Previous releases checked only a subset of protocols/scripts/schemas via a hardcoded list; a maintainer-deleted `hints.md`, top-level `tutor.md`, `challenger.md`, `reviewer.md`, `status.md`, `performance-training.md`, several helper scripts (e.g. `review_scheduler.py`, `goal_priority.py`), or `goal.schema.json` / `hints.yaml.schema.json` could pass verify silently. CI now also asserts the inverse: every shipped engine file must be registered in the manifest. (plan: `docs/plans/verify-bundle-completeness.md`)
+
 ## [0.1.0a18] — 2026-04-24
 
 ### Added

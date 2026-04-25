@@ -46,6 +46,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [interleaving](interleaving.md) | Interleaving — review session topic mixing for discriminative contrast | done |
 | [metacognitive-tracking](metacognitive-tracking.md) | Metacognitive state tracking — calibration, planning tendency, help-seeking | done |
 | [ruff-cleanup](ruff-cleanup.md) | Reconcile 37 ruff violations (E501/E402/F841/F401/SIM105/SIM103) on main | done |
+| [verify-bundle-completeness](verify-bundle-completeness.md) | `sensei verify` checks the full engine bundle via shipped `manifest.yaml` | done |
 
 ### In Progress
 | Plan | Feature | Status |
