@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a19] — 2026-04-25
+
 ### Added
 - Target depth: goals now capture how deep the learner needs to go (`exposure`, `functional`, or `deep`). Inferred from the goal statement, shapes curriculum granularity. (spec: `docs/specs/target-depth.md`)
 - Calibration anchors draft spec: defines how the mentor researches real-world standards to calibrate assessment — two-phase seeding (training data → inbox materials/web research), trust hierarchy (learner materials > web > training data), per-topic success criteria, and integration with the hints pipeline. Schema seam: `anchor_type` field added to hints registry. (spec: `docs/specs/calibration-anchors.md`)
