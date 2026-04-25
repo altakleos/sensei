@@ -41,6 +41,7 @@ sensei/
 │   └── engine/                 (the runtime bundle copied by `sensei init`)
 │       ├── engine.md           (kernel + dispatch table)
 │       ├── defaults.yaml       (tunables — memory half-life, scoring weights)
+│       ├── manifest.yaml       (bundle file enumeration; consumed by `sensei verify`)
 │       ├── protocols/          (prose-as-code mentor protocols)
 │       ├── scripts/config.py   (deep-merge config loader)
 │       ├── prompts/

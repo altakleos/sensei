@@ -413,31 +413,36 @@ def verify(target: Path) -> None:
 
     errors: list[str] = []
 
-    expected = [
-        "engine.md",
-        "defaults.yaml",
-        ".sensei-version",
-        "scripts/config.py",
-        "scripts/check_profile.py",
-        "scripts/classify_confidence.py",
-        "scripts/decay.py",
-        "scripts/mastery_check.py",
-        "scripts/check_goal.py",
-        "protocols/review.md",
-        "protocols/assess.md",
-        "protocols/goal.md",
-        "protocols/personality.md",
-        "protocols/modes/tutor.md",
-        "protocols/modes/assessor.md",
-        "protocols/modes/challenger.md",
-        "protocols/modes/reviewer.md",
-        "schemas/profile.schema.json",
-        "schemas/session-notes.schema.json",
-        "templates/AGENTS.md",
-    ]
-    for rel in expected:
-        if not (sensei_dir / rel).exists():
-            errors.append(f"missing: .sensei/{rel}")
+    # `.sensei-version` is generated at install time, not shipped in the engine
+    # bundle, so it is checked separately from the manifest.
+    if not (sensei_dir / ".sensei-version").exists():
+        errors.append("missing: .sensei/.sensei-version")
+
+    # Bundle integrity is enumerated by `manifest.yaml` shipped inside the
+    # engine. Missing manifest is itself a verify failure — without it we
+    # cannot determine what should be present.
+    manifest_path = sensei_dir / "manifest.yaml"
+    if not manifest_path.exists():
+        errors.append("missing: .sensei/manifest.yaml")
+    else:
+        try:
+            manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+        except yaml.YAMLError as exc:
+            errors.append(f"manifest.yaml: invalid YAML — {exc}")
+            manifest = None
+        if isinstance(manifest, dict):
+            required = manifest.get("required", [])
+            if not isinstance(required, list):
+                errors.append("manifest.yaml: 'required' must be a list")
+            else:
+                for rel in required:
+                    if not isinstance(rel, str):
+                        errors.append(f"manifest.yaml: non-string entry {rel!r}")
+                        continue
+                    if not (sensei_dir / rel).exists():
+                        errors.append(f"missing: .sensei/{rel}")
+        elif manifest is not None:
+            errors.append("manifest.yaml: not a YAML mapping")
 
     profile_path = target / "learner" / "profile.yaml"
     if profile_path.exists():
