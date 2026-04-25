@@ -30,6 +30,7 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0021 | [Phase Overlay Composition — Single Phase Protocol](0021-phase-overlay-composition.md) | accepted |
 | 0023 | [`defaults.schema.json` Marks Inner Tunables `required`](0023-defaults-schema-required-keys.md) | accepted (lite) |
 | 0024 | [Release Audit Log Is a CI-Enforced Gate](0024-release-audit-log-required.md) | accepted (lite) |
+| 0025 | [Runtime Config Validation Hard-Fails by Default](0025-runtime-config-hard-fail.md) | accepted (lite) |
 
 ## Status values
 

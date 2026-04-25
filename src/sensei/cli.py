@@ -485,9 +485,14 @@ def verify(target: Path) -> None:
     # Validate the merged config (defaults + learner override) against
     # defaults.schema.json. The merged result is what scripts see at
     # runtime, so a learner-side typo or wrong type must surface here.
+    # `load_config` itself hard-fails on schema errors per ADR-0025; we
+    # downgrade to soft-fail in this scope so verify can collect every
+    # offending dotpath rather than aborting on the first one.
     defaults_schema_path = sensei_dir / "schemas" / "defaults.schema.json"
     defaults_yaml_path = sensei_dir / "defaults.yaml"
     if defaults_schema_path.exists() and defaults_yaml_path.exists():
+        prior_soft_fail = os.environ.get("SENSEI_CONFIG_SOFT_FAIL")
+        os.environ["SENSEI_CONFIG_SOFT_FAIL"] = "1"
         try:
             import json
 
@@ -502,6 +507,11 @@ def verify(target: Path) -> None:
                 errors.append(f"config: {list(err.absolute_path) or '<root>'}: {err.message}")
         except (yaml.YAMLError, ValueError) as exc:
             errors.append(f"config: {exc}")
+        finally:
+            if prior_soft_fail is None:
+                os.environ.pop("SENSEI_CONFIG_SOFT_FAIL", None)
+            else:
+                os.environ["SENSEI_CONFIG_SOFT_FAIL"] = prior_soft_fail
 
     if errors:
         click.echo("FAIL")
