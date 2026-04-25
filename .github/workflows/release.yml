@@ -7,6 +7,13 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+-*'
       - 'v[0-9]+.[0-9]+.[0-9]+[a-z][0-9]+'
 
+# Force JavaScript-based actions onto Node 24 ahead of GitHub's
+# 2026-09-16 deprecation deadline. Surfaces any Node-24 incompatibility
+# in actions/checkout@v5 / setup-python@v5 / upload-artifact@v5 /
+# download-artifact@v5 / gh-action-pypi-publish with months of runway.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   verify:
     name: pytest (py${{ matrix.python-version }})
