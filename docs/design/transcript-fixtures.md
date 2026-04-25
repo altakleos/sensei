@@ -124,7 +124,7 @@ Turn prefixes are the only structure the loader cares about: lines starting with
 
 `tests/transcripts/conftest.py` discovers fixture files and their companion dogfood transcripts at pytest collection time. For each fixture it emits a parametrised pytest case:
 
-- **If the `.dogfood.md` companion is missing**, the case `pytest.skip`s with a loud message that names the missing file and the fixture protocol. Missing dogfood is not a failure — it is a "this protocol has not been exercised in a real session" signal. The test still runs green in CI.
+- **If the `.dogfood.md` companion is missing**, the case `pytest.fail`s with a loud message that names the missing file and the fixture protocol. Missing dogfood is now a hard failure: a fixture must not land before its dogfood capture exists. The original soft-skip behaviour was a transitional accommodation during the v0.1.0a17–a19 dogfood backfill; once every protocol had a real-LLM capture (CHANGELOG v0.1.0a19), keeping skip-on-missing was just a footgun for any future protocol added without dogfood.
 - **If the companion exists**, the case parses mentor turns from the dogfood transcript and asserts:
   1. No forbidden phrase appears in any mentor turn.
   2. At least one required-one-of pattern matches at least one mentor turn (if the fixture declares `required` — happy-path fixtures do; negative fixtures may not).
