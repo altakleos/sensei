@@ -47,5 +47,8 @@ jobs:
       - name: Lint markdown links
         run: python ci/check_links.py
 
+      - name: Lint changelog links
+        run: python ci/check_changelog_links.py
+
       - name: Lint plan completion
         run: python ci/check_plan_completion.py
