@@ -306,7 +306,11 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a15...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a19...HEAD
+[0.1.0a19]: https://github.com/altakleos/sensei/compare/v0.1.0a18...v0.1.0a19
+[0.1.0a18]: https://github.com/altakleos/sensei/compare/v0.1.0a17...v0.1.0a18
+[0.1.0a17]: https://github.com/altakleos/sensei/compare/v0.1.0a16...v0.1.0a17
+[0.1.0a16]: https://github.com/altakleos/sensei/compare/v0.1.0a15...v0.1.0a16
 [0.1.0a15]: https://github.com/altakleos/sensei/compare/v0.1.0a14...v0.1.0a15
 [0.1.0a14]: https://github.com/altakleos/sensei/compare/v0.1.0a13...v0.1.0a14
 [0.1.0a13]: https://github.com/altakleos/sensei/compare/v0.1.0a12...v0.1.0a13

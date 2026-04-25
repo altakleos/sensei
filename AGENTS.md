@@ -1,6 +1,6 @@
 # AGENTS.md — Sensei Source Repository
 
-You are operating the Sensei source repository. This is the upstream project, not a user's learning instance. For the instance-side boot document (what `sensei init` writes), see [`src/sensei/cli.py`](src/sensei/cli.py) → `_AGENTS_MD`.
+You are operating the Sensei source repository. This is the upstream project, not a user's learning instance. For the instance-side boot document (what `sensei init` writes), see [`src/sensei/engine/templates/AGENTS.md`](src/sensei/engine/templates/AGENTS.md).
 
 ## What Sensei Is
 
