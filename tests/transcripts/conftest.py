@@ -5,7 +5,9 @@ with a `<protocol>.dogfood.md` companion. For every `fixtures:` entry in
 the frontmatter, emits one parametrised pytest case via the
 `transcript_case` parameter consumed by `test_fixtures.py`.
 
-Missing dogfood transcripts produce `pytest.skip`, never a failing case.
+Missing dogfood transcripts produce `pytest.fail` (per `test_fixtures.py`),
+never a silent skip — the dogfood-fail-on-missing plan landed in commit
+202b680 once every protocol had a real-LLM capture.
 
 See `docs/design/transcript-fixtures.md` for the full design, and
 `docs/decisions/0011-transcript-fixtures.md` for the ADR.

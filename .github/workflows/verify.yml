@@ -47,6 +47,9 @@ jobs:
       - name: Lint markdown links
         run: python ci/check_links.py
 
+      - name: Lint markdown links (engine bundle)
+        run: python ci/check_links.py --root src/sensei/engine
+
       - name: Lint changelog links
         run: python ci/check_changelog_links.py
 

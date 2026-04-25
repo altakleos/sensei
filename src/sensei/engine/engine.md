@@ -295,7 +295,7 @@ Current config keys:
 - [`docs/specs/behavioral-modes.md`](../../../docs/specs/behavioral-modes.md) — what modes guarantee
 - [`docs/design/behavioral-modes.md`](../../../docs/design/behavioral-modes.md) — how composition works
 - [`docs/decisions/0013-context-composition.md`](../../../docs/decisions/0013-context-composition.md) — why this composition model
-- [`docs/decisions/0020-phase-overlay-composition.md`](../../../docs/decisions/0020-phase-overlay-composition.md) — phase overlay composition
+- [`docs/decisions/0021-phase-overlay-composition.md`](../../../docs/decisions/0021-phase-overlay-composition.md) — phase overlay composition
 
 <!-- PROVENANCE
 Principles: P-principles-not-modes, P-scripts-compute-protocols-judge, P-prose-is-code

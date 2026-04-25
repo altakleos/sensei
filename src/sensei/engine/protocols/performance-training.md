@@ -122,7 +122,7 @@ Validate with `check_goal.py` after every update. Inform the learner of the tran
 
 - Spec: `docs/specs/performance-training.md`
 - Design: `docs/design/performance-training.md`
-- ADR: `docs/decisions/0020-phase-overlay-composition.md`
+- ADR: `docs/decisions/0021-phase-overlay-composition.md`
 - Config: `defaults.yaml` § `performance_training`
 
 <!-- PROVENANCE
