@@ -59,6 +59,17 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [ci-node24-opt-in](ci-node24-opt-in.md) | Force CI workflows onto Node 24 ahead of 2026-09-16 deprecation deadline | done |
 | [release-audit-enforcement](release-audit-enforcement.md) | CI-enforce the per-release Tier-2 E2E audit log (ADR-0024) — closes the workstation-only gate's evidence-trail gap | done |
 | [config-runtime-hard-fail](config-runtime-hard-fail.md) | Runtime config validation hard-fails by default (ADR-0025); `SENSEI_CONFIG_SOFT_FAIL=1` opt-out | done |
+| [process-prose-audit](process-prose-audit.md) | Development-process prose-as-code audit — discoverability/consistency fixes across `docs/development-process.md` | done |
+| [script-runner](script-runner.md) | `.sensei/run` shell wrapper for reliable Python interpreter resolution (ADR-0022) | done |
+| [real-dogfood-capture](real-dogfood-capture.md) | Replace synthetic-seed dogfood transcripts (hints/assess/review) with real LLM captures | done |
+| [expand-trigger](expand-trigger.md) | Decompose-trigger protocol prose for tutor/assess — break coarse curriculum nodes into subtopics | done |
+| [defaults-schema-required-keys](defaults-schema-required-keys.md) | Mark inner tunables `required` in `defaults.schema.json` so partial-mapping overrides fail verify (ADR-0023) | done |
+| [hints-dispatch-status](hints-dispatch-status.md) | Promote `protocols/hints.md` from `draft` to `accepted` in the engine.md dispatch table | done |
+| [doc-rot-sweep-2026-04-25](doc-rot-sweep-2026-04-25.md) | Sweep stale doc surfaces flagged in the 2026-04-25 audit (CHANGELOG, instance-template, README cross-refs) | done |
+| [ruff-version-skew](ruff-version-skew.md) | Document `.venv/bin/ruff`/`mypy` discipline so local gates match CI; close UP038 false-positive | done |
+| [changelog-link-gate](changelog-link-gate.md) | `ci/check_changelog_links.py` — CI gate for CHANGELOG compare-link integrity | done |
+| [dogfood-fail-on-missing](dogfood-fail-on-missing.md) | `tests/transcripts/test_fixtures.py` fails (not skips) when a fixture lacks a `.dogfood.md` companion | done |
+| [release-tier2-audit-trail](release-tier2-audit-trail.md) | Per-release `docs/operations/releases/<tag>.md` audit-trail template — closes 2026-04-25 audit Risk #2 | done |
 
 ### In Progress
 | Plan | Feature | Status |
