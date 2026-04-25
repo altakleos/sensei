@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [main]
 
+# Force JavaScript-based actions onto Node 24 ahead of GitHub's
+# 2026-09-16 deprecation deadline. Surfaces any Node-24 incompatibility
+# in actions/checkout@v5 / setup-python@v5 etc. with months of runway,
+# rather than the morning the deadline hits.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   test:
     name: pytest (py${{ matrix.python-version }})
