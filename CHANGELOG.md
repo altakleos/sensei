@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 ### Added
 - Target depth: goals now capture how deep the learner needs to go (`exposure`, `functional`, or `deep`). Inferred from the goal statement, shapes curriculum granularity. (spec: `docs/specs/target-depth.md`)
 - Calibration anchors draft spec: defines how the mentor researches real-world standards to calibrate assessment — two-phase seeding (training data → inbox materials/web research), trust hierarchy (learner materials > web > training data), per-topic success criteria, and integration with the hints pipeline. Schema seam: `anchor_type` field added to hints registry. (spec: `docs/specs/calibration-anchors.md`)
+- `defaults.yaml` is now JSON-Schema validated. `sensei verify` rejects typos, wrong types, and out-of-range tunables in the merged config (engine defaults + learner overrides); previously these silently fell through to hardcoded script defaults. The deep-merge loader (`config.py`) soft-warns to stderr at runtime so a single bad tunable cannot brick the engine; `sensei verify` is the strict gate. (plan: `docs/plans/defaults-schema.md`)
 
 ### Changed
 - Mastery calibration: the tutor now requires depth-aware multi-probe evidence before skipping a topic (1 probe for exposure, 2 for functional, 3 for deep). Mastery promotion is capped at one level per interaction — a single correct answer cannot jump from `none` to `solid`. `mastery_check.py` now supports `--min-attempts` and `--min-ratio` flags; the tutor gate requires 3+ attempts at 90%+ accuracy.
