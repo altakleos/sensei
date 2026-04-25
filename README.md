@@ -80,18 +80,20 @@ The pedagogy is grounded in [21 principles](docs/foundations/) informed by [60 r
 
 ## Supported Tools
 
-| Tool | Status |
-|------|--------|
-| **Claude Code** | ✅ Verified |
-| **Kiro** | ✅ Verified |
-| Cursor | Shim provided |
-| GitHub Copilot | Shim provided |
-| Windsurf | Shim provided |
-| Cline | Shim provided |
-| Roo | Shim provided |
-| AI Assistant | Shim provided |
+| Tool | Shim format validated (CI) | Behavior verified |
+|------|:-:|:-:|
+| **Claude Code** | ✅ | ✅ |
+| **Kiro** | ✅ | ✅ |
+| Cursor | ✅ | ⚙ pending |
+| GitHub Copilot | ✅ | ⚙ pending |
+| Windsurf | ✅ | ⚙ pending |
+| Cline | ✅ | ⚙ pending |
+| Roo | ✅ | ⚙ pending |
+| AI Assistant (JetBrains) | ✅ | ⚙ pending |
 
 Sensei writes tool-specific shim files during `sensei init` so each agent finds its native boot document. See [ADR-0003](docs/decisions/0003-tool-specific-agent-hooks.md).
+
+Every shim's path and format are pinned by `tests/test_init.py` (Cursor's `.mdc` frontmatter, Windsurf's `trigger:`, Claude Code's `@AGENTS.md` import directive, etc.). End-to-end behavior — does the tool actually load the shim, follow it to `AGENTS.md`, and behave as a Sensei mentor — requires running each tool against a scaffolded instance. See [`docs/operations/shim-validation.md`](docs/operations/shim-validation.md) for the per-tool runbook.
 
 > **Status: early alpha.** The core works — goals, curriculum, four modes, spaced repetition, performance training. Rough edges remain. [Feedback welcome.](https://github.com/altakleos/sensei/issues)
 
