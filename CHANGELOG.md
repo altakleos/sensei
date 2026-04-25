@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Added
+- Release audit log is now CI-enforced. `ci/check_release_audit.py` runs in `release.yml`'s `build-and-check` job (after `check_package_contents.py`) and fails the build when `docs/operations/releases/<tag>.md` is missing, has malformed frontmatter, omits a required field, reports a non-zero `exit_code`, or carries an unrecognised `tool` value. Closes the gap that survived ADR-0020's self-bypass: the workstation-only Tier-2 gate now leaves a machine-checked artifact before publish. Per [ADR-0024](docs/decisions/0024-release-audit-log-required.md).
+
 ### Changed
 - `sensei verify` now rejects partial nested overrides in `learner/config.yaml` that drop required tunables (e.g. `memory: {}`, `cross_goal: {}`). Previously these silently fell through to hardcoded script defaults — exactly the silent-misconfiguration mode the v0.1.0a19 schema-validation feature was meant to prevent. Per [ADR-0023](docs/decisions/0023-defaults-schema-required-keys.md).
 

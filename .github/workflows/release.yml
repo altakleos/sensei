@@ -48,7 +48,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install build tool
-        run: pip install build
+        run: pip install build pyyaml
 
       - name: Build wheel and sdist
         run: python -m build
@@ -57,6 +57,12 @@ jobs:
         run: |
           WHEEL=$(ls dist/*.whl)
           python ci/check_package_contents.py --wheel "$WHEEL" --tag "${GITHUB_REF_NAME}"
+
+      - name: Validate Tier-2 E2E audit log against tag
+        # Per ADR-0024: the workstation-only Tier-2 gate must leave a committed,
+        # CI-verifiable artifact at docs/operations/releases/<tag>.md before
+        # publish. Closes the gap that survived ADR-0020's self-bypass.
+        run: python ci/check_release_audit.py --tag "${GITHUB_REF_NAME}"
 
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v5
