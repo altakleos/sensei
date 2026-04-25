@@ -127,7 +127,12 @@ def _goal(nodes: dict | None = None) -> dict:
         "expressed_as": "Test goal",
         "created": "2026-04-01T00:00:00Z",
         "status": "active",
-        "three_unknowns": {"prior_state": "none", "target_state": "clear", "constraints": "none", "target_depth": "functional"},
+        "three_unknowns": {
+            "prior_state": "none",
+            "target_state": "clear",
+            "constraints": "none",
+            "target_depth": "functional",
+        },
         "nodes": nodes or {},
     }
 

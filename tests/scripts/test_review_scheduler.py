@@ -30,7 +30,12 @@ def _goal(
         "expressed_as": f"Learn {goal_id}",
         "created": "2026-04-01T00:00:00Z",
         "status": status,
-        "three_unknowns": {"prior_state": "none", "target_state": "clear", "constraints": "none", "target_depth": "functional"},
+        "three_unknowns": {
+            "prior_state": "none",
+            "target_state": "clear",
+            "constraints": "none",
+            "target_depth": "functional",
+        },
         "nodes": nodes or {},
     }
 
@@ -441,9 +446,18 @@ def test_interleave_min_mastery_excludes_novice(tmp_path: Path) -> None:
         "schema_version": 0,
         "learner_id": "alice",
         "expertise_map": {
-            "net-1": {"mastery": "solid", "confidence": 0.8, "last_seen": "2026-03-10T00:00:00Z", "attempts": 5, "correct": 4},
-            "stor-1": {"mastery": "solid", "confidence": 0.8, "last_seen": "2026-03-05T00:00:00Z", "attempts": 5, "correct": 4},
-            "novice": {"mastery": 0.1, "confidence": 0.3, "last_seen": "2026-03-01T00:00:00Z", "attempts": 1, "correct": 0},
+            "net-1": {
+                "mastery": "solid", "confidence": 0.8,
+                "last_seen": "2026-03-10T00:00:00Z", "attempts": 5, "correct": 4,
+            },
+            "stor-1": {
+                "mastery": "solid", "confidence": 0.8,
+                "last_seen": "2026-03-05T00:00:00Z", "attempts": 5, "correct": 4,
+            },
+            "novice": {
+                "mastery": 0.1, "confidence": 0.3,
+                "last_seen": "2026-03-01T00:00:00Z", "attempts": 1, "correct": 0,
+            },
         },
     }
     goals_dir = tmp_path / "goals"

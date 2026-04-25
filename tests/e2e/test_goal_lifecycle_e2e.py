@@ -19,7 +19,6 @@ Tier-2 test per ADR-0011. Skip conditions match the other E2E tests.
 from __future__ import annotations
 
 import json
-import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 

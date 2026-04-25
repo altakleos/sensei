@@ -272,7 +272,7 @@ def test_decompose_fails_no_subgraph(tmp_path: Path, capsys: pytest.CaptureFixtu
 # --- Coverage: mutate() unknown op (line 184) — not reachable via CLI due to argparse choices,
 #     but exercised via direct mutate() call ---
 
-from sensei.engine.scripts.mutate_graph import mutate
+from sensei.engine.scripts.mutate_graph import mutate  # noqa: E402  (import sited near its single test for locality)
 
 
 def test_mutate_unknown_op_returns_error() -> None:

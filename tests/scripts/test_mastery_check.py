@@ -126,13 +126,31 @@ def test_yaml_parse_error(tmp_path: Path, capsys: pytest.CaptureFixture[str]) ->
     assert "yaml" in out or "parse" in out
 
 
+def _evidence_profile(attempts: int, correct: int) -> dict:
+    return {
+        "schema_version": 2,
+        "learner_id": "a",
+        "expertise_map": {
+            "caching": {
+                "mastery": "solid",
+                "confidence": 0.8,
+                "last_seen": "2026-01-01T00:00:00Z",
+                "attempts": attempts,
+                "correct": correct,
+            }
+        },
+    }
+
+
 def test_min_attempts_blocks_premature_pass(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     """Gate fails when attempts < min_attempts even if mastery level is met."""
-    profile = {"schema_version": 2, "learner_id": "a", "expertise_map": {
-        "caching": {"mastery": "solid", "confidence": 0.8, "last_seen": "2026-01-01T00:00:00Z", "attempts": 1, "correct": 1}
-    }}
-    (tmp_path / "p.yaml").write_text(yaml.safe_dump(profile))
-    rc = main(["--profile", str(tmp_path / "p.yaml"), "--topic", "caching", "--required", "solid", "--min-attempts", "3"])
+    (tmp_path / "p.yaml").write_text(yaml.safe_dump(_evidence_profile(1, 1)))
+    rc = main([
+        "--profile", str(tmp_path / "p.yaml"),
+        "--topic", "caching",
+        "--required", "solid",
+        "--min-attempts", "3",
+    ])
     assert rc == 3
     out = json.loads(capsys.readouterr().out)
     assert out["gate"] == "fail"
@@ -141,21 +159,25 @@ def test_min_attempts_blocks_premature_pass(tmp_path: Path, capsys: pytest.Captu
 
 def test_min_attempts_passes_with_enough(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     """Gate passes when attempts >= min_attempts and mastery level is met."""
-    profile = {"schema_version": 2, "learner_id": "a", "expertise_map": {
-        "caching": {"mastery": "solid", "confidence": 0.8, "last_seen": "2026-01-01T00:00:00Z", "attempts": 5, "correct": 5}
-    }}
-    (tmp_path / "p.yaml").write_text(yaml.safe_dump(profile))
-    rc = main(["--profile", str(tmp_path / "p.yaml"), "--topic", "caching", "--required", "solid", "--min-attempts", "3"])
+    (tmp_path / "p.yaml").write_text(yaml.safe_dump(_evidence_profile(5, 5)))
+    rc = main([
+        "--profile", str(tmp_path / "p.yaml"),
+        "--topic", "caching",
+        "--required", "solid",
+        "--min-attempts", "3",
+    ])
     assert rc == 0
 
 
 def test_min_ratio_blocks_low_accuracy(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     """Gate fails when correct/attempts ratio < min_ratio."""
-    profile = {"schema_version": 2, "learner_id": "a", "expertise_map": {
-        "caching": {"mastery": "solid", "confidence": 0.8, "last_seen": "2026-01-01T00:00:00Z", "attempts": 5, "correct": 3}
-    }}
-    (tmp_path / "p.yaml").write_text(yaml.safe_dump(profile))
-    rc = main(["--profile", str(tmp_path / "p.yaml"), "--topic", "caching", "--required", "solid", "--min-ratio", "0.9"])
+    (tmp_path / "p.yaml").write_text(yaml.safe_dump(_evidence_profile(5, 3)))
+    rc = main([
+        "--profile", str(tmp_path / "p.yaml"),
+        "--topic", "caching",
+        "--required", "solid",
+        "--min-ratio", "0.9",
+    ])
     assert rc == 3
     out = json.loads(capsys.readouterr().out)
     assert "accuracy too low" in out["reason"]
@@ -163,19 +185,22 @@ def test_min_ratio_blocks_low_accuracy(tmp_path: Path, capsys: pytest.CaptureFix
 
 def test_min_ratio_passes_high_accuracy(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     """Gate passes when correct/attempts ratio >= min_ratio."""
-    profile = {"schema_version": 2, "learner_id": "a", "expertise_map": {
-        "caching": {"mastery": "solid", "confidence": 0.8, "last_seen": "2026-01-01T00:00:00Z", "attempts": 10, "correct": 9}
-    }}
-    (tmp_path / "p.yaml").write_text(yaml.safe_dump(profile))
-    rc = main(["--profile", str(tmp_path / "p.yaml"), "--topic", "caching", "--required", "solid", "--min-ratio", "0.9"])
+    (tmp_path / "p.yaml").write_text(yaml.safe_dump(_evidence_profile(10, 9)))
+    rc = main([
+        "--profile", str(tmp_path / "p.yaml"),
+        "--topic", "caching",
+        "--required", "solid",
+        "--min-ratio", "0.9",
+    ])
     assert rc == 0
 
 
 def test_defaults_no_evidence_check(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     """Without --min-attempts or --min-ratio, gate behaves as before (backward compat)."""
-    profile = {"schema_version": 2, "learner_id": "a", "expertise_map": {
-        "caching": {"mastery": "solid", "confidence": 0.8, "last_seen": "2026-01-01T00:00:00Z", "attempts": 1, "correct": 1}
-    }}
-    (tmp_path / "p.yaml").write_text(yaml.safe_dump(profile))
-    rc = main(["--profile", str(tmp_path / "p.yaml"), "--topic", "caching", "--required", "solid"])
+    (tmp_path / "p.yaml").write_text(yaml.safe_dump(_evidence_profile(1, 1)))
+    rc = main([
+        "--profile", str(tmp_path / "p.yaml"),
+        "--topic", "caching",
+        "--required", "solid",
+    ])
     assert rc == 0
