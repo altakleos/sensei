@@ -1,8 +1,9 @@
 ---
-status: accepted
+status: superseded
 weight: lite
 date: 2026-04-21
 protocols: []
+superseded-by: 0026
 ---
 # ADR-0020: Release Self-Bypass for Solo Maintainer
 
