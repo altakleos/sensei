@@ -12,6 +12,8 @@ Before tagging any release, run the Tier-2 behavioural E2E on your workstation. 
 
 Activate the project venv first — `pyproject.toml` sets `addopts = "--cov=..."`, which requires `pytest-cov` from the dev extras. Without the venv, the system `pytest` will reject `--cov=*` and `--no-cov` alike.
 
+The same discipline applies to **all** local pre-merge gates, not just pytest. CI installs ruff and mypy from the project's dev extras (`pip install -e '.[dev]'`); a system-wide `ruff` or `mypy` on `PATH` may report different lint rules or type errors than CI does, leading to "looks broken locally, merges green in CI" (or the more dangerous inverse). Use `.venv/bin/<tool>` for ruff, mypy, and pytest; `python ci/check_*.py` is fine to run from the system Python because the validators have no version-sensitive dependencies.
+
 ```bash
 source .venv/bin/activate   # or ./.venv/bin/pytest ... if you prefer not to activate
 
@@ -165,7 +167,7 @@ Before tagging:
 - [ ] `CHANGELOG.md` `## [Unreleased]` section promoted to `vX.Y.Z` with today's date (per [docs/specs/release-communication.md](../specs/release-communication.md) — `ci/check_package_contents.py` rejects the build if this is missing)
 - [ ] Version bumped in `src/sensei/__init__.py`
 - [ ] `docs/plans/` has no `status: in-progress` plans that should block
-- [ ] `pytest` passes locally
+- [ ] Local pre-merge gates pass — run **from the project venv** (`.venv/bin/pytest && .venv/bin/ruff check . && .venv/bin/mypy && python ci/check_foundations.py && python ci/check_links.py && python ci/check_plan_completion.py`). System-wide `ruff`/`mypy`/`pytest` may disagree with CI; the venv version is the source of truth.
 - [ ] `python -m build && python ci/check_package_contents.py --wheel dist/*.whl --tag vX.Y.Z` passes
 - [ ] GitHub Environment `pypi` reviewers still exist and are reachable
 
