@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ### Changed
 - `sensei verify` now rejects partial nested overrides in `learner/config.yaml` that drop required tunables (e.g. `memory: {}`, `cross_goal: {}`). Previously these silently fell through to hardcoded script defaults — exactly the silent-misconfiguration mode the v0.1.0a19 schema-validation feature was meant to prevent. Per [ADR-0023](docs/decisions/0023-defaults-schema-required-keys.md).
+- Runtime config validation is now hard-fail by default. `load_config()` raises `ConfigValidationError` instead of printing a `WARN:` line and continuing, so a bad `learner/config.yaml` cannot silently slip past a learner who does not run `sensei verify`. Set `SENSEI_CONFIG_SOFT_FAIL=1` to downgrade to the previous behaviour for engine-repair / dev / CI-smoke flows. Per [ADR-0025](docs/decisions/0025-runtime-config-hard-fail.md).
 
 ## [0.1.0a19] — 2026-04-25
 

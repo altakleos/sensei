@@ -58,6 +58,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [shim-validation](shim-validation.md) | Static format validation for all 8 tool shims; per-tool manual runbook; README truth-in-advertising | done |
 | [ci-node24-opt-in](ci-node24-opt-in.md) | Force CI workflows onto Node 24 ahead of 2026-09-16 deprecation deadline | done |
 | [release-audit-enforcement](release-audit-enforcement.md) | CI-enforce the per-release Tier-2 E2E audit log (ADR-0024) — closes the workstation-only gate's evidence-trail gap | done |
+| [config-runtime-hard-fail](config-runtime-hard-fail.md) | Runtime config validation hard-fails by default (ADR-0025); `SENSEI_CONFIG_SOFT_FAIL=1` opt-out | done |
 
 ### In Progress
 | Plan | Feature | Status |

@@ -738,3 +738,47 @@ def test_verify_catches_invalid_enum_in_learner_config(tmp_path: Path) -> None:
     assert result.exit_code == 1
     assert "config:" in result.output
     assert "mastery_gate" in result.output
+
+
+def test_verify_does_not_leak_soft_fail_env(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Per ADR-0025, verify temporarily sets SENSEI_CONFIG_SOFT_FAIL=1 so it
+    can collect every offending dotpath. The prior env state must be restored
+    on exit, in both the no-prior-value and prior-value cases."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / "learner" / "config.yaml").write_text(
+        "memory:\n  half_life_days: 'seven'\n", encoding="utf-8"
+    )
+
+    monkeypatch.delenv("SENSEI_CONFIG_SOFT_FAIL", raising=False)
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "SENSEI_CONFIG_SOFT_FAIL" not in os.environ
+
+    monkeypatch.setenv("SENSEI_CONFIG_SOFT_FAIL", "preexisting")
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert os.environ.get("SENSEI_CONFIG_SOFT_FAIL") == "preexisting"
+
+
+def test_verify_collects_every_dotpath_on_multi_field_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Per ADR-0025, verify must report every config violation in one run,
+    not abort on the first. Two unrelated bad fields must both surface."""
+    monkeypatch.delenv("SENSEI_CONFIG_SOFT_FAIL", raising=False)
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / "learner" / "config.yaml").write_text(
+        "memory:\n  half_life_days: 'seven'\n"
+        "performance_training:\n  mastery_gate: legendary\n",
+        encoding="utf-8",
+    )
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "half_life_days" in result.output
+    assert "mastery_gate" in result.output
