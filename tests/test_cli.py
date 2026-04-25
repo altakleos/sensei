@@ -663,3 +663,78 @@ def test_verify_catches_manifest_with_non_list_required(tmp_path: Path) -> None:
     result = runner.invoke(main, ["verify", str(inst)])
     assert result.exit_code == 1
     assert "'required' must be a list" in result.output
+
+
+# --- verify: defaults-schema validation ---
+#
+# Catches typos, wrong types, and out-of-range tunables in the merged
+# (defaults + learner override) config. Previously these silently fell
+# through to hardcoded script defaults.
+
+
+def test_verify_passes_clean_instance_against_defaults_schema(tmp_path: Path) -> None:
+    """Regression: a freshly-scaffolded instance must validate cleanly.
+    Catches schema/defaults-yaml drift if either is edited without the other."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 0, result.output
+    assert "config:" not in result.output
+
+
+def test_verify_catches_unknown_tunable_in_learner_config(tmp_path: Path) -> None:
+    """A typo'd top-level key in learner/config.yaml must surface, not silently fall through."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / "learner" / "config.yaml").write_text(
+        "memori:\n  half_life_dais: 7\n", encoding="utf-8"
+    )
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "config:" in result.output
+    # The schema reports the unknown property under <root> with the key name.
+    assert "memori" in result.output
+
+
+def test_verify_catches_wrong_type_in_learner_config(tmp_path: Path) -> None:
+    """A string in place of a number must be rejected by the schema."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / "learner" / "config.yaml").write_text(
+        'memory:\n  half_life_days: "seven"\n', encoding="utf-8"
+    )
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "config:" in result.output
+    assert "memory" in result.output
+
+
+def test_verify_catches_out_of_range_tunable(tmp_path: Path) -> None:
+    """stale_threshold > 1 violates the 0..1 freshness bound."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / "learner" / "config.yaml").write_text(
+        "memory:\n  stale_threshold: 1.5\n", encoding="utf-8"
+    )
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "config:" in result.output
+    assert "stale_threshold" in result.output
+
+
+def test_verify_catches_invalid_enum_in_learner_config(tmp_path: Path) -> None:
+    """performance_training.mastery_gate is enum-restricted; a wrong value must fail."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / "learner" / "config.yaml").write_text(
+        "performance_training:\n  mastery_gate: legendary\n", encoding="utf-8"
+    )
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "config:" in result.output
+    assert "mastery_gate" in result.output

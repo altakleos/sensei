@@ -1,0 +1,310 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sensei.dev/schemas/defaults.schema.json",
+  "title": "Sensei Engine Defaults",
+  "description": "Schema for src/sensei/engine/defaults.yaml — the authoritative tunable surface for the engine. Learner overrides in learner/config.yaml deep-merge on top before validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version"],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 0,
+      "description": "Defaults schema version. Bump on any field-semantics change."
+    },
+    "mentor": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Mentor-side runtime knobs.",
+      "properties": {
+        "emotional_state": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "staleness_minutes": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Minutes after which the recorded emotional_state is considered stale and re-probed."
+            },
+            "degradation_intervention_threshold": {
+              "type": "string",
+              "enum": ["confused", "frustrated", "bored", "disengaged"],
+              "description": "Earliest emotional state along the degradation chain that triggers an intervention."
+            }
+          }
+        },
+        "metacognitive_state": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "staleness_days": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Days after which the recorded metacognitive_state is considered stale and re-probed."
+            },
+            "fading_threshold": {
+              "type": "string",
+              "enum": ["scaffolded", "proactive", "self-directed"],
+              "description": "Metacognitive level at which scaffolding fades to lighter prompts."
+            }
+          }
+        }
+      }
+    },
+    "learner": {
+      "type": "object",
+      "description": "Learner-side defaults (initial mastery levels, decay rates, etc.). Reserved for future expansion.",
+      "additionalProperties": true
+    },
+    "curriculum": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Curriculum graph tunables (consumed by frontier.py, mutate_graph.py, goal protocol).",
+      "properties": {
+        "max_nodes": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Hard cap on total nodes per goal."
+        },
+        "initial_size_min": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Minimum nodes for initial DAG generation."
+        },
+        "initial_size_max": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum nodes for initial DAG generation."
+        },
+        "prior_knowledge_percentile": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Assumed learner percentile when generating initial curriculum."
+        },
+        "frontier_max": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Max frontier nodes to present as choices."
+        },
+        "mastery_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Minimum correct/attempts ratio to pass mastery gate."
+        },
+        "min_attempts": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Minimum probes before mastery gate can pass."
+        },
+        "max_decompose_children": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Max subtopics when decomposing a coarse node."
+        },
+        "depth_profiles": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "exposure": { "$ref": "#/$defs/DepthProfile" },
+            "functional": { "$ref": "#/$defs/DepthProfile" },
+            "deep": { "$ref": "#/$defs/DepthProfile" }
+          }
+        }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Review protocol tunables (consumed by protocols/review.md via decay.py).",
+      "properties": {
+        "half_life_days": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Exponential decay half-life per topic (days)."
+        },
+        "stale_threshold": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "description": "Freshness below this is considered stale and due for review."
+        }
+      }
+    },
+    "hints": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Hint ingestion tunables (consumed by protocols/hints.md via hint_decay.py).",
+      "properties": {
+        "half_life_days": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Hint relevance decay half-life (days)."
+        },
+        "boost_weight": {
+          "type": "number",
+          "minimum": 1,
+          "description": "Multiplier for hinted topics in curriculum ordering."
+        },
+        "max_boost": {
+          "type": "number",
+          "minimum": 1,
+          "description": "Ceiling on cumulative hint boost per topic."
+        },
+        "cluster_threshold": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Hints in same cluster before suggesting a deep-dive."
+        },
+        "expire_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Freshness below this triggers expiration."
+        },
+        "expire_after_days": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Hard cap: expire unacted hints after this many days."
+        },
+        "relevance_floor": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Hints scored below this are auto-marked irrelevant."
+        }
+      }
+    },
+    "cross_goal": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Cross-goal intelligence tunables (consumed by goal_priority.py, session_allocator.py, review_scheduler.py).",
+      "properties": {
+        "deadline_weight": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Urgency multiplier for imminent deadlines in goal_priority.py."
+        },
+        "min_session_minutes": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Minimum per-goal time allocation in session_allocator.py. Goals receiving fewer minutes are dropped."
+        },
+        "review_dedup": {
+          "type": "boolean",
+          "description": "Enable cross-goal review deduplication in review_scheduler.py."
+        },
+        "concept_dedup": {
+          "type": "boolean",
+          "description": "Enable concept-aware deduplication (in addition to slug-level) in review_scheduler.py."
+        }
+      }
+    },
+    "interleaving": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Interleaving tunables (consumed by review_scheduler.py via review protocol).",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Master switch for interleaving post-sort."
+        },
+        "intensity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "0=blocked (stale-first only), 1=fully interleaved."
+        },
+        "min_mastery": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Topics below this mastery score get blocked practice, not interleaved."
+        }
+      }
+    },
+    "session_notes": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Session notes tunables (consumed by engine.md session-start and session-close).",
+      "properties": {
+        "load_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of recent session notes loaded at session start."
+        },
+        "max_entries": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum sessions retained before oldest are retired."
+        }
+      }
+    },
+    "performance_training": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Performance phase tunables (consumed by protocols/performance-training.md via goal protocol).",
+      "properties": {
+        "mastery_gate": {
+          "type": "string",
+          "enum": ["shaky", "developing", "solid", "mastered"],
+          "description": "Minimum mastery level to enter the performance phase. Ordinal: shaky < developing < solid < mastered."
+        },
+        "stage_thresholds": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "automate": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Correct fluent recalls to advance past stage 2."
+            },
+            "verbalize": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Clear verbal explanations to advance past stage 3."
+            },
+            "time_pressure": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Timed problems solved within budget to advance past stage 4."
+            },
+            "simulated_eval": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Scored problems passed under evaluation conditions to advance past stage 5."
+            },
+            "full_mock": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Complete mock events passed to complete the performance phase."
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "DepthProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Per-target-depth overrides for curriculum tunables.",
+      "properties": {
+        "initial_size_min": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "initial_size_max": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "prior_knowledge_percentile": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    }
+  }
+}

@@ -38,6 +38,39 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     return data
 
 
+def _soft_validate(merged: dict[str, Any], engine_root: Path) -> None:
+    """Validate *merged* config against defaults.schema.json if available.
+
+    Soft-fail: any error is printed to stderr; the merged config is still
+    returned. The hard gate lives in `sensei verify`. Rationale: every
+    protocol invocation calls load_config; a hard failure for one tunable
+    typo would brick the entire engine for a learner who runs `verify`
+    rarely.
+    """
+    schema_path = engine_root / "schemas" / "defaults.schema.json"
+    if not schema_path.exists():
+        return
+    try:
+        import json
+
+        import jsonschema
+    except ImportError:
+        return
+    try:
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return
+    validator = jsonschema.Draft202012Validator(schema)
+    errors = sorted(validator.iter_errors(merged), key=lambda e: list(e.absolute_path))
+    for err in errors:
+        path = list(err.absolute_path) or "<root>"
+        print(
+            f"WARN: config: {path}: {err.message} "
+            f"(run `sensei verify` for the strict gate)",
+            file=sys.stderr,
+        )
+
+
 def load_config(engine_root: Path, instance_root: Path) -> dict[str, Any]:
     """Load engine defaults and merge learner overrides on top.
 
@@ -46,4 +79,6 @@ def load_config(engine_root: Path, instance_root: Path) -> dict[str, Any]:
     """
     defaults = _load_yaml(engine_root / "defaults.yaml")
     overrides = _load_yaml(instance_root / "learner" / "config.yaml")
-    return _deep_merge(defaults, overrides)
+    merged = _deep_merge(defaults, overrides)
+    _soft_validate(merged, engine_root)
+    return merged

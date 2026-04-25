@@ -39,6 +39,7 @@ required:
   - protocols/modes/tutor.md
 
   # Schemas
+  - schemas/defaults.schema.json
   - schemas/goal.schema.json
   - schemas/hints.yaml.schema.json
   - schemas/profile.schema.json

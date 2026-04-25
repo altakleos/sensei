@@ -482,6 +482,27 @@ def verify(target: Path) -> None:
         except yaml.YAMLError as exc:
             errors.append(f"session-notes: invalid YAML — {exc}")
 
+    # Validate the merged config (defaults + learner override) against
+    # defaults.schema.json. The merged result is what scripts see at
+    # runtime, so a learner-side typo or wrong type must surface here.
+    defaults_schema_path = sensei_dir / "schemas" / "defaults.schema.json"
+    defaults_yaml_path = sensei_dir / "defaults.yaml"
+    if defaults_schema_path.exists() and defaults_yaml_path.exists():
+        try:
+            import json
+
+            import jsonschema
+
+            from sensei.engine.scripts.config import load_config
+
+            merged = load_config(sensei_dir, target)
+            schema = json.loads(defaults_schema_path.read_text())
+            validator = jsonschema.Draft202012Validator(schema)
+            for err in sorted(validator.iter_errors(merged), key=lambda e: list(e.absolute_path)):
+                errors.append(f"config: {list(err.absolute_path) or '<root>'}: {err.message}")
+        except (yaml.YAMLError, ValueError) as exc:
+            errors.append(f"config: {exc}")
+
     if errors:
         click.echo("FAIL")
         for e in errors:

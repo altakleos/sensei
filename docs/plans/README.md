@@ -53,6 +53,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [verify-bundle-completeness](verify-bundle-completeness.md) | `sensei verify` checks the full engine bundle via shipped `manifest.yaml` | done |
 | [check-plan-discipline](check-plan-discipline.md) | Tick boxes on two violating plans + add `ci/check_plan_completion.py` lint | done |
 | [tier3-hygiene](tier3-hygiene.md) | Drop stale test count in AGENTS.md + repair collapsed plan-index rows | done |
+| [defaults-schema](defaults-schema.md) | JSON Schema for `defaults.yaml`; verify catches typos, wrong types, out-of-range tunables | done |
 
 ### In Progress
 | Plan | Feature | Status |
