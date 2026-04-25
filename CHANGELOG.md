@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a20] — 2026-04-25
+
 ### Added
 - Release audit log is now CI-enforced. `ci/check_release_audit.py` runs in `release.yml`'s `build-and-check` job (after `check_package_contents.py`) and fails the build when `docs/operations/releases/<tag>.md` is missing, has malformed frontmatter, omits a required field, reports a non-zero `exit_code`, or carries an unrecognised `tool` value. Closes the gap that survived ADR-0020's self-bypass: the workstation-only Tier-2 gate now leaves a machine-checked artifact before publish. Per [ADR-0024](docs/decisions/0024-release-audit-log-required.md).
 
@@ -313,7 +315,8 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a19...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a20...HEAD
+[0.1.0a20]: https://github.com/altakleos/sensei/compare/v0.1.0a19...v0.1.0a20
 [0.1.0a19]: https://github.com/altakleos/sensei/compare/v0.1.0a18...v0.1.0a19
 [0.1.0a18]: https://github.com/altakleos/sensei/compare/v0.1.0a17...v0.1.0a18
 [0.1.0a17]: https://github.com/altakleos/sensei/compare/v0.1.0a16...v0.1.0a17
