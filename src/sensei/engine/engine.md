@@ -195,7 +195,7 @@ When the learner expresses a specific operational intent, dispatch to the corres
 | "Review my solution" / "Check my code" / "Is this right?" | `protocols/reviewer.md` | accepted |
 | "Quiz me" / "Am I ready?" / "Test me" | `protocols/assess.md` | accepted |
 | "Challenge me" / "Make it harder" / "Test my limits" | `protocols/challenger.md` | accepted |
-| "Process my hints" / "What's in my inbox?" / "New hints" | `protocols/hints.md` | draft |
+| "Process my hints" / "What's in my inbox?" / "New hints" | `protocols/hints.md` | accepted |
 | "Pause this goal" / "Take a break" / "Switch goals" | `protocols/goal.md` §Pause | accepted |
 | "Resume [goal]" / "Back to [goal]" / "Continue [goal]" | `protocols/goal.md` §Resume | accepted |
 | "Drop this goal" / "I don't want to learn X" | `protocols/goal.md` §Abandon | accepted |
