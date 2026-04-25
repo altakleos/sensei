@@ -113,3 +113,114 @@ def test_schema_rejects_invalid_values(
     matched = [e for e in errors if list(e.absolute_path) == list(path)]
     assert matched, f"expected an error at {path}, got: {[(list(e.absolute_path), e.message) for e in errors]}"
     assert any(expected_substring in e.message.lower() or expected_substring in e.message for e in matched)
+
+
+# ──────────────────────────────────────────────────────────────────────────
+# ADR-0023: nested mappings declare `required` arrays so partial-mapping
+# overrides (e.g. `memory: {}` in learner/config.yaml) can no longer silently
+# drop tunables that engine code expects.
+# ──────────────────────────────────────────────────────────────────────────
+
+
+@pytest.mark.parametrize(
+    "section,expected_missing",
+    [
+        ("memory", {"half_life_days", "stale_threshold"}),
+        ("cross_goal", {"deadline_weight", "min_session_minutes", "review_dedup", "concept_dedup"}),
+        ("interleaving", {"enabled", "intensity", "min_mastery"}),
+        ("session_notes", {"load_count", "max_entries"}),
+        ("performance_training", {"mastery_gate", "stage_thresholds"}),
+        (
+            "hints",
+            {
+                "half_life_days",
+                "boost_weight",
+                "max_boost",
+                "cluster_threshold",
+                "expire_threshold",
+                "expire_after_days",
+                "relevance_floor",
+            },
+        ),
+        ("mentor", {"emotional_state", "metacognitive_state"}),
+    ],
+)
+def test_empty_section_override_fails_with_all_required_keys(
+    section: str, expected_missing: set[str]
+) -> None:
+    """A whole-key-replace override of a nested mapping (e.g. `memory: {}`)
+    must surface every dropped tunable as a `required` violation, not pass
+    silently and fall through to hardcoded script defaults."""
+    schema = _load_schema()
+    config = _load_defaults()
+    config[section] = {}
+    errors = [
+        e
+        for e in jsonschema.Draft202012Validator(schema).iter_errors(config)
+        if list(e.absolute_path) == [section]
+    ]
+    surfaced = {
+        m.split("'")[1]
+        for e in errors
+        for m in [e.message]
+        if "is a required property" in m
+    }
+    assert surfaced == expected_missing, (
+        f"empty {section}: {{}} should report missing keys {expected_missing}, "
+        f"got {surfaced}"
+    )
+
+
+def test_partial_section_override_reports_only_missing_keys() -> None:
+    """A learner config that overrides one key in a section keeps just the
+    rest of that section's required keys flagged — not all of them."""
+    schema = _load_schema()
+    config = _load_defaults()
+    config["memory"] = {"half_life_days": 10.0}  # missing stale_threshold
+    errors = [
+        e
+        for e in jsonschema.Draft202012Validator(schema).iter_errors(config)
+        if list(e.absolute_path) == ["memory"]
+    ]
+    surfaced = {
+        m.split("'")[1]
+        for e in errors
+        for m in [e.message]
+        if "is a required property" in m
+    }
+    assert surfaced == {"stale_threshold"}
+
+
+def test_inner_nested_mapping_required_keys_enforced() -> None:
+    """Required arrays apply at deeper levels too — replacing
+    `mentor.emotional_state` with `{}` must surface its inner keys."""
+    schema = _load_schema()
+    config = _load_defaults()
+    config["mentor"]["emotional_state"] = {}
+    errors = [
+        e
+        for e in jsonschema.Draft202012Validator(schema).iter_errors(config)
+        if list(e.absolute_path) == ["mentor", "emotional_state"]
+    ]
+    surfaced = {
+        m.split("'")[1]
+        for e in errors
+        for m in [e.message]
+        if "is a required property" in m
+    }
+    assert surfaced == {"staleness_minutes", "degradation_intervention_threshold"}
+
+
+def test_learner_section_remains_open() -> None:
+    """The reserved-for-expansion `learner: {}` block keeps
+    additionalProperties: true and no required keys — partial expansion
+    of this surface must not fail validation."""
+    schema = _load_schema()
+    config = _load_defaults()
+    config["learner"] = {"any_future_key": 42}
+    errors = [
+        e
+        for e in jsonschema.Draft202012Validator(schema).iter_errors(config)
+        if list(e.absolute_path) and e.absolute_path[0] == "learner"
+    ]
+    assert errors == [], "learner: must remain additionalProperties: true"

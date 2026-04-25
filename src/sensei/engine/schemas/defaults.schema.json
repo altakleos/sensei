@@ -15,11 +15,13 @@
     "mentor": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["emotional_state", "metacognitive_state"],
       "description": "Mentor-side runtime knobs.",
       "properties": {
         "emotional_state": {
           "type": "object",
           "additionalProperties": false,
+          "required": ["staleness_minutes", "degradation_intervention_threshold"],
           "properties": {
             "staleness_minutes": {
               "type": "integer",
@@ -36,6 +38,7 @@
         "metacognitive_state": {
           "type": "object",
           "additionalProperties": false,
+          "required": ["staleness_days", "fading_threshold"],
           "properties": {
             "staleness_days": {
               "type": "integer",
@@ -59,6 +62,17 @@
     "curriculum": {
       "type": "object",
       "additionalProperties": false,
+      "required": [
+        "max_nodes",
+        "initial_size_min",
+        "initial_size_max",
+        "prior_knowledge_percentile",
+        "frontier_max",
+        "mastery_threshold",
+        "min_attempts",
+        "max_decompose_children",
+        "depth_profiles"
+      ],
       "description": "Curriculum graph tunables (consumed by frontier.py, mutate_graph.py, goal protocol).",
       "properties": {
         "max_nodes": {
@@ -106,6 +120,7 @@
         "depth_profiles": {
           "type": "object",
           "additionalProperties": false,
+          "required": ["exposure", "functional", "deep"],
           "properties": {
             "exposure": { "$ref": "#/$defs/DepthProfile" },
             "functional": { "$ref": "#/$defs/DepthProfile" },
@@ -117,6 +132,7 @@
     "memory": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["half_life_days", "stale_threshold"],
       "description": "Review protocol tunables (consumed by protocols/review.md via decay.py).",
       "properties": {
         "half_life_days": {
@@ -135,6 +151,15 @@
     "hints": {
       "type": "object",
       "additionalProperties": false,
+      "required": [
+        "half_life_days",
+        "boost_weight",
+        "max_boost",
+        "cluster_threshold",
+        "expire_threshold",
+        "expire_after_days",
+        "relevance_floor"
+      ],
       "description": "Hint ingestion tunables (consumed by protocols/hints.md via hint_decay.py).",
       "properties": {
         "half_life_days": {
@@ -179,6 +204,7 @@
     "cross_goal": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["deadline_weight", "min_session_minutes", "review_dedup", "concept_dedup"],
       "description": "Cross-goal intelligence tunables (consumed by goal_priority.py, session_allocator.py, review_scheduler.py).",
       "properties": {
         "deadline_weight": {
@@ -204,6 +230,7 @@
     "interleaving": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["enabled", "intensity", "min_mastery"],
       "description": "Interleaving tunables (consumed by review_scheduler.py via review protocol).",
       "properties": {
         "enabled": {
@@ -227,6 +254,7 @@
     "session_notes": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["load_count", "max_entries"],
       "description": "Session notes tunables (consumed by engine.md session-start and session-close).",
       "properties": {
         "load_count": {
@@ -244,6 +272,7 @@
     "performance_training": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["mastery_gate", "stage_thresholds"],
       "description": "Performance phase tunables (consumed by protocols/performance-training.md via goal protocol).",
       "properties": {
         "mastery_gate": {
@@ -254,6 +283,7 @@
         "stage_thresholds": {
           "type": "object",
           "additionalProperties": false,
+          "required": ["automate", "verbalize", "time_pressure", "simulated_eval", "full_mock"],
           "properties": {
             "automate": {
               "type": "integer",
@@ -289,6 +319,7 @@
     "DepthProfile": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["initial_size_min", "initial_size_max", "prior_knowledge_percentile"],
       "description": "Per-target-depth overrides for curriculum tunables.",
       "properties": {
         "initial_size_min": {
