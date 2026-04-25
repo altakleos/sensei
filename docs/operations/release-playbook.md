@@ -204,15 +204,19 @@ gh run list --workflow=release.yml --limit 3
 # Confirm the deployment is waiting (returns a non-empty list)
 gh api repos/altakleos/sensei/actions/runs/<RUN_ID>/pending_deployments
 
+# Resolve the pypi environment's numeric id by name (don't hardcode it —
+# recreating the environment changes the id, but the name `pypi` is stable).
+ENV_ID=$(gh api repos/altakleos/sensei/environments/pypi --jq '.id')
+
 # Approve
 gh api repos/altakleos/sensei/actions/runs/<RUN_ID>/pending_deployments \
   --method POST \
-  --field 'environment_ids[]=14342694313' \
+  --field "environment_ids[]=$ENV_ID" \
   --field 'state=approved' \
   --field 'comment=Ship it'
 ```
 
-The environment ID `14342694313` is stable — the `pypi` environment in `altakleos/sensei`. Only the run ID changes per release.
+GitHub-environment ids are stable across runs but tied to GitHub-account state — recreating the `pypi` environment (account migration, accidental delete + recreate, security rotation) changes the id. Resolving by the environment name is therefore the canonical pattern; the hardcoded literal that appears in [ADR-0026](../decisions/0026-publish-gate-manual-approval.md)'s body was the v0.1.0a20-empirical witness and is preserved there as historical record (ADR bodies are immutable). If `gh api repos/altakleos/sensei/environments/pypi` returns 404, the environment was deleted or renamed — re-run [`docs/plans/release-workflow.md`](../plans/release-workflow.md) § Prerequisites to recreate it.
 
 You can also approve through the GitHub UI: open the workflow run, click **Review deployments**, check the `pypi` environment, click **Approve and deploy**.
 
