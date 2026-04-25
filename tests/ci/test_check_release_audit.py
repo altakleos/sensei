@@ -6,17 +6,31 @@ from pathlib import Path
 
 import pytest
 import yaml
-from ci.check_release_audit import REQUIRED_FIELDS, lint, main
+from ci.check_release_audit import REQUIRED_FIELDS, REQUIRED_GATE_TESTS, lint, main
 
 _HEX64 = "a" * 64
 
-_VALID_BODY = """\
-# Release vX.Y.Z — Tier-2 E2E Audit Log
+# A body that mentions all seven ADR-0027 test paths satisfies the
+# ADR-0028 breadth check. Existing happy-path tests rely on this.
+_GATE_TEST_LINES = "\n".join(f"  {p}" for p in REQUIRED_GATE_TESTS)
 
-## Result
+_VALID_BODY = (
+    "# Release vX.Y.Z — Tier-2 E2E Audit Log\n\n"
+    "## Invocation\n\n"
+    f"{_GATE_TEST_LINES}\n\n"
+    "## Result\n\n7 passed, 0 failed.\n"
+)
 
-3 passed, 0 failed.
-"""
+# A body that lists only the original three (pre-ADR-0027) tests. Used by
+# the legacy-log breadth test to document the forward-looking-gate intent.
+_LEGACY_THREE_TEST_BODY = (
+    "# Release vX.Y.Z — Tier-2 E2E Audit Log\n\n"
+    "## Invocation\n\n"
+    "  tests/e2e/test_goal_protocol_e2e.py\n"
+    "  tests/e2e/test_assess_protocol_e2e.py\n"
+    "  tests/e2e/test_hints_protocol_e2e.py\n\n"
+    "## Result\n\n3 passed, 0 failed.\n"
+)
 
 
 def _audit_file(
@@ -252,6 +266,64 @@ def test_non_string_tool_rejected(tmp_path: Path) -> None:
     )
     violations = lint(path, "v0.1.0a20")
     assert any("tool: must be a non-empty string" in v for v in violations)
+
+
+# ---------------------- body breadth (ADR-0028) ---------------------------- #
+
+
+def test_body_breadth_complete(tmp_path: Path) -> None:
+    """All seven ADR-0027 test paths present → no breadth violation."""
+    path = _audit_file(tmp_path)  # _VALID_BODY embeds all seven paths
+    assert lint(path, "v0.1.0a20") == []
+
+
+def test_body_breadth_missing_one(tmp_path: Path) -> None:
+    """One test path absent → exactly one breadth violation naming it."""
+    body = _VALID_BODY.replace("  tests/e2e/test_challenger_protocol_e2e.py\n", "")
+    path = _audit_file(tmp_path, body=body)
+    violations = lint(path, "v0.1.0a20")
+    breadth = [v for v in violations if "missing required test path" in v]
+    assert len(breadth) == 1, breadth
+    assert "test_challenger_protocol_e2e.py" in breadth[0]
+    assert "ADR-0027/0028" in breadth[0]
+
+
+def test_body_breadth_missing_all(tmp_path: Path) -> None:
+    """Empty body → seven breadth violations, one per required path."""
+    path = _audit_file(tmp_path, body="")
+    violations = lint(path, "v0.1.0a20")
+    breadth = [v for v in violations if "missing required test path" in v]
+    assert len(breadth) == 7
+    for required_path in REQUIRED_GATE_TESTS:
+        assert any(required_path in v for v in breadth), (
+            f"path {required_path!r} not flagged in {breadth!r}"
+        )
+
+
+def test_legacy_three_test_log_fails_breadth(tmp_path: Path) -> None:
+    """A pre-ADR-0027 audit log with only three paths fails on the four added.
+
+    Documents the forward-looking-gate intent of ADR-0028: legacy logs
+    aren't backfilled, but if the validator is run against one (e.g. for
+    archaeology) it surfaces exactly the gap that motivated ADR-0027.
+    """
+    path = _audit_file(tmp_path, body=_LEGACY_THREE_TEST_BODY)
+    violations = lint(path, "v0.1.0a20")
+    breadth = [v for v in violations if "missing required test path" in v]
+    assert len(breadth) == 4, breadth
+    expected_missing = {
+        "test_tutor_protocol_e2e.py",
+        "test_review_protocol_e2e.py",
+        "test_reviewer_protocol_e2e.py",
+        "test_challenger_protocol_e2e.py",
+    }
+    found_missing = {
+        path_str
+        for v in breadth
+        for path_str in expected_missing
+        if path_str in v
+    }
+    assert found_missing == expected_missing, breadth
 
 
 # --------------------------------- main ------------------------------------ #

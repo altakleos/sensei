@@ -73,6 +73,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [release-publish-gate-reality](release-publish-gate-reality.md) | ADR-0026 supersedes ADR-0020 — publish gate is a manual approval; reconcile playbook prose to observed v0.1.0a20 behaviour | done |
 | [engine-bundle-link-gate](engine-bundle-link-gate.md) | Extend `ci/check_links.py` to scan the engine bundle; fix four 2026-04-25 follow-up audit drifts (two engine-bundle ADR refs, conftest docstring, operations README post-ADR-0026) | done |
 | [tier2-gate-expansion](tier2-gate-expansion.md) | Expand pre-release Tier-2 gate from 3 protocols to 7 (adds tutor / review / reviewer / challenger); ADR-0027 records the cadence/coverage trade-off | done |
+| [tier2-gate-breadth-enforcement](tier2-gate-breadth-enforcement.md) | CI-enforce 7-test gate breadth in `ci/check_release_audit.py` (ADR-0028); body-breadth check closes the honour-system gap left by ADR-0024 + ADR-0027 | done |
 
 ### In Progress
 | Plan | Feature | Status |

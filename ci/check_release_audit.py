@@ -23,8 +23,14 @@ Rules (all must hold):
 7. ``tool`` is one of ``claude``, ``kiro``, or a string beginning with
    ``other:`` (keeps ADR-0003 conformance auditable while permitting
    future tools without a code change).
+8. The body (everything after the closing frontmatter fence) mentions
+   every test file path in ``REQUIRED_GATE_TESTS`` — the seven Tier-2
+   tests enumerated in ADR-0027. Per ADR-0028; closes the breadth
+   honour-system gap left by ADR-0024 + ADR-0027 alone.
 
-Per [ADR-0024](docs/decisions/0024-release-audit-log-required.md) and the
+Per [ADR-0024](docs/decisions/0024-release-audit-log-required.md),
+[ADR-0027](docs/decisions/0027-tier2-gate-expansion.md),
+[ADR-0028](docs/decisions/0028-tier2-gate-breadth-enforcement.md), and the
 template at [docs/operations/releases/README.md](docs/operations/releases/README.md).
 
 Exit codes:
@@ -58,31 +64,55 @@ REQUIRED_FIELDS: tuple[str, ...] = (
 _HEX64_RE = re.compile(r"^[0-9a-f]{64}$")
 _KNOWN_TOOLS: frozenset[str] = frozenset({"claude", "kiro"})
 
+# ADR-0027 expanded the Tier-2 gate from 3 to 7 protocols. ADR-0028 makes
+# that breadth machine-checked: every release's audit-log body must mention
+# each path verbatim. The maintainer copy-pastes the playbook's bash-array
+# invocation into the body, so the seven paths land there for free; missing
+# paths mean the gate did not run all seven.
+REQUIRED_GATE_TESTS: tuple[str, ...] = (
+    "tests/e2e/test_goal_protocol_e2e.py",
+    "tests/e2e/test_assess_protocol_e2e.py",
+    "tests/e2e/test_hints_protocol_e2e.py",
+    "tests/e2e/test_tutor_protocol_e2e.py",
+    "tests/e2e/test_review_protocol_e2e.py",
+    "tests/e2e/test_reviewer_protocol_e2e.py",
+    "tests/e2e/test_challenger_protocol_e2e.py",
+)
 
-def _split_frontmatter(text: str) -> tuple[dict[str, Any] | None, str | None]:
-    """Return (frontmatter_dict, error_message). Exactly one is non-None."""
+
+def _split_frontmatter(text: str) -> tuple[dict[str, Any] | None, str, str | None]:
+    """Return ``(frontmatter_dict, body_text, error_message)``.
+
+    On success: ``(dict, body, None)`` where ``body`` is everything after
+    the closing fence's terminating newline (may be empty).
+    On failure: ``(None, "", error_string)``.
+    """
     text = text.replace("\r\n", "\n")
     if not text.startswith("---\n"):
-        return None, "file does not start with a YAML frontmatter block"
+        return None, "", "file does not start with a YAML frontmatter block"
     # Search from index 3 (the opening fence's terminating newline) so an empty
     # frontmatter — '---\n---\n' — finds its closing fence at the same newline.
     end = text.find("\n---\n", 3)
+    body = ""
     if end < 0:
         # Allow the closing fence to be the final line without a trailing newline.
         stripped = text.rstrip()
         if stripped.endswith("\n---"):
             end = stripped.rfind("\n---")
+            # No body content possible after a bare-end fence.
         else:
-            return None, "frontmatter closing '---' fence not found"
+            return None, "", "frontmatter closing '---' fence not found"
+    else:
+        body = text[end + len("\n---\n") :]
     try:
         fm = yaml.safe_load(text[4:end])
     except yaml.YAMLError as exc:
-        return None, f"invalid YAML frontmatter: {exc}"
+        return None, "", f"invalid YAML frontmatter: {exc}"
     if fm is None:
-        return None, "frontmatter is empty"
+        return None, "", "frontmatter is empty"
     if not isinstance(fm, dict):
-        return None, "frontmatter is not a mapping"
-    return fm, None
+        return None, "", "frontmatter is not a mapping"
+    return fm, body, None
 
 
 def _validate_tool(value: Any) -> str | None:
@@ -96,6 +126,22 @@ def _validate_tool(value: Any) -> str | None:
         f"tool: {value!r} is not one of {sorted(_KNOWN_TOOLS)} and does not "
         f"start with 'other:'"
     )
+
+
+def _validate_body_breadth(body: str) -> list[str]:
+    """Return one violation per missing test file path in *body*.
+
+    Per ADR-0028, the audit-log body must mention every test file path in
+    ``REQUIRED_GATE_TESTS``. Substring match is sufficient — the playbook's
+    bash-array invocation lists each path on its own line, and the
+    maintainer copy-pastes that block into the audit log's
+    ``## Invocation`` section.
+    """
+    return [
+        f"body: missing required test path {path!r} (ADR-0027/0028 gate breadth)"
+        for path in REQUIRED_GATE_TESTS
+        if path not in body
+    ]
 
 
 def _validate_transcript_hash(value: Any) -> str | None:
@@ -122,7 +168,7 @@ def lint(audit_path: Path, expected_tag: str) -> list[str]:
         return [f"{rel}: audit log not found for tag {expected_tag!r}"]
 
     text = audit_path.read_text(encoding="utf-8")
-    fm, err = _split_frontmatter(text)
+    fm, body, err = _split_frontmatter(text)
     if fm is None:
         return [f"{rel}: {err}"]
 
@@ -158,6 +204,12 @@ def lint(audit_path: Path, expected_tag: str) -> list[str]:
         hash_err = _validate_transcript_hash(fm["transcript_hash"])
         if hash_err is not None:
             violations.append(f"{rel}: {hash_err}")
+
+    # Body-breadth check (ADR-0028). Independent of frontmatter validity:
+    # a malformed-frontmatter run still surfaces breadth gaps in the same
+    # report so the maintainer fixes everything at once.
+    for breadth_err in _validate_body_breadth(body):
+        violations.append(f"{rel}: {breadth_err}")
 
     return violations
 

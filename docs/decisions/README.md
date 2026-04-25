@@ -33,6 +33,7 @@ Decisions in chronological order. Each ADR captures the context, decision, alter
 | 0025 | [Runtime Config Validation Hard-Fails by Default](0025-runtime-config-hard-fail.md) | accepted (lite) |
 | 0026 | [Publish Gate Is a Manual Approval (Supersedes ADR-0020)](0026-publish-gate-manual-approval.md) | accepted (lite) |
 | 0027 | [Pre-Release Tier-2 Gate Covers Seven Protocols](0027-tier2-gate-expansion.md) | accepted (lite) |
+| 0028 | [Tier-2 Gate Breadth Is CI-Enforced](0028-tier2-gate-breadth-enforcement.md) | accepted (lite) |
 
 ## Status values
 
