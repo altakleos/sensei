@@ -37,7 +37,12 @@ def _goal(slug: str, status: str = "active", priority: str = "normal", nodes: di
         "created": "2026-04-01T00:00:00Z",
         "status": status,
         "priority": priority,
-        "three_unknowns": {"prior_state": "none", "target_state": "clear", "constraints": "none", "target_depth": "functional"},
+        "three_unknowns": {
+            "prior_state": "none",
+            "target_state": "clear",
+            "constraints": "none",
+            "target_depth": "functional",
+        },
         "nodes": nodes or {},
     }
 

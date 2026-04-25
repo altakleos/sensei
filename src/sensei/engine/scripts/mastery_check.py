@@ -72,7 +72,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--topic", required=True, help="Topic slug to check")
     parser.add_argument("--required", required=True, choices=list(_LEVELS), help="Required mastery level")
     parser.add_argument("--min-attempts", type=int, default=0, help="Minimum attempts required (0 = no minimum)")
-    parser.add_argument("--min-ratio", type=float, default=0.0, help="Minimum correct/attempts ratio (0.0 = no minimum)")
+    parser.add_argument(
+        "--min-ratio",
+        type=float,
+        default=0.0,
+        help="Minimum correct/attempts ratio (0.0 = no minimum)",
+    )
     args = parser.parse_args(argv)
 
     path = Path(args.profile)

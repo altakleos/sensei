@@ -37,7 +37,14 @@ _SCORES: dict[str, float] = {
 _KNOWN_THRESHOLD = _LEVELS.index("solid")  # rank 3
 
 
-def check(profile: dict[str, Any], topic: str, *, goal: dict[str, Any] | None = None, concept_peers: list[str] | None = None, goal_depth: str | None = None) -> dict[str, Any]:
+def check(
+    profile: dict[str, Any],
+    topic: str,
+    *,
+    goal: dict[str, Any] | None = None,
+    concept_peers: list[str] | None = None,
+    goal_depth: str | None = None,
+) -> dict[str, Any]:
     """Return knowledge status for *topic* given a parsed profile dict.
 
     When *goal* is provided and the topic's node has
@@ -71,7 +78,7 @@ def check(profile: dict[str, Any], topic: str, *, goal: dict[str, Any] | None = 
         return result
     mastery = entry.get("mastery", "none")
     known = _LEVELS.index(mastery) >= threshold
-    result: dict[str, Any] = {"topic": topic, "known": known, "mastery": _SCORES.get(mastery, 0.0)}
+    result = {"topic": topic, "known": known, "mastery": _SCORES.get(mastery, 0.0)}
 
     # Per-goal re-demonstration override (cross-goal intelligence invariant 1).
     if goal is not None and known:
@@ -131,7 +138,18 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps({"error": f"yaml parse error: {exc}"}))
             return 1
 
-    print(json.dumps(check(profile, args.topic, goal=goal, concept_peers=json.loads(args.concept_peers) if args.concept_peers else None, goal_depth=args.goal_depth)))
+    concept_peers = json.loads(args.concept_peers) if args.concept_peers else None
+    print(
+        json.dumps(
+            check(
+                profile,
+                args.topic,
+                goal=goal,
+                concept_peers=concept_peers,
+                goal_depth=args.goal_depth,
+            )
+        )
+    )
     return 0
 
 

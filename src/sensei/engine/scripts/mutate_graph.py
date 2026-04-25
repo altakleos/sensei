@@ -241,7 +241,10 @@ def main(argv: list[str] | None = None) -> int:
                 missing = [p for p in prerequisites if p not in original]
                 msg = f"prerequisite(s) not found: {missing}"
         elif args.operation == "decompose":
-            msg = f"node '{args.node}' does not exist" if args.node not in original else "subgraph required for decompose"
+            if args.node not in original:
+                msg = f"node '{args.node}' does not exist"
+            else:
+                msg = "subgraph required for decompose"
         else:
             msg = "unknown error"
         return _fail(args.operation, args.node, msg)
