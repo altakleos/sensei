@@ -47,7 +47,7 @@ sensei/
 │       ├── prompts/
 │       ├── schemas/
 │       └── profiles/
-└── tests/                    (297 tests — unit, integration, transcript fixtures, E2E)
+└── tests/                    (unit, integration, transcript fixtures, E2E)
 ```
 
 ## Key Constraints

@@ -36,10 +36,14 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [e2e-tutor-protocol](e2e-tutor-protocol.md) | Tutor protocol E2E test — teaching interaction + profile update | done |
 | [curriculum-graph](curriculum-graph.md) | Curriculum graph — frontier, mutations, validation | done |
 | [e2e-challenger-reviewer](e2e-challenger-reviewer.md) | Challenger + reviewer E2E tests | done |
-| [fix-profile-writes](fix-profile-writes.md) | Constrain profile writes in challenger + reviewer protocols | done || [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
-| [e2e-mode-transition](e2e-mode-transition.md) | Multi-turn mode transition E2E test | done || [mermaid-diagrams](mermaid-diagrams.md) | Mermaid diagram enhancement pass | done |
-| [e2e-goal-lifecycle](e2e-goal-lifecycle.md) | Goal lifecycle E2E — pause + resume with stale detection | done || [parallel-worktrees](parallel-worktrees.md) | Parallel agent worktrees | done |
-| [tier3-nightly-ci](tier3-nightly-ci.md) | Tier-3 nightly E2E CI workflow | done || [session-notes](session-notes.md) | Session notes — structured cross-session mentor memory | done |
+| [fix-profile-writes](fix-profile-writes.md) | Constrain profile writes in challenger + reviewer protocols | done |
+| [hints-ingestion](hints-ingestion.md) | Hints ingestion pipeline | done |
+| [e2e-mode-transition](e2e-mode-transition.md) | Multi-turn mode transition E2E test | done |
+| [mermaid-diagrams](mermaid-diagrams.md) | Mermaid diagram enhancement pass | done |
+| [e2e-goal-lifecycle](e2e-goal-lifecycle.md) | Goal lifecycle E2E — pause + resume with stale detection | done |
+| [parallel-worktrees](parallel-worktrees.md) | Parallel agent worktrees | done |
+| [tier3-nightly-ci](tier3-nightly-ci.md) | Tier-3 nightly E2E CI workflow | done |
+| [session-notes](session-notes.md) | Session notes — structured cross-session mentor memory | done |
 | [performance-training-v1](performance-training-v1.md) | Performance training phase overlay (stages 1–4) — config, schema, phase protocol, engine wiring, goal protocol integration | done |
 | [performance-training-v2](performance-training-v2.md) | Performance training stages 5-6 — simulated evaluation + full mock | done |
 | [emotional-state-tracking](emotional-state-tracking.md) | Emotional state tracking — LLM-as-sensor emotional classification with affect-aware protocol adaptations | done |
@@ -48,6 +52,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [ruff-cleanup](ruff-cleanup.md) | Reconcile 37 ruff violations (E501/E402/F841/F401/SIM105/SIM103) on main | done |
 | [verify-bundle-completeness](verify-bundle-completeness.md) | `sensei verify` checks the full engine bundle via shipped `manifest.yaml` | done |
 | [check-plan-discipline](check-plan-discipline.md) | Tick boxes on two violating plans + add `ci/check_plan_completion.py` lint | done |
+| [tier3-hygiene](tier3-hygiene.md) | Drop stale test count in AGENTS.md + repair collapsed plan-index rows | done |
 
 ### In Progress
 | Plan | Feature | Status |
