@@ -61,3 +61,5 @@ Tests covered (per release-playbook § Pre-release gate):
 ## Index
 
 (empty — first entry lands with the next release)
+
+CI-enforced from the next tag onward by [`ci/check_release_audit.py`](../../../ci/check_release_audit.py), wired into `release.yml`'s `build-and-check` job per [ADR-0024](../../decisions/0024-release-audit-log-required.md). A release tag without a conformant log file at `docs/operations/releases/<tag>.md` fails the build before publish.

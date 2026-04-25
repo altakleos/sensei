@@ -57,6 +57,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [silence-ratio-and-missing-dogfood](silence-ratio-and-missing-dogfood.md) | `silence_ratio` helper + per-fixture bands; dogfood capture for tutor/goal/challenger/reviewer/status | done |
 | [shim-validation](shim-validation.md) | Static format validation for all 8 tool shims; per-tool manual runbook; README truth-in-advertising | done |
 | [ci-node24-opt-in](ci-node24-opt-in.md) | Force CI workflows onto Node 24 ahead of 2026-09-16 deprecation deadline | done |
+| [release-audit-enforcement](release-audit-enforcement.md) | CI-enforce the per-release Tier-2 E2E audit log (ADR-0024) — closes the workstation-only gate's evidence-trail gap | done |
 
 ### In Progress
 | Plan | Feature | Status |
