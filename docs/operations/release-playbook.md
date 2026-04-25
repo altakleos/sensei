@@ -39,6 +39,8 @@ Each run takes ~60–120s on a cold Claude Code cache; three tests is ~4–6 min
 
 Skip only with an explicit CHANGELOG note recording why (e.g. upstream Claude Code outage).
 
+Capture the gate's output (or a summary plus the transcript sha256) to `docs/operations/releases/<tag>.md` per the template at [`docs/operations/releases/README.md`](releases/README.md). Commit alongside the release tag. Without this artifact, "did the gate run?" is unverifiable after the fact — the maintainer who could miss running the gate is the same one trusted to confirm it ran.
+
 ## Tier-3 Nightly E2E
 
 The `e2e-nightly` GitHub Actions workflow runs all E2E tests on a daily schedule (06:00 UTC). Results appear in the Actions tab. The workflow can also be triggered manually via `workflow_dispatch` with an optional `tool` input (`auto`/`claude`/`kiro`).
@@ -169,6 +171,7 @@ Before tagging:
 - [ ] Version bumped in `src/sensei/__init__.py`
 - [ ] `docs/plans/` has no `status: in-progress` plans that should block
 - [ ] Local pre-merge gates pass — run **from the project venv** (`.venv/bin/pytest && .venv/bin/ruff check . && .venv/bin/mypy && python ci/check_foundations.py && python ci/check_links.py && python ci/check_plan_completion.py`). System-wide `ruff`/`mypy`/`pytest` may disagree with CI; the venv version is the source of truth.
+- [ ] Tier-2 E2E run captured to `docs/operations/releases/v<X.Y.Z>.md` per the template at [`docs/operations/releases/README.md`](releases/README.md)
 - [ ] `python -m build && python ci/check_package_contents.py --wheel dist/*.whl --tag vX.Y.Z` passes
 - [ ] GitHub Environment `pypi` reviewers still exist and are reachable
 
