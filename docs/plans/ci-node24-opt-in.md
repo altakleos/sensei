@@ -2,7 +2,7 @@
 feature: ci-node24-opt-in
 serves: docs/specs/release-process.md
 design: "Pure CI hygiene. No design doc needed."
-status: planned
+status: done
 date: 2026-04-25
 ---
 # Plan: CI Forward-Compat — Opt Into Node 24 for JavaScript Actions
@@ -22,16 +22,16 @@ The change is reversible: if Node 24 breaks something, the env var is removed an
 
 ## Tasks
 
-- [ ] T1: `.github/workflows/verify.yml` — add a workflow-level `env:` block setting `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"`.
-- [ ] T2: `.github/workflows/release.yml` — same env block at workflow level.
-- [ ] T3: `.github/workflows/e2e-nightly.yml` — same env block at workflow level.
-- [ ] T4: No CHANGELOG entry — internal CI hygiene per AGENTS.md:111 (refactors and internal-test edits don't need entries).
+- [x] T1: `.github/workflows/verify.yml` — add a workflow-level `env:` block setting `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"`.
+- [x] T2: `.github/workflows/release.yml` — same env block at workflow level.
+- [x] T3: `.github/workflows/e2e-nightly.yml` — same env block at workflow level.
+- [x] T4: No CHANGELOG entry — internal CI hygiene per AGENTS.md:111 (refactors and internal-test edits don't need entries).
 
 ## Acceptance Criteria
 
-- [ ] AC1: All three workflow files declare `env: FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"` at the top level (above `jobs:`).
-- [ ] AC2: After merge, the next `verify` run on `main` is green AND the per-job logs no longer carry the Node-20 deprecation annotation (or, if they do, the annotation now reflects the Node-24-forced behavior — the issue is upstream pinning to a node, not us).
-- [ ] AC3: No regression in test outcomes (verified by the same PR's CI run).
+- [x] AC1: All three workflow files declare `env: FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"` at the top level (above `jobs:`).
+- [x] AC2: After merge, the next `verify` run on `main` is green AND the per-job logs no longer carry the Node-20 deprecation annotation (or, if they do, the annotation now reflects the Node-24-forced behavior — the issue is upstream pinning to a node, not us).
+- [x] AC3: No regression in test outcomes (verified by the same PR's CI run).
 
 ## Out of Scope
 
