@@ -105,10 +105,11 @@ Every shim's path and format are pinned by `tests/test_init.py` (Cursor's `.mdc`
 - [Research Bibliography](docs/research/bibliography.md) — 60 curated sources
 
 **Contributing**
+- [CONTRIBUTING.md](CONTRIBUTING.md) — clone, `make setup`, `make gate`
+- [AGENTS.md](AGENTS.md) — contributor boot document (governance)
 - [Development Process](docs/development-process.md) — Spec-Driven Development method
 - [ADR Index](docs/decisions/README.md) — architectural decision records
 - [Implementation Guide](docs/sensei-implementation.md) — Sensei-specific implementation details
-- [AGENTS.md](AGENTS.md) — contributor boot document
 
 ## License
 

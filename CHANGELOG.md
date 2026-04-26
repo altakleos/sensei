@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Added
+- Contributor onboarding scaffolding: top-level `Makefile` (`setup`, `test`, `lint`, `typecheck`, `validators`, `gate`, `clean`) and `CONTRIBUTING.md`. All Makefile targets shell out to `.venv/bin/<tool>` so local pre-merge checks match CI; `make gate` runs the full bundle. Closes the gap where `pytest` on a fresh clone failed because `pyproject.toml` mandates `--cov=…` and PEP 668 blocks system-pip from installing `pytest-cov` — the venv discipline that lived only inside `docs/operations/release-playbook.md` is now mechanised at the entry point. Per [`docs/plans/contributor-onboarding-makefile.md`](docs/plans/contributor-onboarding-makefile.md).
+
 ## [0.1.0a21] — 2026-04-26
 
 ### Added
