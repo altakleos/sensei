@@ -1,5 +1,5 @@
 ---
-status: draft
+status: accepted
 date: 2026-04-24
 realizes:
   - P-curriculum-is-hypothesis
@@ -9,7 +9,7 @@ stressed_by:
   - persona-tomas
   - persona-jacundu
   - persona-nkechi
-fixtures_deferred: "Draft spec. Fixtures follow accepted spec + implementation."
+fixtures_deferred: "Accepted spec; no implementation plan filed yet. Fixtures land alongside the first implementation work — see protocols/goal.md § Step 4 (curriculum generation) and protocols/assess.md for likely consumption sites."
 ---
 
 # Calibration Anchors

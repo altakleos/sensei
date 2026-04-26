@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Changed
+- Calibration anchors spec promoted from draft to accepted ([`docs/specs/calibration-anchors.md`](docs/specs/calibration-anchors.md)). The contract — two-phase seeding, trust hierarchy (learner materials > web > training data), per-topic success criteria, hints-pipeline integration via the existing `anchor_type` enum — is now stable; first implementation work will file its own plan. The `anchor_type` schema seam shipped in v0.1.0a19 is unchanged.
+
 ## [0.1.0a20] — 2026-04-25
 
 ### Added

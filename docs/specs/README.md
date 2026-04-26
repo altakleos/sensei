@@ -8,14 +8,14 @@ For the full development model, see `docs/development-process.md`.
 |------|--------|
 | [Assessment Protocol](assessment-protocol.md) | accepted |
 | [Behavioral Modes](behavioral-modes.md) | accepted |
-| [Calibration Anchors](calibration-anchors.md) | draft |
-| [Cross-Goal Intelligence](cross-goal-intelligence.md) | draft |
+| [Calibration Anchors](calibration-anchors.md) | accepted |
+| [Cross-Goal Intelligence](cross-goal-intelligence.md) | accepted |
 | [Curriculum Graph](curriculum-graph.md) | accepted |
 | [Decompose Trigger](expand-trigger.md) | accepted |
 | [Goal Lifecycle](goal-lifecycle.md) | accepted |
 | [Goal Lifecycle Transitions](goal-lifecycle-transitions.md) | accepted |
 | [Hints](hints.md) | accepted |
-| [Interleaving](interleaving.md) | draft |
+| [Interleaving](interleaving.md) | accepted |
 | [Learner Profile](learner-profile.md) | accepted |
 | [Metacognitive Tracking](metacognitive-tracking.md) | accepted |
 | [Performance Training](performance-training.md) | accepted |

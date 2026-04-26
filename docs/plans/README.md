@@ -75,6 +75,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [tier2-gate-expansion](tier2-gate-expansion.md) | Expand pre-release Tier-2 gate from 3 protocols to 7 (adds tutor / review / reviewer / challenger); ADR-0027 records the cadence/coverage trade-off | done |
 | [tier2-gate-breadth-enforcement](tier2-gate-breadth-enforcement.md) | CI-enforce 7-test gate breadth in `ci/check_release_audit.py` (ADR-0028); body-breadth check closes the honour-system gap left by ADR-0024 + ADR-0027 | done |
 | [pypi-env-id-resolution](pypi-env-id-resolution.md) | Resolve `pypi` GitHub Environment id dynamically in the release-playbook recipe (was hardcoded to `14342694313`); ADR-0026 body left untouched per immutability | done |
+| [calibration-anchors-promotion](calibration-anchors-promotion.md) | Promote `calibration-anchors.md` from draft to accepted; repair stale `specs/README.md` index drift on `cross-goal-intelligence` and `interleaving` rows | done |
 
 ### In Progress
 | Plan | Feature | Status |
