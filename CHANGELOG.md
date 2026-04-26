@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Added
+- Question-density metric for Tier-1 fixtures. New helper `src/sensei/engine/scripts/question_density.py` measures mentor questions per mentor turn; transcript fixtures may declare an optional `question_density: {min, max}` band that fails CI if a Socratic protocol regresses toward telling (low density) or a narrative protocol drifts toward interrogation (high density). All 10 dogfood fixtures shipped with calibrated bands. Complements `silence_ratio`: silence_ratio measures *how much* the mentor talks; question_density measures *what shape* the talk takes. Per [`docs/plans/question-density-metric.md`](docs/plans/question-density-metric.md).
+
 ### Changed
 - Calibration anchors spec promoted from draft to accepted ([`docs/specs/calibration-anchors.md`](docs/specs/calibration-anchors.md)). The contract — two-phase seeding, trust hierarchy (learner materials > web > training data), per-topic success criteria, hints-pipeline integration via the existing `anchor_type` enum — is now stable; first implementation work will file its own plan. The `anchor_type` schema seam shipped in v0.1.0a19 is unchanged.
 

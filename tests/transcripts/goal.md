@@ -40,6 +40,14 @@ fixtures:
       # 0.85 catches a regression where goal-setting devolves into a
       # mentor monologue with no learner input.
       max: 0.85
+    question_density:
+      # Calibrated against goal.dogfood.md (observed 2.000). Goal-setting
+      # is clarification-heavy — three-unknowns probing produces multiple
+      # questions per turn. Bracketed: floor 0.5 catches collapse to
+      # rubric-monologue; ceiling 4.0 catches turning into rubric-rambling
+      # interrogation that overwhelms the learner.
+      min: 0.5
+      max: 4.0
 ---
 
 # Goal Protocol — Transcript Fixtures

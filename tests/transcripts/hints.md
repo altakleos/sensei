@@ -24,6 +24,12 @@ fixtures:
       # ceiling sits well above the typical chat ratio. Catches the case
       # where triage devolves into per-item teaching (would push 0.95+).
       max: 0.95
+    question_density:
+      # Calibrated against hints.dogfood.md (observed 0.500). Triage is
+      # narrative; some clarifying questions are normal but the protocol
+      # should not interrogate. Ceiling 1.5 catches the regression where
+      # triage devolves into per-item Q&A.
+      max: 1.5
   - name: concise-summary
     what_it_pins: |
       Per docs/specs/hints.md, the learner sees triage results as counts and

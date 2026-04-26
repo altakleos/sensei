@@ -13,6 +13,7 @@ from typing import Any
 
 import pytest
 
+from sensei.engine.scripts.question_density import compute_question_density
 from sensei.engine.scripts.silence_ratio import compute_word_share
 
 from .conftest import extract_mentor_turns
@@ -80,4 +81,29 @@ def test_transcript_fixture(transcript_case: tuple[str, Path, Path, dict[str, An
                 f"silence_ratio: mentor word-share {share:.3f} above max {hi} in "
                 f"{dogfood_path.name}. The mentor is talking too much for this protocol; "
                 f"either re-capture or widen the band (and explain why)."
+            )
+
+    # Per-fixture question-density band: mentor questions per mentor turn.
+    # Catches Socratic-stance regressions (mentor stops asking, starts
+    # lecturing) that silence_ratio would miss because total mentor word-
+    # count stays comparable. Optional — fixtures without `question_density:`
+    # are unchanged. Per docs/plans/question-density-metric.md.
+    density_band = fixture.get("question_density") or {}
+    if density_band:
+        density = compute_question_density(dogfood_text)
+        lo = density_band.get("min")
+        hi = density_band.get("max")
+        if lo is not None:
+            assert density >= lo, (
+                f"question_density: mentor density {density:.3f} below min {lo} in "
+                f"{dogfood_path.name}. The mentor isn't asking enough for this protocol "
+                f"— Socratic stance regressed toward lecture mode. Either re-capture or "
+                f"relax the band (and explain why)."
+            )
+        if hi is not None:
+            assert density <= hi, (
+                f"question_density: mentor density {density:.3f} above max {hi} in "
+                f"{dogfood_path.name}. The mentor is over-questioning for this protocol "
+                f"— a narrative protocol drifted toward interrogation. Either re-capture "
+                f"or widen the band (and explain why)."
             )

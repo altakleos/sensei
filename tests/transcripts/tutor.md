@@ -39,6 +39,12 @@ fixtures:
       # lecturing — that pattern pushes mentor word-share into the 0.85+
       # range typical of teaching-mode transcripts.
       max: 0.70
+    question_density:
+      # Calibrated against tutor.dogfood.md (observed 1.500). Socratic
+      # tutoring averages multiple questions per turn — "explain → probe
+      # → reshape." Floor 0.4 catches the regression where the tutor
+      # stops asking and starts telling (lecture-mode density near 0).
+      min: 0.4
 ---
 
 # Tutor Protocol — Transcript Fixtures

@@ -38,6 +38,13 @@ fixtures:
       # substantive (mentor brevity below 50% would mean the report
       # itself is missing).
       min: 0.50
+    question_density:
+      # Calibrated against status.dogfood.md (observed 1.000). Status
+      # protocol naturally includes a brief check-in question ("anything
+      # blocking you?") alongside the report. Ceiling 2.0 catches the
+      # regression where status devolves into interrogation rather than
+      # reporting.
+      max: 2.0
 ---
 
 # Status Protocol — Transcript Fixtures

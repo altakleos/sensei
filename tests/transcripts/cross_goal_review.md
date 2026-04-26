@@ -23,6 +23,12 @@ fixtures:
       # 0.55 catches the regression where the protocol starts narrating
       # the goal map instead of probing.
       max: 0.55
+    question_density:
+      # Calibrated against cross_goal_review.dogfood.md (observed 0.333).
+      # Q&A protocol; some recall turns are statements ("you missed X")
+      # that pull the average down below 1.0. Floor 0.2 catches the
+      # regression where the protocol stops asking entirely (would be 0.0).
+      min: 0.2
   - name: cross-goal-no-duplicate-queue
     what_it_pins: |
       The review queue presented to the learner must not list the same topic

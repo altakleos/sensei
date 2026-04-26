@@ -28,6 +28,12 @@ fixtures:
       # 0.80 catches a regression where the assessor starts teaching
       # (typical teaching-mode word-share is 0.85+).
       max: 0.80
+    question_density:
+      # Calibrated against assess.dogfood.md (observed 1.000). Probing IS
+      # the protocol (per the assessor exception in engine.md § Invariants).
+      # Floor 0.5 catches the regression where the assessor stops asking
+      # and starts teaching — lecture-mode question density is near zero.
+      min: 0.5
   - name: no-teaching-during-assessment
     what_it_pins: |
       The assessor exception is absolute. During summative assessment, the

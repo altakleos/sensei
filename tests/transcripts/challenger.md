@@ -52,6 +52,12 @@ fixtures:
       # learner reasons at length. Ceiling 0.65 catches a regression
       # where the challenger walks through the solution itself.
       max: 0.65
+    question_density:
+      # Calibrated against challenger.dogfood.md (observed 2.500). Multi-
+      # question turns are the challenger's signature — provoke from
+      # several angles per turn. Floor 1.0 catches collapse to single-
+      # question-or-fewer, which is no longer recognisable as challenger.
+      min: 1.0
 ---
 
 # Challenger Protocol — Transcript Fixtures

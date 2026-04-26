@@ -22,6 +22,13 @@ fixtures:
       # Performance training is teaching-heavy in stage 1; ceiling 0.95
       # catches degradation where the mentor stops checking in entirely.
       max: 0.95
+    question_density:
+      # Calibrated against performance_training.dogfood.md (observed 0.000).
+      # Performance training is instructional in stage 1 — narration, not
+      # probing. Some check-in questions ("ready for next stage?") are
+      # legitimate. Ceiling 1.0 catches the regression where stage-1
+      # teaching turns into mid-session interrogation.
+      max: 1.0
   - name: format-aware-framing
     what_it_pins: |
       In stage 1, the Tutor overlay frames material in the shape the

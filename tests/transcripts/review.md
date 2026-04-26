@@ -29,6 +29,12 @@ fixtures:
       # catches a regression where review starts re-teaching (which would
       # also trip the no-reteach forbidden_phrases below).
       max: 0.75
+    question_density:
+      # Calibrated against review.dogfood.md (observed 0.667). Recall is
+      # via questions; some short prompts ("Next.") pull the average
+      # below 1.0. Floor 0.3 catches the regression where review starts
+      # re-teaching (lecture-mode density approaches 0).
+      min: 0.3
   - name: no-reteach
     what_it_pins: |
       Review never explains the correct answer inside the session. A

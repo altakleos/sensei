@@ -46,6 +46,13 @@ fixtures:
       # fine" with no actual review (mentor word-share would drop into
       # the brief-acknowledgement range, ~0.30 typical).
       min: 0.50
+    question_density:
+      # Calibrated against reviewer.dogfood.md (observed 0.500). Feedback
+      # is the deliverable — the reviewer narrates findings, not probes.
+      # Some clarifying questions are normal but heavy questioning would
+      # mean the reviewer is doing the wrong job. Ceiling 1.5 catches
+      # over-questioning regressions.
+      max: 1.5
 ---
 
 # Reviewer Protocol — Transcript Fixtures

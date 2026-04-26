@@ -129,8 +129,9 @@ Turn prefixes are the only structure the loader cares about: lines starting with
   1. No forbidden phrase appears in any mentor turn.
   2. At least one required-one-of pattern matches at least one mentor turn (if the fixture declares `required` — happy-path fixtures do; negative fixtures may not).
   3. Per-fixture custom invariants (expressed as additional regex lists in frontmatter) pass.
+  4. Optional quantitative metric bands hold: `silence_ratio: {min, max}` (mentor word-share vs learner; per [`docs/plans/silence-ratio-and-missing-dogfood.md`](../plans/silence-ratio-and-missing-dogfood.md)) and `question_density: {min, max}` (mentor questions per mentor turn; per [`docs/plans/question-density-metric.md`](../plans/question-density-metric.md)). Both helpers live under `src/sensei/engine/scripts/` and share `[MENTOR]`/`[LEARNER]` turn extraction. The two metrics complement each other — silence_ratio measures *how much* the mentor talks; question_density measures *what shape* the talk takes. A Socratic regression (mentor stops asking, starts lecturing) cuts question_density without necessarily moving silence_ratio. Each per-protocol band carries a calibration comment naming the observed value and the regression mode the band catches.
 
-All assertions are lexical / regex — zero LLM calls, zero API cost, runs on every push in CI.
+All assertions are lexical, regex, or computed at the helper level — zero LLM calls, zero API cost, runs on every push in CI.
 
 ### Tier-2: LLM-as-judge (operator-local, manual)
 
