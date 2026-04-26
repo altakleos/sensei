@@ -45,6 +45,12 @@ fixtures:
       # regression where status devolves into interrogation rather than
       # reporting.
       max: 2.0
+    teaching_density:
+      # Calibrated against status.dogfood.md (observed 0.000). Status
+      # reports state — it does not teach the learner about their own
+      # progress. Any teaching token signals editorialisation that
+      # exceeds the status protocol's reporting role.
+      max: 0.0
 ---
 
 # Status Protocol — Transcript Fixtures

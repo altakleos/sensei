@@ -29,6 +29,12 @@ fixtures:
       # that pull the average down below 1.0. Floor 0.2 catches the
       # regression where the protocol stops asking entirely (would be 0.0).
       min: 0.2
+    teaching_density:
+      # Calibrated against cross_goal_review.dogfood.md (observed 0.000).
+      # Cross-goal review is retrieval — Q&A across goals — not teaching.
+      # Any teaching token signals reteach during recall, which violates
+      # the spaced-repetition spec.
+      max: 0.0
   - name: cross-goal-no-duplicate-queue
     what_it_pins: |
       The review queue presented to the learner must not list the same topic

@@ -34,6 +34,13 @@ fixtures:
       # Floor 0.5 catches the regression where the assessor stops asking
       # and starts teaching — lecture-mode question density is near zero.
       min: 0.5
+    teaching_density:
+      # Calibrated against assess.dogfood.md (observed 0.000). The assessor
+      # exception is the canonical "no teaching" rule — any teaching token
+      # in mentor turns is a regression. Complements the
+      # no-teaching-during-assessment forbidden_phrases list above with a
+      # cross-protocol metric (per docs/plans/teaching-density-metric.md).
+      max: 0.0
   - name: no-teaching-during-assessment
     what_it_pins: |
       The assessor exception is absolute. During summative assessment, the

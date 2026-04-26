@@ -30,6 +30,12 @@ fixtures:
       # should not interrogate. Ceiling 1.5 catches the regression where
       # triage devolves into per-item Q&A.
       max: 1.5
+    teaching_density:
+      # Calibrated against hints.dogfood.md (observed 0.000). Triage is
+      # an administrative operation, not a tutor interaction — teaching
+      # leakage during triage violates the behavioural-modes spec.
+      # Complements the triage-not-teaching forbidden_phrases list above.
+      max: 0.0
   - name: concise-summary
     what_it_pins: |
       Per docs/specs/hints.md, the learner sees triage results as counts and

@@ -66,3 +66,4 @@ required:
   - scripts/review_scheduler.py
   - scripts/session_allocator.py
   - scripts/silence_ratio.py
+  - scripts/teaching_density.py

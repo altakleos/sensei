@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 ## [Unreleased]
 
 ### Added
+- Teaching-density metric for Tier-1 fixtures. New helper `src/sensei/engine/scripts/teaching_density.py` counts mentor appearances of a curated teaching-language taxonomy (`let me explain`, `the (correct/right) answer is`, `think about`, etc.) per mentor turn. Seven fixtures (assess, challenger, cross_goal_review, hints, review, reviewer, status) ship with `teaching_density: {max: 0.0}` bands enforcing the assessor-exception and no-reteach invariants from `engine.md` § Invariants. Closes the third (and final) quantitative metric named by the 2026-04-25 follow-up audit Risk #4 — the family is now silence_ratio + question_density + teaching_density. Per [`docs/plans/teaching-density-metric.md`](docs/plans/teaching-density-metric.md).
 - Question-density metric for Tier-1 fixtures. New helper `src/sensei/engine/scripts/question_density.py` measures mentor questions per mentor turn; transcript fixtures may declare an optional `question_density: {min, max}` band that fails CI if a Socratic protocol regresses toward telling (low density) or a narrative protocol drifts toward interrogation (high density). All 10 dogfood fixtures shipped with calibrated bands. Complements `silence_ratio`: silence_ratio measures *how much* the mentor talks; question_density measures *what shape* the talk takes. Per [`docs/plans/question-density-metric.md`](docs/plans/question-density-metric.md).
 
 ### Changed

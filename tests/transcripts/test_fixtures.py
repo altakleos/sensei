@@ -15,6 +15,7 @@ import pytest
 
 from sensei.engine.scripts.question_density import compute_question_density
 from sensei.engine.scripts.silence_ratio import compute_word_share
+from sensei.engine.scripts.teaching_density import compute_teaching_density
 
 from .conftest import extract_mentor_turns
 
@@ -106,4 +107,24 @@ def test_transcript_fixture(transcript_case: tuple[str, Path, Path, dict[str, An
                 f"{dogfood_path.name}. The mentor is over-questioning for this protocol "
                 f"— a narrative protocol drifted toward interrogation. Either re-capture "
                 f"or widen the band (and explain why)."
+            )
+
+    # Per-fixture teaching-density band: count of canonical teaching-token
+    # appearances per mentor turn. Closes the assessor-exception adherence
+    # gap (audit Risk #4). For protocols where teaching is forbidden
+    # (assess, review, challenger, reviewer, cross_goal_review, status,
+    # hints), the band is `max: 0.0` — any teaching token signals a
+    # regression. Optional — fixtures without `teaching_density:` are
+    # unchanged. Per docs/plans/teaching-density-metric.md.
+    teaching_band = fixture.get("teaching_density") or {}
+    if teaching_band:
+        teaching = compute_teaching_density(dogfood_text)
+        hi = teaching_band.get("max")
+        if hi is not None:
+            assert teaching <= hi, (
+                f"teaching_density: mentor density {teaching:.3f} above max {hi} in "
+                f"{dogfood_path.name}. Teaching language appeared in a protocol where "
+                f"teaching is forbidden — assessor-exception or no-reteach regression. "
+                f"Either re-capture (preferred) or document the loosening with a "
+                f"comment naming why the new ceiling is justified."
             )

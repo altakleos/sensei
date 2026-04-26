@@ -78,6 +78,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [calibration-anchors-promotion](calibration-anchors-promotion.md) | Promote `calibration-anchors.md` from draft to accepted; repair stale `specs/README.md` index drift on `cross-goal-intelligence` and `interleaving` rows | done |
 | [relocate-inbox-seed-content](relocate-inbox-seed-content.md) | Move 25 maintainer-curated `inbox/April-*.md` seed files to sibling `platform/sensei-hints/tech-interview/`; delete source-repo `inbox/`; add `/inbox/` to `.gitignore` | done |
 | [question-density-metric](question-density-metric.md) | Question-density metric for Tier-1 fixtures (mentor questions per turn); new helper + per-protocol bands across all 10 dogfood fixtures; complements silence_ratio | done |
+| [teaching-density-metric](teaching-density-metric.md) | Teaching-density metric (taxonomy of teaching-language tokens per mentor turn); 7 fixtures get `max: 0.0` bands enforcing assessor-exception + no-reteach; closes audit Risk #4 (third and final metric in family) | done |
 
 ### In Progress
 | Plan | Feature | Status |

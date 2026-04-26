@@ -35,6 +35,13 @@ fixtures:
       # below 1.0. Floor 0.3 catches the regression where review starts
       # re-teaching (lecture-mode density approaches 0).
       min: 0.3
+    teaching_density:
+      # Calibrated against review.dogfood.md (observed 0.000). Review
+      # is retrieval-only — never explains the correct answer. Any
+      # teaching token signals reteach-on-miss, which violates the
+      # retrieval-only spec invariant. Complements the no-reteach
+      # forbidden_phrases list above.
+      max: 0.0
   - name: no-reteach
     what_it_pins: |
       Review never explains the correct answer inside the session. A

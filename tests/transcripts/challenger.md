@@ -58,6 +58,13 @@ fixtures:
       # several angles per turn. Floor 1.0 catches collapse to single-
       # question-or-fewer, which is no longer recognisable as challenger.
       min: 1.0
+    teaching_density:
+      # Calibrated against challenger.dogfood.md (observed 0.000). The
+      # challenger overlay's job is to provoke, not tell. Any teaching
+      # token signals the challenger walking through the solution itself
+      # — exactly the regression the no-solution-leak fixture above
+      # already pins lexically.
+      max: 0.0
 ---
 
 # Challenger Protocol — Transcript Fixtures

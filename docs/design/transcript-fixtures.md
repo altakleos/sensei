@@ -129,7 +129,11 @@ Turn prefixes are the only structure the loader cares about: lines starting with
   1. No forbidden phrase appears in any mentor turn.
   2. At least one required-one-of pattern matches at least one mentor turn (if the fixture declares `required` — happy-path fixtures do; negative fixtures may not).
   3. Per-fixture custom invariants (expressed as additional regex lists in frontmatter) pass.
-  4. Optional quantitative metric bands hold: `silence_ratio: {min, max}` (mentor word-share vs learner; per [`docs/plans/silence-ratio-and-missing-dogfood.md`](../plans/silence-ratio-and-missing-dogfood.md)) and `question_density: {min, max}` (mentor questions per mentor turn; per [`docs/plans/question-density-metric.md`](../plans/question-density-metric.md)). Both helpers live under `src/sensei/engine/scripts/` and share `[MENTOR]`/`[LEARNER]` turn extraction. The two metrics complement each other — silence_ratio measures *how much* the mentor talks; question_density measures *what shape* the talk takes. A Socratic regression (mentor stops asking, starts lecturing) cuts question_density without necessarily moving silence_ratio. Each per-protocol band carries a calibration comment naming the observed value and the regression mode the band catches.
+  4. Optional quantitative metric bands hold (the Tier-1 metric family — three metrics, all helpers under `src/sensei/engine/scripts/`, all sharing `[MENTOR]`/`[LEARNER]` turn extraction):
+     - `silence_ratio: {min, max}` — mentor word-share against the learner. Per [`docs/plans/silence-ratio-and-missing-dogfood.md`](../plans/silence-ratio-and-missing-dogfood.md). Measures *how much* the mentor talks.
+     - `question_density: {min, max}` — mentor questions per mentor turn. Per [`docs/plans/question-density-metric.md`](../plans/question-density-metric.md). Measures *what shape* the talk takes; a Socratic regression cuts density without necessarily moving silence_ratio.
+     - `teaching_density: {max}` — canonical-teaching-token appearances per mentor turn (taxonomy mined from existing `forbidden_phrases`). Per [`docs/plans/teaching-density-metric.md`](../plans/teaching-density-metric.md). Closes the assessor-exception / no-reteach gap; bands set `max: 0.0` for the seven protocols where teaching is forbidden.
+     Each per-protocol band carries a calibration comment naming the observed value and the regression mode the band catches.
 
 All assertions are lexical, regex, or computed at the helper level — zero LLM calls, zero API cost, runs on every push in CI.
 

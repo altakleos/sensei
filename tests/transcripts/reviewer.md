@@ -53,6 +53,12 @@ fixtures:
       # mean the reviewer is doing the wrong job. Ceiling 1.5 catches
       # over-questioning regressions.
       max: 1.5
+    teaching_density:
+      # Calibrated against reviewer.dogfood.md (observed 0.000). Code
+      # review surfaces defects — feedback, not teaching. A reviewer
+      # that explains the correct fix in didactic prose has slipped
+      # into tutor mode. Catches that drift.
+      max: 0.0
 ---
 
 # Reviewer Protocol — Transcript Fixtures
