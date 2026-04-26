@@ -48,9 +48,10 @@ import re
 import sys
 from pathlib import Path
 
-# Cross-module sharing of the canonical turn parser. See the same
-# comment in question_density.py for the rationale.
-from sensei.engine.scripts.silence_ratio import _split_into_turns
+# Shared with silence_ratio + question_density via the public
+# split_into_turns API: all three Tier-1 metrics see the same canonical
+# notion of a turn.
+from sensei.engine.scripts.silence_ratio import split_into_turns
 
 # Triple-backtick fenced code block. Strip before pattern matching so a
 # code sample with a comment like ``# the answer is`` doesn't inflate
@@ -105,7 +106,7 @@ def compute_teaching_stats(text: str) -> dict[str, float]:
     ``teaching_density`` is ``teaching_token_count / mentor_turns``,
     or 0.0 when the transcript has no mentor turns (degenerate).
     """
-    mentor, _learner = _split_into_turns(text)
+    mentor, _learner = split_into_turns(text)
     tokens = _count_teaching_tokens(mentor)
     turns = len(mentor)
     density = (tokens / turns) if turns > 0 else 0.0

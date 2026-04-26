@@ -13,6 +13,7 @@ from sensei.engine.scripts.silence_ratio import (
     compute_turn_stats,
     compute_word_share,
     main,
+    split_into_turns,
 )
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -101,6 +102,32 @@ def test_multiline_turns_accumulate() -> None:
 def test_compute_word_share_convenience() -> None:
     text = "[MENTOR] one\n[LEARNER] one two three\n"
     assert compute_word_share(text) == pytest.approx(0.25)
+
+
+# --- split_into_turns public API (shared with question_density + teaching_density) ---
+
+
+def test_split_into_turns_basic() -> None:
+    """Pin the canonical [MENTOR]/[LEARNER] split as the public contract."""
+    mentor, learner = split_into_turns("[MENTOR] hi\n[LEARNER] yes\n")
+    assert mentor == ["hi"]
+    assert learner == ["yes"]
+
+
+def test_split_into_turns_strips_frontmatter_and_accumulates_multiline() -> None:
+    """Frontmatter is removed; lines without a marker append to the open turn."""
+    text = (
+        "---\n"
+        "protocol: assess\n"
+        "---\n"
+        "[MENTOR] line one\n"
+        "line two\n"
+        "[LEARNER] response\n"
+        "more response\n"
+    )
+    mentor, learner = split_into_turns(text)
+    assert mentor == ["line one\nline two"]
+    assert learner == ["response\nmore response"]
 
 
 # --- CLI entry point ---

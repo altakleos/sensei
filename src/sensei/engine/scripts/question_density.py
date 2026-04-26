@@ -44,12 +44,10 @@ import re
 import sys
 from pathlib import Path
 
-# Cross-module sharing: silence_ratio owns the canonical turn-extraction
-# parser ([MENTOR]/[LEARNER] grammar + frontmatter strip). Importing the
-# private helper keeps the parser single-source — both metrics see the
-# same notion of "a turn" — at the cost of a one-character-off-the-style
-# convention. Refactor to a public API only when a third metric joins.
-from sensei.engine.scripts.silence_ratio import _split_into_turns
+# Shared with silence_ratio + teaching_density via the public
+# split_into_turns API: all three Tier-1 metrics see the same canonical
+# notion of a turn.
+from sensei.engine.scripts.silence_ratio import split_into_turns
 
 # Triple-backtick fenced code block. Strip these before counting ``?`` so
 # a code sample with a rhetorical-comment ``?`` doesn't inflate the
@@ -79,7 +77,7 @@ def compute_question_stats(text: str) -> dict[str, float]:
     ``question_density`` is ``mentor_questions / mentor_turns``, or 0.0
     when the transcript has no mentor turns (degenerate but valid).
     """
-    mentor, _learner = _split_into_turns(text)
+    mentor, _learner = split_into_turns(text)
     questions = _count_questions(mentor)
     turns = len(mentor)
     density = (questions / turns) if turns > 0 else 0.0

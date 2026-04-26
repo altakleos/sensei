@@ -16,6 +16,9 @@ Invoked by protocols and tests as:
 Library entry points:
     compute_word_share(text: str) -> float
     compute_turn_stats(text: str) -> dict[str, int | float]
+    split_into_turns(text: str) -> tuple[list[str], list[str]]
+        — canonical [MENTOR]/[LEARNER] turn parser shared with
+        question_density and teaching_density.
 
 Exit codes:
     0 — JSON object on stdout: {mentor_words, learner_words,
@@ -52,12 +55,16 @@ def _strip_frontmatter(text: str) -> str:
     return text[end + len("\n---\n"):]
 
 
-def _split_into_turns(text: str) -> tuple[list[str], list[str]]:
+def split_into_turns(text: str) -> tuple[list[str], list[str]]:
     """Walk the body and accumulate mentor and learner turn texts.
 
     Each `[MENTOR]` line opens a mentor turn; each `[LEARNER]` line opens
     a learner turn. Lines without a marker are appended to whichever
     turn is currently open. A new marker closes the previous turn.
+
+    Public API: shared with `question_density` and `teaching_density`,
+    which import this function to count metrics over the same canonical
+    notion of a turn.
     """
     body = _strip_frontmatter(text)
     mentor_turns: list[str] = []
@@ -97,7 +104,7 @@ def compute_turn_stats(text: str) -> dict[str, float]:
     `mentor_word_share` is `mentor_words / (mentor_words + learner_words)`,
     or 0.0 if neither side has any words (degenerate transcript).
     """
-    mentor, learner = _split_into_turns(text)
+    mentor, learner = split_into_turns(text)
     m_words = _count_words(mentor)
     l_words = _count_words(learner)
     total = m_words + l_words
