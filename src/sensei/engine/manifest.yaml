@@ -48,6 +48,7 @@ required:
   # Helper scripts
   - scripts/_atomic.py
   - scripts/_iso.py
+  - scripts/_states.py
   - scripts/calibration_tracker.py
   - scripts/check_goal.py
   - scripts/check_profile.py

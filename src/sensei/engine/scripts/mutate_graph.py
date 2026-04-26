@@ -30,18 +30,16 @@ except ImportError:  # pragma: no cover
     sys.exit(1)
 
 from sensei.engine.scripts._atomic import atomic_write_text
-
-_DONE_STATES = frozenset({"skipped", "completed"})
-_EXCLUDED_STATES = frozenset({"skipped", "active", "completed", "decomposed"})
+from sensei.engine.scripts._states import DONE_STATES, EXCLUDED_STATES
 
 
 def _is_on_frontier(slug: str, nodes: dict[str, dict[str, Any]]) -> bool:
     """Check if a node is on the activation frontier."""
     node = nodes.get(slug)
-    if not node or node.get("state") in _EXCLUDED_STATES:
+    if not node or node.get("state") in EXCLUDED_STATES:
         return False
     prereqs = node.get("prerequisites", [])
-    return all(nodes.get(p, {}).get("state") in _DONE_STATES for p in prereqs)
+    return all(nodes.get(p, {}).get("state") in DONE_STATES for p in prereqs)
 
 
 def _has_cycle(nodes: dict[str, dict[str, Any]]) -> bool:
