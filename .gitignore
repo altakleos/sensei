@@ -34,3 +34,9 @@ Thumbs.db
 
 # Parallel agent worktrees
 .worktrees/
+
+# Maintainer-private hint corpora live outside this repo
+# (see docs/plans/relocate-inbox-seed-content.md). Leading slash
+# anchors to the repo root so unrelated paths like tests/fixtures/inbox/
+# are not accidentally swept.
+/inbox/
