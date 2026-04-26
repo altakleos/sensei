@@ -80,6 +80,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [question-density-metric](question-density-metric.md) | Question-density metric for Tier-1 fixtures (mentor questions per turn); new helper + per-protocol bands across all 10 dogfood fixtures; complements silence_ratio | done |
 | [teaching-density-metric](teaching-density-metric.md) | Teaching-density metric (taxonomy of teaching-language tokens per mentor turn); 7 fixtures get `max: 0.0` bands enforcing assessor-exception + no-reteach; closes audit Risk #4 (third and final metric in family) | done |
 | [shared-turn-parser-public-api](shared-turn-parser-public-api.md) | Promote `_split_into_turns` → `split_into_turns` (public); silence_ratio now exports the canonical turn parser shared with question_density + teaching_density | done |
+| [release-v0.1.0a21](release-v0.1.0a21.md) | Cut release v0.1.0a21 — bundles question_density + teaching_density + calibration-anchors promotion; first release exercising the full ADR-0024 + ADR-0027 + ADR-0028 trio + dynamic env-id resolution | done |
 
 ### In Progress
 | Plan | Feature | Status |

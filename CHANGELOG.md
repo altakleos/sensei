@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a21] — 2026-04-26
+
 ### Added
 - Teaching-density metric for Tier-1 fixtures. New helper `src/sensei/engine/scripts/teaching_density.py` counts mentor appearances of a curated teaching-language taxonomy (`let me explain`, `the (correct/right) answer is`, `think about`, etc.) per mentor turn. Seven fixtures (assess, challenger, cross_goal_review, hints, review, reviewer, status) ship with `teaching_density: {max: 0.0}` bands enforcing the assessor-exception and no-reteach invariants from `engine.md` § Invariants. Closes the third (and final) quantitative metric named by the 2026-04-25 follow-up audit Risk #4 — the family is now silence_ratio + question_density + teaching_density. Per [`docs/plans/teaching-density-metric.md`](docs/plans/teaching-density-metric.md).
 - Question-density metric for Tier-1 fixtures. New helper `src/sensei/engine/scripts/question_density.py` measures mentor questions per mentor turn; transcript fixtures may declare an optional `question_density: {min, max}` band that fails CI if a Socratic protocol regresses toward telling (low density) or a narrative protocol drifts toward interrogation (high density). All 10 dogfood fixtures shipped with calibrated bands. Complements `silence_ratio`: silence_ratio measures *how much* the mentor talks; question_density measures *what shape* the talk takes. Per [`docs/plans/question-density-metric.md`](docs/plans/question-density-metric.md).
@@ -322,7 +324,8 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a20...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a21...HEAD
+[0.1.0a21]: https://github.com/altakleos/sensei/compare/v0.1.0a20...v0.1.0a21
 [0.1.0a20]: https://github.com/altakleos/sensei/compare/v0.1.0a19...v0.1.0a20
 [0.1.0a19]: https://github.com/altakleos/sensei/compare/v0.1.0a18...v0.1.0a19
 [0.1.0a18]: https://github.com/altakleos/sensei/compare/v0.1.0a17...v0.1.0a18
