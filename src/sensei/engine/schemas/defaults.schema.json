@@ -5,7 +5,7 @@
   "description": "Schema for src/sensei/engine/defaults.yaml — the authoritative tunable surface for the engine. Learner overrides in learner/config.yaml deep-merge on top before validation.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version"],
+  "required": ["schema_version", "pacing"],
   "properties": {
     "schema_version": {
       "type": "integer",
@@ -161,6 +161,26 @@
           "type": "number",
           "exclusiveMinimum": 0,
           "description": "Minimum per-topic stability in days. Prevents decay below this value."
+        }
+      }
+    },
+    "pacing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recency_decay", "review_overhead_cap"],
+      "description": "Velocity and pacing tunables (consumed by protocols/status.md via pacing.py).",
+      "properties": {
+        "recency_decay": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "description": "Weight decay factor for older completions in velocity calculation."
+        },
+        "review_overhead_cap": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "description": "Maximum fraction of time assumed spent on review vs new material."
         }
       }
     },

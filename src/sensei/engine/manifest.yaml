@@ -62,6 +62,7 @@ required:
   - scripts/mastery_check.py
   - scripts/migrate.py
   - scripts/mutate_graph.py
+  - scripts/pacing.py
   - scripts/question_density.py
   - scripts/resume_planner.py
   - scripts/review_scheduler.py

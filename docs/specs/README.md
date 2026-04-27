@@ -18,12 +18,14 @@ For the full development model, see `docs/development-process.md`.
 | [Interleaving](interleaving.md) | accepted |
 | [Learner Profile](learner-profile.md) | accepted |
 | [Metacognitive Tracking](metacognitive-tracking.md) | accepted |
+| [Pacing and Velocity](pacing-velocity.md) | accepted |
 | [Performance Training](performance-training.md) | accepted |
 | [Release Communication](release-communication.md) | accepted |
 | [Release Process](release-process.md) | accepted |
 | [Review Protocol](review-protocol.md) | accepted |
 | [Session Notes](session-notes.md) | accepted |
 | [Target Depth](target-depth.md) | accepted |
+| [Temporal Metadata](temporal-metadata.md) | accepted |
 | [Temporal Metadata](temporal-metadata.md) | accepted |
 
 ## Template

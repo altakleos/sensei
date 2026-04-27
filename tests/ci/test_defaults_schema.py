@@ -142,6 +142,7 @@ def test_schema_rejects_invalid_values(
                 "relevance_floor",
             },
         ),
+        ("pacing", {"recency_decay", "review_overhead_cap"}),
         ("mentor", {"emotional_state", "metacognitive_state"}),
     ],
 )

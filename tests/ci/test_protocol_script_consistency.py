@@ -38,6 +38,7 @@ _INVOKED_SCRIPTS: frozenset[str] = frozenset({
     "hint_decay",
     "mastery_check",
     "mutate_graph",
+    "pacing",
     "resume_planner",
     "review_scheduler",
     "session_allocator",

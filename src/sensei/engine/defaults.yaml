@@ -55,6 +55,11 @@ hints:
   expire_after_days: 28     # hard cap: expire unacted hints after this many days
   relevance_floor: 0.3      # hints scored below this are auto-marked irrelevant
 
+pacing:
+  # Velocity and pacing tunables (consumed by protocols/status.md via pacing.py).
+  recency_decay: 0.7       # weight decay factor for older completions in velocity calc (0-1)
+  review_overhead_cap: 0.3  # max fraction of time assumed spent on review vs new material
+
 cross_goal:
   # Cross-goal intelligence tunables (consumed by goal_priority.py, session_allocator.py, review_scheduler.py).
   deadline_weight: 5.0      # urgency multiplier for imminent deadlines in goal_priority.py
