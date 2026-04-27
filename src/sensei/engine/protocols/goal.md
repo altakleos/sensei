@@ -140,7 +140,7 @@ Rules for generation:
 Write the goal file to `learner/goals/<slug>.yaml` in **exactly** this format:
 
 ```yaml
-schema_version: 0
+schema_version: 2
 goal_id: <slug>
 expressed_as: "<learner's original statement>"
 created: "<current UTC ISO-8601>"
