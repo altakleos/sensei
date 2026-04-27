@@ -2,7 +2,7 @@
 
 How this project is developed. This document describes Spec-Driven Development (SDD) as a method — the artifact layers, how work flows through them, and when each layer is required. It is method-neutral: layers are defined functionally (what runs vs. what checks), not materially (Python vs. markdown).
 
-For this project's specific instantiation of the bottom two layers (what Implementation and Verification mean here), see [sensei-implementation.md](sensei-implementation.md).
+For this project's specific instantiation of the bottom two layers (what Implementation and Verification mean here), see [kanon-implementation.md](kanon-implementation.md).
 
 ## Foundations
 
@@ -81,7 +81,7 @@ ADRs are NOT the starting point for new work. They are produced DURING design an
 
 ADRs follow a consistent format: YAML frontmatter (`status`, `date`), then Context, Decision, Alternatives Considered, Consequences, and optionally Config Impact. ADRs are **immutable** once accepted. To reverse a decision, write a new ADR that supersedes it and set the old one's status to `superseded`.
 
-Mechanical enforcement: `ci/check_adr_immutability.py` rejects body edits to `accepted` / `accepted (lite)` ADRs in CI. Three exceptions are honoured: frontmatter-only changes (FSM transitions and `superseded-by:` annotations), a purely-additive `## Historical Note` section appended at the end, and an explicit commit-message trailer of the form `Allow-ADR-edit: NNNN — <reason>` (em-dash, en-dash, ASCII hyphen, or colon all accepted; comma-separated ADR numbers in one trailer cover several at once). The trailer is the audit log for the rare typo-fix case; superseding via a new ADR is preferred. See `plans/adr-immutability-gate.md`.
+The immutability rule honours three exception classes for normal lifecycle: (1) **frontmatter-only changes** (status FSM transitions, date updates, `superseded-by:` annotations), (2) **appending a `## Historical Note` (or deeper) section** at the end of the file, and (3) **explicit opt-out via a commit-message trailer** of the form `Allow-ADR-edit: NNNN — <reason>` citing the four-digit ADR number with a non-empty reason. Multiple ADRs can be listed comma-separated; em-dash, en-dash, ASCII hyphen, or colon all work as the separator before the reason. The trailer is the post-hoc audit log for the rare case (typo, factual correction, INV-ID migration) where superseding is the wrong tool. Projects that want to enforce this discipline mechanically can run a CI gate over `git log` against `docs/decisions/*.md`; the kit ships such a gate as a kit-internal example and as a protocol prose listing several enforcement options at higher SDD depths.
 
 ADRs live in `docs/decisions/`. See `docs/decisions/README.md` for the full index.
 
@@ -113,8 +113,6 @@ Plans use GFM `- [ ]` / `- [x]` checkboxes. A task's checkbox reflects whether t
 
 The rule exists because plans are permanent records. A future reader must determine "shipped vs. skipped vs. forgotten" from checkbox state alone.
 
-Enforced by `ci/check_plan_completion.py` (run by `verify.yml`): a `status: done` plan with any top-level `- [ ]` is a CI failure.
-
 ### Implementation
 
 Implementation is the layer that performs operations. The artifacts at this layer can be:
@@ -128,7 +126,7 @@ What matters is that the artifact produces the behavior the spec requires. The s
 
 A project using prose-as-LLM-instructions as its primary implementation medium must still treat that prose as code — reviewed, versioned, and tested like any other code. Ambiguity in an instruction is a bug in the same sense that an undefined variable is a bug.
 
-For this project's instantiation of Implementation, see [sensei-implementation.md](sensei-implementation.md).
+For this project's instantiation of Implementation, see [kanon-implementation.md](kanon-implementation.md).
 
 ### Verification
 
@@ -142,7 +140,7 @@ Verification is the layer that confirms Implementation met its spec. The artifac
 
 What matters is that every spec invariant has a mechanical or semi-mechanical check. Verification is not "tooling" — tooling helps do work (a formatter, a scaffolder, a migration script); verification confirms that the work is correct. Verifiers may run on a CPU, in an LLM, or both, but they must be invokable deterministically enough that the same input produces the same pass/fail result.
 
-For this project's instantiation of Verification, see [sensei-implementation.md](sensei-implementation.md).
+For this project's instantiation of Verification, see [kanon-implementation.md](kanon-implementation.md).
 
 ---
 
@@ -455,9 +453,8 @@ Terms used throughout this document with specific meanings:
 
 ## References
 
-- [sensei-implementation.md](sensei-implementation.md) — this project's instantiation of Implementation and Verification
+- [kanon-implementation.md](kanon-implementation.md) — this project's instantiation of Implementation and Verification
 - [docs/decisions/README.md](decisions/README.md) — ADR index
 - [docs/specs/README.md](specs/README.md) — spec index and template
 - [docs/design/README.md](design/README.md) — design doc index
 - [docs/plans/README.md](plans/README.md) — plan template
-- [docs/operations/README.md](operations/README.md) — operational runbooks (release, parallel agents, context budget)

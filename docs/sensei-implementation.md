@@ -78,3 +78,13 @@ Sensei-specific pedagogical principles (the seven pillars from `docs/foundations
 | "What is Sensei as a product?" | [`docs/foundations/vision.md`](foundations/vision.md) |
 | "Where are the tunables?" | `src/sensei/engine/defaults.yaml` |
 | "Which ADRs have been accepted?" | [`decisions/README.md`](decisions/README.md) |
+
+## CI Enforcement (project-specific)
+
+The following enforcement details are specific to sensei's CI pipeline and
+complement the generic SDD method in `development-process.md`:
+
+- **ADR immutability**: `ci/check_adr_immutability.py` rejects body edits to accepted ADRs in PR mode (`--base-ref`).
+- **Plan completion**: `kanon verify` (via kit validator) enforces that `status: done` plans have all top-level tasks ticked.
+- **Foundations integrity**: `kanon verify` (via `project-foundations` aspect) validates spec↔principle↔persona cross-references.
+- **Operational runbooks**: [`docs/operations/README.md`](operations/README.md) — release playbook, parallel agents, context budget.

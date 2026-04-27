@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.2.0a1] — 2026-04-27
+
+### Changed
+
+- Adopted kanon-kit for development discipline infrastructure. AGENTS.md is now marker-managed by kanon; project-specific content preserved outside markers.
+- `docs/development-process.md` is now byte-equal to the kanon kit version. Project-specific CI references relocated to `docs/sensei-implementation.md`.
+- Worktree branch prefix changed from `plan/` to `wt/` (kanon convention). Sensei's merge-with-verify teardown preserved as `scripts/worktree-teardown-merge.sh`.
+- CI `verify.yml` uses `kanon verify .` for structural checks, replacing 5 individual CI script invocations.
+
+### Added
+
+- kanon-kit dependency (development infrastructure).
+- 7 harness shims for cross-agent support (Cursor, Copilot, Windsurf, Cline, Roo, JetBrains AI, Kiro).
+- 4 SDD template files (decisions, plans, specs, design).
+- 2 project-aspects: `project-foundations` (referential integrity) and `project-release` (changelog link validation).
+- `scripts/worktree-status.sh` for listing active worktrees.
+
+### Removed
+
+- `ci/check_plan_completion.py` — replaced by kanon kit validator.
+
 ## [0.1.0a26] — 2026-04-27
 
 ### Fixed
