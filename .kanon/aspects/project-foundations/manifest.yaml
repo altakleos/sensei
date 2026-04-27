@@ -1,0 +1,9 @@
+stability: stable
+depth-range: [1, 1]
+default-depth: 1
+validators:
+  - ci.validators.foundations_integrity
+depth-1:
+  files: []
+  protocols: []
+  sections: []
