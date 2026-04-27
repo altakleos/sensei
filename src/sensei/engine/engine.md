@@ -226,6 +226,137 @@ The wrapper resolves the correct interpreter automatically. If it fails (stale i
 
 ### Script Registry
 
+#### Protocol Scripts
+
+Scripts invoked by LLM protocols at runtime.
+
+#### calibration_tracker.py
+Computes overall assessment accuracy (correct / attempts) from the learner's expertise_map.
+
+```
+.sensei/run calibration_tracker.py --profile learner/profile.yaml
+```
+
+#### check_goal.py
+Validates a goal YAML file against its JSON Schema and cross-field invariants.
+
+```
+.sensei/run check_goal.py --goal learner/goals/<slug>.yaml
+```
+
+#### check_profile.py
+Validates a learner profile against its JSON Schema and cross-field invariants.
+
+```
+.sensei/run check_profile.py --profile learner/profile.yaml
+```
+
+#### classify_confidence.py
+Confidence × correctness 4-quadrant classifier (mastery / misconception / fragile / gap).
+
+```
+.sensei/run classify_confidence.py --confidence <confident|uncertain> --correctness <correct|incorrect>
+```
+
+#### config.py
+Config loader: deep-merges engine defaults with learner overrides. Library-only — no CLI entry point.
+
+#### decay.py
+Forgetting-curve freshness arithmetic — exponential decay retention score.
+
+```
+.sensei/run decay.py \
+  --last-seen <iso-8601> --half-life-days <float> \
+  [--now <utc>] [--stale-threshold <float>]
+```
+
+#### frontier.py
+Computes the activation frontier of a curriculum DAG.
+
+```
+.sensei/run frontier.py \
+  --curriculum learner/goals/<slug>/curriculum.yaml \
+  [--hints learner/hints/hints.yaml] \
+  [--boost-weight <float>] [--max-boost <float>]
+```
+
+#### global_knowledge.py
+Checks if a topic is already mastered globally across all goals.
+
+```
+.sensei/run global_knowledge.py \
+  --profile learner/profile.yaml --topic <slug> \
+  [--goal learner/goals/<slug>.yaml] \
+  [--concept-peers '<json-list>'] [--goal-depth <exposure|functional|deep>]
+```
+
+#### goal_priority.py
+Ranks goals by priority for session start (priority weight, decay risk, recency, deadline urgency).
+
+```
+.sensei/run goal_priority.py \
+  --goals-dir learner/goals/ \
+  --profile learner/profile.yaml \
+  --half-life-days <config.memory.half_life_days> \
+  --stale-threshold <config.memory.stale_threshold> \
+  [--now <utc>] [--deadline-weight <float>]
+```
+
+#### hint_decay.py
+Recomputes freshness for active/triaged hints and expires stale ones.
+
+```
+.sensei/run hint_decay.py \
+  --hints-file learner/hints/hints.yaml \
+  --half-life-days <float> --expire-threshold <float> \
+  --expire-after-days <int> [--now <utc>]
+```
+
+#### mastery_check.py
+Mastery threshold gate — checks if a learner meets a required mastery level on a topic.
+
+```
+.sensei/run mastery_check.py \
+  --profile learner/profile.yaml \
+  --topic <slug> --required <none|shaky|developing|solid|mastered> \
+  [--min-attempts <int>] [--min-ratio <float>]
+```
+
+#### mutate_graph.py
+Validated state transitions on the curriculum DAG (activate, complete, skip, insert, decompose).
+
+```
+.sensei/run mutate_graph.py \
+  --curriculum <path> --operation <activate|complete|skip|insert|decompose> \
+  --node <slug> [--prerequisites <comma-separated>] \
+  [--subgraph '<json>'] [--now <utc>]
+```
+
+#### pacing.py
+Velocity and pacing arithmetic — projects completion date and compares against deadline.
+
+```
+.sensei/run pacing.py \
+  --curriculum learner/goals/<slug>/curriculum.yaml \
+  [--profile learner/profile.yaml] [--now <utc>] \
+  [--half-life-days <float>] [--stale-threshold <float>]
+```
+
+#### resume_planner.py — decay-aware resume planning
+
+Reads a single goal file and the learner profile, computes freshness for completed nodes, identifies stale topics, recomputes the curriculum frontier, and outputs a resume plan.
+
+```
+.sensei/run resume_planner.py \
+  --goal learner/goals/<slug>.yaml \
+  --profile learner/profile.yaml \
+  --half-life-days <config.memory.half_life_days> \
+  --stale-threshold <config.memory.stale_threshold> \
+  [--now <utc>]
+```
+
+Exit 0: JSON `{stale_topics: [{slug, freshness, elapsed_days}], frontier: [slugs], recommended_action: "review_first" | "continue"}` to stdout. Exit 1: invalid input.
+
 #### review_scheduler.py — cross-goal review deduplication and scheduling
 
 Reads all active/paused goal files and the learner profile, computes freshness for every completed topic, deduplicates topics appearing in multiple goals (keeps lowest freshness), and outputs a ranked JSON list sorted by freshness ascending.
@@ -254,20 +385,38 @@ Takes the ranked goal list from `goal_priority.py` (via file or stdin) and a ses
 
 Exit 0: JSON `{allocations: [{slug, minutes, reason}], dropped: [...]}` to stdout. Exit 1: invalid input.
 
-#### resume_planner.py — decay-aware resume planning
+#### Utility Scripts
 
-Reads a single goal file and the learner profile, computes freshness for completed nodes, identifies stale topics, recomputes the curriculum frontier, and outputs a resume plan.
+CLI and test infrastructure scripts — not invoked by protocols.
+
+#### migrate.py
+Schema migration for learner data files (profile.yaml, goal files).
 
 ```
-.sensei/run resume_planner.py \
-  --goal learner/goals/<slug>.yaml \
-  --profile learner/profile.yaml \
-  --half-life-days <config.memory.half_life_days> \
-  --stale-threshold <config.memory.stale_threshold> \
-  [--now <utc>]
+python -m sensei.engine.scripts.migrate --file <path> --type <profile|goal>
+python -m sensei.engine.scripts.migrate --instance learner/
 ```
 
-Exit 0: JSON `{stale_topics: [{slug, freshness, elapsed_days}], frontier: [slugs], recommended_action: "review_first" | "continue"}` to stdout. Exit 1: invalid input.
+#### question_density.py
+Computes mentor question-density from a dogfood transcript.
+
+```
+python -m sensei.engine.scripts.question_density --transcript <path>
+```
+
+#### silence_ratio.py
+Computes mentor talk-share (word-share) from a dogfood transcript.
+
+```
+python -m sensei.engine.scripts.silence_ratio --transcript <path>
+```
+
+#### teaching_density.py
+Computes mentor teaching-token density from a dogfood transcript.
+
+```
+python -m sensei.engine.scripts.teaching_density --transcript <path>
+```
 
 ## Configuration
 
