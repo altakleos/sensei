@@ -71,7 +71,7 @@ package imports don't work.
 
 ## Tasks
 
-- [ ] T1 — Rewrite all 18 absolute imports to bare imports with `sys.path` guard in each of the 12 files.
-- [ ] T2 — Verify all existing tests pass (`make gate` or `pytest`).
-- [ ] T3 — Verify scripts run standalone: `python3 src/sensei/engine/scripts/frontier.py --help` works without `sensei-tutor` on `PYTHONPATH`.
-- [ ] T4 — Update CHANGELOG.md under `## [Unreleased]`.
+- [x] T1 — Rewrite all 18 absolute imports to bare imports with `sys.path` guard in each of the 12 files.
+- [x] T2 — Verify all existing tests pass (`make gate` or `pytest`).
+- [x] T3 — Verify scripts run standalone: `python3 src/sensei/engine/scripts/frontier.py --help` works without `sensei-tutor` on `PYTHONPATH`.
+- [x] T4 — Update CHANGELOG.md under `## [Unreleased]`.
