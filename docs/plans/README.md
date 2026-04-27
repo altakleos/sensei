@@ -82,6 +82,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [shared-turn-parser-public-api](shared-turn-parser-public-api.md) | Promote `_split_into_turns` → `split_into_turns` (public); silence_ratio now exports the canonical turn parser shared with question_density + teaching_density | done |
 | [release-v0.1.0a21](release-v0.1.0a21.md) | Cut release v0.1.0a21 — bundles question_density + teaching_density + calibration-anchors promotion; first release exercising the full ADR-0024 + ADR-0027 + ADR-0028 trio + dynamic env-id resolution | done |
 | [engine-state-constants](engine-state-constants.md) | Hoist `DONE_STATES` / `EXCLUDED_STATES` curriculum-eligibility frozensets into `engine/scripts/_states.py`; both `frontier.py` and `mutate_graph.py` import the single definition. Closes the only architectural-drift risk in the script layer named by the 2026-04-26 audit | done |
+| [contributor-onboarding-makefile](contributor-onboarding-makefile.md) | Top-level `Makefile` (`setup`/`test`/`lint`/`typecheck`/`validators`/`gate`/`clean`) + `CONTRIBUTING.md` so a fresh clone gets to green pytest in one command; mechanises the `.venv/bin/<tool>` discipline previously buried in `release-playbook.md` | done |
 
 ### In Progress
 | Plan | Feature | Status |
