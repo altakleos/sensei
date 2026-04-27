@@ -81,6 +81,8 @@ ADRs are NOT the starting point for new work. They are produced DURING design an
 
 ADRs follow a consistent format: YAML frontmatter (`status`, `date`), then Context, Decision, Alternatives Considered, Consequences, and optionally Config Impact. ADRs are **immutable** once accepted. To reverse a decision, write a new ADR that supersedes it and set the old one's status to `superseded`.
 
+Mechanical enforcement: `ci/check_adr_immutability.py` rejects body edits to `accepted` / `accepted (lite)` ADRs in CI. Three exceptions are honoured: frontmatter-only changes (FSM transitions and `superseded-by:` annotations), a purely-additive `## Historical Note` section appended at the end, and an explicit commit-message trailer of the form `Allow-ADR-edit: NNNN — <reason>` (em-dash, en-dash, ASCII hyphen, or colon all accepted; comma-separated ADR numbers in one trailer cover several at once). The trailer is the audit log for the rare typo-fix case; superseding via a new ADR is preferred. See `plans/adr-immutability-gate.md`.
+
 ADRs live in `docs/decisions/`. See `docs/decisions/README.md` for the full index.
 
 ### Status values

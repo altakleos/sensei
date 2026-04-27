@@ -23,6 +23,11 @@ jobs:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v5
+        with:
+          # ADR-immutability gate (below) walks commit history to compare
+          # ADR bodies before vs. after each commit. Default fetch-depth: 1
+          # is too shallow even for the push-mode HEAD~ lookup.
+          fetch-depth: 0
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -55,3 +60,14 @@ jobs:
 
       - name: Lint plan completion
         run: python ci/check_plan_completion.py
+
+      - name: Lint ADR immutability
+        # PR mode: walk every commit in BASE..HEAD; push-to-main mode:
+        # check the just-pushed HEAD only. The gate falls back to OK
+        # gracefully when the comparison range yields no commits.
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            python ci/check_adr_immutability.py --base-ref "origin/${{ github.base_ref }}"
+          else
+            python ci/check_adr_immutability.py
+          fi

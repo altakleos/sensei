@@ -188,7 +188,7 @@ Before tagging:
 - [ ] `CHANGELOG.md` reference-link tail updated for the new tag — add `[X.Y.Z]: …compare/v<prev>...vX.Y.Z` and bump `[Unreleased]:` to compare from `vX.Y.Z...HEAD` (`ci/check_changelog_links.py` enforces)
 - [ ] Version bumped in `src/sensei/__init__.py`
 - [ ] `docs/plans/` has no `status: in-progress` plans that should block
-- [ ] Local pre-merge gates pass — run **from the project venv** (`.venv/bin/pytest && .venv/bin/ruff check . && .venv/bin/mypy && python ci/check_foundations.py && python ci/check_links.py && python ci/check_plan_completion.py`). System-wide `ruff`/`mypy`/`pytest` may disagree with CI; the venv version is the source of truth.
+- [ ] Local pre-merge gates pass — run **from the project venv** (`.venv/bin/pytest && .venv/bin/ruff check . && .venv/bin/mypy && python ci/check_foundations.py && python ci/check_links.py && python ci/check_plan_completion.py && python ci/check_adr_immutability.py`). System-wide `ruff`/`mypy`/`pytest` may disagree with CI; the venv version is the source of truth.
 - [ ] Tier-2 E2E run captured to `docs/operations/releases/v<X.Y.Z>.md` per the template at [`docs/operations/releases/README.md`](releases/README.md). **CI-enforced** by `ci/check_release_audit.py` in `release.yml`'s `build-and-check` job (per [ADR-0024](../decisions/0024-release-audit-log-required.md)) — a missing or malformed log file fails the build before publish.
 - [ ] `python -m build && python ci/check_package_contents.py --wheel dist/*.whl --tag vX.Y.Z` passes
 - [ ] GitHub Environment `pypi` reviewers still exist and are reachable
