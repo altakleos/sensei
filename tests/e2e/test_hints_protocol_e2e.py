@@ -75,7 +75,7 @@ def test_hints_protocol_drains_inbox_and_populates_registry(tmp_path: Path) -> N
     hints_registry = tmp_path / "learner" / "hints" / "hints.yaml"
 
     before = yaml.safe_load(hints_registry.read_text(encoding="utf-8"))
-    assert before == {"schema_version": 1, "hints": []}, (
+    assert before == {"schema_version": 0, "hints": []}, (
         f"registry should start empty post-init, got: {before}"
     )
 

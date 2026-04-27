@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a26] — 2026-04-27
+
+### Fixed
+
+- `assess.md` referenced undefined config key `config.assessment.mastery_threshold` — corrected to `config.curriculum.mastery_threshold`.
+- Four protocols (`tutor.md`, `challenger.md`, `reviewer.md`, `status.md`) referenced non-existent `learner/goals/<goal>/curriculum.yaml` — corrected to `learner/goals/<slug>.yaml`.
+- `review_scheduler.py` used a 3-level mastery scale diverging from the canonical 5-level scale in `global_knowledge.py` and `mastery_check.py` — aligned to the canonical scale.
+- `mutate_graph.py` used deprecated `datetime.utcnow()` — replaced with `datetime.now(tz=timezone.utc)`.
+- `calibration_tracker.py` produced raw tracebacks on bad input — now emits structured JSON errors.
+- `hint_decay.py` and `migrate.py` printed errors to stderr as plain text — standardised to JSON on stdout matching all other scripts.
+- `mutate_graph.py` `_do_skip` allowed skipping nodes already completed, decomposed, or skipped — now rejects terminal states.
+- `mutate_graph.py` `_do_decompose` silently overwrote existing nodes on slug collision — now rejects collisions.
+- `check_goal.py` failed on old-schema goals instead of auto-migrating — now migrates before validation, matching `check_profile.py`.
+- `hints.yaml` was seeded with `schema_version: 1` but the schema requires `0` — corrected.
+- `sensei init --force` silently overwrote user-customised `AGENTS.md` and tool shims — now preserves existing files.
+- Init learner scaffolding could leave a partial instance on disk-full or permission errors — now catches `OSError` and advises re-running with `--force`.
+
+### Added
+
+- `sensei upgrade` now refreshes `AGENTS.md` and all 8 tool shims after engine replacement.
+- `sensei upgrade` rejects version downgrades with a clear error message (new `packaging` runtime dependency).
+- `sensei verify` now validates goal files, `AGENTS.md` existence, tool shim existence, and hints registry schema.
+- Complete Script Registry in `engine.md` — expanded from 3 to 20 scripts, organised into Protocol Scripts and Utility Scripts.
+
 ## [0.1.0a25] — 2026-04-27
 
 ### Added
@@ -352,7 +376,8 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a25...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a26...HEAD
+[0.1.0a26]: https://github.com/altakleos/sensei/compare/v0.1.0a25...v0.1.0a26
 [0.1.0a25]: https://github.com/altakleos/sensei/compare/v0.1.0a24...v0.1.0a25
 [0.1.0a24]: https://github.com/altakleos/sensei/compare/v0.1.0a23...v0.1.0a24
 [0.1.0a23]: https://github.com/altakleos/sensei/compare/v0.1.0a22...v0.1.0a23
