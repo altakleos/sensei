@@ -8,8 +8,6 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [0.1.0a23] — 2026-04-27
 
-**Tier-2 E2E gate skipped** — mechanical import-only fix, no protocol or schema changes; 689 unit/integration tests green.
-
 ### Fixed
 
 - Engine scripts now use `sys.path`-based bare imports instead of absolute package imports, fixing `ModuleNotFoundError` in user instances when the system Python lacks a matching `sensei-tutor` version.
