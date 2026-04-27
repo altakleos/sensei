@@ -52,10 +52,26 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--profile", required=True, type=Path, help="Path to profile.yaml")
     args = parser.parse_args(argv)
 
-    profile = yaml.safe_load(args.profile.read_text(encoding="utf-8"))
+    # Guard: file must exist
+    if not args.profile.is_file():
+        print(json.dumps({"error": "profile file not found"}))
+        return 1
+
+    # Guard: YAML must parse cleanly
+    try:
+        profile = yaml.safe_load(args.profile.read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        print(json.dumps({"error": f"yaml parse error: {exc}"}))
+        return 1
+
     if profile is None:
         print(json.dumps({"calibration_accuracy": None}))
         return 0
+
+    # Guard: top-level must be a mapping
+    if not isinstance(profile, dict):
+        print(json.dumps({"error": "profile must be a YAML mapping"}))
+        return 1
 
     accuracy = compute_calibration(profile)
     print(json.dumps({"calibration_accuracy": accuracy}))

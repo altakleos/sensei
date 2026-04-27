@@ -91,6 +91,21 @@ VALID_SESSION_NOTES = {
     ],
 }
 
+VALID_HINTS: dict = {
+    "schema_version": 0,
+    "hints": [
+        {
+            "file": "notes/distributed-systems.md",
+            "ingested": "2024-06-01T12:00:00Z",
+            "relevance": 0.85,
+            "topics": ["distributed-consensus"],
+            "status": "active",
+            "freshness": 0.9,
+            "content_hash": "abc123",
+        }
+    ],
+}
+
 
 @pytest.mark.parametrize(
     ("schema_file", "fixture"),
@@ -98,6 +113,7 @@ VALID_SESSION_NOTES = {
         ("profile.schema.json", VALID_PROFILE),
         ("goal.schema.json", VALID_GOAL),
         ("session-notes.schema.json", VALID_SESSION_NOTES),
+        ("hints.yaml.schema.json", VALID_HINTS),
     ],
 )
 def test_valid_fixture_passes_schema(schema_file: str, fixture: dict) -> None:
@@ -530,3 +546,22 @@ def test_profile_topic_with_zero_stability_fails() -> None:
     }
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.validate(profile, _load_schema("profile.schema.json"))
+
+
+# --- Hints schema tests ---
+
+
+def test_hints_invalid_status() -> None:
+    """Status must be one of the enum values."""
+    bad_hint = {**VALID_HINTS["hints"][0], "status": "bogus"}
+    bad = {**VALID_HINTS, "hints": [bad_hint]}
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, _load_schema("hints.yaml.schema.json"))
+
+
+def test_hints_missing_required_field() -> None:
+    """Removing 'file' from a hint entry must fail validation."""
+    bad_hint = {k: v for k, v in VALID_HINTS["hints"][0].items() if k != "file"}
+    bad = {**VALID_HINTS, "hints": [bad_hint]}
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, _load_schema("hints.yaml.schema.json"))

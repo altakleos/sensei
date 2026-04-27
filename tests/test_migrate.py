@@ -458,3 +458,33 @@ def test_profile_migration_v0_to_v2_end_to_end():
     assert result["metacognitive_state"]["calibration_accuracy"] is None
     assert result["metacognitive_state"]["planning_tendency"] == "unknown"
     assert result["metacognitive_state"]["help_seeking"] == "unknown"
+
+
+def test_goal_migration_v0_to_v2_end_to_end():
+    """Real migration chain: v0 -> v1 (state renames) -> v2 (target_depth)."""
+    v0_goal = {
+        "schema_version": 0,
+        "goal_id": "sysdesign",
+        "expressed_as": "learn system design",
+        "created": "2026-04-20T00:00:00Z",
+        "status": "active",
+        "three_unknowns": {"prior_state": "none", "target_state": "vague", "constraints": ""},
+        "nodes": {
+            "a": {"state": "collapsed", "prerequisites": []},
+            "b": {"state": "spawned", "prerequisites": ["a"]},
+            "c": {"state": "expanded", "prerequisites": []},
+            "d": {"state": "active", "prerequisites": [], "spawned_from": "c"},
+        },
+    }
+    result = migrate_goal(v0_goal)
+    assert result["schema_version"] == 2
+    # v0→v1: state renames
+    assert result["nodes"]["a"]["state"] == "skipped"
+    assert result["nodes"]["b"]["state"] == "pending"
+    assert result["nodes"]["c"]["state"] == "decomposed"
+    assert result["nodes"]["d"]["state"] == "active"
+    # v0→v1: field rename
+    assert result["nodes"]["d"]["inserted_from"] == "c"
+    assert "spawned_from" not in result["nodes"]["d"]
+    # v1→v2: target_depth added
+    assert result["three_unknowns"]["target_depth"] == "functional"
