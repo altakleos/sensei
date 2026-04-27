@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a23] — 2026-04-27
+
+**Tier-2 E2E gate skipped** — mechanical import-only fix, no protocol or schema changes; 689 unit/integration tests green.
+
 ### Fixed
 
 - Engine scripts now use `sys.path`-based bare imports instead of absolute package imports, fixing `ModuleNotFoundError` in user instances when the system Python lacks a matching `sensei-tutor` version.
@@ -334,7 +338,8 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a22...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a23...HEAD
+[0.1.0a23]: https://github.com/altakleos/sensei/compare/v0.1.0a22...v0.1.0a23
 [0.1.0a22]: https://github.com/altakleos/sensei/compare/v0.1.0a21...v0.1.0a22
 [0.1.0a21]: https://github.com/altakleos/sensei/compare/v0.1.0a20...v0.1.0a21
 [0.1.0a20]: https://github.com/altakleos/sensei/compare/v0.1.0a19...v0.1.0a20
