@@ -49,6 +49,7 @@ validators: $(VENV)
 	$(PY) ci/check_links.py --root src/sensei/engine
 	$(PY) ci/check_changelog_links.py
 	$(PY) ci/check_plan_completion.py
+	$(PY) ci/check_adr_immutability.py
 
 gate: lint typecheck test validators
 	@echo "All local pre-merge gates green."

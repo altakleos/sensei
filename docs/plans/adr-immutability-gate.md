@@ -79,7 +79,7 @@ The gate is implemented as `ci/check_adr_immutability.py` with a function-level 
   | `048dbfc` | docs: ADR-0026 supersedes ADR-0020 (publish gate is manual approval) | OK | New ADR-0026 creation + frontmatter-only `superseded-by` annotation on ADR-0020. |
 
   Two of seven commits are real body-edit violations under the new gate (`bcd2a7a` and `22e086b`); the other five are legitimate operations the gate correctly allows. The two violations remain on `main` as historical record. No retro-amendment is performed — immutability is forward-looking and the trailer mechanism becomes available to future maintainers.
-- [~] T7 — Deferred. The contributor-onboarding-makefile plan (`docs/plans/contributor-onboarding-makefile.md`) lives on its own branch `chore/contributor-onboarding-makefile` and has not yet merged to main. NOTE: when both branches land, append `$(PY) ci/check_adr_immutability.py` to the `Makefile § validators` target — one extra line, no structural change. Adding it here would either create a `Makefile` from scratch (out of scope for this plan) or pre-build a target that doesn't exist on this branch.
+- [x] T7 — Completed in follow-up branch `chore/makefile-adr-validator` after PR #42 (contributor-onboarding-makefile) and PR #44 (adr-immutability-gate) both landed on main. Single-line append to `Makefile § validators`: `$(PY) ci/check_adr_immutability.py`. `make validators` now runs all six gates locally; `make gate` propagates. Originally marked `[~]` deferred because this branch's parent (main pre-#42) had no Makefile to extend.
 - [x] T8 — `[Unreleased]` § Added entry in `CHANGELOG.md` announces the gate, the three exceptions, and the trailer convention.
 - [x] T9 — Add row to `docs/plans/README.md § Shipped` index.
 - [x] T10 — Commit on `feat/adr-immutability-gate` branch with message `feat: ci/check_adr_immutability.py — enforce ADR-body immutability`. Body cites this plan, names AGENTS.md / `development-process.md` § ADRs as the spec authority, and notes the trailer convention.
@@ -94,7 +94,7 @@ The gate is implemented as `ci/check_adr_immutability.py` with a function-level 
 - [x] AC6 — Retroactive verdict (T6) recorded inline; no history rewrites; two real violations among seven historical commits documented.
 - [x] AC7 — `[Unreleased]` § Added in `CHANGELOG.md` announces the gate.
 - [x] AC8 — Full local gate passes; the new check on push-mode HEAD reports OK because the only commit on this branch is the gate commit itself, which adds new tests/CI but does not modify any accepted ADR.
-- [x] AC9 — `git diff --stat` touches only: this plan, `docs/plans/README.md`, `ci/check_adr_immutability.py` (new), `tests/ci/test_check_adr_immutability.py` (new), `.github/workflows/verify.yml`, `docs/operations/release-playbook.md`, `docs/development-process.md`, `CHANGELOG.md`. The Makefile touch is deferred (T7).
+- [x] AC9 — `git diff --stat` on the original PR (#44) touched only: this plan, `docs/plans/README.md`, `ci/check_adr_immutability.py` (new), `tests/ci/test_check_adr_immutability.py` (new), `.github/workflows/verify.yml`, `docs/operations/release-playbook.md`, `docs/development-process.md`, `CHANGELOG.md`. The Makefile-validators line was added in the follow-up branch `chore/makefile-adr-validator` once PR #42 had landed (T7 above).
 
 ## Out of Scope
 
