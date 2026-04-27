@@ -26,8 +26,7 @@ except ImportError:  # pragma: no cover
     print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
     sys.exit(1)
 
-_DONE_STATES = frozenset({"skipped", "completed"})
-_EXCLUDED_STATES = frozenset({"skipped", "active", "completed", "decomposed"})
+from sensei.engine.scripts._states import DONE_STATES, EXCLUDED_STATES
 
 
 def compute_frontier(
@@ -47,10 +46,10 @@ def compute_frontier(
 
     for idx, slug in enumerate(sorted(nodes)):
         node = nodes[slug]
-        if node.get("state") in _EXCLUDED_STATES:
+        if node.get("state") in EXCLUDED_STATES:
             continue
         prereqs = node.get("prerequisites", [])
-        if all(nodes.get(p, {}).get("state") in _DONE_STATES for p in prereqs):
+        if all(nodes.get(p, {}).get("state") in DONE_STATES for p in prereqs):
             priority = float(idx)
             frontier.append((priority, slug))
 
