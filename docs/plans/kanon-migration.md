@@ -1,5 +1,5 @@
 ---
-status: draft
+status: done
 date: 2026-04-27
 design: "No design doc — migration follows established kanon init/upgrade patterns"
 ---
