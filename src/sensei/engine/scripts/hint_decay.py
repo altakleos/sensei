@@ -24,13 +24,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 try:
     import yaml
 except ImportError:  # pragma: no cover
     print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
     sys.exit(1)
 
-from sensei.engine.scripts._iso import parse_iso
+from _iso import parse_iso
 
 
 def update_hints(

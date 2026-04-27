@@ -25,15 +25,17 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 try:
     import yaml
 except ImportError:  # pragma: no cover
     print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
     sys.exit(1)
 
-from sensei.engine.scripts._iso import parse_iso
-from sensei.engine.scripts.decay import freshness_score
-from sensei.engine.scripts.frontier import compute_frontier
+from _iso import parse_iso
+from decay import freshness_score
+from frontier import compute_frontier
 
 _DEFAULT_HALF_LIFE_DAYS = 7.0
 _DEFAULT_STALE_THRESHOLD = 0.5

@@ -48,10 +48,12 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 # Shared with silence_ratio + question_density via the public
 # split_into_turns API: all three Tier-1 metrics see the same canonical
 # notion of a turn.
-from sensei.engine.scripts.silence_ratio import split_into_turns
+from silence_ratio import split_into_turns
 
 # Triple-backtick fenced code block. Strip before pattern matching so a
 # code sample with a comment like ``# the answer is`` doesn't inflate

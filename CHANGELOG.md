@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Fixed
+
+- Engine scripts now use `sys.path`-based bare imports instead of absolute package imports, fixing `ModuleNotFoundError` in user instances when the system Python lacks a matching `sensei-tutor` version.
+
 ## [0.1.0a22] — 2026-04-27
 
 ### Added

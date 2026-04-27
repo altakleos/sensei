@@ -23,14 +23,16 @@ from collections import deque
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 try:
     import yaml
 except ImportError:  # pragma: no cover
     print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
     sys.exit(1)
 
-from sensei.engine.scripts._atomic import atomic_write_text
-from sensei.engine.scripts._states import DONE_STATES, EXCLUDED_STATES
+from _atomic import atomic_write_text
+from _states import DONE_STATES, EXCLUDED_STATES
 
 
 def _is_on_frontier(slug: str, nodes: dict[str, dict[str, Any]]) -> bool:

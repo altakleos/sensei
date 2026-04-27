@@ -22,13 +22,15 @@ import json
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 try:
     import yaml
 except ImportError:  # pragma: no cover
     print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
     sys.exit(1)
 
-from sensei.engine.scripts.check_profile import validate_profile
+from check_profile import validate_profile
 
 # Ordered mastery levels; index == rank.
 _LEVELS: tuple[str, ...] = ("none", "shaky", "developing", "solid", "mastered")

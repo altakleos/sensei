@@ -21,6 +21,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 try:
     import yaml
     from jsonschema import Draft202012Validator
@@ -67,7 +69,7 @@ def validate_profile(profile: dict[str, Any]) -> tuple[str, list[str]]:
     """
     import contextlib
 
-    from sensei.engine.scripts.migrate import migrate_profile
+    from migrate import migrate_profile
 
     # Migration may fail (bad data); fall through to schema validation which
     # will report the real error.
