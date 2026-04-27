@@ -12,7 +12,7 @@ When the learner signals intent to be assessed (e.g., "quiz me", "am I ready?", 
 
 - Summative assessment invokes assessor mode. No teaching, no hints, no encouragement.
 - Mastery scoring is deterministic via `mastery_check.py`. Never use LLM reasoning for the gate.
-- The 90% mastery threshold is the default gate (configurable via `config.assessment.mastery_threshold`).
+- The 90% mastery threshold is the default gate (configurable via `config.curriculum.mastery_threshold`).
 - After two failures at the same concept, shift to prerequisite diagnosis — do not re-assess a third time.
 - Summative results write to the learner profile. Every write is validated.
 - The learner may exit at any point.

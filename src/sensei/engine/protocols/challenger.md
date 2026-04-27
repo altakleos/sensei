@@ -9,7 +9,7 @@ Strengthen mastery through structured challenges that push the learner beyond co
 ## Paths assumed
 
 - Profile: `learner/profile.yaml` — `expertise_map` (mastery levels per topic)
-- Active curriculum: `learner/goals/<goal>/curriculum.yaml` — completed/active nodes
+- Active curriculum: `learner/goals/<slug>.yaml` — completed/active nodes
 - Helpers: `.sensei/scripts/frontier.py`, `.sensei/scripts/classify_confidence.py`, `.sensei/scripts/mastery_check.py`, `.sensei/scripts/decay.py`
 - Config: `.sensei/defaults.yaml` → `curriculum.mastery_threshold`
 

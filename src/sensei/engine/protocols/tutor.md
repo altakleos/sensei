@@ -9,7 +9,7 @@ Teach the active curriculum topic through an explain→probe→reshape cycle unt
 ## Paths assumed
 
 - Profile: `learner/profile.yaml`
-- Active curriculum: `learner/goals/<goal>/curriculum.yaml`
+- Active curriculum: `learner/goals/<slug>.yaml`
 - Helpers: `.sensei/scripts/frontier.py`, `.sensei/scripts/mutate_graph.py`, `.sensei/scripts/mastery_check.py`, `.sensei/scripts/classify_confidence.py`, `.sensei/scripts/decay.py`
 - Config: `.sensei/defaults.yaml` → `curriculum.mastery_threshold`
 
@@ -25,7 +25,7 @@ Run:
 
 Interpret:
 - **Confident + correct** → the learner may already know this topic. Before skipping, verify depth based on the goal's `target_depth`:
-  - `exposure`: one confident+correct probe is sufficient. Run `.sensei/run mutate_graph.py --operation skip --node <topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Skip to Step 6.
+  - `exposure`: one confident+correct probe is sufficient. Run `.sensei/run mutate_graph.py --operation skip --node <topic> --curriculum learner/goals/<slug>.yaml`. Skip to Step 6.
   - `functional`: pose a second probe at the **application** level (e.g., "solve this problem using [concept]" or "design a system that uses [concept]"). If also confident+correct, skip. If not, begin Step 2 from the gap.
   - `deep`: pose a second probe at **application** and a third at **transfer** level (e.g., "compare trade-offs between [approach A] and [approach B]" or "what breaks if [assumption] changes?"). Skip only if all three are confident+correct. Otherwise, begin Step 2 from the gap.
 - **Partial** (correct but uncertain, or partially correct) → note what they know. Begin Step 2 from the gap, not from scratch.
@@ -66,7 +66,7 @@ Wait for the response. Classify:
 - **Correct + confident** → go to Step 5.
 - **Partially correct** → address the specific misconception. Use a different angle. Return to Step 3. Maximum 2 reshapes before triggering the two-failure rule.
 - **Incorrect** → check for prerequisite gap:
-  - If prerequisite gap detected → run `.sensei/run mutate_graph.py --operation insert --node <prerequisite> --prerequisites <current-topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Pause current topic. Restart this protocol at Step 1 for the prerequisite.
+  - If prerequisite gap detected → run `.sensei/run mutate_graph.py --operation insert --node <prerequisite> --prerequisites <current-topic> --curriculum learner/goals/<slug>.yaml`. Pause current topic. Restart this protocol at Step 1 for the prerequisite.
   - If not a prerequisite gap → choose a different strategy from Step 2's table. Probe again (Step 3).
 
 ## Step 5 — Consolidation
@@ -95,7 +95,7 @@ Run:
 ```
 
 Interpret exit code:
-- **Exit 0 (pass)** → run `.sensei/run mutate_graph.py --operation complete --node <topic> --curriculum learner/goals/<goal>/curriculum.yaml --now <utc-now>`. Update profile. Run `.sensei/run frontier.py --curriculum learner/goals/<goal>/curriculum.yaml` to identify next topic. Return to Step 1 for the next topic, or end if learner signals done.
+- **Exit 0 (pass)** → run `.sensei/run mutate_graph.py --operation complete --node <topic> --curriculum learner/goals/<slug>.yaml --now <utc-now>`. Update profile. Run `.sensei/run frontier.py --curriculum learner/goals/<slug>.yaml` to identify next topic. Return to Step 1 for the next topic, or end if learner signals done.
 - **Exit 3 (fail)** → note partial progress in profile. Offer: "Want to continue with this topic next session, or move on?"
 - **Exit 1 (error)** → surface error, end session.
 
@@ -114,7 +114,7 @@ Evaluate these after every learner turn:
 1. Verify room: current node count + planned subtopics must not exceed `config.curriculum.max_nodes`.
 2. Decompose into 2–`config.curriculum.max_decompose_children` subtopics. Each must be independently teachable with its own explain→probe→reshape cycle. Name as `<parent-slug>-<aspect>` (e.g., `caching-invalidation`, `caching-eviction`). Inherit the parent's `concept_tags` and add specific ones.
 3. Preserve progress: if the learner demonstrated mastery of a sub-aspect, mark that subtopic for immediate skip after decomposition.
-4. Run: `.sensei/run mutate_graph.py --operation decompose --node <slug> --subgraph '<json>' --curriculum learner/goals/<goal>/curriculum.yaml`
+4. Run: `.sensei/run mutate_graph.py --operation decompose --node <slug> --subgraph '<json>' --curriculum learner/goals/<slug>.yaml`
 5. Activate the subtopic the learner is weakest on. Continue from Step 1.
 
 **Overwhelm detection.** If the learner gives 2+ confused or frustrated responses consecutively, activate the crisis script from `modes/tutor.md`: simplify, shrink scope, offer a break. When overwhelm is detected, update `emotional_state` in `learner/profile.yaml` immediately: set `frustration` to the observed level and `agency` to `dependent`. If `frustration` has been at or above the `degradation_intervention_threshold` for 2 or more consecutive exchanges, activate the crisis script. A single frustrated response may be transient — intervene only when frustration is sustained.
@@ -124,7 +124,7 @@ Evaluate these after every learner turn:
 If the learner fails the same probe twice after reshaping:
 1. Do NOT explain a third time.
 2. Diagnose: prerequisite gap or conceptual block?
-3. **Prerequisite gap** → run `.sensei/run mutate_graph.py --operation insert --node <prerequisite> --prerequisites <current-topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Teach prerequisite first.
+3. **Prerequisite gap** → run `.sensei/run mutate_graph.py --operation insert --node <prerequisite> --prerequisites <current-topic> --curriculum learner/goals/<slug>.yaml`. Teach prerequisite first.
 4. **Conceptual block** → try a completely different strategy from Step 2's table. If that also fails → mark topic as "needs more time" in profile, suggest returning next session.
 
 ## Constraints

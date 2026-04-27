@@ -39,11 +39,13 @@ from decay import freshness_score  # type: ignore[import-not-found]
 _DEFAULT_HALF_LIFE_DAYS = 7.0
 _DEFAULT_STALE_THRESHOLD = 0.5
 
-# Ordinal mastery levels used when mastery is a string label.
+# Canonical mastery levels — must match global_knowledge.py _SCORES.
 _MASTERY_ORDINALS: dict[str, float] = {
-    "shaky": 0.2,
-    "solid": 0.6,
-    "deep": 0.9,
+    "none": 0.0,
+    "shaky": 0.25,
+    "developing": 0.5,
+    "solid": 0.75,
+    "mastered": 1.0,
 }
 
 

@@ -11,7 +11,7 @@ When the learner asks about their progress (e.g., "How am I doing?", "Show my pr
 - Profile: `learner/profile.yaml`
 - Engine defaults: `.sensei/defaults.yaml`
 - Learner overrides: `learner/config.yaml`
-- Active goal curriculum: `learner/goals/<active-goal>/curriculum.yaml`
+- Active goal curriculum: `learner/goals/<slug>.yaml`
 - Hints: `learner/hints/hints.yaml`
 - Helpers: `.sensei/scripts/frontier.py`, `.sensei/scripts/decay.py`
 
@@ -28,14 +28,14 @@ Stop. Do not proceed.
 ## Step 2 — Gather data
 
 1. Read `learner/profile.yaml` → extract `expertise_map` (per-topic mastery, last_seen).
-2. Read active goal's `learner/goals/<active-goal>/curriculum.yaml` → completed vs total nodes. If no goal exists, note that.
+2. Read active goal's `learner/goals/<slug>.yaml` → completed vs total nodes. If no goal exists, note that.
 3. Read `learner/hints/hints.yaml` → count unprocessed hints.
 4. Run `.sensei/run frontier.py --curriculum <path>` → next 3 frontier topics.
 5. For each completed topic, run `.sensei/run decay.py --last-seen <last_seen> --half-life-days <config.memory.half_life_days> --now <utc-now> --stale-threshold <config.memory.stale_threshold>`. Collect topics where `"stale": true`.
 6. Run `.sensei/run goal_priority.py --goals-dir learner/goals/ --profile learner/profile.yaml --half-life-days <config.memory.half_life_days> --stale-threshold <config.memory.stale_threshold> --now <utc-now>` → ranked goal list.
 7. Pipe the ranked goal list into `.sensei/run session_allocator.py --goals-json <priority_output> --session-minutes <estimated_session_length> --min-minutes <config.cross_goal.min_session_minutes>` → per-goal time allocations. If `session_allocator.py` fails, skip time budgets — show priority-ranked goals without allocations.
 8. **Pacing** — for each active goal with at least 2 completed nodes, run:
-   `.sensei/run pacing.py --curriculum learner/goals/<goal>/curriculum.yaml --profile learner/profile.yaml --now <utc-now> --half-life-days <config.memory.half_life_days> --stale-threshold <config.memory.stale_threshold> --recency-decay <config.pacing.recency_decay> --review-overhead-cap <config.pacing.review_overhead_cap>`
+   `.sensei/run pacing.py --curriculum learner/goals/<slug>.yaml --profile learner/profile.yaml --now <utc-now> --half-life-days <config.memory.half_life_days> --stale-threshold <config.memory.stale_threshold> --recency-decay <config.pacing.recency_decay> --review-overhead-cap <config.pacing.review_overhead_cap>`
    Parse the JSON output. If the script fails or returns null velocity, skip pacing for that goal.
 
 If a helper fails, skip that data point — do not abort.
