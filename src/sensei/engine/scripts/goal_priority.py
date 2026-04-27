@@ -44,9 +44,15 @@ _DEFAULT_STALE_THRESHOLD = 0.5
 _DEFAULT_DEADLINE_WEIGHT = 5.0
 
 
-def _is_stale(last_seen: str, now: datetime, half_life_days: float, stale_threshold: float) -> bool:
+def _is_stale(
+    last_seen: str,
+    now: datetime,
+    half_life_days: float,
+    stale_threshold: float,
+    stability: float | None = None,
+) -> bool:
     elapsed = (now - parse_iso(last_seen)).total_seconds() / 86_400.0
-    return bool(freshness_score(elapsed, half_life_days) < stale_threshold)
+    return bool(freshness_score(elapsed, stability or half_life_days) < stale_threshold)
 
 
 def score_goal(
@@ -90,7 +96,7 @@ def score_goal(
             ls = parse_iso(entry["last_seen"])
             if most_recent is None or ls > most_recent:
                 most_recent = ls
-            if _is_stale(entry["last_seen"], now, half_life_days, stale_threshold):
+            if _is_stale(entry["last_seen"], now, half_life_days, stale_threshold, stability=entry.get("stability")):
                 stale_count += 1
 
     # Recency boost: 0–5 points, more recent = higher.

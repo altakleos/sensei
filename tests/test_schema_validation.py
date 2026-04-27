@@ -467,3 +467,66 @@ def test_goal_missing_target_depth_rejected():
     bad = {**VALID_GOAL, "three_unknowns": {"prior_state": "none", "target_state": "clear", "constraints": "none"}}
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.validate(bad, _load_schema("goal.schema.json"))
+
+
+# --- T13: completed_at on goal nodes ---
+
+
+def test_goal_node_with_completed_at_validates() -> None:
+    goal = {
+        **VALID_GOAL,
+        "nodes": {"ownership": {"state": "completed", "prerequisites": [], "completed_at": "2026-04-27T12:00:00Z"}},
+    }
+    jsonschema.validate(goal, _load_schema("goal.schema.json"))
+
+
+def test_goal_node_with_null_completed_at_validates() -> None:
+    goal = {
+        **VALID_GOAL,
+        "nodes": {"ownership": {"state": "active", "prerequisites": [], "completed_at": None}},
+    }
+    jsonschema.validate(goal, _load_schema("goal.schema.json"))
+
+
+def test_goal_node_without_completed_at_validates() -> None:
+    """completed_at is optional with a default — omitting it must pass."""
+    goal = {
+        **VALID_GOAL,
+        "nodes": {"ownership": {"state": "active", "prerequisites": []}},
+    }
+    jsonschema.validate(goal, _load_schema("goal.schema.json"))
+
+
+# --- T13: stability on profile topics ---
+
+
+def test_profile_topic_with_stability_validates() -> None:
+    profile = {
+        **VALID_PROFILE,
+        "expertise_map": {
+            "hash-maps": {**VALID_PROFILE["expertise_map"]["hash-maps"], "stability": 14.0},
+        },
+    }
+    jsonschema.validate(profile, _load_schema("profile.schema.json"))
+
+
+def test_profile_topic_with_null_stability_validates() -> None:
+    profile = {
+        **VALID_PROFILE,
+        "expertise_map": {
+            "hash-maps": {**VALID_PROFILE["expertise_map"]["hash-maps"], "stability": None},
+        },
+    }
+    jsonschema.validate(profile, _load_schema("profile.schema.json"))
+
+
+def test_profile_topic_with_zero_stability_fails() -> None:
+    """stability: 0 must fail (exclusiveMinimum: 0)."""
+    profile = {
+        **VALID_PROFILE,
+        "expertise_map": {
+            "hash-maps": {**VALID_PROFILE["expertise_map"]["hash-maps"], "stability": 0},
+        },
+    }
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(profile, _load_schema("profile.schema.json"))

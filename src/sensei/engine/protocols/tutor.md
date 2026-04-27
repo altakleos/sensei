@@ -84,7 +84,7 @@ Update `learner/profile.yaml` expertise_map for this topic. The mastery level MU
 
 Promote at most ONE level per teaching interaction. A learner at `none` who gives one good answer reaches `shaky`, not `solid`. Rapid advancement requires multiple interactions across sessions, not one impressive answer.
 
-Also update `attempts` (increment by the number of probes posed) and `correct` (increment by the number of correct responses). Update `last_seen` to now.
+Also update `attempts` (increment by the number of probes posed) and `correct` (increment by the number of correct responses). Update `last_seen` to now. If this is the topic's first completion, set `stability` to the configured `memory.half_life_days` (default 7.0). If `stability` already exists (re-teaching after a lapse), leave it unchanged.
 
 ## Step 6 — Advance
 
@@ -95,7 +95,7 @@ Run:
 ```
 
 Interpret exit code:
-- **Exit 0 (pass)** → run `.sensei/run mutate_graph.py --operation complete --node <topic> --curriculum learner/goals/<goal>/curriculum.yaml`. Update profile. Run `.sensei/run frontier.py --curriculum learner/goals/<goal>/curriculum.yaml` to identify next topic. Return to Step 1 for the next topic, or end if learner signals done.
+- **Exit 0 (pass)** → run `.sensei/run mutate_graph.py --operation complete --node <topic> --curriculum learner/goals/<goal>/curriculum.yaml --now <utc-now>`. Update profile. Run `.sensei/run frontier.py --curriculum learner/goals/<goal>/curriculum.yaml` to identify next topic. Return to Step 1 for the next topic, or end if learner signals done.
 - **Exit 3 (fail)** → note partial progress in profile. Offer: "Want to continue with this topic next session, or move on?"
 - **Exit 1 (error)** → surface error, end session.
 

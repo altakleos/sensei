@@ -577,3 +577,63 @@ def test_interleave_cli_flags(tmp_path: Path) -> None:
     parsed = json.loads(result.stdout)
     assert len(parsed) == 1
     assert parsed[0]["topic"] == "t1"
+
+
+# --- T12: per-topic stability overrides global half_life ---
+
+
+def test_per_topic_stability_overrides_global_half_life(tmp_path: Path) -> None:
+    """A topic with higher stability is considered less stale than one with lower stability,
+    even when both have the same last_seen and the same global half_life_days."""
+    profile = {
+        "schema_version": 0,
+        "learner_id": "alice",
+        "expertise_map": {
+            "stable-topic": {
+                "mastery": "solid", "confidence": 0.8,
+                "last_seen": "2026-04-01T00:00:00Z",
+                "attempts": 5, "correct": 4,
+                "stability": 30.0,  # long half-life → fresher
+            },
+            "fragile-topic": {
+                "mastery": "solid", "confidence": 0.8,
+                "last_seen": "2026-04-01T00:00:00Z",
+                "attempts": 5, "correct": 4,
+                "stability": 3.0,  # short half-life → more stale
+            },
+        },
+    }
+    goals_dir = tmp_path / "goals"
+    goals_dir.mkdir()
+    _write_yaml(goals_dir / "g.yaml", _goal("g", nodes={
+        "stable-topic": {"state": "completed", "prerequisites": []},
+        "fragile-topic": {"state": "completed", "prerequisites": []},
+    }))
+    prof = _write_yaml(tmp_path / "profile.yaml", profile)
+
+    from datetime import datetime, timezone
+
+    now = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    result = schedule_reviews(goals_dir, prof, now=now)
+    topics = [r["topic"] for r in result]
+    # fragile-topic (stability=3) decays much faster → lower freshness → appears first
+    assert "fragile-topic" in topics
+    # stable-topic (stability=30): freshness = 2^(-19/30) ≈ 0.64 → above 0.5 → excluded
+    assert "stable-topic" not in topics
+
+
+def test_missing_stability_falls_back_to_global(tmp_path: Path) -> None:
+    """A topic without a stability field uses the global half_life_days."""
+    goals_dir, prof = _setup(
+        tmp_path,
+        [_goal("g", nodes={"no-stability": {"state": "completed", "prerequisites": []}})],
+        _profile({"no-stability": "2026-03-21T00:00:00Z"}),  # 30 days ago
+    )
+    from datetime import datetime, timezone
+
+    now = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    # Default half_life_days=7, elapsed=30 → freshness = 2^(-30/7) ≈ 0.05 → stale
+    result = schedule_reviews(goals_dir, prof, now=now)
+    assert len(result) == 1
+    assert result[0]["topic"] == "no-stability"
+    assert result[0]["freshness"] < 0.1

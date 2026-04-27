@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Added
+
+- `completed_at` timestamp on curriculum nodes — recorded when a topic transitions to `completed` via `mutate_graph.py --operation complete --now <utc>`.
+- `stability` field on profile expertise_map entries — per-topic memory half-life in days, replacing the global `half_life_days` for personalised forgetting curves.
+- New config keys: `memory.stability_growth` (default 2.0), `memory.stability_decay` (default 0.5), `memory.stability_floor` (default 1.0).
+
 ## [0.1.0a23] — 2026-04-27
 
 ### Fixed

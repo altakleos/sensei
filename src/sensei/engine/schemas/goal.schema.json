@@ -183,6 +183,12 @@
             "pattern": "^[a-z][a-z0-9-]*$"
           },
           "description": "Abstract concept tags identifying transferable knowledge independent of goal-specific framing."
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "default": null,
+          "description": "ISO-8601 UTC timestamp of when this node was completed. Set once by mutate_graph --operation complete; never overwritten."
         }
       }
     },

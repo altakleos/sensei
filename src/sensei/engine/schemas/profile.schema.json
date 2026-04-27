@@ -107,6 +107,12 @@
         "correct": {
           "type": "integer",
           "minimum": 0
+        },
+        "stability": {
+          "type": ["number", "null"],
+          "exclusiveMinimum": 0,
+          "default": null,
+          "description": "Per-topic memory stability in days — estimated half-life before recall drops to 50%. Null until first completion."
         }
       }
     }

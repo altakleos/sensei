@@ -125,7 +125,7 @@ def test_schema_rejects_invalid_values(
 @pytest.mark.parametrize(
     "section,expected_missing",
     [
-        ("memory", {"half_life_days", "stale_threshold"}),
+        ("memory", {"half_life_days", "stale_threshold", "stability_growth", "stability_decay", "stability_floor"}),
         ("cross_goal", {"deadline_weight", "min_session_minutes", "review_dedup", "concept_dedup"}),
         ("interleaving", {"enabled", "intensity", "min_mastery"}),
         ("session_notes", {"load_count", "max_entries"}),
@@ -188,7 +188,7 @@ def test_partial_section_override_reports_only_missing_keys() -> None:
         for m in [e.message]
         if "is a required property" in m
     }
-    assert surfaced == {"stale_threshold"}
+    assert surfaced == {"stale_threshold", "stability_growth", "stability_decay", "stability_floor"}
 
 
 def test_inner_nested_mapping_required_keys_enforced() -> None:

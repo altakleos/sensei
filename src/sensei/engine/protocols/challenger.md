@@ -85,6 +85,7 @@ Update `learner/profile.yaml` for this topic — write ONLY these fields:
 - `confidence` ← adjust based on observed performance (0.0–1.0); boost if 3+ passed at mastered level
 - `mastery` ← update if evidence warrants (none → shaky → developing → solid → mastered)
 - `last_seen` ← current UTC timestamp (ISO-8601)
+- `stability` ← on successful recall: `stability * memory.stability_growth` (default ×2.0). On lapse: `max(memory.stability_floor, stability * memory.stability_decay)` (default floor 1.0, ×0.5). If `stability` is null, skip.
 
 **Do NOT add any fields beyond those listed above.** The profile schema enforces `additionalProperties: false`. Any extra fields (e.g., challenge_log, weakness_patterns, metadata) will fail validation. Record weakness observations (edge cases? transfer? composition?) in your spoken report to the learner, not in the profile.
 
@@ -99,7 +100,7 @@ Offer: "More challenges, different topic, or back to learning?" On exit, transit
 - NEVER challenge topics below solid mastery — redirect to tutor.
 - NEVER pose more than 5 challenges on one topic without offering an exit.
 - Learner can exit at any point — respect immediately, no guilt.
-- Profile updates after EVERY challenge — write ONLY: `attempts`, `correct`, `confidence`, `mastery`, `last_seen`. No other fields.
+- Profile updates after EVERY challenge — write ONLY: `attempts`, `correct`, `confidence`, `mastery`, `last_seen`, `stability`. No other fields.
 
 ## Error handling
 

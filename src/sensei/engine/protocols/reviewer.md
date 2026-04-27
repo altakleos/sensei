@@ -68,6 +68,7 @@ Act on calibration:
   - `confidence` ← adjust based on self-assessment calibration (0.0–1.0)
   - `mastery` ← update if evidence warrants (none → shaky → developing → solid → mastered)
   - `last_seen` ← current UTC timestamp (ISO-8601)
+  - `stability` ← on successful recall: `stability * memory.stability_growth` (default ×2.0). On lapse (failure to recall): `max(memory.stability_floor, stability * memory.stability_decay)` (default floor 1.0, ×0.5). If `stability` is null, skip (topic not yet completed).
 
 **Do NOT add any fields beyond those listed above.** The profile schema enforces `additionalProperties: false`. Any extra fields (e.g., review_patterns, error_types, calibration_trend) will fail validation. Communicate observed patterns (common error types, calibration trends) verbally to the learner, not in the profile.
 
@@ -78,7 +79,7 @@ Act on calibration:
 - NEVER use generic praise ("good job!") — be specific about what works.
 - Limit to 3–5 issues per review pass (cognitive load) — prioritize critical first.
 - The learner can exit at any point — respect immediately.
-- Profile updates: write ONLY `attempts`, `correct`, `confidence`, `mastery`, `last_seen` per topic. No other fields.
+- Profile updates: write ONLY `attempts`, `correct`, `confidence`, `mastery`, `last_seen`, `stability` per topic. No other fields.
 
 ## Error handling
 

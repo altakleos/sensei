@@ -20,6 +20,7 @@ import copy
 import json
 import sys
 from collections import deque
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -103,10 +104,11 @@ def _do_activate(nodes: dict[str, dict[str, Any]], slug: str) -> tuple[int, str]
     return 0, "active"
 
 
-def _do_complete(nodes: dict[str, dict[str, Any]], slug: str) -> tuple[int, str]:
+def _do_complete(nodes: dict[str, dict[str, Any]], slug: str, now: str) -> tuple[int, str]:
     if slug not in nodes or nodes[slug].get("state") != "active":
         return 1, ""
     nodes[slug]["state"] = "completed"
+    nodes[slug]["completed_at"] = now
     return 0, "completed"
 
 
@@ -164,6 +166,7 @@ def _do_decompose(
 def mutate(
     nodes: dict[str, dict[str, Any]], op: str, slug: str,
     prerequisites: list[str] | None, subgraph: dict[str, Any] | None,
+    *, now: str = "",
 ) -> tuple[int, str]:
     """Apply mutation. Returns (exit_code, new_state_or_empty).
 
@@ -174,7 +177,7 @@ def mutate(
     if op == "activate":
         return _do_activate(nodes, slug)
     if op == "complete":
-        return _do_complete(nodes, slug)
+        return _do_complete(nodes, slug, now)
     if op == "skip":
         return _do_skip(nodes, slug)
     if op == "insert":
@@ -191,7 +194,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--node", required=True, help="Target node slug")
     parser.add_argument("--prerequisites", default=None, help="Comma-separated prerequisite slugs (for insert)")
     parser.add_argument("--subgraph", default=None, help="JSON subgraph string (for decompose)")
+    parser.add_argument("--now", default=None, help="ISO-8601 UTC timestamp for completed_at (default: current UTC)")
     args = parser.parse_args(argv)
+
+    now = args.now or datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
 
     path = Path(args.curriculum)
     if not path.is_file():
@@ -217,7 +223,7 @@ def main(argv: list[str] | None = None) -> int:
         except json.JSONDecodeError as exc:
             return _fail(args.operation, args.node, f"invalid subgraph JSON: {exc}")
 
-    code, new_state = mutate(nodes, args.operation, args.node, prerequisites, subgraph)
+    code, new_state = mutate(nodes, args.operation, args.node, prerequisites, subgraph, now=now)
     if code != 0:
         # Determine error message
         if args.operation == "activate":

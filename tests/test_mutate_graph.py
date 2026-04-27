@@ -316,3 +316,93 @@ def test_main_invalid_subgraph_json(tmp_path: Path, capsys: pytest.CaptureFixtur
     assert rc == 1
     out = json.loads(capsys.readouterr().out)
     assert "invalid subgraph JSON" in out["error"]
+
+
+# --- T11: _do_complete stamps completed_at ---
+
+
+def test_complete_stamps_completed_at(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """Completing a node sets completed_at to the passed now value."""
+    cur = _make_curriculum(tmp_path, {
+        "A": {"state": "active", "prerequisites": []},
+    })
+    now_val = "2026-04-27T12:00:00Z"
+    rc = main(["--curriculum", str(cur), "--operation", "complete", "--node", "A", "--now", now_val])
+    assert rc == 0
+    data = yaml.safe_load(cur.read_text())
+    assert data["nodes"]["A"]["completed_at"] == now_val
+
+
+def test_complete_completed_at_matches_now_arg(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """A specific --now value appears verbatim in the output and on-disk node."""
+    cur = _make_curriculum(tmp_path, {
+        "A": {"state": "active", "prerequisites": []},
+    })
+    specific_now = "2025-12-25T08:30:00Z"
+    rc = main(["--curriculum", str(cur), "--operation", "complete", "--node", "A", "--now", specific_now])
+    out = json.loads(capsys.readouterr().out)
+    assert rc == 0
+    assert out["valid"] is True
+    data = yaml.safe_load(cur.read_text())
+    assert data["nodes"]["A"]["completed_at"] == specific_now
+
+
+# --- T14: Integration — complete stamps completed_at, review_scheduler uses stability ---
+
+
+def test_complete_then_review_uses_stability(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """Integration: complete a node via mutate, verify completed_at, then
+    confirm review_scheduler respects per-topic stability."""
+    from datetime import datetime, timezone
+
+    from sensei.engine.scripts.review_scheduler import schedule_reviews
+
+    # Step 1: create curriculum with one active node and complete it
+    cur = _make_curriculum(tmp_path, {
+        "topic-a": {"state": "active", "prerequisites": []},
+    })
+    now_iso = "2026-04-20T00:00:00Z"
+    rc = main(["--curriculum", str(cur), "--operation", "complete", "--node", "topic-a", "--now", now_iso])
+    assert rc == 0
+
+    # Step 2: verify completed_at is set
+    data = yaml.safe_load(cur.read_text())
+    assert data["nodes"]["topic-a"]["completed_at"] == now_iso
+
+    # Step 3: set up goals dir and profile with stability for review_scheduler
+    goals_dir = tmp_path / "goals"
+    goals_dir.mkdir()
+    goal = {
+        "schema_version": 0,
+        "goal_id": "test-goal",
+        "expressed_as": "Test",
+        "created": "2026-04-01T00:00:00Z",
+        "status": "active",
+        "three_unknowns": {
+            "prior_state": "none", "target_state": "clear",
+            "constraints": "none", "target_depth": "functional",
+        },
+        "nodes": {"topic-a": {"state": "completed", "prerequisites": []}},
+    }
+    (goals_dir / "test-goal.yaml").write_text(yaml.safe_dump(goal), encoding="utf-8")
+
+    # Profile: topic-a seen 10 days ago, stability=30 (long half-life → fresher)
+    profile = {
+        "schema_version": 0,
+        "learner_id": "alice",
+        "expertise_map": {
+            "topic-a": {
+                "mastery": "solid", "confidence": 0.8,
+                "last_seen": "2026-04-10T00:00:00Z",
+                "attempts": 5, "correct": 4,
+                "stability": 30.0,
+            },
+        },
+    }
+    prof_path = tmp_path / "profile.yaml"
+    prof_path.write_text(yaml.safe_dump(profile), encoding="utf-8")
+
+    now = datetime(2026, 4, 20, tzinfo=timezone.utc)
+    # With stability=30, freshness = 2^(-10/30) ≈ 0.79 → above 0.5 threshold → excluded
+    result = schedule_reviews(goals_dir, prof_path, now=now)
+    assert result == [], "High stability should keep topic fresh (above stale threshold)"

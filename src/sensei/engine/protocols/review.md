@@ -149,6 +149,7 @@ In memory, update the topic's state per the V1 rule:
 - `correct` ← `correct + 1` if `correctness == "correct"`, else unchanged.
 - `mastery` unchanged.
 - `confidence` unchanged.
+- `stability` ← if `correctness == "correct"`: `stability * memory.stability_growth` (default ×2.0). If incorrect: `max(memory.stability_floor, stability * memory.stability_decay)` (default floor 1.0, ×0.5). If `stability` is null, skip (topic not yet completed via tutor protocol).
 
 Write the updated `learner/profile.yaml`. Then re-validate:
 

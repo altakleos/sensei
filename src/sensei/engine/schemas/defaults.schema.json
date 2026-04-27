@@ -132,7 +132,7 @@
     "memory": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["half_life_days", "stale_threshold"],
+      "required": ["half_life_days", "stale_threshold", "stability_growth", "stability_decay", "stability_floor"],
       "description": "Review protocol tunables (consumed by protocols/review.md via decay.py).",
       "properties": {
         "half_life_days": {
@@ -145,6 +145,22 @@
           "exclusiveMinimum": 0,
           "maximum": 1,
           "description": "Freshness below this is considered stale and due for review."
+        },
+        "stability_growth": {
+          "type": "number",
+          "exclusiveMinimum": 1,
+          "description": "Multiplier applied to per-topic stability on successful retrieval."
+        },
+        "stability_decay": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "description": "Multiplier applied to per-topic stability on lapse (failure to recall)."
+        },
+        "stability_floor": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Minimum per-topic stability in days. Prevents decay below this value."
         }
       }
     },

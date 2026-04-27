@@ -182,7 +182,8 @@ def schedule_reviews(
                 continue
 
             elapsed = (now - parse_iso(entry["last_seen"])).total_seconds() / 86_400.0
-            fresh = freshness_score(elapsed, half_life_days)
+            topic_stability = entry.get("stability") or half_life_days
+            fresh = freshness_score(elapsed, topic_stability)
 
             if fresh >= stale_threshold:
                 continue

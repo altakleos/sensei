@@ -24,6 +24,7 @@ For the full development model, see `docs/development-process.md`.
 | [Review Protocol](review-protocol.md) | accepted |
 | [Session Notes](session-notes.md) | accepted |
 | [Target Depth](target-depth.md) | accepted |
+| [Temporal Metadata](temporal-metadata.md) | accepted |
 
 ## Template
 
