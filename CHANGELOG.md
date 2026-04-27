@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.1.0a22] — 2026-04-27
+
 ### Added
 - Contributor onboarding scaffolding: top-level `Makefile` (`setup`, `test`, `lint`, `typecheck`, `validators`, `gate`, `clean`) and `CONTRIBUTING.md`. All Makefile targets shell out to `.venv/bin/<tool>` so local pre-merge checks match CI; `make gate` runs the full bundle. Closes the gap where `pytest` on a fresh clone failed because `pyproject.toml` mandates `--cov=…` and PEP 668 blocks system-pip from installing `pytest-cov` — the venv discipline that lived only inside `docs/operations/release-playbook.md` is now mechanised at the entry point. Per [`docs/plans/contributor-onboarding-makefile.md`](docs/plans/contributor-onboarding-makefile.md).
 - ADR-immutability CI gate. New `ci/check_adr_immutability.py` enforces the long-standing process invariant that "ADRs are immutable once accepted" (`docs/development-process.md` § ADRs). Body edits to `accepted` / `accepted (lite)` ADRs fail the build unless the commit message carries an `Allow-ADR-edit: NNNN — <reason>` trailer or the diff is purely a `## Historical Note` append. Frontmatter-only status FSM transitions (provisional → accepted, accepted → superseded, plus `superseded-by:` annotations) are always allowed. Wired into `verify.yml`; runs in PR mode (BASE..HEAD) and push-to-main mode (HEAD only). Closes the only convention-only invariant in the SDD method without a mechanical guard, per the 2026-04-26 audit. Per [`docs/plans/adr-immutability-gate.md`](docs/plans/adr-immutability-gate.md).
@@ -328,7 +330,8 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a21...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.1.0a22...HEAD
+[0.1.0a22]: https://github.com/altakleos/sensei/compare/v0.1.0a21...v0.1.0a22
 [0.1.0a21]: https://github.com/altakleos/sensei/compare/v0.1.0a20...v0.1.0a21
 [0.1.0a20]: https://github.com/altakleos/sensei/compare/v0.1.0a19...v0.1.0a20
 [0.1.0a19]: https://github.com/altakleos/sensei/compare/v0.1.0a18...v0.1.0a19

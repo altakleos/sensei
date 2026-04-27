@@ -84,6 +84,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [engine-state-constants](engine-state-constants.md) | Hoist `DONE_STATES` / `EXCLUDED_STATES` curriculum-eligibility frozensets into `engine/scripts/_states.py`; both `frontier.py` and `mutate_graph.py` import the single definition. Closes the only architectural-drift risk in the script layer named by the 2026-04-26 audit | done |
 | [contributor-onboarding-makefile](contributor-onboarding-makefile.md) | Top-level `Makefile` (`setup`/`test`/`lint`/`typecheck`/`validators`/`gate`/`clean`) + `CONTRIBUTING.md` so a fresh clone gets to green pytest in one command; mechanises the `.venv/bin/<tool>` discipline previously buried in `release-playbook.md` | done |
 | [adr-immutability-gate](adr-immutability-gate.md) | `ci/check_adr_immutability.py` enforces the long-standing ADR-immutability invariant; body edits to accepted ADRs fail CI unless the commit carries an `Allow-ADR-edit: NNNN — reason` trailer or the diff is purely a `## Historical Note` append. Closes the only convention-only invariant in the SDD method. | done |
+| [release-v0.1.0a22](release-v0.1.0a22.md) | Cut release v0.1.0a22 — bundles contributor-onboarding-makefile (#42) + adr-immutability-gate (#44); first release exercising the new ADR-immutability gate in CI | done |
 
 ### In Progress
 | Plan | Feature | Status |
