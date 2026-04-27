@@ -9,6 +9,7 @@ Subcommands:
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import shutil
@@ -17,6 +18,7 @@ import sys
 from pathlib import Path
 
 import click
+import jsonschema
 import yaml
 
 import sensei
@@ -212,37 +214,45 @@ def init(target: Path, force: bool, learner_id: str) -> None:
     _install_run_script(sensei_dir)
 
     # Learner data directory + seed profile.
-    (target / "learner").mkdir(exist_ok=True)
-    (target / "learner" / "goals").mkdir(exist_ok=True)
-    learner_config = target / "learner" / "config.yaml"
-    if not learner_config.exists():
-        learner_config.write_text(_LEARNER_CONFIG_YAML, encoding="utf-8")
-    learner_profile = target / "learner" / "profile.yaml"
-    if not learner_profile.exists():
-        profile_body = yaml.safe_dump(
-            {"schema_version": 0, "learner_id": learner_id, "expertise_map": {}},
-            sort_keys=False,
-        )
-        learner_profile.write_text(
-            _STARTER_PROFILE_HEADER + profile_body,
-            encoding="utf-8",
-        )
+    try:
+        (target / "learner").mkdir(exist_ok=True)
+        (target / "learner" / "goals").mkdir(exist_ok=True)
+        learner_config = target / "learner" / "config.yaml"
+        if not learner_config.exists():
+            learner_config.write_text(_LEARNER_CONFIG_YAML, encoding="utf-8")
+        learner_profile = target / "learner" / "profile.yaml"
+        if not learner_profile.exists():
+            profile_body = yaml.safe_dump(
+                {"schema_version": 0, "learner_id": learner_id, "expertise_map": {}},
+                sort_keys=False,
+            )
+            learner_profile.write_text(
+                _STARTER_PROFILE_HEADER + profile_body,
+                encoding="utf-8",
+            )
 
-    # Session notes file.
-    session_notes = target / "learner" / "session-notes.yaml"
-    if not session_notes.exists():
-        session_notes.write_text("schema_version: 0\nsessions: []\n", encoding="utf-8")
+        # Session notes file.
+        session_notes = target / "learner" / "session-notes.yaml"
+        if not session_notes.exists():
+            session_notes.write_text("schema_version: 0\nsessions: []\n", encoding="utf-8")
 
-    # Hints ingestion directories and registry.
-    (target / "learner" / "inbox").mkdir(exist_ok=True)
-    (target / "learner" / "inbox" / ".gitkeep").write_text(
-        "# Drop zone for raw learning hints (URLs, snippets, notes).\n", encoding="utf-8"
-    )
-    (target / "learner" / "hints" / "active").mkdir(parents=True, exist_ok=True)
-    (target / "learner" / "hints" / "archive").mkdir(parents=True, exist_ok=True)
-    hints_registry = target / "learner" / "hints" / "hints.yaml"
-    if not hints_registry.exists():
-        hints_registry.write_text("schema_version: 1\nhints: []\n", encoding="utf-8")
+        # Hints ingestion directories and registry.
+        (target / "learner" / "inbox").mkdir(exist_ok=True)
+        gitkeep = target / "learner" / "inbox" / ".gitkeep"
+        if not gitkeep.exists():
+            gitkeep.write_text(
+                "# Drop zone for raw learning hints (URLs, snippets, notes).\n", encoding="utf-8"
+            )
+        (target / "learner" / "hints" / "active").mkdir(parents=True, exist_ok=True)
+        (target / "learner" / "hints" / "archive").mkdir(parents=True, exist_ok=True)
+        hints_registry = target / "learner" / "hints" / "hints.yaml"
+        if not hints_registry.exists():
+            hints_registry.write_text("schema_version: 0\nhints: []\n", encoding="utf-8")
+    except OSError as exc:
+        raise click.ClickException(
+            f"Failed to write learner files: {exc}. "
+            f"Re-run with --force to complete initialization."
+        ) from exc
 
     # AGENTS.md + tool shims (ADR-0003). The boot document is bundled in the
     # engine (see src/sensei/engine/templates/AGENTS.md) rather than baked into
@@ -250,11 +260,15 @@ def init(target: Path, force: bool, learner_id: str) -> None:
     # any time the bundle is refreshed. `.sensei/` was just written above, so
     # the template is always readable from there.
     agents_template = sensei_dir / "templates" / "AGENTS.md"
-    (target / "AGENTS.md").write_text(
-        agents_template.read_text(encoding="utf-8"), encoding="utf-8"
-    )
+    agents_md = target / "AGENTS.md"
+    if not agents_md.exists():
+        agents_md.write_text(
+            agents_template.read_text(encoding="utf-8"), encoding="utf-8"
+        )
     for rel_path, content in _SHIMS.items():
-        _write_shim(target, rel_path, content)
+        shim_path = target / rel_path
+        if not shim_path.exists():
+            _write_shim(target, rel_path, content)
 
     click.echo(f"Created .sensei/ at {sensei_dir}")
     click.echo(f"Wrote AGENTS.md and {len(_SHIMS)} tool-specific shims.")
@@ -370,6 +384,18 @@ def upgrade(target: Path) -> None:
     version_file = sensei_dir / ".sensei-version"
     old_version = version_file.read_text().strip() if version_file.exists() else "unknown"
 
+    from packaging.version import InvalidVersion, Version
+    try:
+        old_ver, new_ver = Version(old_version), Version(__version__)
+    except InvalidVersion:
+        old_ver = new_ver = None  # type: ignore[assignment]
+    if old_ver is not None and new_ver is not None and new_ver < old_ver:
+        raise click.ClickException(
+            f"Installed version ({__version__}) is older than current engine "
+            f"({old_version}). Downgrade is not supported — install a newer "
+            f"version or use 'init --force'."
+        )
+
     if old_version == __version__:
         click.echo(f"Already at {__version__}. Nothing to upgrade.")
         return
@@ -391,6 +417,15 @@ def upgrade(target: Path) -> None:
 
     # Refresh interpreter path and run wrapper.
     _install_run_script(sensei_dir)
+
+    # Refresh AGENTS.md + tool shims to match new engine version.
+    agents_template = sensei_dir / "templates" / "AGENTS.md"
+    if agents_template.exists():
+        (target / "AGENTS.md").write_text(
+            agents_template.read_text(encoding="utf-8"), encoding="utf-8"
+        )
+    for rel_path, content in _SHIMS.items():
+        _write_shim(target, rel_path, content)
 
     click.echo(f"Upgraded .sensei/ from {old_version} → {__version__}")
     if learner_dir.exists():
@@ -465,10 +500,6 @@ def verify(target: Path) -> None:
     session_notes_path = target / "learner" / "session-notes.yaml"
     if session_notes_path.exists():
         try:
-            import json
-
-            import jsonschema
-
             notes_data = yaml.safe_load(session_notes_path.read_text())
             if isinstance(notes_data, dict):
                 schema_path = sensei_dir / "schemas" / "session-notes.schema.json"
@@ -494,10 +525,6 @@ def verify(target: Path) -> None:
         prior_soft_fail = os.environ.get("SENSEI_CONFIG_SOFT_FAIL")
         os.environ["SENSEI_CONFIG_SOFT_FAIL"] = "1"
         try:
-            import json
-
-            import jsonschema
-
             from sensei.engine.scripts.config import load_config
 
             merged = load_config(sensei_dir, target)
@@ -512,6 +539,45 @@ def verify(target: Path) -> None:
                 os.environ.pop("SENSEI_CONFIG_SOFT_FAIL", None)
             else:
                 os.environ["SENSEI_CONFIG_SOFT_FAIL"] = prior_soft_fail
+
+    # Check 6: goal files.
+    goals_dir = target / "learner" / "goals"
+    if goals_dir.is_dir():
+        from sensei.engine.scripts.check_goal import validate_goal
+        for goal_path in sorted(goals_dir.glob("*.yaml")):
+            try:
+                goal_data = yaml.safe_load(goal_path.read_text(encoding="utf-8"))
+            except yaml.YAMLError as exc:
+                errors.append(f"{goal_path.name}: invalid YAML — {exc}")
+                continue
+            if not isinstance(goal_data, dict):
+                errors.append(f"{goal_path.name}: not a YAML mapping")
+                continue
+            _status, goal_errors = validate_goal(goal_data)
+            for ge in goal_errors:
+                errors.append(f"{goal_path.name}: {ge}")
+
+    # Check 7: AGENTS.md exists.
+    if not (target / "AGENTS.md").exists():
+        errors.append("missing: AGENTS.md")
+
+    # Check 8: tool shims.
+    for rel_path in _SHIMS:
+        if not (target / rel_path).exists():
+            errors.append(f"missing: {rel_path}")
+
+    # Check 9: hints registry.
+    hints_path = target / "learner" / "hints" / "hints.yaml"
+    hints_schema_path = sensei_dir / "schemas" / "hints.yaml.schema.json"
+    if hints_path.exists() and hints_schema_path.exists():
+        try:
+            hints_data = yaml.safe_load(hints_path.read_text(encoding="utf-8"))
+            hints_schema = json.loads(hints_schema_path.read_text(encoding="utf-8"))
+            jsonschema.validate(hints_data, hints_schema)
+        except yaml.YAMLError as exc:
+            errors.append(f"hints.yaml: invalid YAML — {exc}")
+        except jsonschema.ValidationError as exc:
+            errors.append(f"hints.yaml: {exc.message}")
 
     if errors:
         click.echo("FAIL")

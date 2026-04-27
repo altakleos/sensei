@@ -43,7 +43,7 @@ def test_init_creates_instance(tmp_path: Path) -> None:
     assert (target / "learner" / "hints" / "active").is_dir()
     assert (target / "learner" / "hints" / "archive").is_dir()
     hints_reg = yaml.safe_load((target / "learner" / "hints" / "hints.yaml").read_text())
-    assert hints_reg == {"schema_version": 1, "hints": []}
+    assert hints_reg == {"schema_version": 0, "hints": []}
 
     # Session notes file.
     session_notes = yaml.safe_load((target / "learner" / "session-notes.yaml").read_text())

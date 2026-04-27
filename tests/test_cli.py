@@ -782,3 +782,159 @@ def test_verify_collects_every_dotpath_on_multi_field_failure(
     assert result.exit_code == 1
     assert "half_life_days" in result.output
     assert "mastery_gate" in result.output
+
+
+# --- FIX 5: upgrade refreshes AGENTS.md and shims ---
+
+
+def test_upgrade_refreshes_agents_and_shims(tmp_path: Path) -> None:
+    """After upgrade, AGENTS.md matches the template and shims are present."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    runner.invoke(main, ["init", str(inst)])
+    # Simulate old version so upgrade isn't a noop.
+    (inst / ".sensei" / ".sensei-version").write_text("0.0.0\n")
+    # Stale AGENTS.md before upgrade.
+    (inst / "AGENTS.md").write_text("stale content\n", encoding="utf-8")
+
+    result = runner.invoke(main, ["upgrade", str(inst)])
+    assert result.exit_code == 0
+
+    # AGENTS.md should match the template from the refreshed engine.
+    agents_template = inst / ".sensei" / "templates" / "AGENTS.md"
+    assert agents_template.exists()
+    assert (inst / "AGENTS.md").read_text(encoding="utf-8") == agents_template.read_text(encoding="utf-8")
+
+    # At least one shim file exists with expected content.
+    assert (inst / "CLAUDE.md").exists()
+    assert (inst / "CLAUDE.md").read_text(encoding="utf-8") == "See @AGENTS.md\n"
+
+
+# --- FIX 6: reject version downgrades ---
+
+
+def test_upgrade_rejects_downgrade(tmp_path: Path) -> None:
+    """Upgrade must refuse when the installed version is older than the instance."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    runner.invoke(main, ["init", str(inst)])
+    # Write a version higher than any real release.
+    (inst / ".sensei" / ".sensei-version").write_text("99.0.0\n")
+
+    result = runner.invoke(main, ["upgrade", str(inst)])
+    assert result.exit_code != 0
+    assert "Downgrade is not supported" in result.output
+
+
+# --- FIX 7: verify checks goals, AGENTS.md, shims, hints ---
+
+
+def test_verify_detects_invalid_goal(tmp_path: Path) -> None:
+    """A malformed goal file must be reported by verify."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    goals_dir = inst / "learner" / "goals"
+    goals_dir.mkdir(parents=True, exist_ok=True)
+    # Write a goal that is valid YAML but missing required fields.
+    (goals_dir / "bad-goal.yaml").write_text("title: missing fields\n", encoding="utf-8")
+
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "bad-goal.yaml" in result.output
+
+
+def test_verify_detects_missing_agents_md(tmp_path: Path) -> None:
+    """Verify must report a missing AGENTS.md."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / "AGENTS.md").unlink()
+
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "missing: AGENTS.md" in result.output
+
+
+def test_verify_detects_missing_shim(tmp_path: Path) -> None:
+    """Verify must report a missing tool shim file."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    (inst / "CLAUDE.md").unlink()
+
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "missing: CLAUDE.md" in result.output
+
+
+def test_verify_detects_invalid_hints(tmp_path: Path) -> None:
+    """Verify must report an invalid hints.yaml."""
+    runner = CliRunner()
+    inst = tmp_path / "inst"
+    _init_instance(runner, inst)
+    # Write hints.yaml that violates the schema (wrong type for hints key).
+    (inst / "learner" / "hints" / "hints.yaml").write_text(
+        "schema_version: 1\nhints: not-a-list\n", encoding="utf-8"
+    )
+
+    result = runner.invoke(main, ["verify", str(inst)])
+    assert result.exit_code == 1
+    assert "hints.yaml" in result.output
+
+
+def test_init_partial_failure_recoverable(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """If a learner file write fails, init reports a recoverable error;
+    re-running with --force completes initialization."""
+    runner = CliRunner()
+    original_write_text = Path.write_text
+
+    def failing_write_text(self: Path, content: str, *args: object, **kwargs: object) -> None:
+        if "sessions:" in content:
+            raise OSError("simulated disk full")
+        return original_write_text(self, content, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "write_text", failing_write_text)
+    result = runner.invoke(main, ["init", str(tmp_path)])
+    assert result.exit_code != 0
+    assert "Re-run with --force" in result.output
+
+    monkeypatch.undo()
+    result = runner.invoke(main, ["init", str(tmp_path), "--force"])
+    assert result.exit_code == 0
+
+    assert (tmp_path / "learner" / "profile.yaml").exists()
+    assert (tmp_path / "learner" / "config.yaml").exists()
+    assert (tmp_path / "learner" / "session-notes.yaml").exists()
+    assert (tmp_path / "learner" / "hints" / "hints.yaml").exists()
+    assert (tmp_path / "learner" / "inbox" / ".gitkeep").exists()
+    assert (tmp_path / "AGENTS.md").exists()
+
+
+# --- FIX 24: init --force preserves custom AGENTS.md and shims ---
+
+
+def test_init_force_preserves_custom_agents_md(tmp_path: Path) -> None:
+    """init --force must not overwrite a user-customized AGENTS.md."""
+    runner = CliRunner()
+    _init_instance(runner, tmp_path)
+    agents_md = tmp_path / "AGENTS.md"
+    custom = "# My custom AGENTS.md\nDo not overwrite me.\n"
+    agents_md.write_text(custom, encoding="utf-8")
+
+    result = runner.invoke(main, ["init", str(tmp_path), "--force"])
+    assert result.exit_code == 0
+    assert agents_md.read_text(encoding="utf-8") == custom
+
+
+def test_init_force_preserves_custom_shim(tmp_path: Path) -> None:
+    """init --force must not overwrite a user-customized shim file."""
+    runner = CliRunner()
+    _init_instance(runner, tmp_path)
+    claude_shim = tmp_path / "CLAUDE.md"
+    custom = "# My custom Claude shim\n"
+    claude_shim.write_text(custom, encoding="utf-8")
+
+    result = runner.invoke(main, ["init", str(tmp_path), "--force"])
+    assert result.exit_code == 0
+    assert claude_shim.read_text(encoding="utf-8") == custom
