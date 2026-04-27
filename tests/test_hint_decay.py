@@ -102,8 +102,8 @@ def test_main_missing_hints_file_returns_1(
         "--expire-after-days", "28",
     ])
     assert rc == 1
-    err = capsys.readouterr().err
-    assert "not found" in err
+    out = json.loads(capsys.readouterr().out)
+    assert "not found" in out["error"]
 
 
 def test_main_corrupt_yaml_returns_1(
@@ -118,8 +118,8 @@ def test_main_corrupt_yaml_returns_1(
         "--expire-after-days", "28",
     ])
     assert rc == 1
-    err = capsys.readouterr().err
-    assert "yaml parse error" in err
+    out = json.loads(capsys.readouterr().out)
+    assert "yaml parse error" in out["error"]
 
 
 def test_main_malformed_hints_file_rejected(
@@ -134,8 +134,8 @@ def test_main_malformed_hints_file_rejected(
         "--expire-after-days", "28",
     ])
     assert rc == 1
-    err = capsys.readouterr().err
-    assert "hints" in err.lower()
+    out = json.loads(capsys.readouterr().out)
+    assert "hints" in out["error"].lower()
 
 
 def test_main_uses_wall_clock_when_now_omitted(

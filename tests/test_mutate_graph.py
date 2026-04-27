@@ -406,3 +406,65 @@ def test_complete_then_review_uses_stability(tmp_path: Path, capsys: pytest.Capt
     # With stability=30, freshness = 2^(-10/30) ≈ 0.79 → above 0.5 threshold → excluded
     result = schedule_reviews(goals_dir, prof_path, now=now)
     assert result == [], "High stability should keep topic fresh (above stale threshold)"
+
+
+# --- FIX 11: _do_skip rejects terminal states ---
+
+
+def test_skip_rejects_completed_node(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """A completed node cannot be skipped — it is already terminal."""
+    cur = _make_curriculum(tmp_path, {
+        "A": {"state": "completed", "prerequisites": []},
+    })
+    rc, out = _run(cur, "skip", "A", capsys)
+    assert rc == 1
+    assert out["valid"] is False
+    data = yaml.safe_load(cur.read_text())
+    assert data["nodes"]["A"]["state"] == "completed"
+
+
+def test_skip_rejects_decomposed_node(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """A decomposed node cannot be skipped — it is already terminal."""
+    cur = _make_curriculum(tmp_path, {
+        "A": {"state": "decomposed", "prerequisites": []},
+    })
+    rc, out = _run(cur, "skip", "A", capsys)
+    assert rc == 1
+    assert out["valid"] is False
+    data = yaml.safe_load(cur.read_text())
+    assert data["nodes"]["A"]["state"] == "decomposed"
+
+
+def test_skip_rejects_already_skipped(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """An already-skipped node cannot be skipped again."""
+    cur = _make_curriculum(tmp_path, {
+        "A": {"state": "skipped", "prerequisites": []},
+    })
+    rc, out = _run(cur, "skip", "A", capsys)
+    assert rc == 1
+    assert out["valid"] is False
+    data = yaml.safe_load(cur.read_text())
+    assert data["nodes"]["A"]["state"] == "skipped"
+
+
+# --- FIX 22: _do_decompose rejects slug collisions ---
+
+
+def test_decompose_rejects_slug_collision(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """Decomposing A with a subgraph that contains a node named B must be
+    rejected when B already exists in the graph."""
+    cur = _make_curriculum(tmp_path, {
+        "A": {"state": "pending", "prerequisites": []},
+        "B": {"state": "pending", "prerequisites": ["A"]},
+    })
+    subgraph = {"nodes": {
+        "B": {"prerequisites": []},  # collides with existing B
+        "A1": {"prerequisites": ["B"]},
+    }}
+    rc, out = _run(cur, "decompose", "A", capsys, subgraph=subgraph)
+    assert rc == 1
+    assert out["valid"] is False
+    # Original node B must be unchanged.
+    data = yaml.safe_load(cur.read_text())
+    assert data["nodes"]["B"]["state"] == "pending"
+    assert data["nodes"]["B"]["prerequisites"] == ["A"]

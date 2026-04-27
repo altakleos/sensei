@@ -71,18 +71,18 @@ def main(argv: list[str] | None = None) -> int:
 
     path = Path(args.hints_file)
     if not path.is_file():
-        print(f"error: hints file not found: {path}", file=sys.stderr)
+        print(json.dumps({"error": f"hints file not found: {path}"}))
         return 1
 
     try:
         with path.open("r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
     except yaml.YAMLError as exc:
-        print(f"error: yaml parse error: {exc}", file=sys.stderr)
+        print(json.dumps({"error": f"yaml parse error: {exc}"}))
         return 1
 
     if not isinstance(data, dict) or "hints" not in data:
-        print("error: hints file must contain a top-level 'hints' key", file=sys.stderr)
+        print(json.dumps({"error": "hints file must contain a top-level 'hints' key"}))
         return 1
 
     now = parse_iso(args.now) if args.now else datetime.now(tz=timezone.utc)

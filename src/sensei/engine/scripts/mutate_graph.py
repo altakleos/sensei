@@ -20,7 +20,7 @@ import copy
 import json
 import sys
 from collections import deque
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -115,6 +115,10 @@ def _do_complete(nodes: dict[str, dict[str, Any]], slug: str, now: str) -> tuple
 def _do_skip(nodes: dict[str, dict[str, Any]], slug: str) -> tuple[int, str]:
     if slug not in nodes:
         return 1, ""
+    # Reject nodes already in terminal states
+    state = nodes[slug].get("state", "pending")
+    if state in {"completed", "decomposed", "skipped"}:
+        return 1, ""
     nodes[slug]["state"] = "skipped"
     return 0, "skipped"
 
@@ -148,6 +152,11 @@ def _do_decompose(
     for sn in sub_nodes.values():
         all_prereqs_in_sub.update(sn.get("prerequisites", []))
     leaves = [s for s in sub_nodes if s not in all_prereqs_in_sub]
+
+    # Reject if any subgraph slug collides with an existing node (except the decomposed node itself).
+    for sub_slug in sub_nodes:
+        if sub_slug in nodes and sub_slug != slug:
+            return 1, ""
 
     # Mark original as decomposed
     nodes[slug]["state"] = "decomposed"
@@ -197,7 +206,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--now", default=None, help="ISO-8601 UTC timestamp for completed_at (default: current UTC)")
     args = parser.parse_args(argv)
 
-    now = args.now or datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    now = args.now or datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     path = Path(args.curriculum)
     if not path.is_file():
@@ -237,7 +246,10 @@ def main(argv: list[str] | None = None) -> int:
         elif args.operation == "complete":
             msg = f"node '{args.node}' is not active"
         elif args.operation == "skip":
-            msg = f"node '{args.node}' does not exist"
+            if args.node not in original:
+                msg = f"node '{args.node}' does not exist"
+            else:
+                msg = f"node '{args.node}' is in terminal state '{original[args.node].get('state', 'pending')}'"
         elif args.operation == "insert":
             if args.node in original:
                 msg = f"node '{args.node}' already exists"

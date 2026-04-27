@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 try:
     import yaml
 except ImportError:  # pragma: no cover
-    print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
+    print(json.dumps({"error": "Missing 'pyyaml'. Install with: pip install sensei-tutor"}))
     sys.exit(1)
 
 from _atomic import atomic_write_text  # type: ignore[import-not-found]
@@ -208,10 +208,18 @@ def main(argv: list[str] | None = None) -> int:
     if args.file:
         if not args.type:
             parser.error("--type required with --file")
-        migrated = migrate_file(args.file, args.type)
+        try:
+            migrated = migrate_file(args.file, args.type)
+        except ValueError as exc:
+            print(json.dumps({"error": str(exc)}))
+            return 1
         result: dict[str, Any] = {"file": str(args.file), "migrated": migrated}
     elif args.instance:
-        results = migrate_instance(args.instance)
+        try:
+            results = migrate_instance(args.instance)
+        except ValueError as exc:
+            print(json.dumps({"error": str(exc)}))
+            return 1
         result = {"instance": str(args.instance), "migrated": results}
     else:
         parser.error("Provide --file or --instance")
