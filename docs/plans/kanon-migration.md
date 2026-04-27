@@ -38,12 +38,12 @@ has diverged in 4 places:
 | Operations link | line 463 | Move to `docs/sensei-implementation.md` |
 
 **Steps:**
-- [ ] Bump version in `src/sensei/__init__.py` from `0.1.0a26` to `0.2.0a1`
-- [ ] Add `## [0.2.0a1]` section to CHANGELOG.md with migration summary
-- [ ] Copy kanon's `development-process.md` over sensei's version
-- [ ] Add the 4 removed project-specific references to `docs/sensei-implementation.md`
-- [ ] Verify no broken links result from the swap
-- [ ] Commit: `feat!: begin kanon migration — bump to v0.2.0a1, reconcile development-process.md`
+- [x] Bump version in `src/sensei/__init__.py` from `0.1.0a26` to `0.2.0a1`
+- [x] Add `## [0.2.0a1]` section to CHANGELOG.md with migration summary
+- [x] Copy kanon's `development-process.md` over sensei's version
+- [x] Add the 4 removed project-specific references to `docs/sensei-implementation.md`
+- [x] Verify no broken links result from the swap
+- [x] Commit: `feat!: begin kanon migration — bump to v0.2.0a1, reconcile development-process.md`
 
 ### Phase B: Run `kanon init` with full aspect stack
 
@@ -93,9 +93,9 @@ kanon init /Users/santorob/dev/sensei \
 | `.kanon/protocols/` | CREATE | 14 protocol files across all aspects |
 
 **Steps:**
-- [ ] Run `kanon init` with the full aspect stack
-- [ ] Review the generated AGENTS.md — compare against sensei's hand-authored version
-- [ ] Commit: `feat: initialize kanon with full aspect stack`
+- [x] Run `kanon init` with the full aspect stack
+- [x] Review the generated AGENTS.md — compare against sensei's hand-authored version
+- [x] Commit: `feat: initialize kanon with full aspect stack`
 
 ### Phase C: Restore sensei-specific AGENTS.md content
 
@@ -114,11 +114,11 @@ that must be preserved OUTSIDE kanon markers:
 | Instance-vs-source AGENTS.md distinction (line 3) | Unmanaged header |
 
 **Steps:**
-- [ ] Add sensei-specific header above first kanon marker
-- [ ] Add project-specific Key Constraints section outside markers
-- [ ] Add operations pointer outside markers
-- [ ] Verify `kanon verify` passes (markers intact, unmanaged content preserved)
-- [ ] Commit: `docs: restore sensei-specific AGENTS.md content outside kanon markers`
+- [x] Add sensei-specific header above first kanon marker
+- [x] Add project-specific Key Constraints section outside markers
+- [x] Add operations pointer outside markers
+- [x] Verify `kanon verify` passes (markers intact, unmanaged content preserved)
+- [x] Commit: `docs: restore sensei-specific AGENTS.md content outside kanon markers`
 
 ### Phase D: Handle worktree script conflicts
 
@@ -131,10 +131,10 @@ sensei has richer worktree scripts than kanon. Decisions:
 | `worktree-status.sh` | Does not exist | Lists all worktrees with status | **Use kanon's** — free upgrade |
 
 **Steps:**
-- [ ] Rename sensei's `scripts/worktree-teardown.sh` to `scripts/worktree-teardown-merge.sh`
-- [ ] Let kanon scaffold its 3 scripts
-- [ ] Update `docs/operations/parallel-agents.md` to reference `wt/` prefix instead of `plan/`
-- [ ] Commit: `refactor: adopt kanon worktree scripts, preserve merge teardown`
+- [x] Rename sensei's `scripts/worktree-teardown.sh` to `scripts/worktree-teardown-merge.sh`
+- [x] Let kanon scaffold its 3 scripts
+- [x] Update `docs/operations/parallel-agents.md` to reference `wt/` prefix instead of `plan/`
+- [x] Commit: `refactor: adopt kanon worktree scripts, preserve merge teardown`
 
 ### Phase E: Create project-aspects for sensei-specific validators
 
@@ -191,11 +191,11 @@ depth-1:
 `check(target, errors, warnings)` signature.
 
 **Steps:**
-- [ ] Create `project-foundations` aspect with validator
-- [ ] Create `project-release` aspect with validator
-- [ ] Enable both in `.kanon/config.yaml`
-- [ ] Run `kanon verify` — confirm both project validators run
-- [ ] Commit: `feat: add project-aspects for foundations and changelog validators`
+- [x] Create `project-foundations` aspect with validator
+- [x] Create `project-release` aspect with validator
+- [x] Enable both in `.kanon/config.yaml`
+- [x] Run `kanon verify` — confirm both project validators run
+- [x] Commit: `feat: add project-aspects for foundations and changelog validators`
 
 ### Phase F: Update CI workflows
 
@@ -233,13 +233,13 @@ Note: kanon's kit ADR immutability validator only checks HEAD commit. For PR-mod
 (full range check), keep sensei's standalone script alongside.
 
 **Steps:**
-- [ ] Add `pip install kanon-kit` to CI setup
-- [ ] Replace 5 CI steps with single `kanon verify .`
-- [ ] Keep engine link check as separate step
-- [ ] Keep PR-mode ADR immutability as separate step
-- [ ] Keep release-only validators in `release.yml`
-- [ ] Update Makefile `validators` target
-- [ ] Commit: `ci: migrate to kanon verify for structural checks`
+- [x] Add `pip install kanon-kit` to CI setup
+- [x] Replace 5 CI steps with single `kanon verify .`
+- [x] Keep engine link check as separate step
+- [x] Keep PR-mode ADR immutability as separate step
+- [x] Keep release-only validators in `release.yml`
+- [x] Update Makefile `validators` target
+- [x] Commit: `ci: migrate to kanon verify for structural checks`
 
 ### Phase G: Clean up redundant files
 
@@ -256,32 +256,32 @@ After migration, some sensei files are redundant:
 | `ci/check_package_contents.py` | KEEP | Release-only, standalone |
 
 **Steps:**
-- [ ] Delete `ci/check_plan_completion.py` (replaced by kit validator)
-- [ ] Verify all CI workflows still pass
-- [ ] Commit: `chore: remove CI scripts replaced by kanon verify`
+- [x] Delete `ci/check_plan_completion.py` (replaced by kit validator)
+- [x] Verify all CI workflows still pass
+- [x] Commit: `chore: remove CI scripts replaced by kanon verify`
 
 ### Phase H: Verify and add to .gitignore
 
 **Steps:**
-- [ ] Add `.worktrees/` to `.gitignore` if not already present
-- [ ] Add new harness shim directories to `.gitignore` if desired (optional — most projects commit them)
-- [ ] Run full gate: `pytest -v && ruff check . && mypy && kanon verify .`
-- [ ] Run `kanon verify .` one final time — must be `status: ok`
-- [ ] Commit: `chore: finalize kanon migration`
+- [x] Add `.worktrees/` to `.gitignore` if not already present
+- [x] Add new harness shim directories to `.gitignore` if desired (optional — most projects commit them)
+- [x] Run full gate: `pytest -v && ruff check . && mypy && kanon verify .`
+- [x] Run `kanon verify .` one final time — must be `status: ok`
+- [x] Commit: `chore: finalize kanon migration`
 
 ## Acceptance Criteria
 
-- [ ] `.kanon/config.yaml` exists with all 7 aspects at correct depths
-- [ ] `AGENTS.md` has kanon markers with sensei-specific content preserved outside markers
-- [ ] 8 harness shims exist (CLAUDE.md + 7 new)
-- [ ] 4 template files exist (decisions, plans, specs, design)
-- [ ] `docs/development-process.md` is byte-equal to kanon's kit version
-- [ ] `kanon verify .` returns `status: ok` with zero errors
-- [ ] 2 project-aspects exist and their validators run via `kanon verify`
-- [ ] CI `verify.yml` uses `kanon verify .` for structural checks
-- [ ] All existing tests pass
-- [ ] sensei's merge-with-verify teardown script preserved as `worktree-teardown-merge.sh`
-- [ ] `docs/operations/` and `docs/research/` preserved as unmanaged content
+- [x] `.kanon/config.yaml` exists with all 7 aspects at correct depths
+- [x] `AGENTS.md` has kanon markers with sensei-specific content preserved outside markers
+- [x] 8 harness shims exist (CLAUDE.md + 7 new)
+- [x] 4 template files exist (decisions, plans, specs, design)
+- [x] `docs/development-process.md` is byte-equal to kanon's kit version
+- [x] `kanon verify .` returns `status: ok` with zero errors
+- [x] 2 project-aspects exist and their validators run via `kanon verify`
+- [x] CI `verify.yml` uses `kanon verify .` for structural checks
+- [x] All existing tests pass
+- [x] sensei's merge-with-verify teardown script preserved as `worktree-teardown-merge.sh`
+- [x] `docs/operations/` and `docs/research/` preserved as unmanaged content
 
 ## Risk Register
 

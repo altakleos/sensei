@@ -37,17 +37,17 @@ sensei/
 ├── src/sensei/
 │   ├── __init__.py
 │   ├── cli.py                  (click CLI: init/status/upgrade/verify)
-│   └── engine/                 (prose-as-code engine: protocols, scripts, schemas, profiles)
+│   └── engine/                 (prose-as-code engine: protocols, scripts, schemas, profiles, prompts)
 └── tests/
 ```
 
-## Key Constraints
+## Sensei-Specific Constraints
 
-- `docs/development-process.md` is **project-agnostic**. Do not mention pedagogy, Sensei-specific terms, or product concepts in it. Sensei-specific material lives in `docs/sensei-implementation.md`.
+- `docs/development-process.md` is **project-agnostic**. Do not mention pedagogy, learner, mentor, tutor, curriculum, or Sensei the product in it. Sensei-specific material lives in `docs/sensei-implementation.md`.
 - **Process rules belong in `docs/development-process.md`**. README files in artifact directories carry indexes and templates, not process definitions.
 - ADRs are immutable once accepted. To reverse one, write a superseding ADR.
 - Product vision is fully decomposed into `docs/foundations/` and `docs/specs/`; `docs/research/bibliography.md` is the research catalog.
-- Worktrees live under `.worktrees/` only — never as sibling directories.
+- Worktrees live under `.worktrees/` only — never as sibling directories. See [`docs/operations/parallel-agents.md`](docs/operations/parallel-agents.md).
 
 <!-- kanon:begin:kanon-sdd/body -->
 A `kanon` project with `sdd` at depth 3. Full stack: foundations + specs + design + ADRs + plans + verification. All process gates are active.
@@ -359,7 +359,7 @@ The aspect ships only Tier 1 (lexical replay over committed text). Tier 2 (works
 - **Changelog** — append every user-visible change to `## [Unreleased]` in `CHANGELOG.md` in the same PR (or commit on main) that introduces it. Don't batch at release time. Per [docs/specs/release-communication.md](docs/specs/release-communication.md). Refactors, internal tests, and docs-only edits don't need a changelog entry.
 - **Version references** — always write pre-release versions in full (`v0.1.0a9` or `0.1.0a9`), never the bare suffix (`a9`). A bare suffix is a PEP 440 pre-release marker that attaches to any `X.Y.Z`, so "post-a9" or "a9 cut" is ambiguous across future releases (e.g. `v7.8.9a9` is also "a9"). Applies to prose, filenames, code comments, commit messages, and CHANGELOG entries. Inside a compound like `v0.1.0a9` the suffix is fine — the leading `v0.1.0` disambiguates.
 
-## References
+## Sensei References
 
 - [`docs/development-process.md`](docs/development-process.md) — the SDD method
 - [`docs/sensei-implementation.md`](docs/sensei-implementation.md) — Sensei's instantiation
