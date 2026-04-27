@@ -33,8 +33,8 @@ except ImportError:  # pragma: no cover
     print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
     sys.exit(1)
 
-from _iso import parse_iso
-from decay import freshness_score
+from _iso import parse_iso  # type: ignore[import-not-found]
+from decay import freshness_score  # type: ignore[import-not-found]
 
 _DEFAULT_HALF_LIFE_DAYS = 7.0
 _DEFAULT_STALE_THRESHOLD = 0.5

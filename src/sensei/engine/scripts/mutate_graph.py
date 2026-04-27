@@ -31,8 +31,8 @@ except ImportError:  # pragma: no cover
     print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
     sys.exit(1)
 
-from _atomic import atomic_write_text
-from _states import DONE_STATES, EXCLUDED_STATES
+from _atomic import atomic_write_text  # type: ignore[import-not-found]
+from _states import DONE_STATES, EXCLUDED_STATES  # type: ignore[import-not-found]
 
 
 def _is_on_frontier(slug: str, nodes: dict[str, dict[str, Any]]) -> bool:

@@ -35,8 +35,8 @@ except ImportError:  # pragma: no cover
     print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
     sys.exit(1)
 
-from _iso import parse_iso
-from decay import freshness_score
+from _iso import parse_iso  # type: ignore[import-not-found]
+from decay import freshness_score  # type: ignore[import-not-found]
 
 _PRIORITY_WEIGHT: dict[str, int] = {"high": 3, "normal": 2, "low": 1}
 _DEFAULT_HALF_LIFE_DAYS = 7.0
@@ -46,7 +46,7 @@ _DEFAULT_DEADLINE_WEIGHT = 5.0
 
 def _is_stale(last_seen: str, now: datetime, half_life_days: float, stale_threshold: float) -> bool:
     elapsed = (now - parse_iso(last_seen)).total_seconds() / 86_400.0
-    return freshness_score(elapsed, half_life_days) < stale_threshold
+    return bool(freshness_score(elapsed, half_life_days) < stale_threshold)
 
 
 def score_goal(

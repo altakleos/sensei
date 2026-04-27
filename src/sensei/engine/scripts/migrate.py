@@ -27,7 +27,7 @@ except ImportError:  # pragma: no cover
     print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
     sys.exit(1)
 
-from _atomic import atomic_write_text
+from _atomic import atomic_write_text  # type: ignore[import-not-found]
 
 # Current schema versions (must match *.schema.json const values)
 CURRENT_PROFILE_VERSION = 2

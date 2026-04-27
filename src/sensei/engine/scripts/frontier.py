@@ -28,7 +28,7 @@ except ImportError:  # pragma: no cover
     print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
     sys.exit(1)
 
-from _states import DONE_STATES, EXCLUDED_STATES
+from _states import DONE_STATES, EXCLUDED_STATES  # type: ignore[import-not-found]
 
 
 def compute_frontier(

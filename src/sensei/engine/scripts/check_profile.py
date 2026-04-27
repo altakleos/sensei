@@ -69,7 +69,7 @@ def validate_profile(profile: dict[str, Any]) -> tuple[str, list[str]]:
     """
     import contextlib
 
-    from migrate import migrate_profile
+    from migrate import migrate_profile  # type: ignore[import-not-found]
 
     # Migration may fail (bad data); fall through to schema validation which
     # will report the real error.
