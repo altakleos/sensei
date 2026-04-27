@@ -1,72 +1,36 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Parallel Agent Worktree Teardown
-# Merges agent branches sequentially with verification, then cleans up.
-# Usage: scripts/worktree-teardown.sh <plan-name> [plan-name ...]
-# Merge order = argument order. Recommend: smallest changes first.
+# Usage: ./scripts/worktree-teardown.sh <slug>
+# Safely removes the worktree at .worktrees/<slug>. Refuses if dirty.
 
-if [ $# -eq 0 ]; then
-  echo "Usage: scripts/worktree-teardown.sh <plan-name> [plan-name ...]"
-  echo "Merge order = argument order. Smallest changes first recommended."
+if [[ $# -ne 1 ]]; then
+  echo "Usage: $0 <slug>" >&2
   exit 1
 fi
 
-for PLAN in "$@"; do
-  BRANCH="plan/$PLAN"
-  WORKTREE=".worktrees/$PLAN"
+slug="$1"
+wt_dir=".worktrees/${slug}"
+branch="wt/${slug}"
 
-  echo "--- Merging $BRANCH ---"
+if [[ ! -d "$wt_dir" ]]; then
+  echo "Error: no worktree at ${wt_dir}" >&2
+  exit 1
+fi
 
-  # Merge
-  if ! git merge "$BRANCH" --no-edit 2>/dev/null; then
-    echo ""
-    echo "CONFLICT merging $BRANCH. Conflicting files:"
-    git diff --name-only --diff-filter=U
-    echo ""
-    echo "HINT: For CHANGELOG.md conflicts, keep all entries under [Unreleased]."
-    echo "Resolve conflicts, then run: git merge --continue"
-    echo "Remaining worktrees left intact for manual teardown."
-    exit 1
-  fi
+# Refuse to remove if there are uncommitted changes
+if ! git -C "$wt_dir" diff --quiet HEAD 2>/dev/null || \
+   [[ -n "$(git -C "$wt_dir" status --porcelain 2>/dev/null)" ]]; then
+  echo "Error: worktree at ${wt_dir} has uncommitted changes. Commit or stash first." >&2
+  exit 1
+fi
 
-  # Verify — find pytest in venv or PATH
-  echo "  Verifying..."
-  PYTEST=""
-  if [ -f ".venv/bin/pytest" ]; then
-    PYTEST=".venv/bin/pytest"
-  elif command -v pytest &>/dev/null; then
-    PYTEST="pytest"
-  fi
+git worktree remove "$wt_dir"
+echo "Worktree removed: ${wt_dir}"
 
-  if [ -n "$PYTEST" ]; then
-    if ! $PYTEST -q 2>/dev/null; then
-      echo "ERROR: Tests failed after merging $BRANCH."
-      echo "Fix the issue, commit, then re-run teardown for remaining plans."
-      exit 1
-    fi
-  else
-    echo "  WARN: pytest not found, skipping test verification"
-  fi
-
-  if [ -f "ci/check_foundations.py" ]; then
-    PYTHON="python3"
-    [ -f ".venv/bin/python" ] && PYTHON=".venv/bin/python"
-    if ! $PYTHON ci/check_foundations.py 2>/dev/null; then
-      echo "ERROR: check_foundations.py failed after merging $BRANCH."
-      echo "Fix cross-reference issues, commit, then re-run for remaining plans."
-      exit 1
-    fi
-  fi
-
-  # Cleanup
-  if [ -d "$WORKTREE" ]; then
-    git worktree remove "$WORKTREE"
-  fi
-  git branch -d "$BRANCH" 2>/dev/null || true
-
-  echo "  OK: $BRANCH merged and cleaned up"
-  echo ""
-done
-
-echo "=== All plans integrated successfully ==="
+# Delete branch if merged
+if git branch -d "$branch" 2>/dev/null; then
+  echo "Branch deleted: ${branch} (was merged)"
+else
+  echo "Branch retained: ${branch} (not yet merged or does not exist)"
+fi

@@ -30,9 +30,9 @@ flowchart TD
     C --> F[Human: worktree-teardown.sh deep-frontiers interaction-model curriculum-engine]
     D --> F
     E --> F
-    F --> G[Merge plan/deep-frontiers + verify]
-    G --> H[Merge plan/interaction-model + verify]
-    H --> I[Merge plan/curriculum-engine + verify]
+    F --> G[Merge wt/deep-frontiers + verify]
+    G --> H[Merge wt/interaction-model + verify]
+    H --> I[Merge wt/curriculum-engine + verify]
     I --> J[All worktrees removed, branches deleted]
 ```
 
@@ -50,9 +50,9 @@ scripts/worktree-setup.sh curriculum-engine interaction-model deep-frontiers
 ```
 
 This creates:
-- `.worktrees/curriculum-engine/` on branch `plan/curriculum-engine`
-- `.worktrees/interaction-model/` on branch `plan/interaction-model`
-- `.worktrees/deep-frontiers/` on branch `plan/deep-frontiers`
+- `.worktrees/curriculum-engine/` on branch `wt/curriculum-engine`
+- `.worktrees/interaction-model/` on branch `wt/interaction-model`
+- `.worktrees/deep-frontiers/` on branch `wt/deep-frontiers`
 
 The setup script is idempotent — if a worktree already exists, it skips with a message. Each worktree needs its own `pip install -e .` (~5s per worktree); the script runs this automatically if `pyproject.toml` exists.
 
