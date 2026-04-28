@@ -6,6 +6,41 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.2.0a4] — 2026-04-28
+
+### Added
+
+- `check_hints.py` and `check_session_notes.py` schema validators for hints registry and session notes, with `run.sh` allowlist entries and manifest checksums.
+- Tests for 5 previously untested CI scripts: `check_deps`, `check_security_patterns`, `check_test_quality`, `release-preflight`, `generate_manifest`.
+- CI gate for stale `schema_version` in E2E fixtures — catches drift when migration versions bump.
+- E2E tests for 3 previously uncovered protocols: `status`, `personality`, `performance-training`. All 13 protocols now have E2E coverage.
+- Migration edge-case tests: corrupt YAML, non-dict YAML, version-skip gaps.
+- Backup and recovery runbook (`docs/operations/backup-recovery.md`).
+- Branch protection documentation (`docs/operations/branch-protection.md`).
+
+### Changed
+
+- `sensei status` now uses `load_config()` to respect learner config overrides for `half_life_days` and `stale_threshold`. Previously read engine defaults only.
+- GitHub Actions SHA-pinned across all 3 CI workflows (supply-chain hardening).
+- `run.sh` uses `set -eu` (was `set -e`); catches unset variable errors.
+- `run.sh` execute permission drops other-execute (`S_IXOTH` removed).
+- `ruff` dev dependency capped at `<1` (was unbounded `>=0.11`).
+- Makefile `test` target aligned with CI (`--ignore=tests/e2e`).
+- `release.yml` publish job explicitly scopes `contents: read` permission.
+- Upgraded `kanon-kit` from 0.2.0a8 to 0.2.0a11.
+
+### Fixed
+
+- 10 `open()`/`read_text()` calls missing `encoding="utf-8"` in `pacing.py`, `_verify.py`, and `cli.py`.
+- CHANGELOG `[Unreleased]` section moved to correct position (was below `[0.2.0a3]`).
+- Plans README index: added 16 missing plan entries + `fix-gaps-2-6`.
+- Specs README index: added missing `emotional-state-tracking` entry.
+- Foundations sub-indexes populated (21 principles, 3 personas — were empty stubs).
+- 5 plan files normalized from non-standard `complete` status to `done`.
+- `engine.md` script registry updated with `check_hints.py` and `check_session_notes.py`.
+- Assertion guards in `test_goal_priority.py` now include descriptive failure messages.
+- Bare `except Exception` in `cli.py` status command now warns on config load failure instead of silent swallow.
+
 ## [0.2.0a3] — 2026-04-28
 
 ### Added
@@ -433,7 +468,8 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.2.0a3...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.2.0a4...HEAD
+[0.2.0a4]: https://github.com/altakleos/sensei/compare/v0.2.0a3...v0.2.0a4
 [0.2.0a3]: https://github.com/altakleos/sensei/compare/v0.2.0a2...v0.2.0a3
 [0.2.0a2]: https://github.com/altakleos/sensei/compare/v0.2.0a1...v0.2.0a2
 [0.2.0a1]: https://github.com/altakleos/sensei/compare/v0.1.0a26...v0.2.0a1
