@@ -535,3 +535,51 @@ def test_goal_migration_v0_to_v2_end_to_end():
     assert "spawned_from" not in result["nodes"]["d"]
     # v1→v2: target_depth added
     assert result["three_unknowns"]["target_depth"] == "functional"
+
+
+# --- Edge cases: corrupt YAML and version-skip gaps (#22) ---
+
+
+def test_migrate_file_corrupt_yaml_raises(tmp_path: Path) -> None:
+    """Truly corrupt YAML (truncated/malformed) raises yaml.YAMLError."""
+    corrupt = tmp_path / "corrupt.yaml"
+    corrupt.write_text("key: [unterminated\n  - bad: {nope", encoding="utf-8")
+    with pytest.raises(yaml.YAMLError):
+        migrate_file(corrupt, "profile")
+
+
+def test_migrate_file_non_dict_yaml_raises(tmp_path: Path) -> None:
+    """YAML that parses to a list (not a dict) raises AttributeError on .get()."""
+    bad = tmp_path / "list.yaml"
+    bad.write_text("- item1\n- item2\n", encoding="utf-8")
+    with pytest.raises(AttributeError):
+        migrate_file(bad, "profile")
+
+
+def test_migrate_profile_skipped_version_raises(monkeypatch: pytest.MonkeyPatch) -> None:
+    """If a migration step is missing (gap in chain), ValueError is raised."""
+    from sensei.engine.scripts import migrate as m
+
+    # Register migration for v1→v2 but NOT v0→v1, then try migrating from v0.
+    def v1_to_v2(data: dict) -> dict:
+        return {**data, "upgraded": True}
+
+    monkeypatch.setattr(m, "CURRENT_PROFILE_VERSION", 2)
+    monkeypatch.setattr(m, "PROFILE_MIGRATIONS", {1: v1_to_v2})
+
+    with pytest.raises(ValueError, match="No migration path from profile schema_version 0"):
+        m.migrate_profile({"schema_version": 0, "learner_id": "a", "expertise_map": {}})
+
+
+def test_migrate_goal_skipped_version_raises(monkeypatch: pytest.MonkeyPatch) -> None:
+    """If a goal migration step is missing (gap in chain), ValueError is raised."""
+    from sensei.engine.scripts import migrate as m
+
+    def v2_to_v3(data: dict) -> dict:
+        return {**data, "upgraded": True}
+
+    monkeypatch.setattr(m, "CURRENT_GOAL_VERSION", 3)
+    monkeypatch.setattr(m, "GOAL_MIGRATIONS", {2: v2_to_v3})
+
+    with pytest.raises(ValueError, match="No migration path from goal schema_version 1"):
+        m.migrate_goal({"schema_version": 1, "goal_id": "g", "nodes": {}})
