@@ -64,7 +64,7 @@ def _profile(expertise: dict | None = None) -> dict:
 def test_paused_goal_included_with_status_marker() -> None:
     """Paused goals appear in output with status='paused' and score=0."""
     result = score_goal(_goal(status="paused"), _profile(), NOW)
-    assert result is not None
+    assert result is not None, "paused goal must not be filtered out"
     assert result["status"] == "paused"
     assert result["score"] == 0
     assert result["reason"] == "paused"
@@ -85,7 +85,7 @@ def test_high_priority_scores_above_normal_above_low() -> None:
     high = score_goal(_goal(goal_id="h", priority="high"), _profile(), NOW)
     normal = score_goal(_goal(goal_id="n", priority="normal"), _profile(), NOW)
     low = score_goal(_goal(goal_id="l", priority="low"), _profile(), NOW)
-    assert high is not None and normal is not None and low is not None
+    assert high is not None and normal is not None and low is not None, "active goals must not be filtered out"
     assert high["score"] > normal["score"] > low["score"]
 
 
@@ -102,7 +102,7 @@ def test_stale_completed_node_increases_score() -> None:
     fresh_goal = _goal(nodes={})
     stale_score = score_goal(stale_goal, stale_profile, NOW)
     fresh_score = score_goal(fresh_goal, _profile(), NOW)
-    assert stale_score is not None and fresh_score is not None
+    assert stale_score is not None and fresh_score is not None, "active goals must not be filtered out"
     assert stale_score["score"] > fresh_score["score"]
     assert "stale" in stale_score["reason"]
 
@@ -118,7 +118,7 @@ def test_non_completed_nodes_do_not_affect_decay() -> None:
     no_nodes_goal = _goal(nodes={})
     active_score = score_goal(active_goal, stale_profile, NOW)
     no_nodes_score = score_goal(no_nodes_goal, _profile(), NOW)
-    assert active_score is not None and no_nodes_score is not None
+    assert active_score is not None and no_nodes_score is not None, "active goals must not be filtered out"
     assert active_score["score"] == no_nodes_score["score"]
 
 
@@ -302,7 +302,7 @@ def test_imminent_deadline_scores_higher() -> None:
     with_dl["deadline"] = "2026-04-23T00:00:00Z"  # 2 days away from NOW
     no_dl = score_goal(base, _profile(), NOW)
     dl = score_goal(with_dl, _profile(), NOW)
-    assert no_dl is not None and dl is not None
+    assert no_dl is not None and dl is not None, "active goals must not be filtered out"
     assert dl["score"] > no_dl["score"]
     assert "deadline urgency" in dl["reason"]
 
@@ -312,18 +312,18 @@ def test_distant_deadline_minimal_boost() -> None:
     g = _goal(goal_id="far")
     g["deadline"] = "2026-07-30T00:00:00Z"  # ~100 days from NOW
     result = score_goal(g, _profile(), NOW)
-    assert result is not None
+    assert result is not None, "active goal with deadline must not be filtered out"
     # Urgency = 5.0 * (1/100) = 0.05 — negligible vs base score of 20.
     assert "deadline urgency" in result["reason"]
     base = score_goal(_goal(), _profile(), NOW)
-    assert base is not None
+    assert base is not None, "active goal must not be filtered out"
     assert result["score"] - base["score"] < 1.0
 
 
 def test_no_deadline_no_urgency() -> None:
     """A goal without a deadline field gets no urgency term."""
     result = score_goal(_goal(), _profile(), NOW)
-    assert result is not None
+    assert result is not None, "active goal must not be filtered out"
     assert "deadline" not in result["reason"]
 
 
