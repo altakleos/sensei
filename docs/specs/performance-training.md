@@ -7,7 +7,7 @@ realizes:
 stressed_by:
   - persona-jacundu
 fixtures:
-  - tests/transcripts/performance_training.md
+  - .kanon/fidelity/performance_training.md
 ---
 # Performance Training
 

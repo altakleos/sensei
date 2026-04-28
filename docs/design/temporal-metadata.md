@@ -106,5 +106,5 @@ The update rule is identical across all protocols — only the trigger context d
 
 ## Decisions
 
-- [ADR-0006](../decisions/0006-hybrid-runtime.md) — scripts-compute-protocols-judge boundary. `completed_at` is written by a script; stability adjustments are triggered by protocol judgment.
+- [ADR-0006](../decisions/0006-hybrid-runtime-architecture.md) — scripts-compute-protocols-judge boundary. `completed_at` is written by a script; stability adjustments are triggered by protocol judgment.
 - The stability formula choice (exponential decay with multiplicative update) was resolved in the `temporal-metadata` plan without a separate ADR, as it follows the existing hybrid-runtime pattern and introduces no new architectural mechanism.

@@ -16,8 +16,8 @@ Protocols are prose executed by an LLM. CPython tests can verify that the helper
 
 ## Implications
 
-- Every accepted protocol at `src/sensei/engine/protocols/<name>.md` has a companion at `tests/transcripts/<name>.md` declaring `forbidden_phrases`, `required_one_of`, and/or `required_all_of` per invariant cluster.
-- The dogfood transcript at `tests/transcripts/<name>.dogfood.md` is captured from a real LLM session and refreshed at each release (tier 1) or when the protocol changes (tier 2).
+- Every accepted protocol at `src/sensei/engine/protocols/<name>.md` has a companion at `.kanon/fidelity/<name>.md` declaring `forbidden_phrases`, `required_one_of`, and/or `required_all_of` per invariant cluster.
+- The dogfood transcript at `.kanon/fidelity/<name>.dogfood.md` is captured from a real LLM session and refreshed at each release (tier 1) or when the protocol changes (tier 2).
 - Missing dogfood transcripts produce `pytest.skip`, not failure; the signal is "not yet exercised," not "broken."
 - Tier-2 LLM-as-judge verification is operator-local (no API keys in CI); tier-1 lexical assertions run free on every push.
 
@@ -29,3 +29,4 @@ Protocols are prose executed by an LLM. CPython tests can verify that the helper
 ## Source
 
 [ADR-0011: Transcript Fixtures as a Verification Artifact](../../decisions/0011-transcript-fixtures.md). Elevated to a foundations principle by [ADR-0012](../../decisions/0012-foundations-layer.md).
+.

@@ -9,7 +9,7 @@ stressed_by:
   - persona-jacundu
   - persona-tomas
 fixtures:
-  - tests/transcripts/hints.md
+  - .kanon/fidelity/hints.md
   - tests/test_hint_decay.py
 ---
 # Hints

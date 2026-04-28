@@ -9,7 +9,7 @@ realizes:
 stressed_by:
   - persona-jacundu
 fixtures:
-  - tests/transcripts/assess.md
+  - .kanon/fidelity/assess.md
   - tests/scripts/test_mastery_check.py
 ---
 # Assessment Protocol

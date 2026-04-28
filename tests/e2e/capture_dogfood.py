@@ -45,7 +45,7 @@ PROTOCOLS = (
     "reviewer",
     "status",
 )
-DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[1] / "transcripts"
+DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[2] / ".kanon" / "fidelity"
 
 
 # ---------------------------------------------------------------------------

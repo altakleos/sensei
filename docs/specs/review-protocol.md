@@ -13,7 +13,7 @@ realizes:
 stressed_by:
   - persona-jacundu
 fixtures:
-  - tests/transcripts/review.md
+  - .kanon/fidelity/review.md
   - tests/scripts/test_review_protocol.py
 ---
 # Review Protocol

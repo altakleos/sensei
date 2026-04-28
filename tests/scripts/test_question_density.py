@@ -15,9 +15,6 @@ from sensei.engine.scripts.question_density import (
     main,
 )
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]
-_TRANSCRIPTS_DIR = _REPO_ROOT / "tests" / "transcripts"
-
 
 # --- Pure-function behaviour ---
 
