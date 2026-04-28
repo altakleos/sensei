@@ -21,6 +21,7 @@ For the full development model, see `docs/development-process.md`.
 | 13 | [Emotional State Tracking](emotional-state-tracking.md) | LLM-as-sensor emotional classification with three-dimension enum model, staleness-gated persistence, and affect-aware protocol adaptations | accepted |
 | 14 | [Interleaving](interleaving.md) | Post-sort round-robin reorder of review candidates by area for discriminative contrast | accepted |
 | 15 | [Metacognitive State Tracking](metacognitive-tracking.md) | Three-dimension metacognitive model with calibration tracking, fading scaffolding, and coaching adaptations | accepted |
+| 16 | [Temporal Metadata](temporal-metadata.md) | completed_at timestamp and stability field for spaced-repetition ranking | accepted |
 
 ## Template
 
