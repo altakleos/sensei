@@ -1,5 +1,5 @@
 ---
-status: complete
+status: done
 ---
 # Plan: P2 Remaining — Init Robustness + Migration Chain Tests
 

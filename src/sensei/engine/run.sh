@@ -1,7 +1,7 @@
 #!/bin/sh
 # Sensei script runner — resolves the Python interpreter that has sensei-tutor installed.
 # Written by `sensei init`; refreshed by `sensei upgrade`.
-set -e
+set -eu
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PYTHON_PATH_FILE="$SCRIPT_DIR/.python_path"

@@ -1,5 +1,5 @@
 ---
-status: complete
+status: done
 ---
 # Plan: P2 Batch — Script Hardening + Test Coverage Gaps
 
