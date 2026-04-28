@@ -23,11 +23,8 @@ import json
 import math
 import sys
 from datetime import datetime, timezone
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-from _iso import parse_iso  # type: ignore[import-not-found]
+from _iso import parse_iso
 
 
 def freshness_score(elapsed_days: float, half_life_days: float) -> float:

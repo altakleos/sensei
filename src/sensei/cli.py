@@ -63,8 +63,9 @@ def _engine_source() -> Path:
     """Return a filesystem path to the bundled engine directory.
 
     The engine bundle is shipped inside the `sensei` package at `sensei/engine/`.
-    It is not a Python subpackage (no __init__.py) — it is a data directory of
-    markdown, yaml, and helper scripts that `sensei init` copies into `.sensei/`.
+    It is a data directory of markdown, yaml, and helper scripts (with a
+    minimal ``__init__.py`` for import-path setup) that ``sensei init``
+    copies into ``.sensei/``.
     """
     package_root = Path(sensei.__file__).parent
     engine_dir = package_root / "engine"

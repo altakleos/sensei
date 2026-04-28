@@ -18,13 +18,10 @@ import argparse
 import json
 import sys
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 from typing import Any
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-from _iso import parse_iso  # type: ignore[import-not-found]
-from decay import freshness_score  # type: ignore[import-not-found]
+from _iso import parse_iso
+from decay import freshness_score
 
 try:
     import yaml
