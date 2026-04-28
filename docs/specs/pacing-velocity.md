@@ -1,5 +1,6 @@
 ---
 status: accepted
+design: skip
 date: 2026-04-27
 serves: [vision]
 realizes: [P-forgetting-curve-is-curriculum, P-know-the-learner]
