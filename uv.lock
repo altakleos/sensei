@@ -204,15 +204,15 @@ wheels = [
 
 [[package]]
 name = "kanon-kit"
-version = "0.2.0a7"
+version = "0.2.0a8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "pyyaml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9a/a5/3da736b49ae31f6101eb122edff2ea9c4ce31c4d16893f2b461d5748c9f6/kanon_kit-0.2.0a7.tar.gz", hash = "sha256:768568d03ac01b651a2bd23cf5cfb450fedf5c6d357b098cde0b701772345060", size = 118239, upload-time = "2026-04-27T19:54:52.428Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/13/94/5e8919a32f089d185e7d5a390ca9fe9081171c0ee7fd3c001908a49b1c9d/kanon_kit-0.2.0a8.tar.gz", hash = "sha256:20bb5414c345be5a7620fd5c3b16bbe949750e77b581650aeafcfb8bb901d7a2", size = 125180, upload-time = "2026-04-28T04:19:21.638Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6b/b4/8b604e8f70804a7503f5ffd8ab27d8caac96ed0c04f439fa0b2c7706ab74/kanon_kit-0.2.0a7-py3-none-any.whl", hash = "sha256:f1644e5c981a405e8f3b19cb4b26da5b1bf00436716209396e143e1d8969fe98", size = 143985, upload-time = "2026-04-27T19:54:51.15Z" },
+    { url = "https://files.pythonhosted.org/packages/1f/18/2746040bf8d0bf499d3133564d636aad29df5d0a1a45334b8a26e7d82df0/kanon_kit-0.2.0a8-py3-none-any.whl", hash = "sha256:3d6d1db34509fba3ae32df2c5bd46d3d40dc53f87a58a14db6e6a87297962112", size = 152074, upload-time = "2026-04-28T04:19:20.06Z" },
 ]
 
 [[package]]
@@ -685,7 +685,7 @@ dev = [
 requires-dist = [
     { name = "click", specifier = ">=8.0" },
     { name = "jsonschema", specifier = ">=4.18" },
-    { name = "kanon-kit", marker = "extra == 'dev'", specifier = "==0.2.0a7" },
+    { name = "kanon-kit", marker = "extra == 'dev'", specifier = "==0.2.0a8" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10" },
     { name = "packaging", specifier = ">=23.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },

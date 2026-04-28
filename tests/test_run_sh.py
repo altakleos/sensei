@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from sensei.cli import _engine_source
+from sensei._engine import engine_source
 
 
 @pytest.fixture()
@@ -19,7 +19,7 @@ def run_sh(tmp_path: Path) -> Path:
     scripts.mkdir(parents=True)
 
     # Copy the real run.sh from the engine source.
-    src_run = _engine_source() / "run.sh"
+    src_run = engine_source() / "run.sh"
     run = engine / "run"
     run.write_text(src_run.read_text(encoding="utf-8"), encoding="utf-8")
     run.chmod(run.stat().st_mode | stat.S_IEXEC)

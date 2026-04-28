@@ -13,7 +13,8 @@ import yaml
 from click.testing import CliRunner
 
 from sensei import __version__
-from sensei.cli import _atomic_replace_engine, _engine_source, main
+from sensei._engine import atomic_replace_engine, engine_source
+from sensei.cli import main
 
 
 def _init_instance(runner: CliRunner, target: Path) -> None:
@@ -136,7 +137,7 @@ def test_init_rejects_invalid_learner_id(tmp_path: Path, bad_id: str) -> None:
     assert not (tmp_path / "learner").exists()
 
 
-# _atomic_replace_engine — atomicity contract per ADR-0004.
+# atomic_replace_engine — atomicity contract per ADR-0004.
 # The helper must never leave `.sensei/` in a corrupted or missing state
 # after any failure during copy or swap.
 
@@ -155,7 +156,7 @@ def test_atomic_replace_happy_path(tmp_path: Path) -> None:
     sensei_dir = tmp_path / "inst" / ".sensei"
     sensei_dir.parent.mkdir()
 
-    _atomic_replace_engine(src, sensei_dir, "1.2.3")
+    atomic_replace_engine(src, sensei_dir, "1.2.3")
 
     assert (sensei_dir / "engine.md").read_text() == "# fake\n"
     assert (sensei_dir / ".sensei-version").read_text() == "1.2.3\n"
@@ -178,10 +179,10 @@ def test_atomic_replace_preserves_old_on_copy_failure(
     def boom(*_args: object, **_kwargs: object) -> None:
         raise OSError("simulated disk failure during copy")
 
-    monkeypatch.setattr("sensei.cli.shutil.copytree", boom)
+    monkeypatch.setattr("sensei._engine.shutil.copytree", boom)
 
     with pytest.raises(OSError, match="simulated disk failure"):
-        _atomic_replace_engine(src, sensei_dir, "9.9.9")
+        atomic_replace_engine(src, sensei_dir, "9.9.9")
 
     # Old .sensei/ untouched; no stale temp dirs.
     assert (sensei_dir / "SENTINEL").read_text() == "pre-existing"
@@ -198,7 +199,7 @@ def test_atomic_replace_cleans_stale_tmp_from_prior_run(tmp_path: Path) -> None:
     stale_tmp.mkdir()
     (stale_tmp / "LEFTOVER").write_text("stale", encoding="utf-8")
 
-    _atomic_replace_engine(src, sensei_dir, "1.2.3")
+    atomic_replace_engine(src, sensei_dir, "1.2.3")
 
     assert (sensei_dir / "engine.md").exists()
     assert not stale_tmp.exists()
@@ -218,7 +219,7 @@ def test_atomic_replace_recovers_from_mid_swap_crash(tmp_path: Path) -> None:
     old_dir.mkdir()
     (old_dir / "RECOVERED").write_text("prior-engine-survived", encoding="utf-8")
 
-    _atomic_replace_engine(src, sensei_dir, "2.0.0")
+    atomic_replace_engine(src, sensei_dir, "2.0.0")
 
     # Recovery completes the swap cleanly: the fresh copy wins, and the
     # old aside is removed. Crucially, the helper did NOT overwrite
@@ -253,7 +254,7 @@ def test_atomic_replace_rollback_on_final_rename_failure(
     monkeypatch.setattr(Path, "rename", rename_once_then_fail)
 
     with pytest.raises(OSError, match="simulated rename failure"):
-        _atomic_replace_engine(src, sensei_dir, "3.0.0")
+        atomic_replace_engine(src, sensei_dir, "3.0.0")
 
     # Old content restored; no stale temp or aside dirs.
     assert (sensei_dir / "SENTINEL").read_text() == "survive-me"
@@ -275,7 +276,7 @@ def test_upgrade_leaves_instance_intact_on_failure(
     def fail_copy(*_args: object, **_kwargs: object) -> None:
         raise OSError("simulated")
 
-    monkeypatch.setattr("sensei.cli.shutil.copytree", fail_copy)
+    monkeypatch.setattr("sensei._engine.shutil.copytree", fail_copy)
 
     result = runner.invoke(main, ["upgrade", str(inst)])
     assert result.exit_code != 0
@@ -284,11 +285,11 @@ def test_upgrade_leaves_instance_intact_on_failure(
     assert "preserved" in profile_path.read_text()
 
 
-# --- _engine_source error path ---
+# --- engine_source error path ---
 
 
-def test_engine_source_raises_when_bundle_missing(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    """If the installed package has no engine/ directory, _engine_source raises ClickException."""
+def testengine_source_raises_when_bundle_missing(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """If the installed package has no engine/ directory, engine_source raises ClickException."""
     import sensei
 
     empty = tmp_path / "fake_pkg"
@@ -297,10 +298,10 @@ def test_engine_source_raises_when_bundle_missing(monkeypatch: pytest.MonkeyPatc
     monkeypatch.setattr(sensei, "__file__", str(empty / "__init__.py"))
 
     with pytest.raises(click.ClickException, match="Engine bundle not found"):
-        _engine_source()
+        engine_source()
 
 
-# --- _atomic_replace_engine: prior run completed but died before cleanup ---
+# --- atomic_replace_engine: prior run completed but died before cleanup ---
 
 
 def test_atomic_replace_cleans_old_dir_when_both_exist(tmp_path: Path) -> None:
@@ -318,7 +319,7 @@ def test_atomic_replace_cleans_old_dir_when_both_exist(tmp_path: Path) -> None:
     old_dir.mkdir()
     (old_dir / "STALE").write_text("stale", encoding="utf-8")
 
-    _atomic_replace_engine(src, sensei_dir, "4.0.0")
+    atomic_replace_engine(src, sensei_dir, "4.0.0")
 
     assert (sensei_dir / "engine.md").read_text() == "# fake\n"
     assert (sensei_dir / ".sensei-version").read_text() == "4.0.0\n"
@@ -337,16 +338,16 @@ def test_atomic_replace_fsyncs_parent_after_each_rename(
     parent exactly once in that case, and exactly twice when an existing
     `.sensei/` is swapped aside first.
     """
-    import sensei.cli as cli
+    import sensei._engine as _engine
 
     fsync_fds: list[int] = []
-    real_fsync = cli.os.fsync
+    real_fsync = _engine.os.fsync
 
     def recording_fsync(fd: int) -> None:
         fsync_fds.append(fd)
         return real_fsync(fd)
 
-    monkeypatch.setattr(cli.os, "fsync", recording_fsync)
+    monkeypatch.setattr(_engine.os, "fsync", recording_fsync)
 
     src = _fake_engine(tmp_path / "src")
     sensei_dir = tmp_path / "inst" / ".sensei"
@@ -354,7 +355,7 @@ def test_atomic_replace_fsyncs_parent_after_each_rename(
     sensei_dir.mkdir()
     (sensei_dir / "MARK").write_text("before", encoding="utf-8")
 
-    _atomic_replace_engine(src, sensei_dir, "1.2.3")
+    atomic_replace_engine(src, sensei_dir, "1.2.3")
 
     # Two renames (swap-aside + install-new) ⇒ two parent-dir fsyncs.
     assert len(fsync_fds) == 2, f"expected 2 fsync calls, got {len(fsync_fds)}: {fsync_fds}"
@@ -367,7 +368,7 @@ def test_atomic_replace_fsyncs_parent_after_each_rename(
 def test_fsync_dir_targets_a_directory(tmp_path: Path) -> None:
     """_fsync_dir opens a read-only fd on the given path and the fd refers
     to a directory. Guards against accidentally passing a file path."""
-    from sensei.cli import _fsync_dir
+    from sensei._engine import fsync_dir
 
     d = tmp_path / "somedir"
     d.mkdir()
@@ -382,7 +383,7 @@ def test_fsync_dir_targets_a_directory(tmp_path: Path) -> None:
     finally:
         os.close(fd)
     # Call should complete without raising.
-    _fsync_dir(d)
+    fsync_dir(d)
 
 
 # --- status: uncovered branches ---

@@ -8,7 +8,8 @@ import pytest
 import yaml
 from click.testing import CliRunner
 
-from sensei.cli import _SHIMS, main
+from sensei._shims import SHIMS
+from sensei.cli import main
 from sensei.engine.scripts.check_profile import validate_profile
 
 
@@ -125,7 +126,7 @@ def test_init_rejects_symlink_sensei_dir(tmp_path: Path) -> None:
 # scaffolded instance has a single source of truth.
 
 
-_SHIM_PATHS = sorted(_SHIMS.keys())
+_SHIM_PATHS = sorted(SHIMS.keys())
 
 
 @pytest.fixture(scope="module")
@@ -248,7 +249,7 @@ def test_shims_match_snapshot() -> None:
     """Regression guard against silent edits to cli.py:_SHIMS. If you change
     a shim's content deliberately, update _EXPECTED_SHIMS in the same commit
     and document the reason in the commit message."""
-    assert _SHIMS == _EXPECTED_SHIMS, (
+    assert SHIMS == _EXPECTED_SHIMS, (
         "cli.py:_SHIMS drifted from the snapshot. Either fix the regression "
         "or update _EXPECTED_SHIMS in tests/test_init.py with the new content."
     )
