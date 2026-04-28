@@ -44,7 +44,15 @@ jobs:
           SENSEI_E2E: '1'
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SENSEI_E2E_TOOL: ${{ github.event.inputs.tool || 'auto' }}
-        run: pytest tests/e2e/ -v --no-cov
+        run: pytest tests/e2e/ -v --no-cov --junit-xml=e2e-results.xml
+
+      - name: Fail if no tests ran
+        if: always()
+        run: |
+          if ! grep -q 'tests="[1-9]' e2e-results.xml 2>/dev/null; then
+            echo "ERROR: Zero E2E tests ran. Check ANTHROPIC_API_KEY secret." >&2
+            exit 1
+          fi
 
       - name: Post results summary
         if: always()
