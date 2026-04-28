@@ -120,4 +120,4 @@ def install_run_script(sensei_dir: Path) -> None:
     if run_script.exists():
         run_script.rename(run_dest)
     if run_dest.exists():
-        run_dest.chmod(run_dest.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+        run_dest.chmod(run_dest.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP)

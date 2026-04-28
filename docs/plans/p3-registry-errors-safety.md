@@ -1,5 +1,5 @@
 ---
-status: complete
+status: done
 ---
 # Plan: P3 Batch — Script Registry, Error Consistency, Decompose Safety, Init Guard
 

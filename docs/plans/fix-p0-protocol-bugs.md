@@ -1,5 +1,5 @@
 ---
-status: complete
+status: done
 ---
 # Plan: Fix P0 Protocol & Script Bugs
 

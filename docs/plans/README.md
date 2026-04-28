@@ -88,16 +88,16 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [declare-kanon-dev-dep](declare-kanon-dev-dep.md) | Declare kanon-kit as a dev dependency | done |
 | [decompose-cli](decompose-cli.md) | Decompose cli.py into focused modules | done |
 | [fix-e2e-silent-skip](fix-e2e-silent-skip.md) | Fail CI when E2E tests silently skip | done |
-| [fix-p0-protocol-bugs](fix-p0-protocol-bugs.md) | Fix P0 Protocol & Script Bugs | complete |
+| [fix-p0-protocol-bugs](fix-p0-protocol-bugs.md) | Fix P0 Protocol & Script Bugs | done |
 | [fix-sys-path-insert-hack](fix-sys-path-insert-hack.md) | Eliminate `sys.path.insert` hack from engine scripts | done |
 | [harden-run-sh-and-init](harden-run-sh-and-init.md) | Harden run.sh and sensei init against path-based attacks | done |
 | [kanon-migration](kanon-migration.md) | Migrate sensei to kanon | done |
 | [manifest-checksums](manifest-checksums.md) | Add SHA-256 checksums to engine manifest | done |
 | [migration-backup-and-changelog](migration-backup-and-changelog.md) | Add backup/rollback to migration and fix CHANGELOG | done |
-| [p1-cli-hardening](p1-cli-hardening.md) | P1 CLI Hardening — Upgrade Safety, Verify Completeness, Deprecated API | complete |
-| [p2-init-and-migration](p2-init-and-migration.md) | P2 Remaining — Init Robustness + Migration Chain Tests | complete |
-| [p2-script-hardening](p2-script-hardening.md) | P2 Batch — Script Hardening + Test Coverage Gaps | complete |
-| [p3-registry-errors-safety](p3-registry-errors-safety.md) | P3 Batch — Script Registry, Error Consistency, Decompose Safety, Init Guard | complete |
+| [p1-cli-hardening](p1-cli-hardening.md) | P1 CLI Hardening — Upgrade Safety, Verify Completeness, Deprecated API | done |
+| [p2-init-and-migration](p2-init-and-migration.md) | P2 Remaining — Init Robustness + Migration Chain Tests | done |
+| [p2-script-hardening](p2-script-hardening.md) | P2 Batch — Script Hardening + Test Coverage Gaps | done |
+| [p3-registry-errors-safety](p3-registry-errors-safety.md) | P3 Batch — Script Registry, Error Consistency, Decompose Safety, Init Guard | done |
 | [pacing-velocity](pacing-velocity.md) | Pacing and Velocity in Status | done |
 | [scripts-relative-imports](scripts-relative-imports.md) | Convert Engine Script Imports to Relative | done |
 | [temporal-metadata](temporal-metadata.md) | Temporal Metadata on Topic Transitions | done |

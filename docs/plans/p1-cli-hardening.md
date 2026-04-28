@@ -1,5 +1,5 @@
 ---
-status: complete
+status: done
 ---
 # Plan: P1 CLI Hardening — Upgrade Safety, Verify Completeness, Deprecated API
 
