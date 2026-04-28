@@ -55,6 +55,18 @@ mypy_path = "src"
 module = "tests.*"
 disallow_untyped_defs = false
 
+[[tool.mypy.overrides]]
+# Bare sibling imports in engine scripts (e.g., from _iso import parse_iso)
+# resolve at runtime via __init__.py sys.path setup and run.sh PYTHONPATH,
+# but mypy cannot follow them statically.
+module = [
+    "_iso", "_atomic", "_states",
+    "decay", "frontier", "migrate",
+    "check_profile", "check_goal",
+    "silence_ratio",
+]
+ignore_missing_imports = true
+
 [tool.ruff]
 target-version = "py310"
 src = ["src", "tests", "ci"]

@@ -15,7 +15,6 @@ from sensei.engine.scripts.teaching_density import (
     main,
 )
 
-
 # --- Pure-function behaviour ---
 
 

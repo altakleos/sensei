@@ -4,17 +4,20 @@ All notable user-visible changes to Sensei (distributed as `sensei-tutor` on PyP
 
 The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Policy lives in [`docs/specs/release-communication.md`](docs/specs/release-communication.md).
 
-## [Unreleased]
+## [0.2.0a3] — 2026-04-28
 
 ### Added
 
 - Migration backup/rollback: `sensei upgrade` now backs up learner files before migration and restores them on partial failure, preventing mixed-version state.
+- SHA-256 checksums in engine manifest: `sensei verify` now checks file content integrity, not just existence. Tampered or corrupted engine files are detected.
+- `ci/generate_manifest.py` for regenerating manifest checksums.
 - E2E nightly CI gate: workflow now fails if zero E2E tests actually ran (catches expired API keys).
 - `run.sh` script-name allowlist: rejects unknown scripts before `exec`, preventing path traversal.
 - `run.sh` `.python_path` validation: must be an absolute path.
 - `sensei init` symlink rejection: refuses to write through symlink targets or symlink `.sensei/` directories.
-- `tests/test_run_sh.py`: new test file covering run.sh security hardening.
 - `kanon-kit` declared as dev dependency in `pyproject.toml` (was phantom dependency installed only in CI).
+- Dependabot configuration for weekly pip and GitHub Actions dependency scanning.
+- PyPI publish attestations for supply chain provenance.
 
 ### Changed
 
@@ -22,12 +25,16 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 - `sys.path.insert` hack eliminated from 14 engine scripts; import-path setup centralized in `run.sh` (PYTHONPATH) and `scripts/__init__.py`.
 - E2E tests excluded from default `pytest` collection (`--ignore=tests/e2e` in addopts). Run explicitly with `pytest tests/e2e/`. Skipped count drops from 15 to 1.
 - Upgraded `kanon-kit` from 0.2.0a7 to 0.2.0a8 (fixes 30 fidelity bracket-format errors and 2 validator import errors).
+- Runtime dependency upper bounds pinned (click<9, jsonschema<5, packaging<27, pyyaml<7).
 - CI `verify.yml` no longer collects E2E tests.
 
 ### Fixed
 
+- Protocols (tutor, assess, reviewer) now instruct the LLM to initialize the full `metacognitive_state` object before updating individual fields, preventing schema validation failures on fresh profiles.
 - Transcript fixture references updated after fidelity migration.
 - 5 plan files standardized to YAML frontmatter status format.
+
+## [Unreleased]
 
 ## [0.2.0a2] — 2026-04-27
 
@@ -426,7 +433,8 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.2.0a2...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.2.0a3...HEAD
+[0.2.0a3]: https://github.com/altakleos/sensei/compare/v0.2.0a2...v0.2.0a3
 [0.2.0a2]: https://github.com/altakleos/sensei/compare/v0.2.0a1...v0.2.0a2
 [0.2.0a1]: https://github.com/altakleos/sensei/compare/v0.1.0a26...v0.2.0a1
 [0.1.0a26]: https://github.com/altakleos/sensei/compare/v0.1.0a25...v0.1.0a26
