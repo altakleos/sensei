@@ -1,6 +1,8 @@
+---
+status: complete
+---
 # Plan: P2 Batch — Script Hardening + Test Coverage Gaps
 
-**Status**: complete
 **Scope**: 6 fixes — 3 script hardening, 3 test coverage gaps
 **Design**: Follows existing patterns; no new abstractions
 

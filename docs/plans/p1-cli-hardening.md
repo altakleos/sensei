@@ -1,6 +1,8 @@
+---
+status: complete
+---
 # Plan: P1 CLI Hardening — Upgrade Safety, Verify Completeness, Deprecated API
 
-**Status**: complete
 **Scope**: 4 fixes — 1 script, 3 CLI command improvements
 **Design**: Follows existing patterns; no new abstractions
 

@@ -1,6 +1,8 @@
+---
+status: complete
+---
 # Plan: P3 Batch — Script Registry, Error Consistency, Decompose Safety, Init Guard
 
-**Status**: complete
 **Scope**: 5 fixes (items 19+20 merged, 21, 22, 24; item 23 is a non-issue)
 **Design**: Follows existing patterns; no new abstractions
 

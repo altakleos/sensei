@@ -1,6 +1,8 @@
+---
+status: complete
+---
 # Plan: P2 Remaining — Init Robustness + Migration Chain Tests
 
-**Status**: complete
 **Scope**: 2 fixes — init error recovery, migration chain test gap
 **Design**: Follows existing patterns; no new abstractions
 

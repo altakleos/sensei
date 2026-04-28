@@ -1,6 +1,8 @@
+---
+status: complete
+---
 # Plan: Fix P0 Protocol & Script Bugs
 
-**Status**: complete
 **Scope**: 3 bugs — prose fix, path fix, ordinal fix
 **Design**: Follows existing patterns; no new abstractions
 
