@@ -40,7 +40,7 @@ jobs:
         run: mypy
 
       - name: Verify kanon project shape
-        run: PYTHONPATH=. kanon verify .
+        run: kanon verify .
 
       - name: Lint markdown links (engine bundle)
         run: python ci/check_links.py --root src/sensei/engine

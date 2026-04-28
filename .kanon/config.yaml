@@ -1,38 +1,38 @@
-kit_version: 0.2.0a7
+kit_version: 0.2.0a8
 aspects:
   kanon-fidelity:
     depth: 1
-    enabled_at: '2026-04-27T22:56:12+00:00'
+    enabled_at: '2026-04-28T04:20:22+00:00'
     config: {}
   kanon-sdd:
     depth: 3
-    enabled_at: '2026-04-27T22:57:26+00:00'
+    enabled_at: '2026-04-28T04:20:22+00:00'
     config: {}
   kanon-worktrees:
     depth: 2
-    enabled_at: '2026-04-27T22:57:26+00:00'
+    enabled_at: '2026-04-28T04:20:22+00:00'
     config: {}
   kanon-release:
     depth: 2
-    enabled_at: '2026-04-27T22:57:26+00:00'
+    enabled_at: '2026-04-28T04:20:22+00:00'
     config: {}
   kanon-testing:
     depth: 3
-    enabled_at: '2026-04-27T22:57:26+00:00'
+    enabled_at: '2026-04-28T04:20:22+00:00'
     config: {}
   kanon-security:
     depth: 2
-    enabled_at: '2026-04-27T22:57:26+00:00'
+    enabled_at: '2026-04-28T04:20:22+00:00'
     config: {}
   kanon-deps:
     depth: 2
-    enabled_at: '2026-04-27T22:57:26+00:00'
+    enabled_at: '2026-04-28T04:20:22+00:00'
     config: {}
   project-foundations:
     depth: 1
-    enabled_at: '2026-04-27T23:02:05+00:00'
+    enabled_at: '2026-04-28T04:20:22+00:00'
     config: {}
   project-release:
     depth: 1
-    enabled_at: '2026-04-27T23:02:05+00:00'
+    enabled_at: '2026-04-28T04:20:22+00:00'
     config: {}
