@@ -80,6 +80,7 @@ jobs:
       url: https://pypi.org/project/sensei-tutor
     permissions:
       id-token: write
+      attestations: write
     steps:
       - name: Download dist artifacts
         uses: actions/download-artifact@v5
@@ -89,3 +90,5 @@ jobs:
 
       - name: Publish to PyPI via OIDC trusted publisher
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          attestations: true
