@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+## [0.2.0a2] — 2026-04-27
+
+### Fixed
+
+- `Makefile`: use `kanon` CLI entry point instead of `python -m kanon` (which lacks `__main__.py`).
+
 ## [0.2.0a1] — 2026-04-27
 
 ### Changed
@@ -397,7 +403,8 @@ First public alpha. An architecture-validation release — not suitable for real
 - FSRS scheduling, FIRe fractional credit propagation, per-learner speed calibration, and affect detection are deferred to a v2 ADR per [ADR-0006](docs/decisions/0006-hybrid-runtime-architecture.md).
 - Protocol behavioural verification — whether an LLM actually follows the nine numbered steps — is currently manual-only. Automated behavioural testing is scoped as the next feature.
 
-[Unreleased]: https://github.com/altakleos/sensei/compare/v0.2.0a1...HEAD
+[Unreleased]: https://github.com/altakleos/sensei/compare/v0.2.0a2...HEAD
+[0.2.0a2]: https://github.com/altakleos/sensei/compare/v0.2.0a1...v0.2.0a2
 [0.2.0a1]: https://github.com/altakleos/sensei/compare/v0.1.0a26...v0.2.0a1
 [0.1.0a26]: https://github.com/altakleos/sensei/compare/v0.1.0a25...v0.1.0a26
 [0.1.0a25]: https://github.com/altakleos/sensei/compare/v0.1.0a24...v0.1.0a25
