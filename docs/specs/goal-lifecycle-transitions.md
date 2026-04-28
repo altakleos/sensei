@@ -1,5 +1,6 @@
 ---
 status: accepted
+design: skip
 date: 2026-04-20
 realizes:
   - P-know-the-learner

@@ -1,5 +1,6 @@
 ---
 status: accepted
+design: skip
 date: 2026-04-24
 realizes:
   - P-curriculum-is-hypothesis
