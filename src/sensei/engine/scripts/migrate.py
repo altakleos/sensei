@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import sys
 from pathlib import Path
 from typing import Any
@@ -172,7 +173,12 @@ def migrate_file(path: Path, file_type: str) -> bool:
 
 
 def migrate_instance(learner_dir: Path) -> list[str]:
-    """Migrate all learner data files. Returns list of migrated file descriptions."""
+    """Migrate all learner data files. Returns list of migrated file descriptions.
+
+    Creates a backup of files that migration will touch. On any failure,
+    restores the backup so the learner directory is never left in a
+    mixed-version state.
+    """
     migrated: list[str] = []
 
     # Rename instance/ → learner/ if the old directory name is still in use.
@@ -182,15 +188,47 @@ def migrate_instance(learner_dir: Path) -> list[str]:
         print("Renamed instance/ → learner/ (learner data preserved)")
         migrated.append("instance/ → learner/ (directory renamed)")
 
+    # Collect files that migration will touch.
+    targets: list[tuple[Path, str]] = []
     profile = learner_dir / "profile.yaml"
-    if profile.exists() and migrate_file(profile, "profile"):
-        migrated.append(f"profile.yaml: schema_version → {CURRENT_PROFILE_VERSION}")
-
-    # Migrate goal files (future: when goal workspaces exist)
+    if profile.exists():
+        targets.append((profile, "profile"))
     for goal_file in learner_dir.glob("goals/*.yaml"):
-        if migrate_file(goal_file, "goal"):
-            migrated.append(f"{goal_file.relative_to(learner_dir)}: schema_version → {CURRENT_GOAL_VERSION}")
+        targets.append((goal_file, "goal"))
 
+    if not targets:
+        return migrated
+
+    # Back up targets before migrating.
+    backup_dir = learner_dir / ".migration-backup"
+    if backup_dir.exists():
+        shutil.rmtree(backup_dir)
+    backup_dir.mkdir()
+    for path, _ in targets:
+        rel = path.relative_to(learner_dir)
+        dest = backup_dir / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(path, dest)
+
+    try:
+        for path, file_type in targets:
+            if migrate_file(path, file_type):
+                if file_type == "profile":
+                    migrated.append(f"profile.yaml: schema_version → {CURRENT_PROFILE_VERSION}")
+                else:
+                    migrated.append(f"{path.relative_to(learner_dir)}: schema_version → {CURRENT_GOAL_VERSION}")
+    except Exception:
+        # Restore all backed-up files to pre-migration state.
+        for path, _ in targets:
+            rel = path.relative_to(learner_dir)
+            backup_file = backup_dir / rel
+            if backup_file.exists():
+                shutil.copy2(backup_file, path)
+        shutil.rmtree(backup_dir, ignore_errors=True)
+        raise
+
+    # Success — remove backup.
+    shutil.rmtree(backup_dir, ignore_errors=True)
     return migrated
 
 

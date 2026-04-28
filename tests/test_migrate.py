@@ -397,6 +397,53 @@ def test_migrate_instance_migrates_goal_files(tmp_path: Path, monkeypatch: pytes
     assert any("rust.yaml" in r for r in result)
 
 
+def test_migrate_instance_rollback_on_partial_failure(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """If a goal migration fails, all files are restored to pre-migration state."""
+    from sensei.engine.scripts import migrate as m
+
+    call_count = 0
+
+    def goal_v1_to_v2(data: dict) -> dict:
+        nonlocal call_count
+        call_count += 1
+        if call_count >= 2:
+            raise ValueError("simulated migration failure")
+        return {**data, "upgraded": True}
+
+    monkeypatch.setitem(m.GOAL_MIGRATIONS, 1, goal_v1_to_v2)
+    monkeypatch.setattr(m, "CURRENT_GOAL_VERSION", 2)
+
+    learner = tmp_path / "learner"
+    goal_dir = learner / "goals"
+    goal_dir.mkdir(parents=True)
+
+    # Profile at current version (no migration needed).
+    (learner / "profile.yaml").write_text(yaml.safe_dump({
+        "schema_version": m.CURRENT_PROFILE_VERSION,
+        "learner_id": "test",
+        "expertise_map": {},
+    }))
+
+    # Two goal files at v1 — second will fail.
+    for name in ["aaa.yaml", "bbb.yaml"]:
+        (goal_dir / name).write_text(yaml.safe_dump({
+            "schema_version": 1, "goal_id": name, "nodes": {},
+        }))
+
+    original_aaa = (goal_dir / "aaa.yaml").read_text()
+    original_bbb = (goal_dir / "bbb.yaml").read_text()
+
+    with pytest.raises(ValueError, match="simulated migration failure"):
+        m.migrate_instance(learner)
+
+    # Both files should be restored to their original content.
+    assert (goal_dir / "aaa.yaml").read_text() == original_aaa
+    assert (goal_dir / "bbb.yaml").read_text() == original_bbb
+
+    # Backup directory should be cleaned up.
+    assert not (learner / ".migration-backup").exists()
+
+
 def test_goal_migration_0_to_1() -> None:
     """Verify the real 0→1 migration renames node states and fields."""
     v0_goal = {

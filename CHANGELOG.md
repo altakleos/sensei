@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Added
+
+- Migration backup/rollback: `sensei upgrade` now backs up learner files before migration and restores them on partial failure, preventing mixed-version state.
+- E2E nightly CI gate: workflow now fails if zero E2E tests actually ran (catches expired API keys).
+- `run.sh` script-name allowlist: rejects unknown scripts before `exec`, preventing path traversal.
+- `run.sh` `.python_path` validation: must be an absolute path.
+- `sensei init` symlink rejection: refuses to write through symlink targets or symlink `.sensei/` directories.
+- `tests/test_run_sh.py`: new test file covering run.sh security hardening.
+- `kanon-kit` declared as dev dependency in `pyproject.toml` (was phantom dependency installed only in CI).
+
+### Changed
+
+- `cli.py` decomposed into focused modules: `_engine.py` (engine management), `_shims.py` (tool shims), `_verify.py` (verify logic). cli.py drops from 601 to 322 LOC.
+- `sys.path.insert` hack eliminated from 14 engine scripts; import-path setup centralized in `run.sh` (PYTHONPATH) and `scripts/__init__.py`.
+- E2E tests excluded from default `pytest` collection (`--ignore=tests/e2e` in addopts). Run explicitly with `pytest tests/e2e/`. Skipped count drops from 15 to 1.
+- Upgraded `kanon-kit` from 0.2.0a7 to 0.2.0a8 (fixes 30 fidelity bracket-format errors and 2 validator import errors).
+- CI `verify.yml` no longer collects E2E tests.
+
+### Fixed
+
+- Transcript fixture references updated after fidelity migration.
+- 5 plan files standardized to YAML frontmatter status format.
+
 ## [0.2.0a2] — 2026-04-27
 
 ### Fixed
