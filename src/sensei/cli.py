@@ -159,7 +159,7 @@ def status(target: Path) -> None:
         raise click.ClickException(f"Not a Sensei instance: {target} (no .sensei/ directory).")
 
     version_file = sensei_dir / ".sensei-version"
-    engine_version = version_file.read_text().strip() if version_file.exists() else "unknown"
+    engine_version = version_file.read_text(encoding="utf-8").strip() if version_file.exists() else "unknown"
     click.echo(f"Instance: {target}")
     click.echo(f"Engine:   {engine_version}")
 
@@ -169,7 +169,7 @@ def status(target: Path) -> None:
         click.echo("Profile:  not found")
         return
 
-    profile = yaml.safe_load(profile_path.read_text())
+    profile = yaml.safe_load(profile_path.read_text(encoding="utf-8"))
     if not isinstance(profile, dict):
         click.echo("Profile:  invalid (not a mapping)")
         return
@@ -200,7 +200,7 @@ def status(target: Path) -> None:
 
         now = datetime.now(tz=timezone.utc)
         defaults_path = sensei_dir / "defaults.yaml"
-        defaults = yaml.safe_load(defaults_path.read_text()) if defaults_path.exists() else {}
+        defaults = yaml.safe_load(defaults_path.read_text(encoding="utf-8")) if defaults_path.exists() else {}
         memory_cfg = defaults.get("memory", {}) if isinstance(defaults, dict) else {}
         half_life = float(memory_cfg.get("half_life_days", 7))
         threshold = float(memory_cfg.get("stale_threshold", 0.5))
@@ -255,7 +255,7 @@ def upgrade(target: Path) -> None:
 
     # Read current version
     version_file = sensei_dir / ".sensei-version"
-    old_version = version_file.read_text().strip() if version_file.exists() else "unknown"
+    old_version = version_file.read_text(encoding="utf-8").strip() if version_file.exists() else "unknown"
 
     from packaging.version import InvalidVersion, Version
     try:

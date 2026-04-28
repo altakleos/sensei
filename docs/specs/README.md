@@ -12,6 +12,7 @@ For the full development model, see `docs/development-process.md`.
 | [Cross-Goal Intelligence](cross-goal-intelligence.md) | accepted |
 | [Curriculum Graph](curriculum-graph.md) | accepted |
 | [Decompose Trigger](expand-trigger.md) | accepted |
+| [Emotional State Tracking](emotional-state-tracking.md) | accepted |
 | [Goal Lifecycle](goal-lifecycle.md) | accepted |
 | [Goal Lifecycle Transitions](goal-lifecycle-transitions.md) | accepted |
 | [Hints](hints.md) | accepted |

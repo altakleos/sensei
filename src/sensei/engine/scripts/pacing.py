@@ -165,7 +165,7 @@ def main(argv: list[str] | None = None) -> int:
         print("pacing.py requires PyYAML (`pip install pyyaml`)", file=sys.stderr)
         return 1
 
-    with open(args.curriculum) as f:
+    with open(args.curriculum, encoding="utf-8") as f:
         cur = yaml.safe_load(f) or {}
 
     nodes = cur.get("nodes", {})
@@ -177,7 +177,7 @@ def main(argv: list[str] | None = None) -> int:
 
     profile_map = None
     if args.profile:
-        with open(args.profile) as f:
+        with open(args.profile, encoding="utf-8") as f:
             prof = yaml.safe_load(f) or {}
         profile_map = prof.get("expertise_map", {})
 
