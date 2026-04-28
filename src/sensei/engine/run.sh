@@ -5,6 +5,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PYTHON_PATH_FILE="$SCRIPT_DIR/.python_path"
+export PYTHONPATH="$SCRIPT_DIR/scripts${PYTHONPATH:+:$PYTHONPATH}"
 
 if [ -f "$PYTHON_PATH_FILE" ]; then
     PYTHON=$(cat "$PYTHON_PATH_FILE")

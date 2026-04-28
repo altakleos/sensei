@@ -653,6 +653,7 @@ source = { editable = "." }
 dependencies = [
     { name = "click" },
     { name = "jsonschema" },
+    { name = "packaging" },
     { name = "pyyaml" },
 ]
 
@@ -671,10 +672,11 @@ requires-dist = [
     { name = "click", specifier = ">=8.0" },
     { name = "jsonschema", specifier = ">=4.18" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10" },
+    { name = "packaging", specifier = ">=23.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=5.0" },
     { name = "pyyaml", specifier = ">=6.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.4" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.11" },
     { name = "types-jsonschema", marker = "extra == 'dev'", specifier = ">=4.18" },
     { name = "types-pyyaml", marker = "extra == 'dev'", specifier = ">=6.0" },
 ]

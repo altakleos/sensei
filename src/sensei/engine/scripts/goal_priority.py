@@ -27,16 +27,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
 try:
     import yaml
 except ImportError:  # pragma: no cover
     print("ERROR: Missing 'pyyaml'. Install with: pip install sensei-tutor", file=sys.stderr)
     sys.exit(1)
 
-from _iso import parse_iso  # type: ignore[import-not-found]
-from decay import freshness_score  # type: ignore[import-not-found]
+from _iso import parse_iso
+from decay import freshness_score
 
 _PRIORITY_WEIGHT: dict[str, int] = {"high": 3, "normal": 2, "low": 1}
 _DEFAULT_HALF_LIFE_DAYS = 7.0

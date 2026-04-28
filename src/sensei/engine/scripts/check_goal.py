@@ -30,8 +30,6 @@ except ImportError as _err:  # pragma: no cover
     print(f"ERROR: Missing dependency ({_err.name}). Install with: pip install sensei-tutor", file=sys.stderr)
     sys.exit(1)
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
 _SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schemas" / "goal.schema.json"
 
 
@@ -107,7 +105,7 @@ def validate_goal(goal: dict[str, Any]) -> tuple[str, list[str]]:
     # Auto-migrate older goals before validation (mirrors check_profile.py).
     import contextlib
 
-    from migrate import migrate_goal  # type: ignore[import-not-found]
+    from migrate import migrate_goal
 
     with contextlib.suppress(ValueError, KeyError):
         goal = migrate_goal(dict(goal))

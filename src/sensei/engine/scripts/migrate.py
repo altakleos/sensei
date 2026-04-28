@@ -19,15 +19,13 @@ import sys
 from pathlib import Path
 from typing import Any
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
 try:
     import yaml
 except ImportError:  # pragma: no cover
     print(json.dumps({"error": "Missing 'pyyaml'. Install with: pip install sensei-tutor"}))
     sys.exit(1)
 
-from _atomic import atomic_write_text  # type: ignore[import-not-found]
+from _atomic import atomic_write_text
 
 # Current schema versions (must match *.schema.json const values)
 CURRENT_PROFILE_VERSION = 2
