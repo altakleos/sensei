@@ -44,7 +44,7 @@ typecheck: $(VENV)
 	$(MYPY)
 
 validators: $(VENV)
-	PYTHONPATH=. $(PY) -m kanon verify .
+	PYTHONPATH=. .venv/bin/kanon verify .
 	$(PY) ci/check_links.py --root src/sensei/engine
 	$(PY) ci/check_adr_immutability.py
 
