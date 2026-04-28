@@ -73,7 +73,7 @@ testpaths = ["tests"]
 # Remaining gaps are branch-level only. Further ratchet once the first real
 # schema migration lands — migrate.py's migration-applied branch is currently
 # unreachable because CURRENT_PROFILE_VERSION and CURRENT_GOAL_VERSION are 0.
-addopts = "--cov=sensei --cov-report=term-missing --cov-fail-under=92"
+addopts = "--cov=sensei --cov-report=term-missing --cov-fail-under=92 --ignore=tests/e2e"
 
 [tool.coverage.run]
 source = ["src/sensei"]
