@@ -73,8 +73,12 @@ required:
     sha256: fd24a7641c2a5d83c97c1e5aa0d1a69c518c8846836585307230dd5b2dffbd5e
   - path: scripts/check_goal.py
     sha256: 8480f5b080f0e4b964d6f5b748550ac01eaceaa9fbd0460ab7d463d7e004ce4f
+  - path: scripts/check_hints.py
+    sha256: 1eb0ebc223dcf0fe435ff7aa9cc47a18d5e4fa52ccad6454763bc4c959bef4a5
   - path: scripts/check_profile.py
     sha256: 82d1b3b496ea69153df1dcaeec9b341f444ad0f281ac58ceb6619812c80392ed
+  - path: scripts/check_session_notes.py
+    sha256: 464df9a14d103fa090f64aa015d8e436238f0fd0ef7e488495e2f8306c15c450
   - path: scripts/classify_confidence.py
     sha256: 32c2decd23986f107753d293b88496babb725e9e5f904cb8192218c49f510bc7
   - path: scripts/config.py
