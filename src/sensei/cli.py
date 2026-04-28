@@ -198,10 +198,22 @@ def init(target: Path, force: bool, learner_id: str) -> None:
             param_hint="--learner-id",
         )
 
+    # Reject symlinks before resolving — writing through a symlink could
+    # redirect engine files to an attacker-controlled location.
+    if target.is_symlink():
+        raise click.ClickException(
+            f"Target path is a symlink: {target}. "
+            f"Refusing to write through symlinks for security."
+        )
     target = target.resolve()
     target.mkdir(parents=True, exist_ok=True)
 
     sensei_dir = target / ".sensei"
+    if sensei_dir.is_symlink():
+        raise click.ClickException(
+            f".sensei is a symlink: {sensei_dir}. "
+            f"Refusing to write through symlinks for security."
+        )
     if sensei_dir.exists() and not force:
         raise click.ClickException(
             f"Instance already exists at {sensei_dir}. "

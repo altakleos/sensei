@@ -88,6 +88,33 @@ def test_init_force_overwrites(tmp_path: Path) -> None:
     assert second.exit_code == 0
 
 
+def test_init_rejects_symlink_target(tmp_path: Path) -> None:
+    """sensei init must refuse to write through a symlink target."""
+    real_dir = tmp_path / "real"
+    real_dir.mkdir()
+    link = tmp_path / "link"
+    link.symlink_to(real_dir)
+
+    runner = CliRunner()
+    result = runner.invoke(main, ["init", str(link)])
+    assert result.exit_code != 0
+    assert "symlink" in result.output.lower()
+
+
+def test_init_rejects_symlink_sensei_dir(tmp_path: Path) -> None:
+    """sensei init must refuse if .sensei is a pre-planted symlink."""
+    target = tmp_path / "learner-home"
+    target.mkdir()
+    evil = tmp_path / "evil"
+    evil.mkdir()
+    (target / ".sensei").symlink_to(evil)
+
+    runner = CliRunner()
+    result = runner.invoke(main, ["init", str(target)])
+    assert result.exit_code != 0
+    assert "symlink" in result.output.lower()
+
+
 # --- Shim format validation ---
 #
 # Per docs/operations/shim-validation.md, every generated shim must (a) live
