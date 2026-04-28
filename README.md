@@ -12,15 +12,15 @@
 </div>
 
 ```bash
-pip install sensei-tutor
+uv tool install sensei-tutor
 sensei init ~/learning
 cd ~/learning            # open with any LLM coding agent
 ```
 
-or with [uv](https://docs.astral.sh/uv/):
+or with pip:
 
 ```bash
-uv pip install sensei-tutor
+pip install sensei-tutor
 sensei init ~/learning
 cd ~/learning
 ```
