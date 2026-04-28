@@ -203,6 +203,19 @@ wheels = [
 ]
 
 [[package]]
+name = "kanon-kit"
+version = "0.2.0a7"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+    { name = "pyyaml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9a/a5/3da736b49ae31f6101eb122edff2ea9c4ce31c4d16893f2b461d5748c9f6/kanon_kit-0.2.0a7.tar.gz", hash = "sha256:768568d03ac01b651a2bd23cf5cfb450fedf5c6d357b098cde0b701772345060", size = 118239, upload-time = "2026-04-27T19:54:52.428Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6b/b4/8b604e8f70804a7503f5ffd8ab27d8caac96ed0c04f439fa0b2c7706ab74/kanon_kit-0.2.0a7-py3-none-any.whl", hash = "sha256:f1644e5c981a405e8f3b19cb4b26da5b1bf00436716209396e143e1d8969fe98", size = 143985, upload-time = "2026-04-27T19:54:51.15Z" },
+]
+
+[[package]]
 name = "librt"
 version = "0.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -659,6 +672,7 @@ dependencies = [
 
 [package.optional-dependencies]
 dev = [
+    { name = "kanon-kit" },
     { name = "mypy" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -671,6 +685,7 @@ dev = [
 requires-dist = [
     { name = "click", specifier = ">=8.0" },
     { name = "jsonschema", specifier = ">=4.18" },
+    { name = "kanon-kit", marker = "extra == 'dev'", specifier = "==0.2.0a7" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10" },
     { name = "packaging", specifier = ">=23.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },
