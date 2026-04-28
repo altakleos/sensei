@@ -199,9 +199,16 @@ def status(target: Path) -> None:
         from sensei.engine.scripts.decay import freshness_score
 
         now = datetime.now(tz=timezone.utc)
-        defaults_path = sensei_dir / "defaults.yaml"
-        defaults = yaml.safe_load(defaults_path.read_text(encoding="utf-8")) if defaults_path.exists() else {}
-        memory_cfg = defaults.get("memory", {}) if isinstance(defaults, dict) else {}
+        try:
+            from sensei.engine.scripts.config import load_config
+
+            merged = load_config(sensei_dir, target)
+        except Exception:
+            defaults_path = sensei_dir / "defaults.yaml"
+            merged = yaml.safe_load(defaults_path.read_text(encoding="utf-8")) if defaults_path.exists() else {}
+            if not isinstance(merged, dict):
+                merged = {}
+        memory_cfg = merged.get("memory", {}) if isinstance(merged, dict) else {}
         half_life = float(memory_cfg.get("half_life_days", 7))
         threshold = float(memory_cfg.get("stale_threshold", 0.5))
 
