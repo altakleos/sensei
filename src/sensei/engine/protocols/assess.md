@@ -101,7 +101,7 @@ Run:
 
 Parse the JSON output. Record the `quadrant` (mastered / learning / gap / misconception).
 
-After classifying the confidence quadrant, run `.sensei/run calibration_tracker.py --profile learner/profile.yaml` to update `metacognitive_state.calibration_accuracy` in the profile. This computes the running ratio of confident-correct to total-confident responses.
+After classifying the confidence quadrant, run `.sensei/run calibration_tracker.py --profile learner/profile.yaml` to update `metacognitive_state.calibration_accuracy` in the profile. If `metacognitive_state` does not yet exist in the profile, initialize it first as `{calibration_accuracy: null, planning_tendency: unknown, help_seeking: unknown, updated_at: <now>}` before running the script. This computes the running ratio of confident-correct to total-confident responses.
 
 Do not comment on the answer. Do not say whether it was correct or incorrect. Do not use the word "Correct" in your response to the learner — ever. Proceed silently to Step 5.
 

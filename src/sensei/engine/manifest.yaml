@@ -20,7 +20,7 @@ required:
 
   # Protocols (top-level)
   - path: protocols/assess.md
-    sha256: 9fee81127e2753de258933c1c5cc87f214370cb55a70c9a7d6a2496ba8339115
+    sha256: 577126d9a2d135ec09f6ed20185400198901e2d3a417003215a2a16fb85a3f1e
   - path: protocols/challenger.md
     sha256: 7a9701ac7f588446b5dcf72f2a5415dadc83a56b369e48f7445a43327fc4d5ae
   - path: protocols/goal.md
@@ -38,7 +38,7 @@ required:
   - path: protocols/status.md
     sha256: f109f253c6995a239dc2d17ec3919bc4cea655c40c7128c7087903ee2fa08ecd
   - path: protocols/tutor.md
-    sha256: 4ef20b3d8091389e656427695e210e18cfaa1ba987ab889364d2dc6adef7e04c
+    sha256: 239bed934a025c8de746d416097b7db1084afa3f334d22e716396de31d09c336
 
   # Behavioral mode files
   - path: protocols/modes/assessor.md
@@ -46,7 +46,7 @@ required:
   - path: protocols/modes/challenger.md
     sha256: 96090d12737ec729b807532345aef0fa75fa1945fddec785e3b5071a43976b66
   - path: protocols/modes/reviewer.md
-    sha256: 6e3b10514e4ae196268b1c5ce910f59837f7dbc87d6ec4cbd3a552e669a239ec
+    sha256: 81a83a54ddd23851764c8e92e7b467b2039bd9e7772ddeccc61dfc458e57209c
   - path: protocols/modes/tutor.md
     sha256: ce67893e8b0f49fdaf6c45bbcc026028bbcf68596b4125cfbcd919fa6f7fa1a8
 

@@ -50,7 +50,7 @@ After explaining, pose a comprehension check. This is NOT a quiz (that's `assess
 
 For non-trivial probes, prompt forethought before the learner answers: "What's your approach? What do you think the key challenge is?" Do not skip this for efficiency — forethought is the highest-leverage metacognitive intervention (g=1.613). Omit for simple recall questions. Exception: read `metacognitive_state.planning_tendency` from the profile — if `impulsive`, prompt forethought on ALL probes (not just non-trivial). If `proactive` and past the `fading_threshold` in `.sensei/defaults.yaml`, reduce forethought prompts to non-trivial probes only.
 
-After the learner responds to the forethought prompt, update `metacognitive_state.planning_tendency` in the profile:
+After the learner responds to the forethought prompt, update `metacognitive_state.planning_tendency` in the profile. If `metacognitive_state` does not yet exist in the profile, initialize it first as `{calibration_accuracy: null, planning_tendency: unknown, help_seeking: unknown, updated_at: <now>}` — then update the field below:
 - If the learner spontaneously planned before you prompted (outlined approach, identified challenges, structured their thinking): `proactive`
 - If the learner planned only after your forethought prompt: `prompted`
 - If the learner skipped planning and jumped straight to answering despite the prompt: `impulsive`
