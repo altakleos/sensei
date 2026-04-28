@@ -85,6 +85,19 @@ def test_verify_fails_without_instance(tmp_path: Path) -> None:
     assert result.exit_code != 0
 
 
+def test_verify_detects_checksum_mismatch(tmp_path: Path) -> None:
+    """Tamper with a shipped engine file and confirm verify catches it."""
+    runner = CliRunner()
+    runner.invoke(main, ["init", str(tmp_path / "inst")])
+    tampered = tmp_path / "inst" / ".sensei" / "scripts" / "decay.py"
+    assert tampered.exists()
+    with tampered.open("a") as f:
+        f.write("\n# tampered\n")
+    result = runner.invoke(main, ["verify", str(tmp_path / "inst")])
+    assert result.exit_code != 0
+    assert "checksum mismatch" in result.output
+
+
 def test_version_flag() -> None:
     runner = CliRunner()
     result = runner.invoke(main, ["--version"])

@@ -11,6 +11,7 @@ manifest.yaml in the same commit — these tests will fail otherwise.
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
 import pytest
@@ -45,13 +46,22 @@ def _shipped_files() -> set[str]:
     return out
 
 
-def _manifest_required() -> list[str]:
+def _manifest_data() -> dict:
     data = yaml.safe_load(_MANIFEST_PATH.read_text(encoding="utf-8"))
     assert isinstance(data, dict), "manifest.yaml must be a YAML mapping"
+    return data
+
+
+def _manifest_required() -> list[dict]:
+    data = _manifest_data()
     required = data.get("required")
     assert isinstance(required, list), "manifest.yaml: 'required' must be a list"
-    assert all(isinstance(r, str) for r in required), "manifest entries must be strings"
+    assert all(isinstance(r, dict) for r in required), "manifest entries must be dicts"
     return required
+
+
+def _manifest_paths() -> list[str]:
+    return [e["path"] for e in _manifest_required()]
 
 
 def test_manifest_exists() -> None:
@@ -59,12 +69,15 @@ def test_manifest_exists() -> None:
 
 
 def test_manifest_is_well_formed() -> None:
-    """Schema_version present, required is a non-empty string list."""
-    data = yaml.safe_load(_MANIFEST_PATH.read_text(encoding="utf-8"))
-    assert isinstance(data, dict)
-    assert data.get("schema_version") == 1
+    """Schema_version present, required is a non-empty list of dicts."""
+    data = _manifest_data()
+    assert data.get("schema_version") == 2
     required = data.get("required")
     assert isinstance(required, list) and required, "required list is empty or wrong type"
+    for entry in required:
+        assert isinstance(entry, dict), f"expected dict, got {type(entry).__name__}"
+        assert "path" in entry, f"entry missing 'path': {entry}"
+        assert "sha256" in entry, f"entry missing 'sha256': {entry}"
 
 
 def test_every_shipped_file_is_registered() -> None:
@@ -72,7 +85,7 @@ def test_every_shipped_file_is_registered() -> None:
     must appear in manifest.yaml. Catches contributors adding a new protocol
     file but forgetting to register it."""
     shipped = _shipped_files()
-    registered = set(_manifest_required())
+    registered = set(_manifest_paths())
     unregistered = sorted(shipped - registered)
     assert not unregistered, (
         "The following engine files ship but are not registered in "
@@ -85,11 +98,26 @@ def test_no_manifest_entries_point_at_missing_files() -> None:
     """Forward-coverage check: every manifest entry resolves to a real file
     in the engine bundle. Catches typos and stale entries left after a
     rename or deletion."""
-    registered = _manifest_required()
-    missing = [rel for rel in registered if not (_ENGINE_DIR / rel).is_file()]
+    missing = [rel for rel in _manifest_paths() if not (_ENGINE_DIR / rel).is_file()]
     assert not missing, (
         "manifest.yaml lists entries that do not exist in the bundle:\n  - "
         + "\n  - ".join(missing)
+    )
+
+
+def test_checksums_match_file_contents() -> None:
+    """Verify that committed SHA-256 hashes match actual file contents.
+    Catches stale hashes after file edits without regenerating the manifest."""
+    mismatches: list[str] = []
+    for entry in _manifest_required():
+        rel = entry["path"]
+        expected = entry["sha256"]
+        actual = hashlib.sha256((_ENGINE_DIR / rel).read_bytes()).hexdigest()
+        if actual != expected:
+            mismatches.append(f"{rel}: expected {expected[:12]}… got {actual[:12]}…")
+    assert not mismatches, (
+        "Checksum mismatches — regenerate with: python ci/generate_manifest.py\n  - "
+        + "\n  - ".join(mismatches)
     )
 
 
@@ -113,7 +141,7 @@ def test_no_manifest_entries_point_at_missing_files() -> None:
 def test_manifest_contains_previously_unchecked_files(rel: str) -> None:
     """Regression: pin the specific files that the v0.1.0a18 hardcoded list
     omitted, so we cannot accidentally drop them again."""
-    assert rel in _manifest_required(), (
+    assert rel in _manifest_paths(), (
         f"{rel} must be registered in manifest.yaml — it was previously "
         "missing from the hardcoded verify list."
     )
