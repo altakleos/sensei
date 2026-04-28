@@ -4,6 +4,8 @@ All notable user-visible changes to Sensei (distributed as `sensei-tutor` on PyP
 
 The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Policy lives in [`docs/specs/release-communication.md`](docs/specs/release-communication.md).
 
+## [Unreleased]
+
 ## [0.2.0a3] — 2026-04-28
 
 ### Added
@@ -33,8 +35,6 @@ The format is based on [Keep a Changelog 1.1](https://keepachangelog.com/en/1.1.
 - Protocols (tutor, assess, reviewer) now instruct the LLM to initialize the full `metacognitive_state` object before updating individual fields, preventing schema validation failures on fresh profiles.
 - Transcript fixture references updated after fidelity migration.
 - 5 plan files standardized to YAML frontmatter status format.
-
-## [Unreleased]
 
 ## [0.2.0a2] — 2026-04-27
 

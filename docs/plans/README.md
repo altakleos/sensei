@@ -85,6 +85,22 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [contributor-onboarding-makefile](contributor-onboarding-makefile.md) | Top-level `Makefile` (`setup`/`test`/`lint`/`typecheck`/`validators`/`gate`/`clean`) + `CONTRIBUTING.md` so a fresh clone gets to green pytest in one command; mechanises the `.venv/bin/<tool>` discipline previously buried in `release-playbook.md` | done |
 | [adr-immutability-gate](adr-immutability-gate.md) | `ci/check_adr_immutability.py` enforces the long-standing ADR-immutability invariant; body edits to accepted ADRs fail CI unless the commit carries an `Allow-ADR-edit: NNNN — reason` trailer or the diff is purely a `## Historical Note` append. Closes the only convention-only invariant in the SDD method. | done |
 | [release-v0.1.0a22](release-v0.1.0a22.md) | Cut release v0.1.0a22 — bundles contributor-onboarding-makefile (#42) + adr-immutability-gate (#44); first release exercising the new ADR-immutability gate in CI | done |
+| [declare-kanon-dev-dep](declare-kanon-dev-dep.md) | Declare kanon-kit as a dev dependency | done |
+| [decompose-cli](decompose-cli.md) | Decompose cli.py into focused modules | done |
+| [fix-e2e-silent-skip](fix-e2e-silent-skip.md) | Fail CI when E2E tests silently skip | done |
+| [fix-p0-protocol-bugs](fix-p0-protocol-bugs.md) | Fix P0 Protocol & Script Bugs | complete |
+| [fix-sys-path-insert-hack](fix-sys-path-insert-hack.md) | Eliminate `sys.path.insert` hack from engine scripts | done |
+| [harden-run-sh-and-init](harden-run-sh-and-init.md) | Harden run.sh and sensei init against path-based attacks | done |
+| [kanon-migration](kanon-migration.md) | Migrate sensei to kanon | done |
+| [manifest-checksums](manifest-checksums.md) | Add SHA-256 checksums to engine manifest | done |
+| [migration-backup-and-changelog](migration-backup-and-changelog.md) | Add backup/rollback to migration and fix CHANGELOG | done |
+| [p1-cli-hardening](p1-cli-hardening.md) | P1 CLI Hardening — Upgrade Safety, Verify Completeness, Deprecated API | complete |
+| [p2-init-and-migration](p2-init-and-migration.md) | P2 Remaining — Init Robustness + Migration Chain Tests | complete |
+| [p2-script-hardening](p2-script-hardening.md) | P2 Batch — Script Hardening + Test Coverage Gaps | complete |
+| [p3-registry-errors-safety](p3-registry-errors-safety.md) | P3 Batch — Script Registry, Error Consistency, Decompose Safety, Init Guard | complete |
+| [pacing-velocity](pacing-velocity.md) | Pacing and Velocity in Status | done |
+| [scripts-relative-imports](scripts-relative-imports.md) | Convert Engine Script Imports to Relative | done |
+| [temporal-metadata](temporal-metadata.md) | Temporal Metadata on Topic Transitions | done |
 
 ### In Progress
 | Plan | Feature | Status |

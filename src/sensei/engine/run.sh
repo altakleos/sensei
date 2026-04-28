@@ -10,7 +10,8 @@ export PYTHONPATH="$SCRIPT_DIR/scripts${PYTHONPATH:+:$PYTHONPATH}"
 # --- Script-name allowlist (files with __main__ guards) ---
 SCRIPT="$1"
 case "$SCRIPT" in
-  calibration_tracker.py|check_goal.py|check_profile.py|\
+  calibration_tracker.py|check_goal.py|check_hints.py|\
+  check_profile.py|check_session_notes.py|\
   classify_confidence.py|decay.py|frontier.py|\
   global_knowledge.py|goal_priority.py|hint_decay.py|\
   mastery_check.py|migrate.py|mutate_graph.py|\
