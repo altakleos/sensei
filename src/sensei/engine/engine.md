@@ -244,11 +244,25 @@ Validates a goal YAML file against its JSON Schema and cross-field invariants.
 .sensei/run check_goal.py --goal learner/goals/<slug>.yaml
 ```
 
+#### check_hints.py
+Validates a hints registry against its JSON Schema.
+
+```
+.sensei/run check_hints.py --hints-file learner/hints/hints.yaml
+```
+
 #### check_profile.py
 Validates a learner profile against its JSON Schema and cross-field invariants.
 
 ```
 .sensei/run check_profile.py --profile learner/profile.yaml
+```
+
+#### check_session_notes.py
+Validates session notes against its JSON Schema.
+
+```
+.sensei/run check_session_notes.py --session-notes-file learner/session-notes.yaml
 ```
 
 #### classify_confidence.py

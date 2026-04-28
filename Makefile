@@ -35,7 +35,7 @@ setup: $(VENV)
 	@echo "Sensei dev environment ready at $(VENV)/"
 
 test: $(VENV)
-	$(PYTEST)
+	$(PYTEST) --ignore=tests/e2e
 
 lint: $(VENV)
 	$(RUFF) check .

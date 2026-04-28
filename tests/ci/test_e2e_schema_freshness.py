@@ -4,6 +4,10 @@ E2E test fixtures hardcode schema_version values. When migrate.py bumps
 CURRENT_PROFILE_VERSION or CURRENT_GOAL_VERSION, these fixtures become
 stale. This test catches the drift at CI time rather than at the next
 nightly E2E run.
+
+Note: this test uses a direct package import (not the importlib pattern
+used by other CI tests) because migrate.py has intra-package imports
+that require the full sensei package context to resolve.
 """
 
 from __future__ import annotations

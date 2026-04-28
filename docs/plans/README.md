@@ -101,6 +101,7 @@ See `docs/development-process.md` for when to write a plan and how plans fit in 
 | [pacing-velocity](pacing-velocity.md) | Pacing and Velocity in Status | done |
 | [scripts-relative-imports](scripts-relative-imports.md) | Convert Engine Script Imports to Relative | done |
 | [temporal-metadata](temporal-metadata.md) | Temporal Metadata on Topic Transitions | done |
+| [fix-gaps-2-6](fix-gaps-2-6.md) | Fix Gap Analysis Issues #2–6 — schema validators, CHANGELOG, plans index, CI test coverage | done |
 
 ### In Progress
 | Plan | Feature | Status |
