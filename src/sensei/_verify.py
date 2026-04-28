@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import sys
@@ -40,16 +41,33 @@ def run_verify(target: Path) -> None:
             errors.append(f"manifest.yaml: invalid YAML — {exc}")
             manifest = None
         if isinstance(manifest, dict):
+            schema_ver = manifest.get("schema_version", 1)
             required = manifest.get("required", [])
             if not isinstance(required, list):
                 errors.append("manifest.yaml: 'required' must be a list")
             else:
-                for rel in required:
-                    if not isinstance(rel, str):
-                        errors.append(f"manifest.yaml: non-string entry {rel!r}")
-                        continue
-                    if not (sensei_dir / rel).exists():
-                        errors.append(f"missing: .sensei/{rel}")
+                for entry in required:
+                    if schema_ver >= 2:
+                        # v2: entry is a dict with path + sha256
+                        if not isinstance(entry, dict):
+                            errors.append(f"manifest.yaml: expected dict entry, got {type(entry).__name__}")
+                            continue
+                        rel = entry.get("path", "")
+                        expected_hash = entry.get("sha256", "")
+                        file_path = sensei_dir / rel
+                        if not file_path.exists():
+                            errors.append(f"missing: .sensei/{rel}")
+                            continue
+                        actual_hash = hashlib.sha256(file_path.read_bytes()).hexdigest()
+                        if actual_hash != expected_hash:
+                            errors.append(f"checksum mismatch: .sensei/{rel}")
+                    else:
+                        # v1 fallback: existence only
+                        if not isinstance(entry, str):
+                            errors.append(f"manifest.yaml: non-string entry {entry!r}")
+                            continue
+                        if not (sensei_dir / entry).exists():
+                            errors.append(f"missing: .sensei/{entry}")
         elif manifest is not None:
             errors.append("manifest.yaml: not a YAML mapping")
 

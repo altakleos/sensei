@@ -1,71 +1,111 @@
 # Sensei engine bundle manifest. Enumerates every file that must be present
-# for `sensei verify` to report OK. Read by src/sensei/cli.py:verify.
+# for `sensei verify` to report OK, with SHA-256 checksums for content
+# integrity verification.
 #
-# When adding a new protocol/script/schema to the engine bundle, also add it
-# here. The inverse check (tests/ci/test_engine_manifest.py) asserts every
-# shipped engine file is registered, so omissions are caught at CI time.
-#
-# Excluded (deliberately not registered):
-#   - __pycache__/, __init__.py    Python packaging artefacts
-#   - */README.md                  Developer docs, not engine code
-#   - manifest.yaml                Self-reference avoided
-#   - run.sh                       Renamed to `run` at install time; checked
-#                                  separately via `.sensei/run` presence
+# Regenerate with: python ci/generate_manifest.py
 
-schema_version: 1
+schema_version: 2
 
 required:
+
   # Top-level
-  - engine.md
-  - defaults.yaml
-  - templates/AGENTS.md
+  - path: defaults.yaml
+    sha256: d5991773db0b0321d071a2079196ddff360935b31e5888485eb6e4179f5ee29b
+  - path: engine.md
+    sha256: 9fb931d78625787d068b671d56682801cebd80d6d7e7c5f13321aace97e3e473
+
+  # Templates
+  - path: templates/AGENTS.md
+    sha256: 721250f7b2d9c482205e52d41fa5b54a3979e6791d0c0ed0ad8e7ec2dfc16708
 
   # Protocols (top-level)
-  - protocols/assess.md
-  - protocols/challenger.md
-  - protocols/goal.md
-  - protocols/hints.md
-  - protocols/performance-training.md
-  - protocols/personality.md
-  - protocols/review.md
-  - protocols/reviewer.md
-  - protocols/status.md
-  - protocols/tutor.md
+  - path: protocols/assess.md
+    sha256: 9fee81127e2753de258933c1c5cc87f214370cb55a70c9a7d6a2496ba8339115
+  - path: protocols/challenger.md
+    sha256: 7a9701ac7f588446b5dcf72f2a5415dadc83a56b369e48f7445a43327fc4d5ae
+  - path: protocols/goal.md
+    sha256: 469355cfb571c0737f30376f0515005690f54bdab96f32c78ef34d49e1409de9
+  - path: protocols/hints.md
+    sha256: 5224091256472ff343bb8fe38790a3b031f48759e8b4432390304c14aa7259bf
+  - path: protocols/performance-training.md
+    sha256: 75a28a2552c75a95b7d1e004a037f73746ec803b6ef832d3ae60e5c435c6b9fc
+  - path: protocols/personality.md
+    sha256: d79af90a6558fdb00f361e146313664f07563591356e77a5519640c9977b7aea
+  - path: protocols/review.md
+    sha256: 6a972d8bf6c79bdca3bb2dfc1f0bfedabf2956b69778e33e0362098860c8cb12
+  - path: protocols/reviewer.md
+    sha256: 4f54b16af7ab3d5ad717a2c1f04c47fa23d148a68b811b88b6e1b82b43e28361
+  - path: protocols/status.md
+    sha256: f109f253c6995a239dc2d17ec3919bc4cea655c40c7128c7087903ee2fa08ecd
+  - path: protocols/tutor.md
+    sha256: 4ef20b3d8091389e656427695e210e18cfaa1ba987ab889364d2dc6adef7e04c
 
   # Behavioral mode files
-  - protocols/modes/assessor.md
-  - protocols/modes/challenger.md
-  - protocols/modes/reviewer.md
-  - protocols/modes/tutor.md
+  - path: protocols/modes/assessor.md
+    sha256: 3b5a8ab1117e9e5adeeff230cb6eb07b34e7d00297823d5838f7de9c16c8ad1a
+  - path: protocols/modes/challenger.md
+    sha256: 96090d12737ec729b807532345aef0fa75fa1945fddec785e3b5071a43976b66
+  - path: protocols/modes/reviewer.md
+    sha256: 6e3b10514e4ae196268b1c5ce910f59837f7dbc87d6ec4cbd3a552e669a239ec
+  - path: protocols/modes/tutor.md
+    sha256: ce67893e8b0f49fdaf6c45bbcc026028bbcf68596b4125cfbcd919fa6f7fa1a8
 
   # Schemas
-  - schemas/defaults.schema.json
-  - schemas/goal.schema.json
-  - schemas/hints.yaml.schema.json
-  - schemas/profile.schema.json
-  - schemas/session-notes.schema.json
+  - path: schemas/defaults.schema.json
+    sha256: fdc5e1640ba24b817ae72d1813fff32c6a6f7596faccac7c6e9c502e8e5a14be
+  - path: schemas/goal.schema.json
+    sha256: fc10ec3fa72c588702c30c74b7b9b72abd25793aec5487ec8a536eab7eaec985
+  - path: schemas/hints.yaml.schema.json
+    sha256: 9ab0cb0db4b1eb671578380d00b60189a31c315dc1f893f0af13cd144c940e11
+  - path: schemas/profile.schema.json
+    sha256: fb59f01313e1b0fa3519c85e665cffa0a3ab5cf9254b312b7cfd6e787850d0d4
+  - path: schemas/session-notes.schema.json
+    sha256: f615b084815bef0253d5bf1dbb8584a4547f9204acdab1062b8bd7c81b0b5738
 
   # Helper scripts
-  - scripts/_atomic.py
-  - scripts/_iso.py
-  - scripts/_states.py
-  - scripts/calibration_tracker.py
-  - scripts/check_goal.py
-  - scripts/check_profile.py
-  - scripts/classify_confidence.py
-  - scripts/config.py
-  - scripts/decay.py
-  - scripts/frontier.py
-  - scripts/global_knowledge.py
-  - scripts/goal_priority.py
-  - scripts/hint_decay.py
-  - scripts/mastery_check.py
-  - scripts/migrate.py
-  - scripts/mutate_graph.py
-  - scripts/pacing.py
-  - scripts/question_density.py
-  - scripts/resume_planner.py
-  - scripts/review_scheduler.py
-  - scripts/session_allocator.py
-  - scripts/silence_ratio.py
-  - scripts/teaching_density.py
+  - path: scripts/_atomic.py
+    sha256: 02117c318b03d9b5fe6fd3dd130ae834268bb8e708a2759a112b2f76578c1db5
+  - path: scripts/_iso.py
+    sha256: e03981378953791911a0c77c8430da2f84c83665ee137c539dabe4fb3ae6f9d7
+  - path: scripts/_states.py
+    sha256: a77adbe64a2c67951f74e06ea54d444014e290c696e6d3b227f3a7250e8e8268
+  - path: scripts/calibration_tracker.py
+    sha256: fd24a7641c2a5d83c97c1e5aa0d1a69c518c8846836585307230dd5b2dffbd5e
+  - path: scripts/check_goal.py
+    sha256: 8480f5b080f0e4b964d6f5b748550ac01eaceaa9fbd0460ab7d463d7e004ce4f
+  - path: scripts/check_profile.py
+    sha256: 82d1b3b496ea69153df1dcaeec9b341f444ad0f281ac58ceb6619812c80392ed
+  - path: scripts/classify_confidence.py
+    sha256: 32c2decd23986f107753d293b88496babb725e9e5f904cb8192218c49f510bc7
+  - path: scripts/config.py
+    sha256: c4be31ad3cb5231adcb043f54102c8f660adb8a67a95724c76694fc7d5cd039c
+  - path: scripts/decay.py
+    sha256: 558d4738835f90f6fe11c9c7dcb1d92bca141826a34bc7804daabae18ce6001e
+  - path: scripts/frontier.py
+    sha256: deb256486c69406c522eb824a840fe3f159f97b211df9aec95ee76cf432099f3
+  - path: scripts/global_knowledge.py
+    sha256: 57fefdd5321988435752b75ba40d264de8a0cc603cd83015e0ac85f089a8be91
+  - path: scripts/goal_priority.py
+    sha256: 2444b1233b518432a91e1636c09263d3303ad7b2a4af95840ef20c638088254a
+  - path: scripts/hint_decay.py
+    sha256: 60cfebc7957ab98e5a74a6fd3b5471c2e883137abcd0013f02d6c74f9a826335
+  - path: scripts/mastery_check.py
+    sha256: 0cafc6479ff5cafabf8b6a526378c66c63229af2f9e13430055155b4445db7e1
+  - path: scripts/migrate.py
+    sha256: 8892e05373f1c254f969312b082c9451d70f57707f8f7f8a558f60daee57227b
+  - path: scripts/mutate_graph.py
+    sha256: eb2aa787b6a01b239835319265878077d00741c2bc1d90d98b54c1b5e78cf20e
+  - path: scripts/pacing.py
+    sha256: 786f82323a2ce242bc0418d24dd03d1ce3d88bc5ceb80446a720b64833e412ae
+  - path: scripts/question_density.py
+    sha256: 2bdd613f43cd79da2d435d45f8505227c8ba36e09580e44c1bd3bb6f353e0b3a
+  - path: scripts/resume_planner.py
+    sha256: 800b340724a0012f6fe36725e02d9df517074b23b5dd7520f205f956c6fe7d4e
+  - path: scripts/review_scheduler.py
+    sha256: 3ecfcdc3022df498b3f277229223e9bde3a3d14726454718b3336e802376eedd
+  - path: scripts/session_allocator.py
+    sha256: 9295e18999b0e6d24f98b1e8767757d5585acde791d3a5084c93d4605608577c
+  - path: scripts/silence_ratio.py
+    sha256: 3c683afb1716018d03f0daa8076ff08aa7b757ab6cf716aa339e79c8a97cf4ad
+  - path: scripts/teaching_density.py
+    sha256: 169f9a735b0446dfb1685fa8add817475c5f90e3f4bea0cd3c9acd3ff945147a
