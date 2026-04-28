@@ -203,7 +203,8 @@ def status(target: Path) -> None:
             from sensei.engine.scripts.config import load_config
 
             merged = load_config(sensei_dir, target)
-        except Exception:
+        except Exception:  # noqa: BLE001 — fallback to defaults-only is intentional
+            click.echo("Warning: could not load merged config, using engine defaults.", err=True)
             defaults_path = sensei_dir / "defaults.yaml"
             merged = yaml.safe_load(defaults_path.read_text(encoding="utf-8")) if defaults_path.exists() else {}
             if not isinstance(merged, dict):

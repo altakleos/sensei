@@ -12,7 +12,7 @@ required:
   - path: defaults.yaml
     sha256: d5991773db0b0321d071a2079196ddff360935b31e5888485eb6e4179f5ee29b
   - path: engine.md
-    sha256: 9fb931d78625787d068b671d56682801cebd80d6d7e7c5f13321aace97e3e473
+    sha256: cd8573ca734cb5ba194926b9d1fec0ff5803fdf48f159cd1fbdbadf59419447a
 
   # Templates
   - path: templates/AGENTS.md
