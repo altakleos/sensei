@@ -25,6 +25,15 @@ sensei init ~/learning
 cd ~/learning
 ```
 
+**Upgrading:**
+
+```bash
+uv tool upgrade sensei-tutor    # upgrade the CLI
+sensei upgrade ~/learning       # upgrade your instance's engine bundle
+```
+
+or with pip: `pip install --upgrade sensei-tutor`, then `sensei upgrade ~/learning`.
+
 ---
 
 Sensei turns any LLM coding agent into a structured, adaptive mentor. Install a CLI, scaffold a folder, open it with your agent. The agent reads Sensei's protocols and becomes a tutor that tracks what you know, what you've forgotten, and what to teach next.
