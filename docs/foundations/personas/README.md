@@ -4,7 +4,11 @@ Design-stressing user scenarios. Each persona carries a `stresses:` list pointin
 
 ## Index
 
-*(empty — add personas as the project identifies design-stressing users)*
+| ID | Persona |
+|----|---------|
+| [persona-jacundu](jacundu.md) | Jacundu — Senior SDE, Laid-Off, Interview Prep Under Urgency |
+| [persona-nkechi](nkechi.md) | Nkechi — Salon Owner, Lagos, Learning Finance From Zero |
+| [persona-tomas](tomas.md) | Tomás — Staff Engineer, Three Concurrent Goals, Curiosity-Driven |
 
 ## Template
 

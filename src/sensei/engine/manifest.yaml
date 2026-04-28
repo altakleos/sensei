@@ -100,7 +100,7 @@ required:
   - path: scripts/mutate_graph.py
     sha256: eb2aa787b6a01b239835319265878077d00741c2bc1d90d98b54c1b5e78cf20e
   - path: scripts/pacing.py
-    sha256: 786f82323a2ce242bc0418d24dd03d1ce3d88bc5ceb80446a720b64833e412ae
+    sha256: 8cccde963728af124d9d4bab42d91529d88b9a61ea06a071def9c98a53f280b3
   - path: scripts/question_density.py
     sha256: 2bdd613f43cd79da2d435d45f8505227c8ba36e09580e44c1bd3bb6f353e0b3a
   - path: scripts/resume_planner.py

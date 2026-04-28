@@ -74,7 +74,7 @@ def run_verify(target: Path) -> None:
     profile_path = target / "learner" / "profile.yaml"
     if profile_path.exists():
         try:
-            profile = yaml.safe_load(profile_path.read_text())
+            profile = yaml.safe_load(profile_path.read_text(encoding="utf-8"))
             if isinstance(profile, dict):
                 from sensei.engine.scripts.check_profile import validate_profile
 
@@ -92,11 +92,11 @@ def run_verify(target: Path) -> None:
     session_notes_path = target / "learner" / "session-notes.yaml"
     if session_notes_path.exists():
         try:
-            notes_data = yaml.safe_load(session_notes_path.read_text())
+            notes_data = yaml.safe_load(session_notes_path.read_text(encoding="utf-8"))
             if isinstance(notes_data, dict):
                 schema_path = sensei_dir / "schemas" / "session-notes.schema.json"
                 if schema_path.exists():
-                    schema = json.loads(schema_path.read_text())
+                    schema = json.loads(schema_path.read_text(encoding="utf-8"))
                     validator = jsonschema.Draft202012Validator(schema)
                     for err in sorted(validator.iter_errors(notes_data), key=lambda e: list(e.absolute_path)):
                         errors.append(f"session-notes: {list(err.absolute_path) or '<root>'}: {err.message}")
@@ -120,7 +120,7 @@ def run_verify(target: Path) -> None:
             from sensei.engine.scripts.config import load_config
 
             merged = load_config(sensei_dir, target)
-            schema = json.loads(defaults_schema_path.read_text())
+            schema = json.loads(defaults_schema_path.read_text(encoding="utf-8"))
             validator = jsonschema.Draft202012Validator(schema)
             for err in sorted(validator.iter_errors(merged), key=lambda e: list(e.absolute_path)):
                 errors.append(f"config: {list(err.absolute_path) or '<root>'}: {err.message}")
